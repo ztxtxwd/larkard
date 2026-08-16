@@ -1,0 +1,6 @@
+{
+  "id": "S10",
+  "difficulty": "medium",
+  "prompt": "生成一张审批操作卡片：两个按钮并排等宽铺满一行——左边「批准」（主样式，回调动作 approve），右边「驳回」（危险样式，回调动作 reject），按钮点击通过 callback 回传 {\"action\": ...}。",
+  "golden": "g-s10.json"
+}

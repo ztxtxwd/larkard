@@ -1,0 +1,31 @@
+{
+  "schema": "2.0",
+  "body": {
+    "elements": [
+      {
+        "tag": "column_set",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "elements": [
+              { "tag": "markdown", "content": "**订单已发货**\n预计 3 天内送达" }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "auto",
+            "elements": [
+              {
+                "tag": "button",
+                "text": { "tag": "plain_text", "content": "查看物流" },
+                "behaviors": [{ "type": "open_url", "default_url": "https://open.feishu.cn" }]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

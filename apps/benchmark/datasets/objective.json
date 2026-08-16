@@ -1,0 +1,418 @@
+[
+  {
+    "id": "Q01",
+    "category": "基础结构",
+    "question": "飞书卡片 JSON 2.0 中，使用 2.0 能力（如新组件、卡片搭建工具）时，根对象需要显式声明什么？",
+    "options": [
+      "\"version\": \"2.0\"",
+      "\"schema\": \"2.0\"",
+      "\"card_schema\": 2",
+      "无需任何声明"
+    ],
+    "answer": "B",
+    "explanation": "根对象必须包含 \"schema\": \"2.0\"；省略时平台按 1.0 处理。"
+  },
+  {
+    "id": "Q02",
+    "category": "基础结构",
+    "question": "卡片 JSON 2.0 根对象的合法顶层字段是以下哪一组？",
+    "options": [
+      "schema / config / card_link / header / body",
+      "schema / style / content / footer",
+      "type / layout / widgets",
+      "schema / header / body / tail / actions"
+    ],
+    "answer": "A",
+    "explanation": "根结构为 schema、config、card_link（可选）、header（可选）、body（可选）。"
+  },
+  {
+    "id": "Q03",
+    "category": "基础结构",
+    "question": "卡片正文的组件列表放在哪个位置？",
+    "options": [
+      "根级 \"elements\" 数组",
+      "\"body\": { \"elements\": [...] }",
+      "\"content\": { \"widgets\": [...] }",
+      "\"layout\": { \"children\": [...] }"
+    ],
+    "answer": "B",
+    "explanation": "正文组件放在 body.elements 数组中。"
+  },
+  {
+    "id": "Q04",
+    "category": "基础结构",
+    "question": "卡片标题区的标准结构是？",
+    "options": [
+      "\"header\": { \"title\": \"卡片标题\" }",
+      "\"header\": { \"title\": { \"tag\": \"plain_text\", \"content\": \"卡片标题\" }, \"template\": \"blue\" }",
+      "\"header\": { \"text\": \"卡片标题\", \"color\": \"blue\" }",
+      "\"title\": { \"header\": \"卡片标题\" }"
+    ],
+    "answer": "B",
+    "explanation": "标题用 { tag: \"plain_text\", content } 结构，主题色通过 header.template 指定。"
+  },
+  {
+    "id": "Q05",
+    "category": "基础结构",
+    "question": "JSON 2.0 中 config.update_multi 的合法取值是？",
+    "options": [
+      "true / false",
+      "只能是 true 或不写",
+      "任意布尔值",
+      "\"auto\" / \"manual\""
+    ],
+    "answer": "B",
+    "explanation": "JSON 2.0 下 update_multi 只能为 true 或省略，写 false 不合法。"
+  },
+  {
+    "id": "Q06",
+    "category": "基础结构",
+    "question": "要让整个卡片点击后跳转链接，应配置哪个字段？",
+    "options": ["body.link", "config.redirect_url", "card_link", "header.action"],
+    "answer": "C",
+    "explanation": "根级 card_link 字段配置卡片整体点击跳转。"
+  },
+  {
+    "id": "Q07",
+    "category": "基础结构",
+    "question": "卡片摘要（展示在聊天栏消息预览中的文案）配置在哪里？",
+    "options": ["header.subtitle", "config.summary", "body.preview", "config.update_multi"],
+    "answer": "B",
+    "explanation": "config.summary.content 是聊天栏预览摘要文案。"
+  },
+  {
+    "id": "Q08",
+    "category": "基础结构",
+    "question": "以下关于空卡片 {} 的说法正确的是？",
+    "options": [
+      "不合法，必须至少有 header",
+      "在开放平台语义上合法，渲染为空白卡片",
+      "不合法，必须有 schema 字段",
+      "只在 1.0 中合法"
+    ],
+    "answer": "B",
+    "explanation": "空对象在开放平台语义上合法（空白卡片）。"
+  },
+  {
+    "id": "Q09",
+    "category": "基础结构",
+    "question": "body 内组件的默认排列方向（direction）是？",
+    "options": ["horizontal", "vertical", "自动换行", "随机"],
+    "answer": "B",
+    "explanation": "body.direction 默认 vertical（纵向排列）。"
+  },
+  {
+    "id": "Q10",
+    "category": "基础结构",
+    "question": "config 中自定义字号（custom_font_size）的取值范围是？",
+    "options": [
+      "8px–48px",
+      "10px–40px",
+      "12px–32px",
+      "无限制"
+    ],
+    "answer": "B",
+    "explanation": "各端字号可取官方枚举或 10px–40px 自定义值。"
+  },
+  {
+    "id": "Q11",
+    "category": "组件",
+    "question": "展示富文本（支持 Markdown 语法、@人、超链接）应使用哪个组件？",
+    "options": ["text", "markdown", "div", "rich_text"],
+    "answer": "B",
+    "explanation": "tag: \"markdown\"，content 中可使用 Markdown 及飞书扩展语法。"
+  },
+  {
+    "id": "Q12",
+    "category": "组件",
+    "question": "图片组件中，图片资源通过哪个字段引用？",
+    "options": ["url", "src", "img_key", "image_id"],
+    "answer": "C",
+    "explanation": "使用 img_key 引用已上传到飞书的图片，不能直接写外链 URL。"
+  },
+  {
+    "id": "Q13",
+    "category": "组件",
+    "question": "图片组件设置「等比缩放、某一边贴齐容器」的缩放模式是 scale_type 的哪个值？",
+    "options": ["fit_horizontal", "crop_center", "stretch", "contain"],
+    "answer": "A",
+    "explanation": "scale_type: \"fit_horizontal\" 表示等比缩放、水平方向贴齐。"
+  },
+  {
+    "id": "Q14",
+    "category": "组件",
+    "question": "实现多列并排布局应使用哪个组件？",
+    "options": ["grid", "columns", "column_set", "layout_box"],
+    "answer": "C",
+    "explanation": "column_set 包含 columns 数组，每列 column 内再放 elements。"
+  },
+  {
+    "id": "Q15",
+    "category": "组件",
+    "question": "column_set 的窄屏自适应模式（flex_mode）不包括以下哪个值？",
+    "options": ["stretch", "flow", "bisect", "collapse"],
+    "answer": "D",
+    "explanation": "flex_mode 取值为 none / stretch / flow / bisect / trisect，没有 collapse。"
+  },
+  {
+    "id": "Q16",
+    "category": "组件",
+    "question": "以下哪个组件可以嵌套其他组件形成「图文混排块」，且常用于头像+文本的组合？",
+    "options": ["div", "note", "panel", "box"],
+    "answer": "A",
+    "explanation": "div 组件支持 text + extra（如头像列）等子结构，是常用图文混排容器。"
+  },
+  {
+    "id": "Q17",
+    "category": "组件",
+    "question": "备注组件（小字说明，常放卡片底部）的 tag 是？",
+    "options": ["tip", "footnote", "note", "caption"],
+    "answer": "C",
+    "explanation": "tag: \"note\"，内部为 plain_text / img 元素列表。"
+  },
+  {
+    "id": "Q18",
+    "category": "组件",
+    "question": "分隔线的组件 tag 是？",
+    "options": ["divider", "hr", "line", "separator"],
+    "answer": "B",
+    "explanation": "tag: \"hr\"，无其他必填属性。"
+  },
+  {
+    "id": "Q19",
+    "category": "组件",
+    "question": "展示单个人员（头像+姓名）的组件 tag 是？",
+    "options": ["user", "person", "member", "avatar"],
+    "answer": "B",
+    "explanation": "person 展示单人，person_list 展示多人列表。"
+  },
+  {
+    "id": "Q20",
+    "category": "组件",
+    "question": "以下哪个是飞书卡片真实存在的组件 tag？",
+    "options": ["carousel", "tab_bar", "chart", "modal"],
+    "answer": "C",
+    "explanation": "chart（图表）是真实组件；carousel / tab_bar / modal 不是卡片 body 组件。"
+  },
+  {
+    "id": "Q21",
+    "category": "组件",
+    "question": "视频组件在客户端不支持时，可配置 fallback 的 drop 行为，其含义是？",
+    "options": [
+      "降级为图片",
+      "直接丢弃该组件",
+      "降级为文本链接",
+      "报错提示用户升级"
+    ],
+    "answer": "B",
+    "explanation": "fallback 取值 drop 表示客户端不支持时丢弃该组件。"
+  },
+  {
+    "id": "Q22",
+    "category": "组件",
+    "question": "表格组件（table）在卡片中的位置限制是？",
+    "options": [
+      "可以放在任何容器内",
+      "只能放在 body.elements 根级",
+      "只能放在 column 内",
+      "只能配合 form 使用"
+    ],
+    "answer": "B",
+    "explanation": "form / table 仅允许在 body.elements 根级，column 内不支持。"
+  },
+  {
+    "id": "Q23",
+    "category": "组件",
+    "question": "可折叠面板组件（默认收起、点击展开）的 tag 是？",
+    "options": ["fold_panel", "collapsible_panel", "expandable", "accordion"],
+    "answer": "B",
+    "explanation": "collapsible_panel，展开态图标旋转角度支持 ±90 / ±180。"
+  },
+  {
+    "id": "Q24",
+    "category": "组件",
+    "question": "collapsible_panel 展开态图标的合法旋转角度不包括？",
+    "options": ["-180", "-90", "45", "180"],
+    "answer": "C",
+    "explanation": "仅支持 -180 / -90 / 90 / 180。"
+  },
+  {
+    "id": "Q25",
+    "category": "组件",
+    "question": "图片组合组件（多图聚合，如九宫格）的 tag 是？",
+    "options": ["img_group", "img_combination", "gallery", "image_set"],
+    "answer": "B",
+    "explanation": "img_combination 是真实的图片组合组件。"
+  },
+  {
+    "id": "Q26",
+    "category": "组件",
+    "question": "音频组件的 tag 是？",
+    "options": ["audio", "media", "voice", "sound"],
+    "answer": "A",
+    "explanation": "tag: \"audio\"，audio / video 均为真实组件。"
+  },
+  {
+    "id": "Q27",
+    "category": "交互",
+    "question": "按钮组件的文案结构是？",
+    "options": [
+      "\"text\": \"提交\"",
+      "\"text\": { \"tag\": \"plain_text\", \"content\": \"提交\" }",
+      "\"label\": \"提交\"",
+      "\"content\": \"提交\""
+    ],
+    "answer": "B",
+    "explanation": "按钮文案为 plain_text 结构，交互行为配置在 behaviors 数组。"
+  },
+  {
+    "id": "Q28",
+    "category": "交互",
+    "question": "按钮组件配置交互行为的字段是？",
+    "options": ["action", "behaviors", "on_click", "events"],
+    "answer": "B",
+    "explanation": "JSON 2.0 用 behaviors 数组描述按钮交互（打开链接、回调等）。"
+  },
+  {
+    "id": "Q29",
+    "category": "交互",
+    "question": "表单容器 form 的必需属性包括？",
+    "options": [
+      "name（表单标识，卡片内唯一）",
+      "action（提交地址）",
+      "method（提交方式）",
+      "id（数字编号）"
+    ],
+    "answer": "A",
+    "explanation": "form 必须有唯一的 name 标识，且内部需包含提交按钮。"
+  },
+  {
+    "id": "Q30",
+    "category": "交互",
+    "question": "表单内触发提交的按钮，其 form_action_type 应为？",
+    "options": ["send", "submit", "confirm", "commit"],
+    "answer": "B",
+    "explanation": "form 内必须包含 form_action_type 为 submit 的按钮。"
+  },
+  {
+    "id": "Q31",
+    "category": "交互",
+    "question": "以下哪个是真实的输入类组件 tag？",
+    "options": ["textbox", "textarea", "input", "edit_text"],
+    "answer": "C",
+    "explanation": "input 是真实组件；另有 select_static、date_picker、checker 等。"
+  },
+  {
+    "id": "Q32",
+    "category": "交互",
+    "question": "静态选项单选下拉框的 tag 是？",
+    "options": ["dropdown", "select", "select_static", "single_select"],
+    "answer": "C",
+    "explanation": "select_static 为静态单选，multi_select_static 为静态多选。"
+  },
+  {
+    "id": "Q33",
+    "category": "交互",
+    "question": "选人组件（通讯录选人）的 tag 是？",
+    "options": ["person_picker", "select_person", "choose_user", "user_select"],
+    "answer": "B",
+    "explanation": "select_person / multi_select_person 用于人员选择。"
+  },
+  {
+    "id": "Q34",
+    "category": "交互",
+    "question": "把多个次要操作收进「更多」菜单的组件是？",
+    "options": ["more_menu", "overflow", "actions_fold", "context_menu"],
+    "answer": "B",
+    "explanation": "overflow 组件收纳次要操作，点击弹出菜单。"
+  },
+  {
+    "id": "Q35",
+    "category": "交互",
+    "question": "交互容器（为任意内容块整体附加点击行为）的 tag 是？",
+    "options": ["clickable", "interactive_container", "touch_wrapper", "action_area"],
+    "answer": "B",
+    "explanation": "interactive_container 可包裹内容并配置 behaviors。"
+  },
+  {
+    "id": "Q36",
+    "category": "易错与最佳实践",
+    "question": "关于 form 和 table 的嵌套限制，正确的说法是？",
+    "options": [
+      "form 可以放进 column",
+      "table 可以放进 column",
+      "form / table 只能在 body 根级，不能放进 column 等容器",
+      "两者都可以随意嵌套"
+    ],
+    "answer": "C",
+    "explanation": "form / table 仅允许 body.elements 根级，column 内不支持。"
+  },
+  {
+    "id": "Q37",
+    "category": "易错与最佳实践",
+    "question": "按最佳实践，卡片嵌套深度（linter 默认规则）不应超过多少层？",
+    "options": ["5 层", "8 层", "12 层", "无限制"],
+    "answer": "B",
+    "explanation": "默认 maxDepth = 8，超深嵌套会被 lint 警告。"
+  },
+  {
+    "id": "Q38",
+    "category": "易错与最佳实践",
+    "question": "生成卡片时对图片资源的正确做法是？",
+    "options": [
+      "直接使用任意外链 URL 作为 img_key",
+      "使用 message_card 自定义格式的 base64",
+      "使用上传到飞书后获得的 img_key（如 img_v2_xxx），无法确定时使用明确的示例占位值",
+      "图片必须内联在 JSON 中"
+    ],
+    "answer": "C",
+    "explanation": "img_key 必须是飞书图片资源标识，臆造外链或 base64 都是常见错误。"
+  },
+  {
+    "id": "Q39",
+    "category": "易错与最佳实践",
+    "question": "以下哪种做法符合飞书卡片最佳实践？",
+    "options": [
+      "主题色铺满所有组件，越鲜艳越好",
+      "主题色集中在 header.template，正文保持简洁",
+      "每个文本都单独设置不同颜色",
+      "用大量嵌套 column_set 实现复杂布局"
+    ],
+    "answer": "B",
+    "explanation": "主题色宜集中在 header.template，避免满屏铺色与超深嵌套。"
+  },
+  {
+    "id": "Q40",
+    "category": "易错与最佳实践",
+    "question": "卡片正文组件总数按最佳实践（linter 默认规则）不应超过多少个？",
+    "options": ["20 个", "50 个", "100 个", "无限制"],
+    "answer": "B",
+    "explanation": "默认 maxElements = 50，超量会被 lint 警告。"
+  },
+  {
+    "id": "Q41",
+    "category": "易错与最佳实践",
+    "question": "单段文本内容过长时（默认超过 3000 字符），linter 会？",
+    "options": [
+      "直接判定卡片非法",
+      "给出超长文本警告，建议拆分",
+      "自动截断文本",
+      "无任何提示"
+    ],
+    "answer": "B",
+    "explanation": "maxTextLength 默认 3000，超长是 warning 级最佳实践问题，不影响 Schema 合法性。"
+  },
+  {
+    "id": "Q42",
+    "category": "易错与最佳实践",
+    "question": "在 markdown 组件中 @ 某人（通知到该用户），正确的做法是？",
+    "options": [
+      "直接写 @姓名",
+      "使用 <at id=用户open_id></at> 语法，用户标识需用真实的 open_id",
+      "用 person 组件即可实现通知",
+      "卡片 JSON 无法实现 @ 人"
+    ],
+    "answer": "B",
+    "explanation": "@ 通知需使用 at 标签语法并携带真实 open_id；person 组件只是展示人员，不含通知语义。"
+  }
+]

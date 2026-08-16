@@ -1,0 +1,24 @@
+{
+  "models": [
+    {
+      "name": "thinker",
+      "model": "vendor/think-model",
+      "baseUrl": "https://example.test/v1",
+      "apiKey": "${BENCH_KEY}"
+    },
+    {
+      "name": "thinker-hinted",
+      "model": "vendor/think-model",
+      "baseUrl": "https://example.test/v1",
+      "apiKey": "sk-literal",
+      "promptHint": "button 必须带 behaviors 数组。"
+    },
+    {
+      "name": "no-think",
+      "model": "vendor/think-model",
+      "baseUrl": "https://example.test/v1",
+      "apiKey": "sk-literal",
+      "extra": { "enable_thinking": false }
+    }
+  ]
+}

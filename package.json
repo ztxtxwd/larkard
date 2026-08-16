@@ -1,0 +1,25 @@
+{
+  "name": "open-feishu-card-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "飞书卡片 (Feishu/Lark Card Schema 2.0) 全栈工具链：解析、校验、适配、编译、渲染、LSP 与 IDE 插件",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^7.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "turbo"
+    ]
+  }
+}

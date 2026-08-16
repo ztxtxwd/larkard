@@ -1,0 +1,6 @@
+{
+  "id": "S03",
+  "difficulty": "easy",
+  "prompt": "生成一张会议邀请卡片：标题「会议邀请」，正文说明「产品评审会将于明天 14:00 开始」，并放一个主要样式的「加入会议」按钮，点击后打开链接 https://vc.feishu.cn/demo。",
+  "golden": "g-s03.json"
+}

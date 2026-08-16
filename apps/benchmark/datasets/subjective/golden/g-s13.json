@@ -1,0 +1,87 @@
+{
+  "schema": "2.0",
+  "header": {
+    "title": { "tag": "plain_text", "content": "报销审批" },
+    "template": "blue"
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "column_set",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "**申请人**：张三\n**金额**：¥1,280.00\n**事由**：客户拜访差旅"
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "auto",
+            "elements": [
+              {
+                "tag": "img",
+                "img_key": "img_v2_demo-key",
+                "alt": { "tag": "plain_text", "content": "报销凭证" }
+              }
+            ]
+          }
+        ]
+      },
+      { "tag": "hr" },
+      {
+        "tag": "form",
+        "name": "approve_form",
+        "elements": [
+          {
+            "tag": "input",
+            "name": "comment",
+            "placeholder": { "tag": "plain_text", "content": "审批意见" }
+          },
+          {
+            "tag": "column_set",
+            "columns": [
+              {
+                "tag": "column",
+                "width": "weighted",
+                "weight": 1,
+                "elements": [
+                  {
+                    "tag": "button",
+                    "width": "fill",
+                    "text": { "tag": "plain_text", "content": "同意" },
+                    "type": "primary",
+                    "name": "approve",
+                    "form_action_type": "submit",
+                    "behaviors": [{ "type": "callback", "value": { "action": "approve" } }]
+                  }
+                ]
+              },
+              {
+                "tag": "column",
+                "width": "weighted",
+                "weight": 1,
+                "elements": [
+                  {
+                    "tag": "button",
+                    "width": "fill",
+                    "text": { "tag": "plain_text", "content": "驳回" },
+                    "type": "danger",
+                    "name": "reject",
+                    "form_action_type": "submit",
+                    "behaviors": [{ "type": "callback", "value": { "action": "reject" } }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

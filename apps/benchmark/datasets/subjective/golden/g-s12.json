@@ -1,0 +1,17 @@
+{
+  "schema": "2.0",
+  "config": { "update_multi": true },
+  "card_link": { "url": "https://open.feishu.cn" },
+  "header": {
+    "title": { "tag": "plain_text", "content": "本周精选文章" },
+    "template": "turquoise"
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "1. 深入理解飞书卡片 JSON 结构\n2. 卡片交互最佳实践"
+      }
+    ]
+  }
+}

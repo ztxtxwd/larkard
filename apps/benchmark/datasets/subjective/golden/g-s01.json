@@ -1,0 +1,12 @@
+{
+  "schema": "2.0",
+  "header": {
+    "title": { "tag": "plain_text", "content": "系统通知" },
+    "template": "blue"
+  },
+  "body": {
+    "elements": [
+      { "tag": "markdown", "content": "您的账号已于今日 09:30 成功登录新设备。" }
+    ]
+  }
+}

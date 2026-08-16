@@ -1,0 +1,37 @@
+{
+  "schema": "2.0",
+  "config": {
+    "update_multi": true
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "各位伙伴：\n\n为保障6月15日发布会期间网络稳定运行，请各位同事于6月15日14:00起，将手机、电脑等终端设备的网络连接方式由5G网络切换至员工Wi-Fi。",
+        "text_align": "left"
+      },
+      {
+        "tag": "img",
+        "alt": {
+          "tag": "plain_text",
+          "content": "image"
+        },
+        "img_key": "img_v3_0212m_ff877047-4d89-4479-b832-42387190374g",
+        "preview": true,
+        "scale_type": "crop_center"
+      },
+      {
+        "tag": "markdown",
+        "content": "**温馨提示：**\n **1.** 请提前确认设备已正常连接员工Wi-Fi：\n    **·**  **lixiang-2022**\n    适用于理想内部员工电脑端，连接路径：飞连-概览-员工Wi-Fi-连接\n    **·**  **lixiang-guest**\n       适用于理想内部员工手机端、外部访客，仅能访问外部网络(不能翻墙)，不能访问任何公司内网，连接路径：密码连接（**chj59505099）**\n **2.** 活动期间如无特殊需求，请尽量避免使用5G网络。\n\n如有任何问题，可在飞书搜索【IT机器人】选择“[C区行政运营](https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&url=https%3A%2F%2Fit-order-web.chehejia.com%2Forder%2Fcreate%3F_srv_id%3D1010733)”发起工单，我们将第一时间回复。\n感谢大家的理解与配合，共同保障活动顺利开展。\n\n**紧急联系人：**\n王鹏飞：13910630273\n夏培培：18410057780\n王 欣（行政）：13124735166\n张 震（品牌）：18801077244\n\n理想汽车 | 公共事务部 & 品牌\n2026年6月15日\n",
+        "text_align": "left"
+      }
+    ]
+  },
+  "header": {
+    "template": "green",
+    "title": {
+      "tag": "plain_text",
+      "content": "关于配合发布会网络保障工作的通知"
+    }
+  }
+}

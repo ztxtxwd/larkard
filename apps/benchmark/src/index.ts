@@ -1,0 +1,12 @@
+export { run } from './cli.js';
+export { createClient, runPool } from './client.js';
+export { gradeObjective } from './grade-objective.js';
+export { gradeSubjective, tagSequence, bagF1 } from './grade-subjective.js';
+export { extractJsonText, extractOption, balancedObject } from './extract.js';
+export { aggregate } from './metrics.js';
+export { buildReport, renderMarkdown, writeReport } from './report.js';
+export { loadObjectiveTasks, loadSubjectiveTasks, loadGolden } from './tasks.js';
+export { composeSystemPrompt } from './prompts.js';
+export { formatScorecard, loadSelfEval, runSelfEval } from './self-eval.js';
+export { applyCliOverrides, expandEnvVars, findSubject, loadCatalog, resolveRunModels } from './catalog.js';
+export type * from './types.js';

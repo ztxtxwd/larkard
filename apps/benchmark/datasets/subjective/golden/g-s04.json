@@ -1,0 +1,8 @@
+{
+  "schema": "2.0",
+  "body": {
+    "elements": [
+      { "tag": "markdown", "content": "# 欢迎加入\n这里是团队空间，请先阅读群公告。" }
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "name": "open-feishu-card-vscode",
+  "displayName": "Open Feishu Card",
+  "description": "飞书卡片 (Card Schema 2.0) 开发套件：LSP 智能提示 + Webview 实时预览 + 一键净化非标属性",
+  "version": "0.1.0",
+  "publisher": "open-feishu-card",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "vscode": "^1.92.0"
+  },
+  "categories": [
+    "Visualization",
+    "Programming Languages",
+    "Linters"
+  ],
+  "keywords": [
+    "lark",
+    "feishu",
+    "card",
+    "universal card"
+  ],
+  "icon": "media/icon.png",
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/*.card"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "openFeishuCard.openPreview",
+        "title": "Open Feishu Card: Open Preview to the Side",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "openFeishuCard.openSample",
+        "title": "Open Feishu Card: Open Sample Card"
+      },
+      {
+        "command": "openFeishuCard.showSource",
+        "title": "Open Feishu Card: Open Source",
+        "icon": "$(code)"
+      },
+      {
+        "command": "openFeishuCard.refresh",
+        "title": "Open Feishu Card: Refresh Preview",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "openFeishuCard.clean",
+        "title": "Open Feishu Card: Sanitize Card (Strip Non-Standard Properties)"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "openFeishuCard.editor",
+        "displayName": "Open Feishu Card Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.card"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "configurationDefaults": {
+      "files.associations": {
+        "*.card": "json"
+      }
+    },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "openFeishuCard.showSource",
+          "when": "activeCustomEditorId == openFeishuCard.editor",
+          "group": "navigation@0"
+        },
+        {
+          "command": "openFeishuCard.openPreview",
+          "when": "resourceExtname == .card && activeCustomEditorId != openFeishuCard.editor",
+          "group": "navigation"
+        },
+        {
+          "command": "openFeishuCard.refresh",
+          "when": "activeWebviewPanelId == openFeishuCard.preview",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "openFeishuCard.openPreview",
+          "when": "resourceExtname == .card",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Open Feishu Card",
+      "properties": {
+        "openFeishuCard.preview.theme": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ],
+          "default": "auto",
+          "description": "Theme used by card previews."
+        },
+        "openFeishuCard.preview.maxWidth": {
+          "type": "number",
+          "default": 650,
+          "minimum": 280,
+          "maximum": 1000,
+          "description": "Maximum preview card width in pixels."
+        },
+        "openFeishuCard.render.warnOnUnknownTag": {
+          "type": "boolean",
+          "default": true,
+          "description": "Report unknown card element tags in the Extension Host console."
+        },
+        "openFeishuCard.imageBaseURL": {
+          "type": "string",
+          "default": "",
+          "description": "Optional URL prefix used to resolve image values."
+        },
+        "openFeishuCard.languageServer.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable diagnostics / completion / hover / quick-fix for *.card files from the embedded language server."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "package": "node scripts/package.mjs",
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "echo no tests",
+    "build": "node esbuild.mjs"
+  },
+  "dependencies": {
+    "@open-feishu-card/renderer": "workspace:*",
+    "@open-feishu-card/compiler": "workspace:*",
+    "@open-feishu-card/parser": "workspace:*",
+    "vscode-languageclient": "^9.0.1",
+    "@open-feishu-card/language-server": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "@types/vscode": "^1.92.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^7.0.2",
+    "@vscode/vsce": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/open-feishu-card/open-feishu-card.git"
+  }
+}

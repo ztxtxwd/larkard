@@ -1,0 +1,6 @@
+{
+  "id": "S12",
+  "difficulty": "medium",
+  "prompt": "生成一张内容聚合卡片：整卡可点击跳转到 https://open.feishu.cn，标题「本周精选文章」带主题色，正文列出至少两篇文章标题，并支持多次更新（update_multi）。",
+  "golden": "g-s12.json"
+}

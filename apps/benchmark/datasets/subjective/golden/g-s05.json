@@ -1,0 +1,18 @@
+{
+  "schema": "2.0",
+  "header": {
+    "title": { "tag": "plain_text", "content": "活动海报" }
+  },
+  "body": {
+    "elements": [
+      { "tag": "markdown", "content": "年度技术沙龙现场照片：" },
+      {
+        "tag": "img",
+        "img_key": "img_v2_demo-key",
+        "alt": { "tag": "plain_text", "content": "活动照片" },
+        "scale_type": "fit_horizontal",
+        "preview": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "2.0",
+  "header": {
+    "template": "blue",
+    "title": {
+      "tag": "plain_text",
+      "content": "Lark Card Preview"
+    },
+    "subtitle": {
+      "tag": "plain_text",
+      "content": "Powered by open-feishu-card"
+    }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "## Preview DSL cards while you type\n\nOpen any `.card` file to get an instant visual preview. For `.json` files, run **Lark Card Preview: Open Preview**."
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "note",
+        "elements": [
+          {
+            "tag": "plain_text",
+            "content": "This renderer accepts Card DSL using JSON Schema 2.0."
+          }
+        ]
+      },
+      {
+        "tag": "column_set",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "<text_tag color='blue'>DSL JSON</text_tag>"
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "elements": [
+              {
+                "tag": "markdown",
+                "content": "<text_tag color='green'>Live Preview</text_tag>"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

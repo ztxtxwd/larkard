@@ -1,0 +1,29 @@
+{
+  "name": "@open-feishu-card/compiler",
+  "version": "0.1.0",
+  "description": "编译器与净化器：DSL → 标准 RAW JSON，并自动剥离不符合 Schema 2.0 的非标属性",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@open-feishu-card/adapter": "workspace:*",
+    "@open-feishu-card/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^7.0.2",
+    "@types/node": "^22.20.1"
+  }
+}

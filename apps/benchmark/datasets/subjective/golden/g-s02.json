@@ -1,0 +1,20 @@
+{
+  "schema": "2.0",
+  "header": {
+    "title": { "tag": "plain_text", "content": "国庆放假通知" },
+    "template": "green"
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "**放假时间**：10月1日–10月7日\n**调休安排**：10月11日（周日）上班"
+      },
+      { "tag": "hr" },
+      {
+        "tag": "note",
+        "elements": [{ "tag": "plain_text", "content": "如有疑问请联系行政部" }]
+      }
+    ]
+  }
+}

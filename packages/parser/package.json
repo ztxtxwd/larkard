@@ -1,0 +1,25 @@
+{
+  "name": "@open-feishu-card/parser",
+  "version": "0.1.0",
+  "description": "飞书卡片 JSON/JSONC 解析器，生成带位置信息 (Line/Column/Range) 的 AST",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^7.0.2",
+    "@types/node": "^22.20.1"
+  }
+}

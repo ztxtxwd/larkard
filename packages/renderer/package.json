@@ -1,0 +1,43 @@
+{
+  "name": "@open-feishu-card/renderer",
+  "version": "0.1.0",
+  "description": "零框架依赖的飞书卡片渲染引擎：Web / DOM / SSR，输入 RAW 或公开 DSL，输出真实 DOM 或 HTML 字符串",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./icon-font.css": "./dist/icon-font.css",
+    "./emoji.css": "./dist/emoji.css",
+    "./all.css": "./dist/all.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "./dist/*.js",
+    "./dist/*.cjs"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@open-feishu-card/adapter": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.20.1"
+  }
+}

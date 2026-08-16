@@ -1,0 +1,35 @@
+{
+  "name": "@open-feishu-card/benchmark",
+  "version": "0.1.0",
+  "description": "飞书卡片生成能力 Benchmark：客观题（知识问答）+ 主观题（真实生成，工具链自动判分）",
+  "type": "module",
+  "bin": {
+    "open-feishu-card-benchmark": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "datasets", "models.json"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && chmod +x dist/cli.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@open-feishu-card/compiler": "workspace:*",
+    "@open-feishu-card/linter": "workspace:*",
+    "@open-feishu-card/parser": "workspace:*",
+    "@open-feishu-card/renderer": "workspace:*",
+    "@open-feishu-card/validator": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^7.0.2",
+    "@types/node": "^22.20.1"
+  }
+}

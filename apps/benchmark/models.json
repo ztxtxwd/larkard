@@ -1,0 +1,54 @@
+{
+  "models": [
+    {
+      "name": "gemini-3.7-flash",
+      "model": "google/gemini-3.7-flash-tiered",
+      "baseUrl": "https://tokenflux.dev/v1",
+      "apiKey": "${TOKENFLUX_API_KEY}"
+    },
+    {
+      "name": "gemini-3.7-flash-hinted",
+      "model": "google/gemini-3.7-flash-tiered",
+      "baseUrl": "https://tokenflux.dev/v1",
+      "apiKey": "${TOKENFLUX_API_KEY}",
+      "promptHint": "交互组件（button 等）必须带 behaviors 数组，例如 [{\"type\":\"open_url\",\"default_url\":\"https://example.com\"}]，不要省略该字段。"
+    },
+    {
+      "name": "qwen3.8-27b",
+      "model": "free/qwen3.8-27b-q4",
+      "baseUrl": "https://tokenflux.dev/v1",
+      "apiKey": "${TOKENFLUX_API_KEY}"
+    },
+    {
+      "name": "qwen3.8-27b-no-think",
+      "model": "free/qwen3.8-27b-q4",
+      "baseUrl": "https://tokenflux.dev/v1",
+      "apiKey": "${TOKENFLUX_API_KEY}",
+      "extra": {
+        "enable_thinking": false,
+        "chat_template_kwargs": { "enable_thinking": false }
+      }
+    },
+    {
+      "name": "doubao-seed-evolving",
+      "model": "doubao-seed-evolving",
+      "baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+      "apiKey": "${ARK_API_KEY}",
+      "extra": {
+        "thinking": { "type": "disabled" }
+      }
+    },
+    {
+      "name": "grok-4.6",
+      "model": "grok/grok-4.6",
+      "baseUrl": "https://tokenflux.dev/v1",
+      "apiKey": "${TOKENFLUX_API_KEY}"
+    },
+    {
+      "name": "deepseek-v4-flash",
+      "model": "deepseek/deepseek-v4-flash",
+      "baseUrl": "https://tokenflux.dev/v1",
+      "apiKey": "${TOKENFLUX_API_KEY}"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "2.0",
+  "header": {
+    "title": { "tag": "plain_text", "content": "请假申请" }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "form",
+        "name": "leave_form",
+        "elements": [
+          {
+            "tag": "input",
+            "name": "reason",
+            "placeholder": { "tag": "plain_text", "content": "请输入请假事由" },
+            "required": true
+          },
+          {
+            "tag": "select_static",
+            "name": "leave_type",
+            "behaviors": [{ "type": "callback", "value": { "key": "leave_type_change" } }],
+            "options": [
+              { "text": { "tag": "plain_text", "content": "年假" }, "value": "annual" },
+              { "text": { "tag": "plain_text", "content": "病假" }, "value": "sick" }
+            ]
+          },
+          {
+            "tag": "button",
+            "text": { "tag": "plain_text", "content": "提交申请" },
+            "type": "primary",
+            "name": "submit",
+            "form_action_type": "submit",
+            "behaviors": [{ "type": "callback", "value": { "action": "submit_leave" } }]
+          }
+        ]
+      }
+    ]
+  }
+}
