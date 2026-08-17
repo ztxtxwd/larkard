@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/parser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "飞书卡片 JSON/JSONC 解析器，生成带位置信息 (Line/Column/Range) 的 AST",
   "type": "module",
   "main": "./dist/index.js",

@@ -1,6 +1,7 @@
 {
   "name": "@open-feishu-card/benchmark",
   "version": "0.1.0",
+  "private": true,
   "description": "飞书卡片生成能力 Benchmark：客观题（知识问答）+ 主观题（真实生成，工具链自动判分）",
   "type": "module",
   "bin": {
