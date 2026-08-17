@@ -34,5 +34,14 @@
     "tsx": "^4.19.3",
     "typescript": "^7.0.2",
     "@types/node": "^22.20.1"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ztxtxwd/open-feishu-card-monorepo.git",
+    "directory": "packages/language-server"
   }
 }
