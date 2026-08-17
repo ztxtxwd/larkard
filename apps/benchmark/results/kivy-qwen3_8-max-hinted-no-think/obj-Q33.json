@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 24。飞书卡片 JSON 2.0 中 column_set 的 horizontal_spacing 枚举值 extra_large 对应 24px 间距。",
+  "extracted": "24",
+  "correct": false,
+  "weight": 10
+}

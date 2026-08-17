@@ -1,0 +1,51 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下为多图混排示例：\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"layout\": \"double\",\n        \"img_size\": \"medium\",\n        \"elements\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 1\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 2\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"layout\": \"triple\",\n        \"img_size\": \"medium\",\n        \"elements\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 3\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 4\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 5\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"layout\": \"bisect\",\n        \"img_size\": \"medium\",\n        \"elements\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 6\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 7\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 8\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"layout\": \"triple\",\n        \"img_size\": \"medium\",\n        \"elements\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 9\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 10\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 11\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.118,
+    "total": 0.368,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/1/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/2/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/2/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/3/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/3/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/4/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/4/img_list: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img_combination",
+        "img",
+        "img",
+        "img_combination",
+        "img",
+        "img",
+        "img",
+        "img_combination",
+        "img",
+        "img",
+        "img",
+        "img_combination",
+        "img",
+        "img",
+        "img"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

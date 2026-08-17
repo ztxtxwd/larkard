@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单容器内的输入框、下拉等组件在填写过程中不会立刻触发服务端回调，通常需通过提交按钮统一提交。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

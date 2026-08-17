@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 caption。理由：在飞书卡片文本组件的 `text_style` 字段中，`caption` 用于表示辅助说明的较小字号。",
+  "extracted": "caption",
+  "correct": false,
+  "weight": 20
+}

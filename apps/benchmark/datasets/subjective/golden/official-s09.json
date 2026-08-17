@@ -1,0 +1,118 @@
+{
+  "schema": "2.0",
+  "header": {
+    "template": "yellow",
+    "title": {
+      "tag": "plain_text",
+      "content": "折叠面板展示"
+    }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "下面是一个 默认折叠 的折叠面板组件"
+      },
+      {
+        "tag": "collapsible_panel",
+        "expanded": false,
+        "header": {
+          "title": {
+            "tag": "plain_text",
+            "content": "面板标题文本"
+          },
+          "vertical_align": "center",
+          "icon": {
+            "tag": "standard_icon",
+            "token": "down_outlined",
+            "color": "",
+            "size": "16px 16px"
+          },
+          "icon_position": "right",
+          "icon_expanded_angle": -180
+        },
+        "border": {
+          "color": "grey",
+          "corner_radius": "5px"
+        },
+        "vertical_spacing": "8px",
+        "padding": "8px 8px 8px 8px",
+        "elements": [
+          {
+            "tag": "markdown",
+            "content": "很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本"
+          }
+        ]
+      },
+      {
+        "tag": "markdown",
+        "content": "下面是一个 标题带背景色 且 默认展开 的折叠面板组件"
+      },
+      {
+        "tag": "collapsible_panel",
+        "expanded": true,
+        "header": {
+          "title": {
+            "tag": "markdown",
+            "content": "**面板标题文本**"
+          },
+          "background_color": "yellow",
+          "vertical_align": "center",
+          "icon": {
+            "tag": "standard_icon",
+            "token": "down_outlined",
+            "color": "white",
+            "size": "16px 16px"
+          },
+          "icon_position": "right",
+          "icon_expanded_angle": -180
+        },
+        "border": {
+          "color": "grey",
+          "corner_radius": "5px"
+        },
+        "vertical_spacing": "8px",
+        "padding": "8px 8px 8px 8px",
+        "elements": [
+          {
+            "tag": "markdown",
+            "content": "很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本"
+          }
+        ]
+      },
+      {
+        "tag": "markdown",
+        "content": "下面是一个无边框折叠面板组件"
+      },
+      {
+        "tag": "collapsible_panel",
+        "expanded": true,
+        "header": {
+          "title": {
+            "tag": "markdown",
+            "content": "**面板标题文本**"
+          },
+          "width": "auto_when_fold",
+          "vertical_align": "center",
+          "padding": "4px 0px 4px 8px",
+          "icon": {
+            "tag": "standard_icon",
+            "token": "down_outlined",
+            "color": "",
+            "size": "16px 16px"
+          },
+          "icon_position": "follow_text",
+          "icon_expanded_angle": -180
+        },
+        "vertical_spacing": "8px",
+        "padding": "8px 8px 8px 8px",
+        "elements": [
+          {
+            "tag": "markdown",
+            "content": "很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本很长的文本"
+          }
+        ]
+      }
+    ]
+  }
+}

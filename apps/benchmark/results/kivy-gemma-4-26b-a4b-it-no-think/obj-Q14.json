@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 click。<理由>在飞书卡片交互规范中，behaviors 数组用于记录用户行为，其 type 字段用于标识交互类型，点击行为对应的枚举值为 click。",
+  "extracted": "click",
+  "correct": false,
+  "weight": 20
+}

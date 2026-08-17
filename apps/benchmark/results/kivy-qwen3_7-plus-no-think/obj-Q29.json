@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 fit_horizontal。<理由>飞书卡片 img 组件的 scale_type 属性中，表示“水平拉伸贴齐”（即保持宽高比，宽度填满容器，高度自适应）的枚举值为 fit_horizontal。",
+  "extracted": "fit_horizontal",
+  "correct": true,
+  "weight": 12
+}

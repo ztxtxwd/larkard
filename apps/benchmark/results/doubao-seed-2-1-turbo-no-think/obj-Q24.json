@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。\n在飞书卡片 JSON 2.0 规范中，`config.update_multi` 为布尔类型字段，支持显式赋值为 `false`，表示仅更新当前卡片、不更新同多卡片实例 ID 的其他卡片。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

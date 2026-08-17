@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。在 JSON 2.0 中，图片组件移除了原有的通栏开关，官方推荐通过设置负值的 `margin` 来抵消容器内边距以实现通栏视觉效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

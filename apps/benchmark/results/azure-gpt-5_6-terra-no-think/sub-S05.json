@@ -1,0 +1,36 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（Overflow）示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"当操作按钮较多时，可将次要操作收纳到折叠按钮组中，保持卡片界面简洁。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"horizontal_spacing\": \"8px\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"查看详情\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://www.feishu.cn\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"立即处理\"\n                },\n                \"type\": \"default\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"handle_now\",\n                      \"task_id\": \"task_demo_001\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"编辑\"\n                    },\n                    \"value\": \"edit\"\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"复制链接\"\n                    },\n                    \"value\": \"copy_link\"\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"查看历史记录\"\n                    },\n                    \"value\": \"view_history\"\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"删除\"\n                    },\n                    \"value\": \"delete\"\n                  }\n                ],\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"overflow_menu\",\n                      \"task_id\": \"task_demo_001\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：主操作建议直接展示，低频或辅助操作可放入折叠按钮组。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.545,
+    "total": 0.932,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "column_set",
+        "button",
+        "button",
+        "overflow",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

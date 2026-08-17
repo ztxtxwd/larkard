@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。\n根据飞书卡片官方约定，表单容器（form）为卡片根级组件，仅支持放在卡片 JSON 的根层级，不允许内嵌在 column 等其他组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

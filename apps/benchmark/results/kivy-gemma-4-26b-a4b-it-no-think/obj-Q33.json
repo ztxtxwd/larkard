@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 32。根据飞书卡片布局规范，column_set 的 horizontal_spacing 在取 extra_large 时对应 32 像素。",
+  "extracted": "32",
+  "correct": false,
+  "weight": 10
+}

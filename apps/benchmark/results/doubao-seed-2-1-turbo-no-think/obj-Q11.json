@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 default_url。\n在飞书卡片 behaviors 中 type 为 open_url 时，default_url 是必填的兜底跳转链接字段，用于在各平台链接配置缺失或不生效时作为默认跳转地址。",
+  "extracted": "default_url",
+  "correct": true,
+  "weight": 25
+}

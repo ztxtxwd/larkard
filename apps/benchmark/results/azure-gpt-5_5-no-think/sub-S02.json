@@ -1,0 +1,28 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"图片组件\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"图片组件用于在卡片中展示图片。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"图片\"\n        },\n        \"mode\": \"fit_horizontal\",\n        \"preview\": true\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.667,
+    "total": 0.95,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

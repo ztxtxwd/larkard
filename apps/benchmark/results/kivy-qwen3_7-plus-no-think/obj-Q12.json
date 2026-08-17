@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。<理由>在飞书卡片 2.0 的表单容器（form）配置中，用于绑定提交动作的事件字段名为 submit。",
+  "extracted": "submit",
+  "correct": false,
+  "weight": 25
+}

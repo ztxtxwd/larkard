@@ -1,0 +1,31 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"以下为客户跟进明细表格展示，支持分页、排序及多类型数据渲染：\"\n        }\n      },\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"medium\",\n        \"header_style\": {\n          \"text_align\": \"left\",\n          \"background_style\": \"grey\",\n          \"bold\": true,\n          \"lines\": 1\n        },\n        \"columns\": [\n          {\n            \"name\": \"logo\",\n            \"display_name\": \"企业 Logo\",\n            \"data_type\": \"image\",\n            \"width\": \"90px\",\n            \"align\": \"center\"\n          },\n          {\n            \"name\": \"company_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"140px\",\n            \"align\": \"left\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"text\",\n            \"width\": \"100px\",\n            \"align\": \"center\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR (万元)\",\n            \"data_type\": \"number\",\n            \"width\": \"110px\",\n            \"align\": \"right\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"person\",\n            \"width\": \"110px\",\n            \"align\": \"left\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date\",\n            \"width\": \"110px\",\n            \"align\": \"center\"\n          },\n          {\n            \"name\": \"website\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"markdown\",\n            \"width\": \"90px\",\n            \"align\": \"center\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"logo\": \"img_v2_demo-key\",\n            \"company_name\": \"北京未来科技有限公司\",\n            \"scale\": \"500-1000人\",\n            \"arr\": 120.5,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-03-15\",\n            \"website\": \"[官网](https://www.feishu.cn)\"\n          },\n          {\n            \"logo\": \"img_v2_demo-key\",\n            \"company_name\": \"上海数智互联网络公司\",\n            \"scale\": \"1000人以上\",\n            \"arr\": 360.0,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-04-01\",\n            \"website\": \"[官网](https://www.feishu.cn)\"\n          },\n          {\n            \"logo\": \"img_v2_demo-key\",\n            \"company_name\": \"深圳极光云创信息技术\",\n            \"scale\": \"100-499人\",\n            \"arr\": 45.8,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-04-18\",\n            \"website\": \"[官网](https://www.feishu.cn)\"\n          },\n          {\n            \"logo\": \"img_v2_demo-key\",\n            \"company_name\": \"杭州灵动创想科技\",\n            \"scale\": \"50-99人\",\n            \"arr\": 18.2,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-05-10\",\n            \"website\": \"[官网](https://www.feishu.cn)\"\n          },\n          {\n            \"logo\": \"img_v2_demo-key\",\n            \"company_name\": \"广州智汇物联技术\",\n            \"scale\": \"500-1000人\",\n            \"arr\": 95.0,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-05-22\",\n            \"website\": \"[官网](https://www.feishu.cn)\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.667,
+    "total": 0.8,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/columns/0/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/1/columns/4/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

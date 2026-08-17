@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 180。这是折叠面板在展开状态下图标默认旋转的角度。",
+  "extracted": "180",
+  "correct": true,
+  "weight": 10
+}

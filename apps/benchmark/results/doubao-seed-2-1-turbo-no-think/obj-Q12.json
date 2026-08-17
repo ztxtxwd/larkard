@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。\n理由：在飞书卡片表单容器中，提交按钮通过 `submit` 字段绑定表单提交事件，用于触发表单数据的提交行为。",
+  "extracted": "submit",
+  "correct": false,
+  "weight": 25
+}

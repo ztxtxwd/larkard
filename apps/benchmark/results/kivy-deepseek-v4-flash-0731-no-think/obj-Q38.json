@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 table 组件是独立布局组件，不能嵌套在其它组件内部（如 column 中）。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。在飞书表格组件的 columns 配置中，name 字段作为该列的唯一标识，用于映射行数据对象 rows 中的同名属性键。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

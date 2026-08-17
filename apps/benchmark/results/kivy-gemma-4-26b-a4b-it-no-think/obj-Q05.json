@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 image_group。这是飞书卡片多图组合组件对应的官方 tag 名称。",
+  "extracted": "image_group",
+  "correct": false,
+  "weight": 15
+}

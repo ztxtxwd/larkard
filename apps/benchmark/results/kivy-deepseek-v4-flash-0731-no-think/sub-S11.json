@@ -1,0 +1,31 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"style\": {\n          \"border\": true\n        },\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"text\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"data_type\": \"number\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"person\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date\"\n          },\n          {\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"url\"\n          },\n          {\n            \"name\": \"logo\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"img\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"示例科技\",\n            \"scale\": \"500人\",\n            \"arr\": 1200000,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": 1704067200000,\n            \"link\": \"https://example.com\",\n            \"logo\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer_name\": \"星辰网络\",\n            \"scale\": \"200人\",\n            \"arr\": 800000,\n            \"owner\": \"ou_demo456\",\n            \"sign_date\": 1706745600000,\n            \"link\": \"https://example.com/star\",\n            \"logo\": \"img_v2_demo-key2\"\n          },\n          {\n            \"customer_name\": \"蓝海数据\",\n            \"scale\": \"1000人\",\n            \"arr\": 2500000,\n            \"owner\": \"ou_demo789\",\n            \"sign_date\": 1709251200000,\n            \"link\": \"https://example.com/ocean\",\n            \"logo\": \"img_v2_demo-key3\"\n          },\n          {\n            \"customer_name\": \"极光智能\",\n            \"scale\": \"300人\",\n            \"arr\": 950000,\n            \"owner\": \"ou_demo321\",\n            \"sign_date\": 1711929600000,\n            \"link\": \"https://example.com/aurora\",\n            \"logo\": \"img_v2_demo-key4\"\n          },\n          {\n            \"customer_name\": \"云帆互联\",\n            \"scale\": \"800人\",\n            \"arr\": 1800000,\n            \"owner\": \"ou_demo654\",\n            \"sign_date\": 1714521600000,\n            \"link\": \"https://example.com/sail\",\n            \"logo\": \"img_v2_demo-key5\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.775,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/3/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

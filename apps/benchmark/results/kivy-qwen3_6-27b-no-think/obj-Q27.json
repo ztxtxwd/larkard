@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary。\n\n理由：在飞书卡片消息（Interactive Card）的 Button 组件中，`type` 字段用于定义按钮样式，其中「primary」对应高亮显示的镭射/主色调按钮，而「default」为默认灰色按钮，「danger」为危险红色按钮。",
+  "extracted": "primary",
+  "correct": false,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。`notation` 是普通文本中比正文更小、用于辅助说明的备注字号枚举值。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

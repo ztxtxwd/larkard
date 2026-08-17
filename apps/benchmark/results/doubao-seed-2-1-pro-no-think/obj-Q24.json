@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。根据飞书卡片JSON 2.0官方约定，config.update_multi为布尔类型配置，未显式配置时默认值为false，该字段仅在需要开启多端同步更新时显式设置为true，不允许显式写false。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

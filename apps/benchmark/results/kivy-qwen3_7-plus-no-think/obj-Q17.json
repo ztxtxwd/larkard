@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。<理由>根据飞书卡片官方文档，表单容器（form）内的交互组件必须配置 name 字段，该字段将作为提交数据时的键名，未配置 name 的组件数据不会被包含在提交结果中。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

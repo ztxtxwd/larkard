@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。<理由>飞书卡片 JSON 2.0 中 `img` 组件移除了旧版的通栏属性，官方文档指出可通过设置负值 margin（如 `-8`）来抵消容器内边距从而实现视觉上的通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

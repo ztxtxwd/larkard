@@ -1,0 +1,61 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器 Interactive Container 示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"**交互容器（interactive_container）** 允许你将一组组件包裹在一个可整体交互的区域内，点击该区域任意位置即可触发预设的回调行为。\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"container_click\",\n              \"target_id\": \"demo_container_001\"\n            }\n          }\n        ],\n        \"body\": {\n          \"elements\": [\n            {\n              \"tag\": \"column_set\",\n              \"columns\": [\n                {\n                  \"width\": \"weighted\",\n                  \"weight\": 1,\n                  \"vertical_align\": \"center\",\n                  \"elements\": [\n                    {\n                      \"tag\": \"div\",\n                      \"text\": {\n                        \"tag\": \"lark_md\",\n                        \"content\": \"**飞书项目 V3.2 已发布**\\n点击当前容器任意区域即可查看完整更新日志\"\n                      }\n                    }\n                  ]\n                },\n                {\n                  \"width\": \"weighted\",\n                  \"weight\": 1,\n                  \"vertical_align\": \"center\",\n                  \"elements\": [\n                    {\n                      \"tag\": \"div\",\n                      \"text\": {\n                        \"tag\": \"lark_md\",\n                        \"content\": \"<font color='green'>● 新版本</font>\"\n                      },\n                      \"text_align\": \"right\"\n                    }\n                  ]\n                }\n              ]\n            },\n            {\n              \"tag\": \"hr\"\n            },\n            {\n              \"tag\": \"div\",\n              \"text\": {\n                \"tag\": \"lark_md\",\n                \"content\": \"本次更新包含 12 项功能优化与 5 项缺陷修复，主要涉及多维表格、自动化流程与权限管理模块。\"\n              }\n            },\n            {\n              \"tag\": \"column_set\",\n              \"columns\": [\n                {\n                  \"width\": \"weighted\",\n                  \"weight\": 1,\n                  \"vertical_align\": \"center\",\n                  \"elements\": [\n                    {\n                      \"tag\": \"div\",\n                      \"text\": {\n                        \"tag\": \"plain_text\",\n                        \"content\": \"发布时间：2024-05-20\"\n                      },\n                      \"text_size\": \"notation\",\n                      \"text_color\": \"grey\"\n                    }\n                  ]\n                },\n                {\n                  \"width\": \"weighted\",\n                  \"weight\": 1,\n                  \"vertical_align\": \"center\",\n                  \"elements\": [\n                    {\n                      \"tag\": \"button\",\n                      \"text\": {\n                        \"tag\": \"plain_text\",\n                        \"content\": \"查看详情\"\n                      },\n                      \"type\": \"primary\",\n                      \"size\": \"small\",\n                      \"behaviors\": [\n                        {\n                          \"type\": \"callback\",\n                          \"value\": {\n                            \"action\": \"view_detail\",\n                            \"source\": \"inner_button\"\n                          }\n                        }\n                      ]\n                    }\n                  ]\n                }\n              ]\n            }\n          ]\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"下方是第二个交互容器示例，演示不同的内部布局与回调参数：\"\n        }\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"container_click\",\n              \"target_id\": \"demo_container_002\"\n            }\n          }\n        ],\n        \"body\": {\n          \"elements\": [\n            {\n              \"tag\": \"column_set\",\n              \"columns\": [\n                {\n                  \"width\": \"weighted\",\n                  \"weight\": 1,\n                  \"vertical_align\": \"center\",\n                  \"elements\": [\n                    {\n                      \"tag\": \"img\",\n                      \"img_key\": \"img_v2_demo-key\",\n                      \"alt\": {\n                        \"tag\": \"plain_text\",\n                        \"content\": \"封面图\"\n                      },\n                      \"preview\": false\n                    }\n                  ]\n                },\n                {\n                  \"width\": \"weighted\",\n                  \"weight\": 3,\n                  \"vertical_align\": \"center\",\n                  \"elements\": [\n                    {\n                      \"tag\": \"div\",\n                      \"text\": {\n                        \"tag\": \"lark_md\",\n                        \"content\": \"**自动化流程模板库上新**\\n新增 8 个跨部门协作模板，覆盖产品研发、市场活动与客户服务场景。\"\n                      }\n                    },\n                    {\n                      \"tag\": \"div\",\n                      \"text\": {\n                        \"tag\": \"plain_text\",\n                        \"content\": \"点击容器区域即可跳转至模板中心\"\n                      },\n                      \"text_size\": \"notation\",\n                      \"text_color\": \"grey\"\n                    }\n                  ]\n                }\n              ]\n            }\n          ]\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.182,
+    "total": 0.727,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/elements: Invalid input: expected array, received undefined",
+        "/body/elements/5/elements: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "hr",
+        "interactive_container",
+        "hr",
+        "div",
+        "interactive_container"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

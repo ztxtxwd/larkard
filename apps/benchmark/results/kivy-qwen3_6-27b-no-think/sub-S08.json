@@ -1,0 +1,61 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"Interactive Container Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**Interactive Container**\\n\\nThis card demonstrates the `interactive_container` component. Clicking anywhere in the container triggers a callback.\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"container_click\",\n              \"id\": \"demo-container-001\"\n            }\n          }\n        ],\n        \"body\": {\n          \"elements\": [\n            {\n              \"tag\": \"div\",\n              \"text\": {\n                \"tag\": \"lark_md\",\n                \"content\": \"👆 **Click me!**\\n\\nThis entire area is clickable. The click event will be sent to the backend via callback.\"\n              },\n              \"background_color\": \"fill_2\",\n              \"vertical_spacing\": \"shallow\"\n            }\n          ]\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"Note: In Feishu Card JSON 2.0, interactive containers allow you to define custom click behaviors for complex UI blocks.\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.121,
+    "total": 0.718,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/elements: Invalid input: expected array, received undefined",
+        "/body/elements/4/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "interactive_container",
+        "hr",
+        "note",
+        "plain_text"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

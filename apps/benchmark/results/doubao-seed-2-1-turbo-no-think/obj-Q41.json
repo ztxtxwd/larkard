@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 2.0。\n理由是飞书卡片 JSON 2.0 规范要求根对象必须声明 schema 字段，其固定取值为字符串 \"2.0\"，用于标识卡片使用 2.0 版本的协议规范。",
+  "extracted": "2.0",
+  "correct": true,
+  "weight": 10
+}

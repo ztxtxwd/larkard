@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。在 JSON 2.0 中，表单外的独立组件不再支持通过顶层 `value` 字段进行 1.0 式的自动回传交互，必须通过 `on_click` 等事件回调进行显式处理。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

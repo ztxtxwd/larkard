@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 crop_center。img 组件的 scale_type 取“水平拉伸贴齐”时对应枚举值为 crop_center。",
+  "extracted": "crop_center",
+  "correct": false,
+  "weight": 12
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 10。飞书卡片 table 组件官方文档规定最多支持添加 10 列，超出部分将不会展示。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 10
+}

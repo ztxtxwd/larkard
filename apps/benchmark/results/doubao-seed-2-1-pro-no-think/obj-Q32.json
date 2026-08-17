@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 flow。\n理由：飞书卡片 column_set 的 flex_mode 字段中，枚举值 flow 表示流式布局，窄屏下多列会自动等分换行，实现三列等分在窄屏的适配效果。",
+  "extracted": "flow",
+  "correct": false,
+  "weight": 15
+}

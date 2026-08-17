@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。JSON 2.0 仍保留并支持交互模块 tag=action。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 20
+}

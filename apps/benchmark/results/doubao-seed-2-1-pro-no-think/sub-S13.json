@@ -1,0 +1,57 @@
+{
+  "kind": "subjective",
+  "taskId": "S13",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"新建项目任务\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**项目名称：业务做大做强**\\n请填写以下任务信息，提交后将自动同步至项目看板。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"task_create_form\",\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"select_person\",\n                    \"name\": \"assignee\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"经办人\"\n                    },\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择经办人\"\n                    },\n                    \"required\": true\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"select_static\",\n                    \"name\": \"priority\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"优先级\"\n                    },\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择优先级\"\n                    },\n                    \"required\": true,\n                    \"options\": [\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"🔴 高\"\n                        },\n                        \"value\": \"high\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"🟡 中\"\n                        },\n                        \"value\": \"medium\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"🟢 低\"\n                        },\n                        \"value\": \"low\"\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"description\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"任务描述\"\n            },\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入任务详细描述、验收标准等信息\"\n            },\n            \"type\": \"textarea\",\n            \"max_length\": 500\n          },\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"date_picker\",\n                    \"name\": \"deadline\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"截止日期\"\n                    },\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择截止日期\"\n                    }\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"select_static\",\n                    \"name\": \"task_type\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"任务类型\"\n                    },\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择任务类型\"\n                    },\n                    \"options\": [\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"需求开发\"\n                        },\n                        \"value\": \"feature\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"缺陷修复\"\n                        },\n                        \"value\": \"bugfix\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"运营支持\"\n                        },\n                        \"value\": \"ops\"\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"hr\"\n          },\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\",\n                    \"width\": \"fill\",\n                    \"name\": \"reset_btn\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"reset_form\"\n                      }\n                    ]\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\",\n                    \"width\": \"fill\",\n                    \"name\": \"submit_btn\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"submit_form\",\n                        \"value\": {\n                          \"action\": \"submit_task\",\n                          \"project\": \"业务做大做强\"\n                        }\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：提交后经办人将收到飞书消息通知\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.69,
+    "total": 0.804,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/elements/4/columns/0/elements/0/behaviors/0/type: Invalid discriminator value. Expected 'open_url' | 'callback'",
+        "/body/elements/2/elements/4/columns/1/elements/0/behaviors/0/type: Invalid discriminator value. Expected 'open_url' | 'callback'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "form",
+        "column_set",
+        "select_person",
+        "select_static",
+        "input",
+        "column_set",
+        "date_picker",
+        "select_static",
+        "hr",
+        "column_set",
+        "button",
+        "button",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "form",
+        "column_set",
+        "markdown",
+        "select_person",
+        "column_set",
+        "markdown",
+        "select_static",
+        "column_set",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

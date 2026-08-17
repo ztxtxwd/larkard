@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。飞书卡片 JSON 2.0 的 markdown 组件依然支持使用 `[文本]($urlVal)` 占位符配合 `href` 字典来实现多端差异化跳转。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

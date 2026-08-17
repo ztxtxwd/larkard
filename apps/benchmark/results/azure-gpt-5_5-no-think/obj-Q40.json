@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。icon_expanded_angle 只支持 -180、-90、0、90、180 等固定角度值，45 不合法。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

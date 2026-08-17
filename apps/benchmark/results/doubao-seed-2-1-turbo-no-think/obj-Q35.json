@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。\n理由：根据飞书卡片 table 组件的官方约定，列数据类型为「人员」时，data_type 字段的枚举值为 person。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

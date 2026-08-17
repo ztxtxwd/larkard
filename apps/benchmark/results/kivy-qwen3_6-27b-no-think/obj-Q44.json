@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。在飞书卡片交互回调（callback）的 behaviors 中，value 字段用于传递业务数据，官方规范明确要求其类型必须为对象（object）。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

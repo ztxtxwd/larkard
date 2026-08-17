@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。`name` 用于对应 `rows` 行对象中的键名，且为列定义的必填字段。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

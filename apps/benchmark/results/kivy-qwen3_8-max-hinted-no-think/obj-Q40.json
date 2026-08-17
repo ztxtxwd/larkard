@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。飞书卡片折叠面板（collapsible_panel）的 icon_expanded_angle 字段仅支持 -180、-90、0、90、180 这几个固定枚举值，45 不在合法取值范围内。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

@@ -9,12 +9,23 @@ export function aggregate(results: TaskResult[]): ModelReport {
   const subjective = results.filter((r): r is Extract<TaskResult, { kind: 'subjective' }> => r.kind === 'subjective');
 
   const objectiveByCategory: ModelReport['objectiveByCategory'] = {};
+  let weightSum = 0;
+  let weightedCorrect = 0;
   for (const r of objective) {
-    const slot = (objectiveByCategory[r.category] ??= { correct: 0, total: 0 });
+    const w = typeof r.weight === 'number' && r.weight > 0 ? r.weight : 9;
+    weightSum += w;
+    if (r.correct) weightedCorrect += w;
+    const slot = (objectiveByCategory[r.category] ??= { correct: 0, total: 0, weighted: 0, weightSum: 0 });
     slot.total++;
-    if (r.correct) slot.correct++;
+    slot.weightSum += w;
+    if (r.correct) {
+      slot.correct++;
+      slot.weighted += w;
+    }
   }
-  const objectiveAccuracy = objective.length > 0 ? objective.filter((r) => r.correct).length / objective.length : null;
+  const objectiveAccuracy = weightSum > 0 ? weightedCorrect / weightSum : null;
+  const objectiveRawAccuracy =
+    objective.length > 0 ? objective.filter((r) => r.correct).length / objective.length : null;
 
   let subjectiveDims: ModelReport['subjectiveDims'] = null;
   const subjectiveByDifficulty: ModelReport['subjectiveByDifficulty'] = {};
@@ -52,6 +63,7 @@ export function aggregate(results: TaskResult[]): ModelReport {
   return {
     model: '',
     objectiveAccuracy: objectiveAccuracy === null ? null : round4(objectiveAccuracy),
+    objectiveRawAccuracy: objectiveRawAccuracy === null ? null : round4(objectiveRawAccuracy),
     objectiveByCategory,
     subjectiveDims:
       subjectiveDims === null

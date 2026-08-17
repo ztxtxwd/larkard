@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。根据飞书卡片官方约定，callback 类型 behaviors 的 value 字段用于携带回调交互的自定义参数，类型要求必须为 object（对象）。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

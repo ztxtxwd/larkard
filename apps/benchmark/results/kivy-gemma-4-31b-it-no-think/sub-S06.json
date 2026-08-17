@@ -1,0 +1,44 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"header\",\n        \"title\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"多图混排示例\"\n        },\n        \"template\": \"blue\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下展示了 `img_combination` 组件的不同布局模式，可用于快速构建精美的图片墙。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"images\": [\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          }\n        ],\n        \"layout\": \"three_images\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"布局模式：three_images (三图混排)\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"images\": [\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          }\n        ],\n        \"layout\": \"four_images\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"布局模式：four_images (四图混排)\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"images\": [\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          }\n        ],\n        \"layout\": \"five_images\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"布局模式：five_images (五图混排)\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.182,
+    "total": 0.377,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/2/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/2/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/5/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/5/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/8/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/8/img_list: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "header",
+        "markdown",
+        "img_combination",
+        "div",
+        "hr",
+        "img_combination",
+        "div",
+        "hr",
+        "img_combination",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

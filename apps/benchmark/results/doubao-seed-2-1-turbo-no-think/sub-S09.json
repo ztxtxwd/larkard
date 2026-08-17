@@ -1,0 +1,49 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**默认折叠面板**\\n默认状态下为折叠，点击标题即可展开详情。\"\n      },\n      {\n        \"tag\": \"collapse_panel\",\n        \"expanded\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"面板标题\"\n          },\n          \"background\": \"default\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"这里是折叠面板的内容区域，你可以放入任意支持的组件。\"\n            }\n          }\n        ],\n        \"bordered\": true\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**标题带背景色且默认展开**\\n标题栏带背景色，默认处于展开状态。\"\n      },\n      {\n        \"tag\": \"collapse_panel\",\n        \"expanded\": true,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"面板标题（带背景）\"\n          },\n          \"background\": \"grey\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"这是一个标题带背景色、默认展开的折叠面板示例。\"\n            }\n          }\n        ],\n        \"bordered\": true\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**无边框折叠面板**\\n去掉外边框，呈现更轻量的展示效果。\"\n      },\n      {\n        \"tag\": \"collapse_panel\",\n        \"expanded\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"无边框面板标题\"\n          },\n          \"background\": \"default\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"无边框样式的折叠面板，视觉上更加简洁。\"\n            }\n          }\n        ],\n        \"bordered\": false\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.3,
+    "total": 0.67,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/4/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/7/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "collapse_panel",
+        "div",
+        "hr",
+        "markdown",
+        "collapse_panel",
+        "div",
+        "hr",
+        "markdown",
+        "collapse_panel",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

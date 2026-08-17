@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片JSON 2.0规范要求正文内容必须放在body对象的elements字段下，不再支持1.0版本中将elements直接写在根对象的写法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

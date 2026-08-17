@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary。<理由>在飞书卡片 JSON 2.0 规范中，按钮的 `type` 字段用于定义样式，`primary` 对应蓝底白字的主按钮样式。",
+  "extracted": "primary",
+  "correct": false,
+  "weight": 15
+}

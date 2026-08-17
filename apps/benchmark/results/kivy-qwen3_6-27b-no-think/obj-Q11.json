@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 url。根据飞书卡片消息模板规范，当 behaviors 的 type 为 open_url 时，必须提供 url 字段以指定跳转链接。",
+  "extracted": "url",
+  "correct": false,
+  "weight": 25
+}

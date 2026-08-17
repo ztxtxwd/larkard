@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。\n理由：表单容器内的交互组件在用户填写过程中不会立刻触发服务端回调，仅当点击表单的提交按钮时才会统一触发表单提交的服务端回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

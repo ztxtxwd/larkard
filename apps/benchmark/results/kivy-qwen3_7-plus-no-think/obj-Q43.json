@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q43",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 3。<理由>根据飞书卡片官方文档，普通文本组件（text）的 text_tag_list 字段最多支持展示 3 个标签。",
+  "extracted": "3",
+  "correct": true,
+  "weight": 10
+}

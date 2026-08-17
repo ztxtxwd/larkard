@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。表格（table）组件目前仅支持放置在卡片根级的 elements 数组中，不支持嵌套在分栏（column）、折叠面板等其它容器组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

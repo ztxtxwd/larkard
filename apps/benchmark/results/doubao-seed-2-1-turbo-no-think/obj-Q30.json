@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weighted。\n在飞书卡片多列布局中，column 的 width 字段取值为 weighted 时表示按 weight 权重分配列宽。",
+  "extracted": "weighted",
+  "correct": true,
+  "weight": 20
+}

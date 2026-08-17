@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 select_static。在飞书卡片消息模板中，静态选项的多选下拉组件对应的 tag 为 select_static。",
+  "extracted": "select_static",
+  "correct": false,
+  "weight": 20
+}

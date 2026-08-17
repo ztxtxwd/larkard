@@ -1,0 +1,50 @@
+{
+  "kind": "subjective",
+  "taskId": "S13",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**项目名称：业务做大做强**\"\n      },\n      {\n        \"tag\": \"form\",\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"input\",\n                    \"name\": \"handler\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"经办人\"\n                    },\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请输入经办人\"\n                    }\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"select_static\",\n                    \"name\": \"priority\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"优先级\"\n                    },\n                    \"options\": [\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"高\"\n                        },\n                        \"value\": \"high\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"中\"\n                        },\n                        \"value\": \"medium\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"低\"\n                        },\n                        \"value\": \"low\"\n                      }\n                    ],\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择优先级\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"description\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"描述\"\n            },\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入详细描述...\"\n            }\n          },\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.696,
+    "total": 0.879,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/name: Invalid input: expected string, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "form",
+        "column_set",
+        "input",
+        "select_static",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "form",
+        "column_set",
+        "markdown",
+        "select_person",
+        "column_set",
+        "markdown",
+        "select_static",
+        "column_set",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

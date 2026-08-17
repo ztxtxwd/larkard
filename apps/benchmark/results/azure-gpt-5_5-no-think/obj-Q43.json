@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q43",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 3。普通文本组件的 text_tag_list 文本后缀标签最多展示 3 个。",
+  "extracted": "3",
+  "correct": true,
+  "weight": 10
+}

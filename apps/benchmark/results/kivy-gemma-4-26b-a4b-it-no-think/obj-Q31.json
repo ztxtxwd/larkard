@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 1000。根据飞书卡片布局文档，column.weight 的取值范围是 1 到 1000。",
+  "extracted": "1000",
+  "correct": false,
+  "weight": 15
+}

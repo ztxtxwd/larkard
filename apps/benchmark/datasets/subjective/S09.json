@@ -1,6 +1,8 @@
 {
   "id": "S09",
   "difficulty": "medium",
-  "prompt": "生成一张图标行卡片：左边一个自适应宽度的小图标列（示例图片 img_key：img_v2_demo-key），右边一个占满剩余宽度的文本列（内容「**飞书小助手** 已为你整理今日待办」），文本垂直居中对齐。",
-  "golden": "g-s09.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「折叠面板」示例，生成黄色标题「折叠面板展示」的完整卡片：包含默认折叠、标题带背景色且默认展开、以及无边框等几种折叠面板（文案与文档一致）。",
+  "golden": "official-s09.json",
+  "source": "/feishu-cards/card-json-v2-components/containers/collapsible-panel",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

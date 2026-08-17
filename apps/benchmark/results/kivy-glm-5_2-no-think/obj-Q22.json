@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。\nJSON 2.0 不再支持根级 i18n_elements，多语言需通过 i18n_template 配合 template_variable 在卡片实例化时实现。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

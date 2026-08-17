@@ -4,16 +4,25 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { BenchmarkConfig, ModelConfig } from './types.js';
 
-function resolveDefaultCatalogPath(): string {
+function packageRoot(): string {
   const here = dirname(fileURLToPath(import.meta.url));
-  for (const p of [join(here, '..', 'models.json'), join(here, '..', '..', 'models.json')]) {
-    if (existsSync(p)) return p;
+  for (const root of [join(here, '..'), join(here, '..', '..')]) {
+    if (existsSync(join(root, 'models.json'))) return root;
   }
-  throw new Error('找不到 models.json');
+  throw new Error('找不到 apps/benchmark 包根（缺少 models.json）');
+}
+
+function resolveDefaultCatalogPath(): string {
+  return join(packageRoot(), 'models.json');
 }
 
 export function defaultCatalogPath(): string {
   return resolveDefaultCatalogPath();
+}
+
+/** 默认结果目录：包内 results/（与 cwd 无关）。 */
+export function defaultResultsDir(): string {
+  return join(packageRoot(), 'results');
 }
 
 export function loadCatalog(path: string = defaultCatalogPath()): ModelConfig[] {

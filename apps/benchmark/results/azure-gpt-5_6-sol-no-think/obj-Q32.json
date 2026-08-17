@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 bisect。`bisect` 表示在窄屏下将三列等分显示。",
+  "extracted": "bisect",
+  "correct": false,
+  "weight": 15
+}

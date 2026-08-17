@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。在飞书卡片 JSON 2.0 规范中，`config.update_multi` 字段若需启用多实例更新功能应显式设置为 `true`，默认行为即为不支持（相当于 false），官方文档及最佳实践通常不建议也不支持显式写入 `false`，该字段为可选且仅在设为 true 时生效。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

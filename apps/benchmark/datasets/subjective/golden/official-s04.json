@@ -1,0 +1,189 @@
+{
+  "schema": "2.0",
+  "header": {
+    "template": "blue",
+    "title": {
+      "tag": "plain_text",
+      "content": "勾选组件（依赖端版本 7.9+)"
+    }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "background_style": "default",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 1,
+            "vertical_spacing": "1px",
+            "elements": [
+              {
+                "tag": "checker",
+                "name": "check_1",
+                "checked": false,
+                "text": {
+                  "tag": "lark_md",
+                  "content": "完成新品上市计划报告 💬[战略研讨会](https://open.feishu.cn)"
+                },
+                "overall_checkable": false,
+                "button_area": {
+                  "pc_display_rule": "always",
+                  "buttons": [
+                    {
+                      "tag": "button",
+                      "type": "text",
+                      "size": "large",
+                      "text": {
+                        "tag": "plain_text",
+                        "content": ""
+                      },
+                      "icon": {
+                        "tag": "standard_icon",
+                        "token": "forward-com_outlined",
+                        "color": "grey-500"
+                      },
+                      "disabled": false,
+                      "behaviors": [
+                        {
+                          "type": "callback",
+                          "value": {
+                            "key": "btn1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "button",
+                      "type": "text",
+                      "size": "large",
+                      "text": {
+                        "tag": "plain_text",
+                        "content": ""
+                      },
+                      "icon": {
+                        "tag": "standard_icon",
+                        "token": "tab-todo_outlined",
+                        "color": "grey-500"
+                      },
+                      "disabled": false,
+                      "behaviors": [
+                        {
+                          "type": "open_url",
+                          "default_url": "https://www.baidu.com",
+                          "android_url": "https://developer.android.com/",
+                          "ios_url": "lark://msgcard/unsupported_action",
+                          "pc_url": "https://www.windows.com"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "checked_style": {
+                  "show_strikethrough": true,
+                  "opacity": 0.5
+                },
+                "padding": "2px 2px 2px 2px",
+                "behaviors": [
+                  {
+                    "type": "callback",
+                    "value": {
+                      "key": "todo1"
+                    }
+                  }
+                ]
+              },
+              {
+                "tag": "checker",
+                "name": "check_2",
+                "checked": false,
+                "text": {
+                  "tag": "lark_md",
+                  "content": "把材料提前给💬[业务数据共享群](https://open.feishu.cn)审阅"
+                },
+                "overall_checkable": true,
+                "button_area": {
+                  "pc_display_rule": "on_hover",
+                  "buttons": [
+                    {
+                      "tag": "button",
+                      "type": "text",
+                      "size": "large",
+                      "text": {
+                        "tag": "plain_text",
+                        "content": ""
+                      },
+                      "icon": {
+                        "tag": "standard_icon",
+                        "token": "forward-com_outlined",
+                        "color": "grey-500"
+                      },
+                      "disabled": false,
+                      "behaviors": [
+                        {
+                          "type": "callback",
+                          "value": {
+                            "key": "btn2"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "button",
+                      "type": "text",
+                      "size": "large",
+                      "text": {
+                        "tag": "plain_text",
+                        "content": ""
+                      },
+                      "icon": {
+                        "tag": "standard_icon",
+                        "token": "tab-todo_outlined",
+                        "color": "grey-500"
+                      },
+                      "disabled": false,
+                      "behaviors": [
+                        {
+                          "type": "open_url",
+                          "default_url": "https://www.baidu.com",
+                          "android_url": "https://developer.android.com/",
+                          "ios_url": "lark://msgcard/unsupported_action",
+                          "pc_url": "https://www.windows.com"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "checked_style": {
+                  "show_strikethrough": true,
+                  "opacity": 0.5
+                },
+                "padding": "2px 2px 2px 2px",
+                "confirm": {
+                  "title": {
+                    "tag": "plain_text",
+                    "content": "弹窗标题"
+                  },
+                  "text": {
+                    "tag": "plain_text",
+                    "content": "确认提交吗"
+                  }
+                },
+                "behaviors": [
+                  {
+                    "type": "callback",
+                    "value": {
+                      "key": "todo2"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

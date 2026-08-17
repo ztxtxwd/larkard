@@ -1,0 +1,29 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"图片组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下展示飞书卡片 JSON 2.0 中 **img** 组件的标准用法，包含 alt 提示文本与圆角配置。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"示例图片\"\n        },\n        \"border_radius\": \"8px\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.5,
+    "total": 0.925,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "img"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

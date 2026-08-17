@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 small。<理由>在飞书卡片 JSON 2.0 的 `div` 组件中，`text` 字段的 `tag` 为 `plain_text` 时，其 `size` 属性支持 `small`（小号/辅助说明）、`normal`（默认正文）和 `large`（大号），其中 `small` 对应比正文更小的备注字号。",
+  "extracted": "small",
+  "correct": false,
+  "weight": 20
+}

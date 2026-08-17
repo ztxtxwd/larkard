@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 interactive。理由：飞书卡片中可点击的交互容器组件 tag 为 interactive。",
+  "extracted": "interactive",
+  "correct": false,
+  "weight": 15
+}

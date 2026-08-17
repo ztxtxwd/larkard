@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 url。理由：open_url 行为通过 url 字段指定点击卡片后的跳转地址。",
+  "extracted": "url",
+  "correct": false,
+  "weight": 25
+}

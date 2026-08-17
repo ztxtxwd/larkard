@@ -1,0 +1,43 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（overflow）\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"通过 **overflow** 将多个操作收纳到折叠按钮组中，点击后展示操作菜单。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"编辑\"\n            },\n            \"value\": {\n              \"action\": \"edit\"\n            }\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"复制链接\"\n            },\n            \"value\": {\n              \"action\": \"copy_link\"\n            }\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"移动到文件夹\"\n            },\n            \"value\": {\n              \"action\": \"move\"\n            }\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"删除\"\n            },\n            \"value\": {\n              \"action\": \"delete\"\n            }\n          }\n        ],\n        \"confirm\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"确认操作\"\n          },\n          \"text\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"请选择菜单中的操作。\"\n          }\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"overflow_selected\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"overflow：折叠多个操作按钮，适用于操作较多或需要节省卡片空间的场景。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"主要按钮\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"primary\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"次要按钮\"\n                },\n                \"type\": \"default\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"secondary\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"打开链接\"\n                },\n                \"type\": \"default\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://www.feishu.cn\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.615,
+    "total": 0.442,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/options/0/value: Invalid input: expected string, received object",
+        "/body/elements/2/options/1/value: Invalid input: expected string, received object",
+        "/body/elements/2/options/2/value: Invalid input: expected string, received object",
+        "/body/elements/2/options/3/value: Invalid input: expected string, received object"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "overflow",
+        "div",
+        "hr",
+        "column_set",
+        "button",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

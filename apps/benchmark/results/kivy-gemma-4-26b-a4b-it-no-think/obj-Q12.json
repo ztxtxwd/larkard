@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form.submit。在飞书卡片表单组件中，提交按钮通过该字段名来触发表单数据的提交动作。",
+  "extracted": "form.submit",
+  "correct": false,
+  "weight": 25
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。JSON 2.0 移除了旧版的通栏属性配置，官方推荐通过为组件设置负 margin 来抵消容器内边距以实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

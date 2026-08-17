@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 form_id。\n理由：在飞书卡片 JSON 2.0 规范中，`form` 容器通过 `form_id` 字段来唯一标识该表单，以便在提交回调中区分不同的表单实例。",
+  "extracted": "form_id",
+  "correct": false,
+  "weight": 12
+}

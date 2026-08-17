@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。form 仅支持作为卡片根节点下的一级组件，不支持嵌套在 column 等其它组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

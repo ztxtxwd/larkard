@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。\n在 JSON 2.0 中，所有交互组件的回传值必须定义在 `value` 字段中，但该字段仅在 `form` 容器内有效，独立 button 需通过 `action` 的 `value` 属性传递参数。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

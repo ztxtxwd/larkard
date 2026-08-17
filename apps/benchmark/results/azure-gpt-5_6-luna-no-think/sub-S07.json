@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本（Markdown）语法示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 标题与基本文本\\n\\n这是一段普通文本，支持 **加粗文本**、*斜体文本*、~~删除线文本~~，以及 `行内代码`。\\n\\n> 这是一段引用文本。\\n>\\n> 引用可以包含多行内容。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"### 链接与提及\\n\\n[访问飞书官网](https://www.feishu.cn)\\n\\n[打开示例文档](https://www.feishu.cn/hc/zh-CN)\\n\\n<at id=ou_demo123>示例用户</at>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"### 列表\\n\\n- 无序列表项目一\\n- 无序列表项目二\\n  - 嵌套列表项目\\n  - 另一个嵌套项目\\n\\n1. 有序列表项目一\\n2. 有序列表项目二\\n3. 有序列表项目三\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"### 代码块\\n\\n```javascript\\nfunction greet(name) {\\n  return `Hello, ${name}!`;\\n}\\n\\nconsole.log(greet(\\\"Feishu\\\"));\\n```\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"### 表格\\n\\n| 功能 | 语法 | 示例 |\\n| --- | --- | --- |\\n| 加粗 | `**文本**` | **文本** |\\n| 斜体 | `*文本*` | *文本* |\\n| 删除线 | `~~文本~~` | ~~文本~~ |\\n| 行内代码 | `` `代码` `` | `代码` |\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"### 分隔线与转义\\n\\n使用反斜杠可以转义 Markdown 特殊字符：\\\\*不会变成斜体\\\\*。\\n\\n---\\n\\n以上内容覆盖标题、段落、加粗、斜体、删除线、行内代码、引用、链接、@用户、无序列表、有序列表、代码块、表格、分隔线和字符转义等常用 Markdown 写法。\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"说明：Markdown 内容将按照飞书卡片富文本组件的渲染规则展示。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "Unterminated string"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,6 +1,8 @@
 {
   "id": "S06",
-  "difficulty": "easy",
-  "prompt": "生成一张产品介绍卡片：介绍「飞书卡片」是什么（可使用 Markdown 排版、列表、加粗等），要求结构清晰、至少三个段落要点。",
-  "golden": null
+  "difficulty": "medium",
+  "prompt": "按飞书卡片 JSON 2.0 官方「多图混排（img_combination）」文档示例，生成一张完整卡片，展示文档中的多图布局。",
+  "golden": "official-s06.json",
+  "source": "/feishu-cards/card-json-v2-components/content-components/multi-image-laylout",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

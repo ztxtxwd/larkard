@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weight。\n理由：飞书卡片 column 组件的 width 字段取值为 weight 时，代表该列按权重比例分配剩余宽度。",
+  "extracted": "weight",
+  "correct": false,
+  "weight": 20
+}

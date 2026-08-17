@@ -1,0 +1,32 @@
+{
+  "kind": "subjective",
+  "taskId": "S03",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"普通文本组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"这是一个普通文本组件，支持设置文本大小、颜色、对齐方式等样式。\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"小号灰色文本\",\n          \"text_size\": \"caption\",\n          \"text_color\": \"grey\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"默认大小普通文本\",\n          \"text_size\": \"normal\",\n          \"text_color\": \"default\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"大号红色文本\",\n          \"text_size\": \"heading\",\n          \"text_color\": \"red\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"居中对齐的绿色文本\",\n          \"text_align\": \"center\",\n          \"text_color\": \"green\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.286,
+    "total": 0.893,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "hr",
+        "div",
+        "div",
+        "div",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "div"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

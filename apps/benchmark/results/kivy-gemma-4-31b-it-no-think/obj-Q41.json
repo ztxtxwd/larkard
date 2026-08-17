@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 schema。理由是根据飞书卡片 JSON 2.0 规范，根对象必须包含 schema 字段且其值通常为 \"card\" 以定义卡片版本和结构。",
+  "extracted": "schema",
+  "correct": false,
+  "weight": 10
+}

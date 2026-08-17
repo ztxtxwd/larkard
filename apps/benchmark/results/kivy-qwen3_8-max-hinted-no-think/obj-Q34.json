@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 10。table 组件在未显式指定 page_size 时，飞书卡片 JSON 2.0 默认每页展示 10 行数据。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

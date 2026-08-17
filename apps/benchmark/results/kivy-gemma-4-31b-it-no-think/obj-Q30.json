@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weight。理由是 column 组件的 width 字段在按权重分配空间时，其枚举值应设置为 weight。",
+  "extracted": "weight",
+  "correct": false,
+  "weight": 20
+}

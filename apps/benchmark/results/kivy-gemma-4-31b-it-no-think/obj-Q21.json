@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>在 JSON 2.0 中，原有的 `action` 模块已被废弃，交互组件（如按钮）现在直接通过组件自身的 `value` 或 `action` 属性来定义交互行为。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

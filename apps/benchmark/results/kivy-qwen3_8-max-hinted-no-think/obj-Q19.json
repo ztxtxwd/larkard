@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 name。在飞书卡片 JSON 2.0 中，form 容器组件通过 name 字段作为表单的唯一标识，用于在回调数据中区分和识别具体提交的是哪个表单。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 12
+}

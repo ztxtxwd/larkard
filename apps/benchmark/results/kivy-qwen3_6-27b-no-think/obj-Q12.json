@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。在飞书卡片 JSON 2.0 规范中，表单容器（form）内的提交按钮通过设置 action 的 type 为 \"submit\" 来触发提交事件，该类型标识即为 submit。",
+  "extracted": "submit",
+  "correct": false,
+  "weight": 25
+}

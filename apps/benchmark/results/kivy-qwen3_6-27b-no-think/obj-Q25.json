@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。在飞书卡片 JSON 2.0 中，Markdown 组件已不再支持旧版通过 `$urlVal` 配合 `href` 实现差异化跳转的语法，而是推荐使用标准的 Markdown 链接语法 `[text](url)` 或结合模板变量进行渲染。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

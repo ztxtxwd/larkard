@@ -1,0 +1,52 @@
+{
+  "kind": "subjective",
+  "taskId": "S13",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"新建任务工单\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**项目名称**：业务做大做强\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"task_form\",\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"bisect\",\n            \"background_style\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"div\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"经办人\"\n                    }\n                  },\n                  {\n                    \"tag\": \"select_person\",\n                    \"name\": \"assignee\",\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择经办人\"\n                    }\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"div\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"优先级\"\n                    }\n                  },\n                  {\n                    \"tag\": \"select_static\",\n                    \"name\": \"priority\",\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择优先级\"\n                    },\n                    \"options\": [\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"高 (P0)\"\n                        },\n                        \"value\": \"p0\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"中 (P1)\"\n                        },\n                        \"value\": \"p1\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"低 (P2)\"\n                        },\n                        \"value\": \"p2\"\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"任务描述\"\n            }\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"description\",\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入任务详细描述...\"\n            },\n            \"max_length\": 500,\n            \"rows\": 3\n          },\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"flow\",\n            \"horizontal_spacing\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\",\n                    \"action_type\": \"form_submit\",\n                    \"name\": \"submit_btn\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\",\n                    \"action_type\": \"form_reset\",\n                    \"name\": \"reset_btn\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.667,
+    "total": 0.95,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "form",
+        "column_set",
+        "div",
+        "select_person",
+        "div",
+        "select_static",
+        "div",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "form",
+        "column_set",
+        "markdown",
+        "select_person",
+        "column_set",
+        "markdown",
+        "select_static",
+        "column_set",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。飞书卡片JSON 2.0的图片组件移除了旧版的通栏开关属性，官方推荐通过将图片组件的margin设为负数来实现通栏效果，无需改用markdown内嵌图片或仅放在header中。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 select_person。飞书卡片 2.0 规范中人员选择（单选）组件的 tag 固定为 `select_person`。",
+  "extracted": "select_person",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 flex_mode=「none」。（注：若题目指“三列等分”的枚举值，飞书卡片中 column_set 的 flex_mode 枚举为 none / stretch / free，其中 none 表示按内容宽度等分，窄屏下三列等分即使用 none。）",
+  "extracted": "flex_mode=「none",
+  "correct": false,
+  "weight": 15
+}

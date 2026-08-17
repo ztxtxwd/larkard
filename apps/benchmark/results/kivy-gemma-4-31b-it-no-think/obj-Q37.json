@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 column_key。理由：在 table 组件的 columns 定义中，column_key 用于唯一标识该列，以便在 rows 的数据对象中通过该键名匹配对应单元格的内容。",
+  "extracted": "column_key",
+  "correct": false,
+  "weight": 16
+}

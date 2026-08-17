@@ -1,0 +1,61 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器 Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**交互容器示例**：点击下方按钮触发回调\"\n        }\n      },\n      {\n        \"tag\": \"button\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"点击我\"\n        },\n        \"type\": \"default\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"key\": \"interactive_container_click\",\n              \"action\": \"demo\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**打开链接**：\"\n        }\n      },\n      {\n        \"tag\": \"button\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"访问飞书文档\"\n        },\n        \"type\": \"primary\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"value\": \"https://www.feishu.cn\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.063,
+    "total": 0.634,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/3/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/4/behaviors/0/default_url: Invalid input: expected string, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "button",
+        "hr",
+        "div",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

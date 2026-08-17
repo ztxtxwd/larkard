@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中表单容器外的独立按钮不再支持组件顶层 value 字段做回传交互，需通过 button 的 behaviors 等 2.0 规范配置交互回传。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

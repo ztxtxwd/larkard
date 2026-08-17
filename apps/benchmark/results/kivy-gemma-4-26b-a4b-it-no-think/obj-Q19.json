@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 form_id。该字段用于在表单容器中标识当前表单的唯一 ID。",
+  "extracted": "form_id",
+  "correct": false,
+  "weight": 12
+}

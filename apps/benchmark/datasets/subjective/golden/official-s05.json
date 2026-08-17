@@ -1,0 +1,101 @@
+{
+  "schema": "2.0",
+  "config": {
+    "update_multi": true
+  },
+  "body": {
+    "direction": "horizontal",
+    "horizontal_spacing": "8px",
+    "vertical_spacing": "8px",
+    "horizontal_align": "left",
+    "vertical_align": "top",
+    "padding": "12px 12px 12px 12px",
+    "elements": [
+      {
+        "tag": "button",
+        "text": {
+          "tag": "plain_text",
+          "content": "按钮 1"
+        },
+        "type": "default",
+        "width": "default",
+        "size": "medium",
+        "margin": "0px 0px 0px 0px",
+        "behaviors": [
+          {
+            "type": "callback",
+            "value": {
+              "from": "official-doc-normalize"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "button",
+        "text": {
+          "tag": "plain_text",
+          "content": "按钮 2"
+        },
+        "type": "default",
+        "width": "default",
+        "size": "medium",
+        "margin": "0px 0px 0px 0px",
+        "behaviors": [
+          {
+            "type": "callback",
+            "value": {
+              "from": "official-doc-normalize"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "button",
+        "text": {
+          "tag": "plain_text",
+          "content": "按钮 3"
+        },
+        "type": "default",
+        "width": "default",
+        "size": "medium",
+        "margin": "0px 0px 0px 0px",
+        "behaviors": [
+          {
+            "type": "callback",
+            "value": {
+              "from": "official-doc-normalize"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "overflow",
+        "width": "default",
+        "options": [
+          {
+            "text": {
+              "tag": "plain_text",
+              "content": "按钮 4"
+            },
+            "value": "button_4"
+          },
+          {
+            "text": {
+              "tag": "plain_text",
+              "content": "按钮 5"
+            },
+            "value": "button_5"
+          }
+        ],
+        "behaviors": [
+          {
+            "type": "callback",
+            "value": {
+              "from": "official-doc-normalize"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

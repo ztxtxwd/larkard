@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。在飞书卡片 JSON 2.0 中，图片组件移除了通栏属性，官方文档建议通过将 margin 设置为负数（如 -16px）来抵消容器内边距，从而实现视觉上的通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

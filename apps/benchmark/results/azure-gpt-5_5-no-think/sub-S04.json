@@ -1,0 +1,41 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器（checker）Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"请选择你感兴趣的内容：\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"checker_demo_form\",\n        \"elements\": [\n          {\n            \"tag\": \"checker\",\n            \"name\": \"checker_single\",\n            \"layout\": \"vertical\",\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"选项一\"\n                },\n                \"value\": \"option_1\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"选项二\"\n                },\n                \"value\": \"option_2\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"选项三\"\n                },\n                \"value\": \"option_3\"\n              }\n            ],\n            \"default_value\": \"option_1\"\n          },\n          {\n            \"tag\": \"hr\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"checker_multiple\",\n            \"layout\": \"vertical\",\n            \"multiple\": true,\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"前端开发\"\n                },\n                \"value\": \"frontend\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"后端开发\"\n                },\n                \"value\": \"backend\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"产品设计\"\n                },\n                \"value\": \"design\"\n              }\n            ],\n            \"default_value\": [\n              \"frontend\",\n              \"backend\"\n            ]\n          },\n          {\n            \"tag\": \"hr\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"checker_disabled\",\n            \"layout\": \"vertical\",\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"可选项\"\n                },\n                \"value\": \"enabled\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"禁用项\"\n                },\n                \"value\": \"disabled\",\n                \"disabled\": true\n              }\n            ],\n            \"default_value\": \"enabled\"\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交\"\n            },\n            \"type\": \"primary\",\n            \"action_type\": \"submit\"\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"重置\"\n            },\n            \"action_type\": \"reset\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"以上为勾选器在表单中的单选、多选与禁用态示例。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.308,
+    "total": 0.746,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/elements/5/action_type: Invalid option: expected one of \"link\"|\"request\"|\"multi\"|\"form_submit\"|\"form_reset\"",
+        "/body/elements/1/elements/6/action_type: Invalid option: expected one of \"link\"|\"request\"|\"multi\"|\"form_submit\"|\"form_reset\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "form",
+        "checker",
+        "hr",
+        "checker",
+        "hr",
+        "checker",
+        "button",
+        "button",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

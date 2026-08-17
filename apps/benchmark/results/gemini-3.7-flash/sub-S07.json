@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"飞书卡片 Markdown 富文本语法全景示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**一、 文本样式与排版**\\n普通文本、**加粗文本**、*斜体文本*、~~删除线文本~~、<u>下划线文本</u>、`行内代码`。\\n支持彩色字体：<font color='red'>红色警告</font>、<font color='green'>绿色成功</font>、<font color='blue'>蓝色信息</font>。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**二、 标题层级**\\n# 一级标题 (H1)\\n## 二级标题 (H2)\\n### 三级标题 (H3)\\n#### 四级标题 (H4)\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**三、 列表与引用**\\n* 无序列表项 1\\n* 无序列表项 2\\n  * 嵌套子列表\\n\\n1. 有序列表项 1\\n2. 有序列表项 2\\n\\n> 这是一个 Markdown 块级引用内容，可用于展示通知、摘要或系统说明。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**四、 链接与飞书特有标签**\\n* 普通链接：[飞书开放平台](https://open.feishu.cn)\\n* 提及单人：<at id=ou_demo123></at>\\n* 提及所有人：<at id=all></at>\\n* 自定义状态标签：<text_tag color='blue'>处理中</text_tag> <text_tag color='green'>已通过</text_tag> <text_tag color='red'>已驳回</text_tag> <text_tag color='grey'>待评审</text_tag>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**五、 多行代码块**\\n```json\\n{\\n  \\\"schema\\\": \\\"2.0\\\",\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"code\\\": 200\\n}\\n```\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "Unterminated string"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。config.update_multi 是布尔类型字段，支持显式设置为 false 以关闭多端同步更新卡片内容的能力。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

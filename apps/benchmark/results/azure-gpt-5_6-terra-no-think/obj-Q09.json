@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 picker_datetime。该组件用于在飞书卡片中选择日期和时间。",
+  "extracted": "picker_datetime",
+  "correct": true,
+  "weight": 20
+}

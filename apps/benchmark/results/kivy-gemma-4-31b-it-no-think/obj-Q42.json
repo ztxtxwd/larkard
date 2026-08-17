@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 64。根据飞书卡片 JSON 2.0 规范，element_id 的最大长度限制为 64 个字符。",
+  "extracted": "64",
+  "correct": false,
+  "weight": 15
+}

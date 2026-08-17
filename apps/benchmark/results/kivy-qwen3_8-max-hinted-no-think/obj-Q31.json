@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 12。飞书卡片 JSON 2.0 中 column 组件的 weight 字段用于定义列宽比例，其合法整数取值范围为 1 至 12。",
+  "extracted": "12",
+  "correct": false,
+  "weight": 15
+}

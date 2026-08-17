@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 \"notation\"。\n在飞书卡片普通文本的字号（font_size）枚举中，notation 对应比正文更小的辅助说明/备注字号。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

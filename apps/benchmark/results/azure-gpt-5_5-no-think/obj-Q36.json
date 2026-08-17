@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 10。table 最多支持添加 10 列，超出不展示。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 10
+}

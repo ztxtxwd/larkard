@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 field。在飞书卡片 table 组件的 column 定义中，field 字段用于指定该列与 rows 数据对象中哪个键（key）进行映射。",
+  "extracted": "field",
+  "correct": false,
+  "weight": 16
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 action_button。折叠按钮组（更多操作）在飞书卡片 JSON 2.0 中对应的组件标签（tag）为 action_button，通常配合 layout 属性使用以展示下拉菜单形式的操作项。",
+  "extracted": "action_button",
+  "correct": false,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 extra_small。在飞书卡片文本样式枚举中，extra_small 用于表示比正文更小的辅助说明字号。",
+  "extracted": "extra_small",
+  "correct": false,
+  "weight": 20
+}

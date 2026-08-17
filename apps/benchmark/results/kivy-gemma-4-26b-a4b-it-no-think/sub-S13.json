@@ -1,0 +1,53 @@
+{
+  "kind": "subjective",
+  "taskId": "S13",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"项目信息录入\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"### 业务做大做强\\n请填写以下项目详细信息以进行备案。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"action\": {\n          \"type\": \"submit\",\n          \"label\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"提交申请\"\n          }\n        },\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"stretch\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"input\",\n                    \"name\": \"handler\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"经办人\"\n                    },\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择人员\"\n                    },\n                    \"type\": \"person\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"select_static\",\n                    \"name\": \"priority\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"优先级\"\n                    },\n                    \"options\": [\n                      {\n                        \"tag\": \"option\",\n                        \"label\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"高\"\n                        },\n                        \"value\": \"high\"\n                      },\n                      {\n                        \"tag\": \"option\",\n                        \"label\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"中\"\n                        },\n                        \"value\": \"medium\"\n                      },\n                      {\n                        \"tag\": \"option\",\n                        \"label\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"低\"\n                        },\n                        \"value\": \"low\"\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"description\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"项目描述\"\n            },\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入详细的项目背景或目标...\"\n            },\n            \"type\": \"text_area\"\n          },\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"stretch\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置表单\"\n                    },\n                    \"type\": \"default\",\n                    \"action\": {\n                      \"type\": \"reset\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.609,
+    "total": 0.441,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/name: Invalid input: expected string, received undefined",
+        "/body/elements/2/elements/0/columns/1/elements/0/options/0/text: Invalid input: expected object, received undefined",
+        "/body/elements/2/elements/0/columns/1/elements/0/options/1/text: Invalid input: expected object, received undefined",
+        "/body/elements/2/elements/0/columns/1/elements/0/options/2/text: Invalid input: expected object, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "form",
+        "column_set",
+        "input",
+        "select_static",
+        "input",
+        "column_set",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "form",
+        "column_set",
+        "markdown",
+        "select_person",
+        "column_set",
+        "markdown",
+        "select_static",
+        "column_set",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

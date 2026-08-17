@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 -180。\n理由：飞书折叠面板组件的 header 图标展开旋转角 icon_expanded_angle 字段默认值为 -180，即展开时图标逆时针旋转180度。",
+  "extracted": "-180",
+  "correct": false,
+  "weight": 10
+}

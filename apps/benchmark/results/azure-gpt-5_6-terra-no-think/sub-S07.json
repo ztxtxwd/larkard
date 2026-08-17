@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本（Markdown）语法示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"# 一级标题\\n## 二级标题\\n### 三级标题\\n\\n这是普通文本，支持 **粗体**、*斜体*、~~删除线~~ 与 `行内代码`。\\n\\n[飞书官网](https://www.feishu.cn) 以及 <https://open.feishu.cn>。\\n\\n> 这是引用文本。\\n> \\n> 支持多行引用内容。\\n\\n---\\n\\n### 列表示例\\n\\n无序列表：\\n- 第一项\\n- 第二项\\n  - 二级项目\\n  - 另一个二级项目\\n- 第三项\\n\\n有序列表：\\n1. 第一项\\n2. 第二项\\n3. 第三项\\n\\n### 代码块\\n\\n```javascript\\nconst greeting = \\\"Hello, Feishu Card!\\\";\\nconsole.log(greeting);\\n```\\n\\n### 表格\\n\\n| 姓名 | 部门 | 状态 |\\n| --- | --- | --- |\\n| 张三 | 产品部 | 已完成 |\\n| 李四 | 研发部 | 进行中 |\\n| 王五 | 市场部 | 待处理 |\\n\\n### 提及与表情\\n\\n@_user_1 你好，欢迎使用飞书卡片！ :smile: :rocket:\\n\\n### 图片\\n\\n![示例图片](https://via.placeholder.com/640x240.png?text=Feishu+Markdown)\\n\\n### 转义字符\\n\\n\\\\*这不是斜体\\\\*，\\\\# 这不是标题。\",\n        \"text_size\": \"normal\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"以上内容展示了标题、文本样式、链接、引用、分割线、列表、代码块、表格、提及、表情、图片与转义等常见 Markdown 写法。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "Unterminated string"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

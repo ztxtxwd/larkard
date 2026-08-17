@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>根据飞书卡片 JSON 2.0 官方规范，`config.update_multi` 字段仅在需要开启多次更新能力时显式设置为 `true`，若不开启则直接省略该字段，不支持也不允许显式设置为 `false`。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

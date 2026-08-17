@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 datetime_picker。飞书卡片 JSON 2.0 中日期时间选择器组件的 tag 字段值固定为 datetime_picker。",
+  "extracted": "datetime_picker",
+  "correct": false,
+  "weight": 20
+}

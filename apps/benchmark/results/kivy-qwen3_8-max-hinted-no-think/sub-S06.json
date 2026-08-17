@@ -1,0 +1,42 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排布局示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 双图并列布局**\\n使用 `img_combination` 实现两张图片等宽排列，适用于对比展示或关联内容。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"side_by_side\",\n        \"images\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"左侧示例图\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"右侧示例图\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 三图并列布局**\\n三张图片均匀分布，适合展示系列内容、步骤流程或多角度视图。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"side_by_side\",\n        \"images\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图片1\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图片2\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图片3\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 四宫格布局**\\n2×2 网格排列，常用于相册预览、产品图集或数据可视化组合展示。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"grid\",\n        \"images\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"左上\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"右上\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"左下\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"右下\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"💡 提示：以上所有图片均使用示例 img_key，实际使用时请替换为真实资源 ID。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.2,
+    "total": 0.38,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/1/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/4/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/4/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/7/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/7/img_list: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 url。在 behaviors 配置中，当 type 为 open_url 时，必须通过 url 字段指定跳转的目标链接。",
+  "extracted": "url",
+  "correct": false,
+  "weight": 25
+}

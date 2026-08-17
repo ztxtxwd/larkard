@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary_filled。在飞书卡片 JSON 2.0 中，button 组件的 type 字段使用 primary_filled 表示蓝底白字的填充按钮样式，而 primary 仅表示蓝字带边框的轮廓按钮。",
+  "extracted": "primary_filled",
+  "correct": true,
+  "weight": 15
+}

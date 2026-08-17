@@ -1,0 +1,46 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 默认折叠**\\n点击标题可展开内容。\"\n      },\n      {\n        \"tag\": \"collapse_div\",\n        \"header\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"默认折叠状态\"\n        },\n        \"body\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"这是默认折叠的内容区域。\\n\\n- 支持 Markdown 格式\\n- 可以包含多种组件\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 标题带背景色且默认展开**\\n设置 `has_divider` 为 true 并指定颜色，同时设置 `is_expand` 为 true。\"\n      },\n      {\n        \"tag\": \"collapse_div\",\n        \"header\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"默认展开且带背景色\"\n        },\n        \"body\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"这个面板默认是展开的。\\n\\n> 注意：header 中配置了 has_divider 和 color\"\n          }\n        ],\n        \"is_expand\": true,\n        \"header_style\": {\n          \"has_divider\": true,\n          \"color\": \"blue\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 无边框样式**\\n通过设置 `borderless` 为 true 去除边框。\"\n      },\n      {\n        \"tag\": \"collapse_div\",\n        \"header\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"无边框折叠面板\"\n        },\n        \"body\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"这是一个没有边框的折叠面板。\\n\\n视觉上更加简洁，适合嵌入在流式布局中。\"\n          }\n        ],\n        \"borderless\": true\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.353,
+    "total": 0.678,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/4/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/7/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "collapse_div",
+        "hr",
+        "markdown",
+        "collapse_div",
+        "hr",
+        "markdown",
+        "collapse_div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

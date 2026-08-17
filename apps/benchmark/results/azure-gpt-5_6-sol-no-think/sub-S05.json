@@ -1,0 +1,41 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（Overflow）示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"通过 **overflow** 将多个次要操作收纳到折叠菜单中，并与常用按钮搭配使用。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"项目：飞书卡片 JSON 2.0 示例\"\n        },\n        \"extra\": {\n          \"tag\": \"overflow\",\n          \"options\": [\n            {\n              \"text\": {\n                \"tag\": \"plain_text\",\n                \"content\": \"查看详情\"\n              },\n              \"value\": {\n                \"action\": \"view_detail\"\n              }\n            },\n            {\n              \"text\": {\n                \"tag\": \"plain_text\",\n                \"content\": \"编辑项目\"\n              },\n              \"value\": {\n                \"action\": \"edit_project\"\n              }\n            },\n            {\n              \"text\": {\n                \"tag\": \"plain_text\",\n                \"content\": \"删除项目\"\n              },\n              \"value\": {\n                \"action\": \"delete_project\"\n              }\n            }\n          ]\n        }\n      },\n      {\n        \"tag\": \"column_set\",\n        \"horizontal_spacing\": \"8px\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"打开文档\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://open.feishu.cn/document\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"刷新\"\n                },\n                \"type\": \"default\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"refresh\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"复制链接\"\n                    },\n                    \"value\": {\n                      \"action\": \"copy_link\"\n                    }\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"移动到归档\"\n                    },\n                    \"value\": {\n                      \"action\": \"archive\"\n                    }\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"删除\"\n                    },\n                    \"value\": {\n                      \"action\": \"delete\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"点击折叠按钮后，可从弹出的菜单中选择操作。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.5,
+    "total": 0.7,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/3/columns/2/elements/0/options/0/value: Invalid input: expected string, received object",
+        "/body/elements/3/columns/2/elements/0/options/1/value: Invalid input: expected string, received object",
+        "/body/elements/3/columns/2/elements/0/options/2/value: Invalid input: expected string, received object"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "div",
+        "column_set",
+        "button",
+        "button",
+        "overflow",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

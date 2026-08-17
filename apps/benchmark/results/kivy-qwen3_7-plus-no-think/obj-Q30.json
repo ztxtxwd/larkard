@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weight。<理由>在飞书卡片 JSON 2.0 的 column_set 组件中，当 column 的宽度模式设置为按权重分配时，width 字段的值应指定为字符串 \"weight\"，并配合 weight 字段使用。",
+  "extracted": "weight",
+  "correct": false,
+  "weight": 20
+}

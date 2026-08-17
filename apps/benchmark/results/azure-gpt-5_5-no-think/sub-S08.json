@@ -1,0 +1,61 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器 Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"点击下方交互容器区域，触发 callback 行为。\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"padding\": \"12px\",\n        \"corner_radius\": \"8px\",\n        \"background_style\": \"grey\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"click_interactive_container\",\n              \"source\": \"demo\"\n            }\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"**这是一个交互容器**\\n\\n整个容器都可以点击。\"\n          },\n          {\n            \"tag\": \"hr\"\n          },\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"点击容器任意位置，即可触发交互事件。\"\n            },\n            \"text_size\": \"notation\",\n            \"text_color\": \"grey\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"padding\": \"12px\",\n        \"corner_radius\": \"8px\",\n        \"background_style\": \"default\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot\"\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"**打开链接**\\n\\n点击此容器将跳转到指定 URL。\"\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片\"\n            },\n            \"mode\": \"fit_horizontal\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.389,
+    "total": 0.908,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "hr",
+        "div",
+        "hr",
+        "interactive_container",
+        "markdown",
+        "img"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

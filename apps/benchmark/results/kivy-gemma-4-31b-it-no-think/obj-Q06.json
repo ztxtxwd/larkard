@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 card_action. 它是飞书卡片 2.0 中专门用于承载可点击交互行为的容器组件。",
+  "extracted": "card_action",
+  "correct": false,
+  "weight": 15
+}

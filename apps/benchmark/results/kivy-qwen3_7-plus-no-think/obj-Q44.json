@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 C。<理由>在飞书卡片 JSON 2.0 中，`callback` 类型 behaviors 的 `value` 字段用于透传数据给服务端，官方约定其类型必须为字符串（string）。",
+  "extracted": "C",
+  "correct": false,
+  "weight": 16
+}

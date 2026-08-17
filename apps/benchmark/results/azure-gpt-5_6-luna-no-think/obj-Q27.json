@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 laser。button 的 `type` 取值为 `laser`。",
+  "extracted": "laser",
+  "correct": true,
+  "weight": 10
+}

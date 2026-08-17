@@ -1,0 +1,35 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"图片组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**图片组件**：用于展示图片，支持自定义尺寸、圆角、预览等能力。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": \"示例图片\",\n        \"mode\": \"fit_horizontal\",\n        \"preview\": true,\n        \"scale_type\": \"crop\",\n        \"size\": {\n          \"width\": \"100%\",\n          \"height\": 200\n        },\n        \"corner_radius\": 8\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**说明**：以上图片配置与官方文档示例一致，`img_key` 使用示例值 `img_v2_demo-key`。\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.4,
+    "total": 0.41,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/alt: Invalid input: expected object, received string",
+        "/body/elements/1/corner_radius: Invalid input: expected string, received number",
+        "/body/elements/1/scale_type: Invalid option: expected one of \"crop_center\"|\"crop_top\"|\"fit_horizontal\"",
+        "/body/elements/1/size: Invalid input: expected string, received object"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img",
+        "hr",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

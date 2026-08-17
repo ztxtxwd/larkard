@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。form 组件是卡片顶层容器，只能直接作为 card 的子元素，不能嵌套在 column、div 等其他组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

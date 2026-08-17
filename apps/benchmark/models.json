@@ -11,7 +11,7 @@
       "model": "google/gemini-3.7-flash-tiered",
       "baseUrl": "https://tokenflux.dev/v1",
       "apiKey": "${TOKENFLUX_API_KEY}",
-      "promptHint": "交互组件（button 等）必须带 behaviors 数组，例如 [{\"type\":\"open_url\",\"default_url\":\"https://example.com\"}]，不要省略该字段。"
+      "promptHint": "表单外的 button/select 等必须带 behaviors（open_url/callback），不要用 multi_url 或顶层 value；进入 form 后可不写 behaviors，submit 按钮用 form_action_type。"
     },
     {
       "name": "qwen3.8-27b",
@@ -49,6 +49,142 @@
       "model": "deepseek/deepseek-v4-flash",
       "baseUrl": "https://tokenflux.dev/v1",
       "apiKey": "${TOKENFLUX_API_KEY}"
+    },
+    {
+      "name": "kivy-qwen3_8-max",
+      "model": "kivy-qwen3_8-max",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}"
+    },
+    {
+      "name": "kivy-qwen3_8-max-hinted",
+      "model": "kivy-qwen3_8-max",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "promptHint": "表单外的 button/select 等必须带 behaviors（数组，open_url/callback），不是 action/multi_url/顶层 value；进入 form 后可不写 behaviors，submit 用 form_action_type。",
+      "extra": {
+        "enable_thinking": true,
+        "thinking_budget": 100
+      }
+    },
+    {
+      "name": "kivy-qwen3_8-max-hinted-no-think",
+      "model": "kivy-qwen3_8-max",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "promptHint": "表单外的 button/select 等必须带 behaviors（数组，open_url/callback），不是 action/multi_url/顶层 value；进入 form 后可不写 behaviors，submit 用 form_action_type。不要套用 HTML/CSS/通用前端命名；组件 tag 与字段名以飞书卡片 JSON 2.0 为准（如 schema 不是 version，person 不是 user，body.elements 不是根级 elements）。",
+      "extra": {
+        "enable_thinking": false,
+        "chat_template_kwargs": { "enable_thinking": false }
+      }
+    },
+    {
+      "name": "kivy-glm-5_2-no-think",
+      "model": "kivy-glm-5_2",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "kivy-deepseek-v4-flash-0731-no-think",
+      "model": "kivy-deepseek-v4-flash-0731",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "azure-gpt-5_6-terra-no-think",
+      "model": "azure-gpt-5_6-terra",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "reasoning_effort": "none"
+      }
+    },
+    {
+      "name": "azure-gpt-5_5-no-think",
+      "model": "azure-gpt-5_5",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "reasoning_effort": "none"
+      }
+    },
+    {
+      "name": "azure-gpt-5_6-luna-no-think",
+      "model": "azure-gpt-5_6-luna",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "reasoning_effort": "none"
+      }
+    },
+    {
+      "name": "azure-gpt-5_6-sol-no-think",
+      "model": "azure-gpt-5_6-sol",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "reasoning_effort": "none"
+      }
+    },
+    {
+      "name": "doubao-seed-2-1-turbo-no-think",
+      "model": "doubao-seed-2-1-turbo",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "doubao-seed-2-1-pro-no-think",
+      "model": "doubao-seed-2-1-pro",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "kivy-gemma-4-26b-a4b-it-no-think",
+      "model": "kivy-gemma-4-26b-a4b-it",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "kivy-gemma-4-31b-it-no-think",
+      "model": "kivy-gemma-4-31b-it",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "kivy-qwen3_6-27b-no-think",
+      "model": "kivy-qwen3_6-27b",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "kivy-qwen3_7-plus-no-think",
+      "model": "kivy-qwen3_7-plus",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
     }
   ]
 }

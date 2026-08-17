@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。\n理由：根据飞书卡片官方约定，table 组件为顶层组件，不允许嵌套在其他组件（如 column）内部使用。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

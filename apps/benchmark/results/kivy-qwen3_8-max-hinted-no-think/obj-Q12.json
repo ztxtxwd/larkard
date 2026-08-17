@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form_action_type。该字段用于在表单容器内的 button 组件上声明点击后触发的行为类型（如 submit 或 reset），是飞书卡片 JSON 2.0 中表单按钮专用的属性名。",
+  "extracted": "form_action_type",
+  "correct": true,
+  "weight": 25
+}

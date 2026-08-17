@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。<理由>根据飞书卡片官方文档，`icon_expanded_angle` 的合法取值仅为 -180、-90、0、90、180，45 不在允许范围内。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

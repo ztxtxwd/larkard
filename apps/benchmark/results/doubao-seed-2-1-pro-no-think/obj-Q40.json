@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。\n理由：飞书折叠面板的 icon_expanded_angle 仅支持 -180、-90、0、90、180 这几个固定角度取值，45 不在合法取值范围内。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

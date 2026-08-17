@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 key。在飞书卡片 JSON 2.0 的 table 组件中，column 定义必须包含 key 字段，该值作为 rows 数组中每个行对象里对应单元格数据的键名。",
+  "extracted": "key",
+  "correct": false,
+  "weight": 16
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 request。飞书卡片 JSON 2.0 的 behaviors 交互行为中，用于向服务端发起回传交互的类型枚举值为 request。",
+  "extracted": "request",
+  "correct": false,
+  "weight": 20
+}

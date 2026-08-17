@@ -1,0 +1,49 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"**1. 默认折叠**\\n点击右侧箭头可展开/收起内容。\"\n        }\n      },\n      {\n        \"tag\": \"collapse\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"默认折叠标题\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"lark_md\",\n              \"content\": \"这是默认折叠的内容区域。\\n支持富文本、图片等组件。\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"**2. 标题带背景色且默认展开**\\n通过 `status` 控制展开状态，`background_style` 控制样式。\"\n        }\n      },\n      {\n        \"tag\": \"collapse\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"带背景色的展开标题\"\n        },\n        \"status\": \"expanded\",\n        \"background_style\": \"grey\",\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"lark_md\",\n              \"content\": \"这是默认展开的内容。\\n背景色为灰色，视觉层级更清晰。\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"**3. 无边框模式**\\n使用 `mode` 属性去除边框，使界面更简洁。\"\n        }\n      },\n      {\n        \"tag\": \"collapse\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"无边框折叠标题\"\n        },\n        \"mode\": \"borderless\",\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"lark_md\",\n              \"content\": \"这是无边框模式下的内容。\\n适合嵌入在长文档中，减少视觉干扰。\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.625,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/4/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/7/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "collapse",
+        "div",
+        "hr",
+        "div",
+        "collapse",
+        "div",
+        "hr",
+        "div",
+        "collapse",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

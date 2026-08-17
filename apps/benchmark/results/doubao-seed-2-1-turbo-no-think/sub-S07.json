@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"Markdown 富文本语法示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 标题层级\\n\\n# 一级标题\\n## 二级标题\\n### 三级标题\\n#### 四级标题\\n##### 五级标题\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 文本样式\\n\\n**粗体文本**  \\n*斜体文本*  \\n~~删除线文本~~  \\n`行内代码`  \\n<u>下划线文本</u>  \\n<font color='red'>红色文本</font>  \\n<font color='green'>绿色文本</font>  \\n<font color='blue'>蓝色文本</font>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 列表\\n\\n### 无序列表\\n- 列表项一\\n- 列表项二\\n  - 嵌套列表项 A\\n  - 嵌套列表项 B\\n- 列表项三\\n\\n### 有序列表\\n1. 第一步\\n2. 第二步\\n3. 第三步\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 引用与代码块\\n\\n> 这是一段引用文本\\n> 可以包含多行内容\\n\\n```javascript\\n// 代码块示例\\nfunction hello() {\\n  console.log('Hello, Feishu Card!');\\n}\\n```\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 链接与图片\\n\\n[访问飞书开放平台](https://open.feishu.cn)\\n\\n![示例图片](https://sf3-cn.feishucdn.com/obj/ee-portal/pc/feishu_logo.svg)\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 表格\\n\\n| 列标题 1 | 列标题 2 | 列标题 3 |\\n| :--- | :---: | ---: |\\n| 左对齐 | 居中对齐 | 右对齐 |\\n| 内容 A | 内容 B | 内容 C |\\n| 数据 1 | 数据 2 | 数据 3 |\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 任务列表\\n\\n- [x] 已完成任务\\n- [ ] 待完成任务\\n- [ ] 计划中任务\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"## 分隔线与换行\\n\\n上面是分隔线  \\n这是一行文本  \\n这是新的一行（两个空格 + 回车）\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"注：以上为飞书卡片 Markdown 支持的主要语法示例\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "Unterminated string"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

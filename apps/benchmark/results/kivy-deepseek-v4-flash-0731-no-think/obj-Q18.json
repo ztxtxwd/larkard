@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片规范中 form 是顶层容器，不能嵌套在其他组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

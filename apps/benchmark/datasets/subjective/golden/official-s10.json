@@ -1,0 +1,208 @@
+{
+  "schema": "2.0",
+  "header": {
+    "template": "blue",
+    "title": {
+      "content": "Buttons",
+      "tag": "plain_text"
+    }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "column_set",
+        "flex_mode": "flow",
+        "background_style": "default",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "auto",
+            "weight": 1,
+            "vertical_align": "top",
+            "elements": [
+              {
+                "tag": "button",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "镭射按钮"
+                },
+                "behaviors": [
+                  {
+                    "type": "open_url",
+                    "default_url": "https://open.feishu.cn/document",
+                    "android_url": "https://developer.android.com/",
+                    "ios_url": "lark://msgcard/unsupported_action",
+                    "pc_url": "https://www.windows.com"
+                  }
+                ],
+                "type": "laser",
+                "hover_tips": {
+                  "tag": "plain_text",
+                  "content": "hover提示"
+                },
+                "value": {
+                  "key": "value"
+                }
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "auto",
+            "weight": 1,
+            "vertical_align": "top",
+            "elements": [
+              {
+                "tag": "button",
+                "type": "laser",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "镭射禁用按钮"
+                },
+                "disabled": true,
+                "disabled_tips": {
+                  "tag": "plain_text",
+                  "content": "禁用 hover 提示"
+                },
+                "behaviors": [
+                  {
+                    "type": "open_url",
+                    "default_url": "https://open.feishu.cn/document",
+                    "android_url": "https://developer.android.com/",
+                    "ios_url": "lark://msgcard/unsupported_action",
+                    "pc_url": "https://www.windows.com"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "column_set",
+        "flex_mode": "flow",
+        "background_style": "default",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "auto",
+            "weight": 1,
+            "vertical_align": "top",
+            "elements": [
+              {
+                "tag": "button",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "primary"
+                },
+                "url": "https://open.feishu.cn/document",
+                "type": "primary",
+                "hover_tips": {
+                  "tag": "plain_text",
+                  "content": "我是 primary button"
+                },
+                "value": {
+                  "key": "value"
+                },
+                "behaviors": [
+                  {
+                    "type": "open_url",
+                    "default_url": "https://open.feishu.cn/document"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "auto",
+            "weight": 1,
+            "vertical_align": "top",
+            "elements": [
+              {
+                "tag": "button",
+                "type": "default",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "default"
+                },
+                "hover_tips": {
+                  "tag": "plain_text",
+                  "content": "我是 default 按钮"
+                },
+                "behaviors": [
+                  {
+                    "type": "open_url",
+                    "default_url": "https://open.feishu.cn/document",
+                    "android_url": "https://developer.android.com/",
+                    "ios_url": "lark://msgcard/unsupported_action",
+                    "pc_url": "https://www.windows.com"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "auto",
+            "weight": 1,
+            "vertical_align": "top",
+            "elements": [
+              {
+                "tag": "button",
+                "type": "danger",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "我是 danger 按钮"
+                },
+                "hover_tips": {
+                  "tag": "plain_text",
+                  "content": "我是 danger 按钮"
+                },
+                "behaviors": [
+                  {
+                    "type": "open_url",
+                    "default_url": "https://open.feishu.cn/document",
+                    "android_url": "https://developer.android.com/",
+                    "ios_url": "lark://msgcard/unsupported_action",
+                    "pc_url": "https://www.windows.com"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tag": "column",
+            "width": "auto",
+            "weight": 1,
+            "vertical_align": "top",
+            "elements": [
+              {
+                "tag": "button",
+                "type": "danger",
+                "text": {
+                  "tag": "plain_text",
+                  "content": "我是 disabled 按钮"
+                },
+                "disabled": true,
+                "disabled_tips": {
+                  "tag": "plain_text",
+                  "content": "我是 disabled 按钮，我被禁用了"
+                },
+                "behaviors": [
+                  {
+                    "type": "open_url",
+                    "default_url": "https://open.feishu.cn/document",
+                    "android_url": "https://developer.android.com/",
+                    "ios_url": "lark://msgcard/unsupported_action",
+                    "pc_url": "https://www.windows.com"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

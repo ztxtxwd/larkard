@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 bisect。\n<理由>根据飞书卡片 2.0 官方文档，`column_set` 组件的 `flex_mode` 属性在窄屏下支持 `none`（单列）、`bisect`（两列等分）和 `trisection`（三列等分），其中「三列等分」对应的枚举值为 `trisection`。等等，让我再次确认官方文档。\n\n查阅飞书开放平台文档关于 `column_set` 的 `flex_mode` 定义：\n- `none`: 不换行，窄屏下单列显示。\n- `bisect`: 二分，窄屏下两列等分。\n- `trisection`: 三分，窄屏下三列等分。\n\n题目问的是「三列等分」。\n因此枚举值应为 `trisection`。\n\n答案是 trisection。\n<理由>根据飞书卡片 JSON 2.0 规范，`column_set` 的 `flex_mode` 字段用于控制窄屏下的列数布局，其中 `trisection` 表示窄屏下三列等分显示。",
+  "extracted": "bisect",
+  "correct": false,
+  "weight": 15
+}

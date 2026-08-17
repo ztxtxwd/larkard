@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 average。在飞书卡片 JSON 2.0 中，column_set 的 flex_mode 字段用于定义列的宽度分配策略，其中 \"average\" 表示所有列平分可用宽度，从而实现等分效果。",
+  "extracted": "average",
+  "correct": false,
+  "weight": 15
+}

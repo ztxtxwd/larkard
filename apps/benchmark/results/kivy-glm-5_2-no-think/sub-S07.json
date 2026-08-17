@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"Markdown 富文本语法示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 文本样式**\\n**加粗文本**\\n*斜体文本*\\n~~删除线文本~~\\n<u>下划线文本</u>\\n[超链接文本](https://www.feishu.cn)\\n[飞书文档](https://www.feishu.cn \\\"悬停提示\\\")\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 引用与多级引用**\\n> 这是一段引用文本。\\n> > 这是嵌套的二级引用文本。\\n> > > 这是三级引用文本。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 列表**\\n**无序列表：**\\n- 列表项 1\\n- 列表项 2\\n  - 嵌套列表项 2.1\\n  - 嵌套列表项 2.2\\n\\n**有序列表：**\\n1. 第一项\\n2. 第二项\\n   1. 嵌套项 2.1\\n   2. 嵌套项 2.2\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. 代码块**\\n**行内代码**\\n这是一段包含 `inline code` 的文本。\\n\\n**多行代码块**\\n```json\\n{\\n  \\\"name\\\": \\\"Feishu\\\",\\n  \\\"type\\\": \\\"Card\\\"\\n}\\n```\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**5. 特殊语法：@人与换行**\\n<at id=ou_demo123></at> 这是在文本中@人的用法。\\n第一行(Shift+Enter换行)\\n第二行\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"提示：以上内容展示了飞书卡片 Markdown 组件支持的主要语法，实际渲染效果以客户端为准。\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "Unterminated string"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

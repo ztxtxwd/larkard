@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 \"submit\"。\n根据飞书卡片官方约定，form_action_type 表示提交表单时的枚举取值为字符串 submit。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

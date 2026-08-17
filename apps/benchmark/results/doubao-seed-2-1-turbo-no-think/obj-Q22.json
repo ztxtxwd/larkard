@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。\n飞书卡片 JSON 2.0 已不再支持根级 i18n_elements 做全局多语言，多语言需通过 i18n 相关的新机制（如模板变量结合 i18n 文本对象等）实现。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

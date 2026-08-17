@@ -1,6 +1,8 @@
 {
   "id": "S12",
-  "difficulty": "medium",
-  "prompt": "生成一张内容聚合卡片：整卡可点击跳转到 https://open.feishu.cn，标题「本周精选文章」带主题色，正文列出至少两篇文章标题，并支持多次更新（update_multi）。",
-  "golden": "g-s12.json"
+  "difficulty": "hard",
+  "prompt": "按飞书卡片 JSON 2.0 官方「分栏」组件示例，生成一张完整卡片：以「个人效率总览」为主题，用多层 column_set 展示已审批单量等指标布局（结构与文案对齐官方 Demo）。",
+  "golden": "official-s12.json",
+  "source": "/feishu-cards/card-json-v2-components/containers/column-set",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

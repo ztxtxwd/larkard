@@ -1,0 +1,35 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"待办任务清单\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**今日待办事项**\\n点击勾选框可实时更新任务完成状态：\"\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_1\",\n        \"checked\": true,\n        \"style\": \"line_through\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"完成飞书卡片 JSON 2.0 规范评审\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"task_id\": \"task_1\",\n              \"action\": \"toggle_status\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_2\",\n        \"checked\": false,\n        \"style\": \"default\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"编写勾选器（checker）组件示例与文档\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"task_id\": \"task_2\",\n              \"action\": \"toggle_status\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_3\",\n        \"checked\": false,\n        \"style\": \"default\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"发送全员周报通知邮件\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"task_id\": \"task_3\",\n              \"action\": \"toggle_status\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_4\",\n        \"checked\": false,\n        \"disabled\": true,\n        \"style\": \"default\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"下季度规划对齐（前置任务未完成，暂不可勾选）\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"勾选状态变动将自动同步至飞书任务系统\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.91,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "checker",
+        "checker",
+        "checker",
+        "checker",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

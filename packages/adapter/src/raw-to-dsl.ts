@@ -31,7 +31,7 @@ const KNOWN_TAGS = new Set([
   'markdown', 'lark_md', 'div', 'column_set', 'column', 'hr', 'image', 'img',
   'button', 'overflow', 'select_static', 'select_multi', 'input', 'date_picker',
   'picker_time', 'picker_date', 'checker', 'chart', 'table', 'iframe', 'person',
-  'person_list', 'interactive_container', 'note', 'tag', 'text_tag', 'multi_image',
+  'person_list', 'interactive_container', 'tag', 'text_tag', 'multi_image',
   'plain_text', 'lark_md_inline', 'image_text', 'carousel', 'grid', 'speaking',
   'vote', 'lottery', 'calender', 'schedule', 'share_chat', 'share_user', 'add_on',
   'whole_text', 'cropper_image', 'highlight', 'local_file', 'file_preview',

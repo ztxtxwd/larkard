@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 JSON 2.0 的 markdown 组件已废弃旧版 `[text]($urlVal)` 差异化跳转语法，统一使用标准 Markdown 链接语法 `[text](url)` 或配合 href 字段实现跳转。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

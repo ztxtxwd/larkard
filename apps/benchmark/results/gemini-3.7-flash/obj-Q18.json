@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。飞书卡片中表单容器（form）支持放置在分栏（column）等布局组件内部，仅限制不能在 form 内部再嵌套 form。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 20
+}

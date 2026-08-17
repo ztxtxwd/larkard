@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 person_select。飞书卡片 JSON 2.0 中人员选择交互组件的 tag 固定为 person_select，用于区分多选（multi_person_select）及其他表单控件。",
+  "extracted": "person_select",
+  "correct": false,
+  "weight": 20
+}

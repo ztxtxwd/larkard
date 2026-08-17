@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。table.columns 中人员列的 data_type 枚举值为 person。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

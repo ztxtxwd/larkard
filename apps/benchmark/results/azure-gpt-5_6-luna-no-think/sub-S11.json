@@ -1,0 +1,31 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"low\",\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"data_type\": \"number\",\n            \"format\": \"￥#,##0\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"url\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"company_image\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"image\",\n            \"width\": \"auto\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"飞书科技\",\n            \"scale\": \"大型企业\",\n            \"arr\": 1200000,\n            \"owner\": \"张三\",\n            \"sign_date\": \"2024-01-15\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://example.com/customer/feishu\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\",\n              \"alt\": \"飞书科技\"\n            }\n          },\n          {\n            \"customer_name\": \"字节跳动\",\n            \"scale\": \"大型企业\",\n            \"arr\": 980000,\n            \"owner\": \"李四\",\n            \"sign_date\": \"2024-02-20\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://example.com/customer/bytedance\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\",\n              \"alt\": \"字节跳动\"\n            }\n          },\n          {\n            \"customer_name\": \"云雀数据\",\n            \"scale\": \"中型企业\",\n            \"arr\": 560000,\n            \"owner\": \"王五\",\n            \"sign_date\": \"2024-03-08\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://example.com/customer/yunque\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\",\n              \"alt\": \"云雀数据\"\n            }\n          },\n          {\n            \"customer_name\": \"星河科技\",\n            \"scale\": \"中型企业\",\n            \"arr\": 420000,\n            \"owner\": \"赵六\",\n            \"sign_date\": \"2024-04-12\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://example.com/customer/xinghe\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\",\n              \"alt\": \"星河科技\"\n            }\n          },\n          {\n            \"customer_name\": \"远景咨询\",\n            \"scale\": \"小型企业\",\n            \"arr\": 180000,\n            \"owner\": \"钱七\",\n            \"sign_date\": \"2024-05-18\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://example.com/customer/yuanjing\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\",\n              \"alt\": \"远景咨询\"\n            }\n          },\n          {\n            \"customer_name\": \"蓝海软件\",\n            \"scale\": \"小型企业\",\n            \"arr\": 150000,\n            \"owner\": \"孙八\",\n            \"sign_date\": \"2024-06-25\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://example.com/customer/lanhai\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\",\n              \"alt\": \"蓝海软件\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.775,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/2/format: Invalid input: expected record, received string",
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

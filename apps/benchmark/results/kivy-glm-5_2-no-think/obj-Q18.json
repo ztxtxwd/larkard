@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。表单容器（form）属于顶层容器组件，不能内嵌在其他组件（如 column）内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

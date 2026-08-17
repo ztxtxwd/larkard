@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 action_type。在飞书卡片 2.0 表单容器中，通过给按钮组件配置 action_type 字段并指定为 form_submit 来绑定表单提交事件。",
+  "extracted": "action_type",
+  "correct": false,
+  "weight": 25
+}

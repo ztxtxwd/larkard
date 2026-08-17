@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 64。飞书卡片规范中 `element_id` 自定义元素唯一标识的长度上限为 64 字符。",
+  "extracted": "64",
+  "correct": false,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。\n理由：飞书卡片 JSON 2.0 仍支持交互模块 tag=action，用于承载按钮等交互组件，是官方保留的基础交互模块标签。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 20
+}

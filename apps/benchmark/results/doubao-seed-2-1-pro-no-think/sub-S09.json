@@ -1,0 +1,52 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**默认折叠面板**\\n默认状态下为折叠状态，点击可展开查看内容。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"折叠面板 - 默认折叠\"\n          },\n          \"template\": \"default\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"这是折叠面板的内容区域，默认状态下是折叠隐藏的，点击标题栏即可展开查看全部内容。\"\n            }\n          },\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"你可以在这里放置任意卡片组件，比如文本、图片、按钮、表单等。\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**带背景色标题 + 默认展开**\\n标题区域带有主题背景色，且初始状态为展开。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": true,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"折叠面板 - 默认展开 + 标题背景\"\n          },\n          \"template\": \"turquoise\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"这个折叠面板默认是展开状态，用户打开卡片即可直接看到内容。\"\n            }\n          },\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"标题栏使用了 turquoise 主题背景色，视觉上更加突出。\"\n            }\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"操作按钮\"\n            },\n            \"type\": \"primary\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"click_btn\"\n                }\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**无边框折叠面板**\\n去掉外边框样式，视觉更轻量。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": false,\n        \"bordered\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"折叠面板 - 无边框样式\"\n          },\n          \"template\": \"default\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"这是无边框样式的折叠面板，整体视觉更加简洁轻量，适合嵌入在内容流中使用。\"\n            }\n          },\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片\"\n            },\n            \"mode\": \"fit_horizontal\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.444,
+    "total": 0.917,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "collapsible_panel",
+        "div",
+        "div",
+        "hr",
+        "markdown",
+        "hr",
+        "collapsible_panel",
+        "div",
+        "div",
+        "button",
+        "hr",
+        "markdown",
+        "hr",
+        "collapsible_panel",
+        "div",
+        "img"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

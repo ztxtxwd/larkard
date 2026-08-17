@@ -502,17 +502,3 @@ export const VideoSchema = z
   .describe('视频组件（video）');
 
 export type Video = z.infer<typeof VideoSchema>;
-
-/** 备注组件：一行次要说明，elements 为文本叶子（plain_text / lark_md） */
-export const NoteElementSchema = z.object({
-  tag: z.literal('note').describe('组件标签，固定为 note'),
-  elements: z
-    .array(
-      z.object({
-        tag: z.literal('plain_text'),
-        content: z.string().describe('备注文本'),
-      }),
-    )
-    .describe('备注内容'),
-  element_id: z.string().optional(),
-});

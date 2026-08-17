@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>飞书卡片 JSON 2.0 废弃了根级 `i18n_elements`，改为在支持多语言的组件字段（如 `text`、`title`）中直接使用对象结构 `{ \"zh_cn\": \"...\", \"en_us\": \"...\" }` 来定义多语言内容。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

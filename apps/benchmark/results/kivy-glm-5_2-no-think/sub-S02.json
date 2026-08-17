@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"图片组件 Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**图片 Image** 组件用于在卡片中展示图片。你可通过配置图片的圆角、缩放模式、悬浮提示等属性，来丰富图片的展示效果。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"#### 基础用法\\n直接传入 `img_key` 即可展示图片。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"一张示例图片\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"#### 自定义尺寸\\n通过 `width`、`height` 属性可控制图片的显示尺寸。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"自定义尺寸的图片\"\n        },\n        \"width\": \"200px\",\n        \"height\": \"150px\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"#### 圆角与缩放模式\\n通过 `border_radius` 设置圆角，通过 `fit` 控制图片的缩放模式。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"带圆角的图片\"\n        },\n        \"border_radius\": \"12px\",\n        \"fit\": \"center_width\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"#### 悬浮提示\\n配置 `alt` 属性后，当鼠标悬浮在图片上时会显示该提示文本。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"这是鼠标悬浮时显示的提示文本\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：以上图片 img_key 均为示例值，实际使用时请替换为你的真实图片资源 ID。\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.133,
+    "total": 0.87,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "img",
+        "hr",
+        "markdown",
+        "img",
+        "hr",
+        "markdown",
+        "img",
+        "hr",
+        "markdown",
+        "img",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

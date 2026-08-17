@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 action_group。理由：在飞书卡片 JSON 2.0 中，用于实现折叠按钮组（更多操作）的组件 tag 为 action_group。",
+  "extracted": "action_group",
+  "correct": false,
+  "weight": 15
+}

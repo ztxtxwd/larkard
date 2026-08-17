@@ -1,6 +1,8 @@
 {
   "id": "S03",
   "difficulty": "easy",
-  "prompt": "生成一张会议邀请卡片：标题「会议邀请」，正文说明「产品评审会将于明天 14:00 开始」，并放一个主要样式的「加入会议」按钮，点击后打开链接 https://vc.feishu.cn/demo。",
-  "golden": "g-s03.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「普通文本（div）」文档示例，生成一张完整卡片，复现文档中的普通文本 Demo。",
+  "golden": "official-s03.json",
+  "source": "/feishu-cards/card-json-v2-components/content-components/plain-text",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

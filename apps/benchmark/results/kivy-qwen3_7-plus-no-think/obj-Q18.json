@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。<理由>根据飞书卡片官方文档，form 组件必须作为卡片的根节点（即直接位于 `config` 和 `header` 之后），不支持嵌套在 column、div 或其他容器组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

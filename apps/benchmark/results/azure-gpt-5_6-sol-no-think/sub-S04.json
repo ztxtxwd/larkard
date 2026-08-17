@@ -1,0 +1,41 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器 Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**请选择你常用的办公工具：**\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"checker_demo_form\",\n        \"elements\": [\n          {\n            \"tag\": \"checker\",\n            \"name\": \"office_tools\",\n            \"checked\": false,\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"飞书文档\"\n            },\n            \"value\": \"docs\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"office_tools\",\n            \"checked\": true,\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"飞书多维表格\"\n            },\n            \"value\": \"bitable\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"office_tools\",\n            \"checked\": false,\n            \"disabled\": true,\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"飞书会议（暂不可选）\"\n            },\n            \"value\": \"meeting\"\n          },\n          {\n            \"tag\": \"hr\"\n          },\n          {\n            \"tag\": \"column_set\",\n            \"horizontal_spacing\": \"8px\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"name\": \"reset\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\",\n                    \"action_type\": \"reset\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"name\": \"submit\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\",\n                    \"action_type\": \"submit\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"勾选后点击提交，所选值将随表单一起提交。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.462,
+    "total": 0.769,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/elements/4/columns/0/elements/0/action_type: Invalid option: expected one of \"link\"|\"request\"|\"multi\"|\"form_submit\"|\"form_reset\"",
+        "/body/elements/1/elements/4/columns/1/elements/0/action_type: Invalid option: expected one of \"link\"|\"request\"|\"multi\"|\"form_submit\"|\"form_reset\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "form",
+        "checker",
+        "checker",
+        "checker",
+        "hr",
+        "column_set",
+        "button",
+        "button",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

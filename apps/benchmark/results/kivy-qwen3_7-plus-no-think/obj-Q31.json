@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 10。<理由>根据飞书卡片 JSON 2.0 官方文档，column 组件的 weight 属性用于控制列宽权重，其合法整数取值范围为 1 到 10。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

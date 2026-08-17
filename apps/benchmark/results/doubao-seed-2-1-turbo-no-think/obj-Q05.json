@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 img_combination。\n理由：根据飞书卡片官方文档，多图组合（图片组合）组件的 tag 固定为 img_combination。",
+  "extracted": "img_combination",
+  "correct": true,
+  "weight": 15
+}

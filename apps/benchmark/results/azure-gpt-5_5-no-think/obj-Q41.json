@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 2.0。根对象的 schema 字段需声明为该字符串以启用卡片 JSON 2.0 能力。",
+  "extracted": "2.0",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。在飞书卡片 JSON 2.0 规范中，`action` 模块已被废弃，交互按钮等组件需直接放置在 `div`、`header` 或 `note` 等容器中，不再使用独立的 `action` 标签包裹。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

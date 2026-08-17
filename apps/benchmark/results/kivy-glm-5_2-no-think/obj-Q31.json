@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 5。column 的 weight 字段用于多列布局列宽分配，官方限定取值范围为 1 到 5 的整数。",
+  "extracted": "5",
+  "correct": true,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 100。\n根据飞书卡片官方约定，element_id 自定义元素 ID 的最大字符长度为 100。",
+  "extracted": "100",
+  "correct": false,
+  "weight": 15
+}

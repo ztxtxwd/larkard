@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q10",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 Checker。\n根据飞书卡片官方约定，勾选组件的 tag 为 Checker。",
+  "extracted": "Checker",
+  "correct": true,
+  "weight": 8
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 crop_center。<理由：飞书卡片 img 组件 scale_type 的枚举值中，crop_center 表示水平拉伸贴齐（即水平方向拉伸填满，垂直方向裁剪居中）。",
+  "extracted": "crop_center",
+  "correct": false,
+  "weight": 12
+}

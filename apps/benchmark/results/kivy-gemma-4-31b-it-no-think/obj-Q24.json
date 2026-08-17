@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。<理由>`update_multi` 是一个布尔值字段，允许显式设置为 `true` 或 `false` 以控制卡片更新模式。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

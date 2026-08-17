@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 select。理由是飞书卡片 2.0 中，下拉选择组件统一使用 select 标签，通过配置 selectable 属性为 true 来实现多选。",
+  "extracted": "select",
+  "correct": false,
+  "weight": 20
+}

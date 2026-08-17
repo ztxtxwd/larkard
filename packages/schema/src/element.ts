@@ -19,7 +19,6 @@ import {
   VideoSchema,
 } from './content/index.js';
 import { MarkdownSchema } from './markdown/component.js';
-import { NoteElementSchema } from './content/index.js';
 import { registerElementSchema } from './element-ref.js';
 import {
   ButtonSchema,
@@ -57,7 +56,6 @@ export const ElementSchema = z
     ChartSchema,
     TableSchema,
     HrSchema,
-    NoteElementSchema,
     AudioSchema,
     VideoSchema,
     // 交互

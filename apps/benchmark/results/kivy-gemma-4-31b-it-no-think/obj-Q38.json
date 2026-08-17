@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。<理由>table 组件属于布局类组件，不支持嵌套在 column 或其他组件的子元素中。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

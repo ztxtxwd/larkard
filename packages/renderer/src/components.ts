@@ -519,11 +519,6 @@ registerComponent('div', (el, ctx) => {
   return h('div', { className: `${CLS}-div` }, content);
 });
 
-// note：备注（小字灰色）
-registerComponent('note', (el, ctx) =>
-  h('div', { className: `${CLS}-note` }, renderElements(el.property?.elements, ctx))
-);
-
 // ---- 布局 ----
 
 // column_set：横向分栏容器

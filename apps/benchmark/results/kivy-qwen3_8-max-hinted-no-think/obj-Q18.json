@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。根据飞书卡片 JSON 2.0 规范，form 容器只能作为 body.elements 数组中的顶层元素存在，不支持嵌套在 column、div 等其它布局组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,57 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"grey\",\n        \"has_border\": true,\n        \"border_color\": \"grey\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn/document/feishu-cards/card-components/content-components/interactive-container\"\n          },\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"click_interactive_container\",\n              \"container_id\": \"demo_container\"\n            }\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"horizontal_spacing\": \"12px\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"vertical_align\": \"top\",\n                \"elements\": [\n                  {\n                    \"tag\": \"img\",\n                    \"img_key\": \"img_v2_demo-key\",\n                    \"alt\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"交互容器示例图片\"\n                    },\n                    \"mode\": \"crop_center\",\n                    \"width\": \"80px\",\n                    \"height\": \"80px\",\n                    \"corner_radius\": \"8px\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"vertical_align\": \"center\",\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**点击整个区域触发交互**\\n交互容器可以包裹多个组件，并为整个容器统一配置点击行为。\"\n                  },\n                  {\n                    \"tag\": \"div\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"点击后打开文档，并向应用发送回调事件\"\n                    },\n                    \"text_size\": \"notation\",\n                    \"text_color\": \"grey\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.313,
+    "total": 0.897,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

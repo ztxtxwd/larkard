@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>飞书卡片 JSON 2.0 中交互能力已统一收敛至 `actions` 数组及组件的 `on_click` 等事件配置，不再支持使用 `tag: \"action\"` 这种旧版（JSON 1.0）的独立模块写法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

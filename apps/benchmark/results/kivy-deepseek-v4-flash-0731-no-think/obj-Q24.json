@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。config.update_multi 是布尔字段，默认值为 false，显式写 false 与默认行为一致，但官方文档中该字段通常只用于开启（true），不鼓励显式写 false。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

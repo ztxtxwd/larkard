@@ -1,0 +1,24 @@
+{
+  "schema": "2.0",
+  "body": {
+    "direction": "vertical",
+    "padding": "12px 12px 12px 12px",
+    "elements": [
+      {
+        "tag": "img",
+        "img_key": "img_v2_9dd98485-2900-4d65-ada9-e31d1408dcfg",
+        "preview": true,
+        "transparent": false,
+        "scale_type": "crop_center",
+        "size": "stretch",
+        "alt": {
+          "tag": "plain_text",
+          "content": "示例图片"
+        },
+        "corner_radius": "5%",
+        "margin": "0px 0px 0px 0px",
+        "element_id": "demoimg01"
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 fold_button_group。这是飞书卡片组件中用于实现“更多操作”折叠按钮组的特定 tag。",
+  "extracted": "fold_button_group",
+  "correct": false,
+  "weight": 15
+}

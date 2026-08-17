@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary。理由是飞书卡片 2.0 中，button 组件的 type 字段使用 primary 表示主按钮（视觉上为镭射/品牌色按钮）。",
+  "extracted": "primary",
+  "correct": false,
+  "weight": 10
+}

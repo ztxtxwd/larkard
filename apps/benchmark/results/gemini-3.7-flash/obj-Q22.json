@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 废弃了 1.0 的根级 `i18n_elements` 字段，改为通过 `body` 结构及局部/全局 `i18n` 对象来支持多语言配置。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

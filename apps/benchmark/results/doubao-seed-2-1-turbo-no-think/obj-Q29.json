@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 stretch_horizontal。\n根据飞书卡片 img 组件 scale_type 的官方枚举约定，对应「水平拉伸贴齐」效果的枚举值为 stretch_horizontal。",
+  "extracted": "stretch_horizontal",
+  "correct": false,
+  "weight": 12
+}

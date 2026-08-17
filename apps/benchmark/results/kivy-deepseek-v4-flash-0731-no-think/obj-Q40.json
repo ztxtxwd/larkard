@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 A。理由：icon_expanded_angle 的合法取值是 -90、0、90、180 等 90 的倍数，-180 不在允许范围内。",
+  "extracted": "A",
+  "correct": false,
+  "weight": 10
+}

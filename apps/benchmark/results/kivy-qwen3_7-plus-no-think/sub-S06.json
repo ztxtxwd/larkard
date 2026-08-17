@@ -1,0 +1,38 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"以下是飞书卡片 2.0 中常见的图片布局组合方式：\"\n        }\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"img\",\n                \"img_key\": \"img_v2_demo-key-01\",\n                \"alt\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"单张大图\"\n                },\n                \"mode\": \"crop_center\",\n                \"preview\": true\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"img\",\n                \"img_key\": \"img_v2_demo-key-02\",\n                \"alt\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"左图\"\n                },\n                \"mode\": \"crop_center\",\n                \"preview\": true\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"img\",\n                \"img_key\": \"img_v2_demo-key-03\",\n                \"alt\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"右图\"\n                },\n                \"mode\": \"crop_center\",\n                \"preview\": true\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"img\",\n                \"img_key\": \"img_v2_demo-key-04\",\n                \"alt\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"图1\"\n                },\n                \"mode\": \"crop_center\",\n                \"preview\": true\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"img\",\n                \"img_key\": \"img_v2_demo-key-05\",\n                \"alt\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"图2\"\n                },\n                \"mode\": \"crop_center\",\n                \"preview\": true\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"img\",\n                \"img_key\": \"img_v2_demo-key-06\",\n                \"alt\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"图3\"\n                },\n                \"mode\": \"crop_center\",\n                \"preview\": true\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "column_set",
+        "img",
+        "hr",
+        "column_set",
+        "img",
+        "img",
+        "hr",
+        "column_set",
+        "img",
+        "img",
+        "img"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单容器内的交互组件仅在用户点击提交按钮或触发特定提交动作时才会将数据发送至服务端。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

@@ -1,0 +1,32 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器（Checker）\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"通过勾选器组件选择任务完成状态：\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"checker_demo_form\",\n        \"elements\": [\n          {\n            \"tag\": \"checker\",\n            \"name\": \"task_checker\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"完成任务\"\n            },\n            \"checked\": false,\n            \"value\": {\n              \"task_id\": \"demo_task_001\",\n              \"status\": \"completed\"\n            }\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交\"\n            },\n            \"type\": \"primary\",\n            \"action_type\": \"form_submit\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.286,
+    "total": 0.893,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "form",
+        "checker",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

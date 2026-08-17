@@ -141,7 +141,7 @@
   margin: 8px 0;
 }
 
-/* ---- div / note ---- */
+/* ---- div ---- */
 .universal-card-div > * + * { margin-top: 8px; }
 /* div 带前置图标：icon 在左、文本在右排成一行（复刻网页版 .universal-card-div 布局） */
 .universal-card-div--with-icon {
@@ -153,10 +153,6 @@
   display: flex; align-items: center; overflow: hidden;
 }
 .universal-card-div__content { flex: 1; min-width: 0; }
-.universal-card-note {
-  font-size: 12px;
-  color: #8f959e;
-}
 
 /* ---- 布局：column_set / column ---- */
 .universal-card-column-set { display: flex; }
@@ -607,4 +603,3 @@
 }
 .universal-card-root.theme-dark .universal-card-markdown { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-hr { background-color: #2e2e30; }
-.universal-card-root.theme-dark .universal-card-note { color: #8a8a8a; }

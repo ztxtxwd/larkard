@@ -1,0 +1,33 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"header\",\n        \"title\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"图片组件 Demo\"\n        },\n        \"template\": \"blue\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"这是一个图片组件的示例，展示了图片在卡片中的呈现效果。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt_text\": \"示例图片\",\n        \"content\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"点击查看大图\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"注：图片组件支持通过 img_key 引用飞书资源库中的图片。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.76,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/2/alt: Invalid input: expected object, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "header",
+        "markdown",
+        "img",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单容器内的组件值仅在前端本地暂存，只有点击表单提交按钮时才会统一向服务端发送回传交互请求。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

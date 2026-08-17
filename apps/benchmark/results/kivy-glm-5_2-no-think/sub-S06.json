@@ -1,0 +1,50 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"飞书卡片多图混排 (img_combination) 示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**多图混排组件 (img_combination)** 支持在卡片中灵活组合多张图片，实现丰富的图文排版效果。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"📍 **左图右文** (left_right)\"\n        }\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination\": {\n          \"text\": {\n            \"tag\": \"lark_md\",\n            \"content\": \"**飞书多维表格**\\n全新的数据协作形态，将复杂的数据以灵活的视图呈现，满足团队项目管理、数据追踪等多种场景需求。\\n\\n[点击查看详情](https://www.feishu.cn)\"\n          },\n          \"img\": {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"多维表格配图\"\n            },\n            \"preview\": true,\n            \"corner_radius\": \"8px\"\n          },\n          \"mode\": \"left_right\",\n          \"img_width\": \"120px\",\n          \"img_height\": \"80px\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"📍 **右图左文** (right_left)\"\n        }\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination\": {\n          \"text\": {\n            \"tag\": \"lark_md\",\n            \"content\": \"**飞书文档**\\n支持多人实时协作的在线文档，让团队的知识沉淀与共享更加高效便捷。\"\n          },\n          \"img\": {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"飞书文档配图\"\n            },\n            \"preview\": true,\n            \"corner_radius\": \"8px\"\n          },\n          \"mode\": \"right_left\",\n          \"img_width\": \"120px\",\n          \"img_height\": \"80px\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"📍 **上图下文** (top_bottom)\"\n        }\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination\": {\n          \"text\": {\n            \"tag\": \"lark_md\",\n            \"content\": \"**飞书项目**\\n专业的研发项目管理工具，助力团队高效推进项目落地。\"\n          },\n          \"img\": {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"飞书项目配图\"\n            },\n            \"preview\": true,\n            \"corner_radius\": \"8px\"\n          },\n          \"mode\": \"top_bottom\",\n          \"img_width\": \"100%\",\n          \"img_height\": \"120px\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"📍 **下图上文** (bottom_top)\"\n        }\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination\": {\n          \"text\": {\n            \"tag\": \"lark_md\",\n            \"content\": \"**飞书视频会议**\\n高清流畅的视频会议体验，支持智能降噪与实时字幕，让远程沟通如同面对面。\"\n          },\n          \"img\": {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"视频会议配图\"\n            },\n            \"preview\": true,\n            \"corner_radius\": \"8px\"\n          },\n          \"mode\": \"bottom_top\",\n          \"img_width\": \"100%\",\n          \"img_height\": \"120px\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：以上为多图混排组件的四种基础布局模式，可通过 mode 属性进行切换。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.125,
+    "total": 0.369,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/3/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/3/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/6/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/6/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/9/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/9/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/12/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/12/img_list: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "div",
+        "img_combination",
+        "hr",
+        "div",
+        "img_combination",
+        "hr",
+        "div",
+        "img_combination",
+        "hr",
+        "div",
+        "img_combination",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

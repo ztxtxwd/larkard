@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单内组件的填写过程不会立刻触发服务端回调，通常需点击提交按钮后才触发。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

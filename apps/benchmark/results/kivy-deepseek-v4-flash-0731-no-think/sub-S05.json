@@ -1,0 +1,49 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（overflow）示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**折叠按钮组（overflow）** 用于将多个操作收纳在「…」菜单中，点击后展开。以下为官方文档示例：\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**示例 1：基础折叠按钮组**\"\n        }\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项一\"\n            },\n            \"value\": \"option_1\"\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项二\"\n            },\n            \"value\": \"option_2\"\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项三\"\n            },\n            \"value\": \"option_3\"\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"key\": \"overflow_clicked\",\n              \"option\": \"{{option.value}}\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**示例 2：折叠按钮组 + 普通按钮组合**\"\n        }\n      },\n      {\n        \"tag\": \"column_set\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"主操作\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"key\": \"main_action\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"编辑\"\n                    },\n                    \"value\": \"edit\"\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"删除\"\n                    },\n                    \"value\": \"delete\"\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"分享\"\n                    },\n                    \"value\": \"share\"\n                  }\n                ],\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"key\": \"overflow_action\",\n                      \"action\": \"{{option.value}}\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**示例 3：折叠按钮组 + 跳转链接**\"\n        }\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"打开文档\"\n            },\n            \"value\": \"open_doc\"\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"访问官网\"\n            },\n            \"value\": \"visit_site\"\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"value\": {\n              \"url\": \"https://www.feishu.cn\",\n              \"android_url\": \"https://www.feishu.cn\",\n              \"ios_url\": \"https://www.feishu.cn\",\n              \"pc_url\": \"https://www.feishu.cn\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**说明：**\\n- 折叠按钮组通过 `overflow` 标签实现，`options` 定义菜单项；\\n- 点击菜单项后，可通过 `behaviors` 触发回调或跳转；\\n- 回调中可用 `{{option.value}}` 获取当前选中项的值。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.222,
+    "total": 0.383,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/5/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/8/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/9/behaviors/0/default_url: Invalid input: expected string, received undefined",
+        "/body/elements/11/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "div",
+        "overflow",
+        "hr",
+        "div",
+        "column_set",
+        "button",
+        "overflow",
+        "hr",
+        "div",
+        "overflow",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

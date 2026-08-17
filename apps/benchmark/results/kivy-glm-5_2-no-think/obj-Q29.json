@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 stretch_horizontal。\n\nimg 组件 scale_type 枚举值 stretch_horizontal 表示图片水平方向拉伸贴齐，垂直方向按比例缩放。",
+  "extracted": "stretch_horizontal",
+  "correct": false,
+  "weight": 12
+}

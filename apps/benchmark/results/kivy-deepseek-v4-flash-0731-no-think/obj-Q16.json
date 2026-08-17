@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片表单组件（如输入框、下拉）在用户填写时不会立即触发服务端回调，只有点击提交按钮后才会统一将表单数据发送给服务端。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

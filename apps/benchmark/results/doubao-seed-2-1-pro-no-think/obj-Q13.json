@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。\n理由：飞书卡片 2.0 中，form 容器的 form_action_type 字段用于表示提交表单行为时，对应的枚举取值为 submit。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

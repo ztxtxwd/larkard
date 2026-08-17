@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。飞书卡片 JSON 2.0 规范中仍保留并支持 tag 为 note 的备注组件，用于在卡片底部展示辅助说明文本。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 25
+}

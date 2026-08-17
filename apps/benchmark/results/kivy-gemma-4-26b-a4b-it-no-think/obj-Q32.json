@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 stretch。在 column_set 的 flex_mode 属性中，stretch 表示在窄屏下各列等分。",
+  "extracted": "stretch",
+  "correct": false,
+  "weight": 15
+}

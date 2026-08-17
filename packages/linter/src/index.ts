@@ -17,7 +17,7 @@ export interface LintDiagnostic {
 
 export interface LintOptions {
   maxDepth?: number; // default 8
-  maxElements?: number; // default 50
+  maxElements?: number; // default 200
   maxTextLength?: number; // default 3000
 }
 
@@ -153,7 +153,7 @@ export function lintAst(ast: JsonObjectNode | undefined, options: LintOptions = 
   const ctx: Ctx = {
     diagnostics: [],
     maxDepth: options.maxDepth ?? 8,
-    maxElements: options.maxElements ?? 50,
+    maxElements: options.maxElements ?? 200,
     maxTextLength: options.maxTextLength ?? 3000,
   };
   lintDepth(ast, ctx);

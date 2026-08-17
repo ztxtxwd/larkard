@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 的 button 回传参数应通过 action.value 配置，不再使用组件顶层 value。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

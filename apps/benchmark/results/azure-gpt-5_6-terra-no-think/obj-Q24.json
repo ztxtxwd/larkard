@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。`config.update_multi` 仅在需要开启多端更新时设置为 `true`，不支持显式设置为 `false`。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

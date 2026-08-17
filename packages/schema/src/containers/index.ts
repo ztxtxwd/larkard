@@ -156,8 +156,8 @@ export const InteractiveContainerSchema = z
     tag: z
       .literal('interactive_container')
       .describe('组件标签，固定为 interactive_container'),
-    behaviors: BehaviorsSchema.describe(
-      '交互行为列表。纯展示弱卡片感时设 disabled:true 且不要依赖点击；真正可点才配 behaviors',
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填。纯展示弱卡片感时设 disabled:true 且不要依赖点击；真正可点才配 behaviors',
     ),
     elements: z
       .lazy(() => z.array(getElementSchema()))

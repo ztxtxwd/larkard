@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary。<理由>在飞书卡片 JSON 2.0 规范中，button 组件的 type 字段取值为 \"primary\" 时对应官方定义的“镭射按钮”样式（通常为蓝色高亮），而 \"default\" 对应默认按钮，\"danger\" 对应危险按钮。",
+  "extracted": "primary",
+  "correct": false,
+  "weight": 10
+}

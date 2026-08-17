@@ -5,6 +5,7 @@ import { runPool, type ChatClient } from './client.js';
 import { gradeObjective } from './grade-objective.js';
 import { gradeSubjective } from './grade-subjective.js';
 import { loadGolden, loadObjectiveTasks, loadSubjectiveTasks } from './tasks.js';
+import { taskFormat } from './grade-objective.js';
 import {
   OBJECTIVE_SYSTEM_PROMPT,
   SUBJECTIVE_SYSTEM_PROMPT,
@@ -29,22 +30,20 @@ function slug(name: string): string {
   return name.replace(/[^a-zA-Z0-9._-]+/g, '_');
 }
 
-/** dry-run 假客户端：客观题按 id 哈希选一个固定选项，主观题返回 golden 卡片（加代码围栏）。 */
-function createDryRunClient(modelName: string, goldenResponses: Map<string, string>): ChatClient {
-  const hash = (s: string) => {
-    let h = 0;
-    for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0;
-    return Math.abs(h);
-  };
+/** dry-run 假客户端：客观题用预置答案，主观题返回 golden 卡片（加代码围栏）。 */
+function createDryRunClient(
+  modelName: string,
+  goldenResponses: Map<string, string>,
+  objectiveAnswers: Map<string, string> = new Map(),
+): ChatClient {
   return {
     name: modelName,
     async chat(messages) {
       const user = messages.find((m) => m.role === 'user')?.content ?? '';
-      // 客观题 user prompt 以题号开头（如 "Q01."），主观题则以自然语言需求开头
-      const qm = /^(Q\d+)\./.exec(user);
+      const qm = /【(?:单选|填空|是否)】(Q\d+)\b/.exec(user) ?? /^(Q\d+)\./.exec(user);
       if (qm) {
-        const letter = 'ABCD'[hash(qm[1]) % 4];
-        return `答案是 ${letter}。${qm[1]} 的选择理由（dry-run 演示数据）。`;
+        const ans = objectiveAnswers.get(qm[1]) ?? 'A';
+        return `答案是 ${ans}。${qm[1]} 的 dry-run 演示作答。`;
       }
       const firstLine = user.split('\n')[0] ?? '';
       if (firstLine.startsWith('【成绩单】')) {
@@ -75,10 +74,14 @@ export async function runBenchmark(client: ChatClient, opts: RunOptions): Promis
     jobs.push({
       file,
       execute: async () => {
+        const format = taskFormat(task);
         const response = await client.chat(
           [
             { role: 'system', content: composeSystemPrompt(OBJECTIVE_SYSTEM_PROMPT, opts.promptHint) },
-            { role: 'user', content: objectiveUserPrompt(task.question, task.options) },
+            {
+              role: 'user',
+              content: objectiveUserPrompt(`${task.id}. ${task.question}`, task.options, format),
+            },
           ],
           { temperature: opts.temperature },
         );

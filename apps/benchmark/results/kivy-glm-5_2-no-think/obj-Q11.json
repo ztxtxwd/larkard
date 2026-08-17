@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 url。\n\n在 behaviors 的 open_url 类型中，url 字段用于指定兜底跳转地址，为必填项。",
+  "extracted": "url",
+  "correct": false,
+  "weight": 25
+}

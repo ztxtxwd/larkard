@@ -40,12 +40,12 @@ export function renderMarkdown(report: ReportOutput): string {
   lines.push('# 飞书卡片生成 Benchmark 报告', '');
   lines.push(`生成时间：${report.generatedAt}`, '');
   lines.push('## 排行榜', '');
-  lines.push('| 模型 | 总分 | 客观准确率 | 编译通过率 | 主观总分 | JSON | Schema | Lint | 编译 | 相似度 | 题数 |');
-  lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
+  lines.push('| 模型 | 总分 | 领域知识(加权) | 客观原始 | 编译通过率 | 主观总分 | JSON | Schema | Lint | 编译 | 相似度 | 题数 |');
+  lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
   for (const m of report.models) {
     const d = m.subjectiveDims;
     lines.push(
-      `| ${m.model} | ${pct(m.overallScore)} | ${pct(m.objectiveAccuracy)} | ${pct(m.compilePassRate)} | ${pct(d?.total ?? null)} | ${pct(d?.jsonParse ?? null)} | ${pct(d?.schema ?? null)} | ${pct(d?.lint ?? null)} | ${pct(d?.compile ?? null)} | ${pct(d?.similarity ?? null)} | ${m.taskCount} |`,
+      `| ${m.model} | ${pct(m.overallScore)} | ${pct(m.objectiveAccuracy)} | ${pct(m.objectiveRawAccuracy ?? null)} | ${pct(m.compilePassRate)} | ${pct(d?.total ?? null)} | ${pct(d?.jsonParse ?? null)} | ${pct(d?.schema ?? null)} | ${pct(d?.lint ?? null)} | ${pct(d?.compile ?? null)} | ${pct(d?.similarity ?? null)} | ${m.taskCount} |`,
     );
   }
   lines.push('');
@@ -55,10 +55,13 @@ export function renderMarkdown(report: ReportOutput): string {
     const cats = Object.entries(m.objectiveByCategory).sort();
     if (cats.length > 0) {
       lines.push('### 客观题分类准确率', '');
-      lines.push('| 分类 | 正确 / 总数 | 准确率 |');
-      lines.push('| --- | --- | --- |');
-      for (const [cat, { correct, total }] of cats) {
-        lines.push(`| ${cat} | ${correct} / ${total} | ${pct(total === 0 ? 0 : correct / total)} |`);
+      lines.push('| 分类 | 正确 / 总数 | 原始准确率 | 加权准确率 |');
+      lines.push('| --- | --- | --- | --- |');
+      for (const [cat, slot] of cats) {
+        const { correct, total, weighted, weightSum } = slot;
+        lines.push(
+          `| ${cat} | ${correct} / ${total} | ${pct(total === 0 ? 0 : correct / total)} | ${pct(weightSum === 0 ? 0 : weighted / weightSum)} |`,
+        );
       }
       lines.push('');
     }
@@ -79,9 +82,12 @@ export function renderMarkdown(report: ReportOutput): string {
   }
 
   lines.push('## 评分说明', '');
-  lines.push('- **客观题**：单选，提取选项字母与标准答案比对。');
-  lines.push('- **主观题**：五维度加权 —— JSON 可解析 20%、Schema 合法 30%、最佳实践 15%、编译通过 20%、结构相似度 15%（无 golden 时为渲染检查）。');
-  lines.push('- **总分** = 客观准确率 × 40% + 主观总分 × 60%。');
+  lines.push(
+    '- **客观题（领域知识探针）**：单选 / 填空 / 是否；按 `specificity × frequency` 加权准确率，侧重飞书特有、易踩坑事实，与「能否写出一张能编译的卡」分开。',
+  );
+  lines.push('- **客观原始准确率**：按题数未加权，仅供对照。');
+  lines.push('- **主观题（生成能力）**：题干对齐官方组件/容器 Demo；golden 为文档示例。五维度 —— JSON 20%、Schema 30%、Lint 15%、编译 20%、与官方示例 tag 序列相似度 15%。');
+  lines.push('- **总分** = 领域知识加权准确率 × 40% + 主观总分 × 60%。');
   lines.push('- **模型自评**：跑题结束后把成绩单（错题、标准答案、schema 报错）交回被测模型，由其撰写反思；不是评分依据。');
   return lines.join('\n');
 }

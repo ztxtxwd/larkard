@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。理由：飞书卡片表格列的数据类型枚举中，人员列对应 data_type 为 person。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

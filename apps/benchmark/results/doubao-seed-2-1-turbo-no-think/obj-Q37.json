@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。\n在飞书卡片 table 组件的列定义中，`name` 是必填字段，用于指定该列对应行数据对象（rows 数组元素）里的键名，以此匹配每行该列的展示数据。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

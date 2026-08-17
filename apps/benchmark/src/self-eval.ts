@@ -55,10 +55,17 @@ export function formatScorecard(model: string, results: TaskResult[]): string {
     if (wrong.length === 0) lines.push('（无）');
     for (const r of wrong) {
       const t = tasks.get(r.taskId);
-      const opts = t?.options.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join('；') ?? '';
-      lines.push(`- ${r.taskId} [${r.category}] ${t?.question ?? ''}`);
+      const format = t?.format ?? r.format ?? 'mcq';
+      const opts =
+        format === 'mcq' && t?.options
+          ? t.options.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join('；')
+          : '';
+      lines.push(`- ${r.taskId} [${r.category}/${format}] ${t?.question ?? ''}`);
       if (opts) lines.push(`  选项：${opts}`);
-      lines.push(`  你的答案：${r.extracted ?? '（未能提取）'}；正确答案：${t?.answer ?? '?'}`);
+      const accept = t?.accept?.length ? `（亦接受：${t.accept.join(' / ')}）` : '';
+      lines.push(
+        `  你的答案：${r.extracted ?? '（未能提取）'}；正确答案：${t?.answer ?? '?'}${accept}`,
+      );
       if (t?.explanation) lines.push(`  说明：${t.explanation}`);
     }
     lines.push('');

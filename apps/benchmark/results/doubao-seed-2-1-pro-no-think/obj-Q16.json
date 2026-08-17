@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。根据飞书卡片官方约定，表单容器内的交互组件在用户填写过程中不会单独触发服务端回调，仅在点击提交按钮时才会统一提交表单数据触发回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

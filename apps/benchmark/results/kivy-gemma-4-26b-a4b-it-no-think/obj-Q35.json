@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 personnel。根据飞书卡片表格组件的规范，人员类型的列数据类型枚举值为 personnel。",
+  "extracted": "personnel",
+  "correct": false,
+  "weight": 15
+}

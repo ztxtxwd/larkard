@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中 markdown 组件已移除旧版差异化跳转语法，需改用新版 `$url` 或 `action` 等机制。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

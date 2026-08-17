@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 A。在飞书卡片的 callback 类型交互行为中，value 字段支持传入任意 JSON 类型的数据，字符串、数字、对象等均可，用于携带自定义参数回传至服务端。",
+  "extracted": "A",
+  "correct": false,
+  "weight": 16
+}

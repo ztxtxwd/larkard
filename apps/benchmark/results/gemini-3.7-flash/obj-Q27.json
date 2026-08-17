@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 laser。在飞书卡片 2.0 中，按钮组件的 `type` 字段取值为 `laser` 时即表示镭射按钮样式。",
+  "extracted": "laser",
+  "correct": true,
+  "weight": 10
+}

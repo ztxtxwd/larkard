@@ -1,6 +1,8 @@
 {
   "id": "S02",
   "difficulty": "easy",
-  "prompt": "生成一张国庆放假通知卡片：绿色标题「国庆放假通知」，正文用加粗列出放假时间（10月1日–10月7日）与调休安排（10月11日周日上班），加分隔线，底部备注小字「如有疑问请联系行政部」。",
-  "golden": "g-s02.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「图片」组件 Demo，生成一张完整卡片（标题、说明与图片配置与文档示例一致，img_key 沿用示例值）。",
+  "golden": "official-s02.json",
+  "source": "/feishu-cards/card-json-v2-components/content-components/image",
+  "sourceNote": "官方文档示例抽取自 Demo_示例.md；仅做 schema 兼容最小修补"
 }

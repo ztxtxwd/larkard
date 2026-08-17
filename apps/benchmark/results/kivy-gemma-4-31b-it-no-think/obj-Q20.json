@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>在卡片 JSON 2.0 中，原有的 `note` 组件已被废弃，其功能由 `markdown` 组件或 `text` 组件的特定样式替代。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

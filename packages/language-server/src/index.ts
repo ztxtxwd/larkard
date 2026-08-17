@@ -100,7 +100,7 @@ const ELEMENT_TAGS = [
   'markdown', 'div', 'column_set', 'column', 'hr', 'image', 'button', 'overflow',
   'select_static', 'select_multi', 'input', 'date_picker', 'picker_datetime',
   'checker', 'chart', 'table', 'iframe', 'person', 'person_list',
-  'interactive_container', 'note', 'tag', 'carousel', 'grid',
+  'interactive_container', 'tag', 'carousel', 'grid',
 ];
 
 export const ELEMENT_TAG_COMPLETIONS: CompletionItem[] = ELEMENT_TAGS.map((t) => ({

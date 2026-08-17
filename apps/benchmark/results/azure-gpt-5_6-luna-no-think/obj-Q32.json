@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 `none`。三列等分时，`column_set.flex_mode` 使用 `none` 枚举值。",
+  "extracted": "none",
+  "correct": false,
+  "weight": 15
+}

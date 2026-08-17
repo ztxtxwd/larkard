@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。在飞书卡片 JSON 2.0 的文本组件中，text_size 字段用于设置字号，notation 是专门用于辅助说明或备注的比正文更小的字号枚举值。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

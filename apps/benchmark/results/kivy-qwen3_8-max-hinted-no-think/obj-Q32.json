@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 none。在飞书卡片 JSON 2.0 中，column_set 的 flex_mode 设为 none 时，各列在窄屏下仍保持定义的宽度比例（如三列等分）而不自动折叠或流式重排。",
+  "extracted": "none",
+  "correct": false,
+  "weight": 15
+}

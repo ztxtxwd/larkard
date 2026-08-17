@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。<理由>根据飞书卡片官方文档，table 组件仅支持作为消息卡片的根节点（root element），不支持嵌套在 column、div 等其他容器组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

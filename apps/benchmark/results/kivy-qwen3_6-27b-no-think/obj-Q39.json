@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 180。\n理由：根据飞书卡片消息模板文档，折叠面板（foldable）组件的 header 图标在展开状态下的旋转角度 icon_expanded_angle 默认值为 180 度。",
+  "extracted": "180",
+  "correct": true,
+  "weight": 10
+}

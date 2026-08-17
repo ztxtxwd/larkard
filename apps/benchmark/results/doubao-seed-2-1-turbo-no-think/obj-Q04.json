@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 collapse。\n折叠面板容器组件的官方 tag 为 collapse。",
+  "extracted": "collapse",
+  "correct": false,
+  "weight": 15
+}

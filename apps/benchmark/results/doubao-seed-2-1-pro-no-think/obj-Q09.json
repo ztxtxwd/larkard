@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 date_picker。\n理由：飞书卡片JSON 2.0规范中，日期时间选择器（含日期、时间、日期时间类型的选择器）组件的tag固定为date_picker，通过其内部的date_time_mode字段区分具体选择类型。",
+  "extracted": "date_picker",
+  "correct": false,
+  "weight": 20
+}

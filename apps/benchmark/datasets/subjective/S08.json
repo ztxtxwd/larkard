@@ -1,6 +1,8 @@
 {
   "id": "S08",
   "difficulty": "medium",
-  "prompt": "生成一张请假申请表单卡片：标题「请假申请」，表单内含一个必填的请假事由输入框、一个请假类型下拉单选（年假/病假），以及一个主样式的「提交申请」按钮用于提交表单。",
-  "golden": "g-s08.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「交互容器」Demo，生成一张完整卡片，复现文档示例中的 interactive_container 结构与点击行为。",
+  "golden": "official-s08.json",
+  "source": "/feishu-cards/card-json-v2-components/containers/interactive-container",
+  "sourceNote": "官方文档示例抽取自 Demo_示例.md；仅做 schema 兼容最小修补"
 }

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 name。\n\n表单容器（`tag: \"form_container\"`）通过 `name` 字段作为该表单的唯一标识，用于在提交时区分提交的是哪个表单。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 12
+}

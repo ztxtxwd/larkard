@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 /** CLI 入口：open-feishu-card-benchmark run | report | list */
-import { applyCliOverrides, defaultCatalogPath, expandEnvVars, loadCatalog, resolveRunModels } from './catalog.js';
+import {
+  applyCliOverrides,
+  defaultCatalogPath,
+  defaultResultsDir,
+  expandEnvVars,
+  loadCatalog,
+  resolveRunModels,
+} from './catalog.js';
 import { createClient, type ChatClient } from './client.js';
 import { buildReport, renderMarkdown, writeReport } from './report.js';
 import { createDryRunClient, runBenchmark } from './runner.js';
@@ -64,7 +71,7 @@ function usage(): string {
   open-feishu-card-benchmark run --config models.json
   OPENAI_API_KEY=sk-... open-feishu-card-benchmark run --model deepseek-chat --base-url https://api.deepseek.com/v1
   open-feishu-card-benchmark run --dry-run          # 离线演示，无需 API Key
-  open-feishu-card-benchmark report                 # 汇总 results/ 生成 REPORT.md`;
+  open-feishu-card-benchmark report                 # 汇总包内 results/ 生成 REPORT.md`;
 }
 
 export async function run(argv: string[]): Promise<number> {
@@ -77,10 +84,16 @@ export async function run(argv: string[]): Promise<number> {
     console.log(`题库目录：${datasetsDir()}`);
     console.log(`客观题 ${objective.length} 道：`);
     const byCat = new Map<string, number>();
-    for (const t of objective) byCat.set(t.category, (byCat.get(t.category) ?? 0) + 1);
+    const byFmt = new Map<string, number>();
+    for (const t of objective) {
+      byCat.set(t.category, (byCat.get(t.category) ?? 0) + 1);
+      const fmt = t.format ?? 'mcq';
+      byFmt.set(fmt, (byFmt.get(fmt) ?? 0) + 1);
+    }
     for (const [cat, n] of byCat) console.log(`  [${cat}] ${n} 道`);
+    console.log(`  题型：${[...byFmt.entries()].map(([k, n]) => `${k}=${n}`).join('，')}`);
     console.log(`主观题 ${subjective.length} 道：`);
-    for (const t of subjective) console.log(`  ${t.id} (${t.difficulty}${t.golden ? ', 有 golden' : ''})`);
+    for (const t of subjective) console.log(`  ${t.id} (${t.difficulty}${t.golden ? ', 有 golden' : ''}${t.source ? ', 官方示例' : ''})`);
     try {
       const catalogPath = defaultCatalogPath();
       const catalog = loadCatalog(catalogPath);
@@ -97,7 +110,7 @@ export async function run(argv: string[]): Promise<number> {
   }
 
   if (command === 'report') {
-    const resultsDir = args.results ?? 'results';
+    const resultsDir = args.results ?? defaultResultsDir();
     const report = buildReport(resultsDir);
     if (report.models.length === 0) {
       console.error(`在 ${resultsDir} 下没有找到任何结果，请先运行 run。`);
@@ -143,23 +156,27 @@ export async function run(argv: string[]): Promise<number> {
     return 1;
   }
 
-  // dry-run 预载 golden 回复（以主观题 prompt 首行为键）
+  // dry-run 预载 golden 回复（以主观题 prompt 首行为键）与客观题标准答案
   const goldenResponses = new Map<string, string>();
+  const objectiveAnswers = new Map<string, string>();
   if (args['dry-run']) {
     for (const t of loadSubjectiveTasks()) {
       const golden = loadGolden(t);
       if (golden !== null) goldenResponses.set(t.prompt.split('\n')[0], JSON.stringify(golden, null, 2));
     }
+    for (const t of loadObjectiveTasks()) {
+      objectiveAnswers.set(t.id, t.answer);
+    }
   }
 
-  const outDir = args.out ?? 'results';
+  const outDir = args.out ?? defaultResultsDir();
   const concurrency = Math.max(1, Number(args.concurrency ?? 4));
   const temperature = Number(args.temperature ?? 0);
 
   for (const raw of models) {
     const m = expandEnvVars(applyCliOverrides(raw, { baseUrl: args['base-url'], apiKey: args['api-key'] }));
     const client: ChatClient = args['dry-run']
-      ? createDryRunClient(m.name, goldenResponses)
+      ? createDryRunClient(m.name, goldenResponses, objectiveAnswers)
       : createClient(m, args['api-key']);
     try {
       await runBenchmark(client, {

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 24。`extra_large` 对应 24 像素。",
+  "extracted": "24",
+  "correct": false,
+  "weight": 10
+}

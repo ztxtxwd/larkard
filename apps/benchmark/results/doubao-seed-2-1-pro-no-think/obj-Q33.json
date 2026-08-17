@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 32。\n理由：根据飞书卡片官方间距 token 约定，horizontal_spacing 的 extra_large 枚举值对应 32px 间距。",
+  "extracted": "32",
+  "correct": false,
+  "weight": 10
+}

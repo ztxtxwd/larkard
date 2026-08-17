@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

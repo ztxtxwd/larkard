@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。根据飞书卡片官方规范，表单容器（form）作为容器组件支持被内嵌在分栏（column）等其他容器组件内部使用。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 20
+}

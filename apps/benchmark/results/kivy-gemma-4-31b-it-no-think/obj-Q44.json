@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。在飞书卡片 JSON 2.0 的 callback 行为定义中，value 字段必须是一个对象，用于传递自定义的键值对参数给后端。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

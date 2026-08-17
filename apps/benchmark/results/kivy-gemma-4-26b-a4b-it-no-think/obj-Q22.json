@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。在 JSON 2.0 中，多语言能力已通过字段级的 `i18n` 属性进行重构，不再支持根级的 `i18n_elements`。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

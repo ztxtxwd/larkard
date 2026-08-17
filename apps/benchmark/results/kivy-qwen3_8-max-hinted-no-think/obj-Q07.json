@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 overflow。飞书卡片 JSON 2.0 中折叠按钮组（更多操作）组件的 tag 为 overflow，用于将多个按钮收纳进“更多”菜单中。",
+  "extracted": "overflow",
+  "correct": true,
+  "weight": 15
+}

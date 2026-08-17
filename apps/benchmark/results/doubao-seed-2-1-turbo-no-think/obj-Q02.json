@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 SelectPerson。\n理由是在飞书卡片 JSON 2.0 规范中，人员选择（单选）交互组件的 tag 固定为 SelectPerson。",
+  "extracted": "SelectPerson",
+  "correct": false,
+  "weight": 20
+}

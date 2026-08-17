@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 的 markdown 组件不再支持旧版「[差异化跳转]($urlVal)」配合 href 的语法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

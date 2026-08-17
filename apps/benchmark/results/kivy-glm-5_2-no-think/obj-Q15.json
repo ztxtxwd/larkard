@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。\nJSON 2.0 中 button 组件已不再支持顶层 value 字段，表单外的独立按钮需通过 behaviors 配置（如 open_url 或回调行为）来定义交互。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

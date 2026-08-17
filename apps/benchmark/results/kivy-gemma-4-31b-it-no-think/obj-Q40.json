@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。`icon_expanded_angle` 仅支持 90 度的倍数（如 0, 90, 180, 270 或其负值），用于控制展开状态下图标的旋转角度。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

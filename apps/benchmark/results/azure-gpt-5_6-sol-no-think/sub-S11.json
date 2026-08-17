@@ -1,0 +1,30 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"middle\",\n        \"header_style\": {\n          \"text_align\": \"left\",\n          \"text_size\": \"normal\",\n          \"background_style\": \"grey\",\n          \"text_color\": \"default\",\n          \"bold\": true,\n          \"lines\": 1\n        },\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"number\",\n            \"width\": \"auto\",\n            \"format\": {\n              \"symbol\": \"人\"\n            }\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"data_type\": \"number\",\n            \"width\": \"auto\",\n            \"format\": {\n              \"precision\": 2,\n              \"separator\": true,\n              \"symbol\": \"¥\"\n            }\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"persons\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date\",\n            \"width\": \"auto\",\n            \"date_format\": \"YYYY/MM/DD\"\n          },\n          {\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"url\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"company_image\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"image\",\n            \"width\": \"auto\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"飞书科技\",\n            \"scale\": 1200,\n            \"arr\": 500000,\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\",\n                \"name\": \"张三\"\n              }\n            ],\n            \"sign_date\": \"2024-01-15\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn/\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"未来智能\",\n            \"scale\": 800,\n            \"arr\": 320000,\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\",\n                \"name\": \"李四\"\n              }\n            ],\n            \"sign_date\": \"2024-02-20\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn/\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"云端网络\",\n            \"scale\": 560,\n            \"arr\": 210000,\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\",\n                \"name\": \"王五\"\n              }\n            ],\n            \"sign_date\": \"2024-03-08\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn/\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"星辰数据\",\n            \"scale\": 2000,\n            \"arr\": 880000,\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\",\n                \"name\": \"赵六\"\n              }\n            ],\n            \"sign_date\": \"2024-04-18\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn/\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"极光科技\",\n            \"scale\": 350,\n            \"arr\": 150000,\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\",\n                \"name\": \"陈七\"\n              }\n            ],\n            \"sign_date\": \"2024-05-26\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn/\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

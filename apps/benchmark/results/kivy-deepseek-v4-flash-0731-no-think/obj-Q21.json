@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。JSON 2.0 中交互模块的 tag 仍为 action，用于定义按钮等可交互元素。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 20
+}

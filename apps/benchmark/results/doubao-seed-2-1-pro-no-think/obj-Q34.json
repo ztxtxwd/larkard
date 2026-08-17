@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 10。\n理由：根据飞书卡片官方组件约定，table 组件的 page_size 字段默认值为 10，即默认每页最多展示10行数据。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

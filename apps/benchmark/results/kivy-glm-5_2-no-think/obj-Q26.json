@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。\n在飞书卡片 plain_text 组件中，text_size 字段支持 notation 枚举值，用于呈现比正文更小的辅助说明/备注字号。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

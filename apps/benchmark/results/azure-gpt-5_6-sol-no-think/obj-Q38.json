@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。table 组件不允许嵌套在其它组件内部，例如不能放入 column。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

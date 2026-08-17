@@ -1,6 +1,8 @@
 {
   "id": "S01",
   "difficulty": "easy",
-  "prompt": "生成一张简单的系统通知卡片：蓝色标题「系统通知」，正文显示「您的账号已于今日 09:30 成功登录新设备。」。",
-  "golden": "g-s01.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「分割线」组件文档示例，生成一张完整卡片：正文为普通文本「普通文本示例」，中间一条分割线，下方一个「查看更多」主按钮。",
+  "golden": "official-s01.json",
+  "source": "/feishu-cards/card-json-v2-components/content-components/divider",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

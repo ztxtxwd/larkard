@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中独立 button 不再使用组件顶层的 value 字段作为 1.0 写法回传，交互数据应按 2.0 规范配置。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

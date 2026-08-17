@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中表单容器外的独立 button 必须通过 behaviors 数组配置交互行为（如 callback 或 open_url），不再支持使用组件顶层的 value 字段进行回传。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

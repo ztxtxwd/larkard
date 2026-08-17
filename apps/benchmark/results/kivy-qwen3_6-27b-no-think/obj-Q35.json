@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。在飞书卡片 JSON 2.0 规范中，table 组件的 columns 配置里，表示人员类型的 data_type 枚举值为 person。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

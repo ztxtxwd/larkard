@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 select_static。\n理由：飞书卡片2.0中，静态选项的多选下拉选择组件的tag为select_static，对应静态选项选择器，配置multiple为true时即为多选模式。",
+  "extracted": "select_static",
+  "correct": false,
+  "weight": 20
+}

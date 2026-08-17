@@ -1,0 +1,23 @@
+{
+  "schema": "2.0",
+  "body": {
+    "direction": "vertical",
+    "padding": "12px 12px 12px 12px",
+    "elements": [
+      {
+        "tag": "img_combination",
+        "combination_mode": "double",
+        "img_list": [
+          {
+            "img_key": "img_v2_9dd98485-2900-4d65-ada9-e31d1408dcfg"
+          },
+          {
+            "img_key": "img_v2_9dd98485-2900-4d65-ada9-e31d1408dcfg"
+          }
+        ],
+        "combination_transparent": false,
+        "margin": "0px 0px 0px 0px"
+      }
+    ]
+  }
+}

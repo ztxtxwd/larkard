@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 90。飞书卡片 JSON 2.0 中折叠面板（collapsible_panel）header 图标展开时的旋转角 icon_expanded_angle 默认值为 90 度。",
+  "extracted": "90",
+  "correct": false,
+  "weight": 10
+}

@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"header\",\n        \"title\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"Markdown 语法能力演示\"\n        },\n        \"template\": \"blue\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**粗体文本** | *斜体文本* | ~~删除线~~ | `行内代码` \\n\\n--- \\n\\n**1. 标题与列表**\\n# 一级标题\\n## 二级标题\\n### 三级标题\\n\\n- 无序列表项 A\\n- 无序列表项 B\\n  - 子列表项 B1\\n\\n1. 有序列表项 1\\n2. 有序列表项 2\\n\\n**2. 链接与提及**\\n- [点击访问飞书官网](https://www.feishu.cn)\\n- 提及用户：<@ou_demo123>\\n- 提及群组：<@group_demo123>\\n\\n**3. 引用与代码块**\\n> 这是一个引用块，用于强调重要信息或引用外部内容。\\n\\n```javascript\\nfunction helloWorld() {\\n  console.log(\\\"Hello Feishu Card!\\\");\\n}\\n```\\n\\n**4. 颜色与状态**\\n- <font color='red'>红色文本</font>\\n- <font color='green'>绿色文本</font>\\n- <font color='blue'>蓝色文本</font>\\n- <font color='grey'>灰色文本</font>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"注：以上内容均在单个 markdown 组件中实现\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      },\n      {\n        \"tag\": \"button\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"查看官方文档\"\n        },\n        \"type\": \"primary\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"url\": \"https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/card-builder\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "Unterminated string"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

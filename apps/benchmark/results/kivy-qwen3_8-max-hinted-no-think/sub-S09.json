@@ -1,0 +1,42 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**默认折叠的折叠面板**\"\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"点击展开查看详情\"\n          }\n        },\n        \"body\": {\n          \"elements\": [\n            {\n              \"tag\": \"markdown\",\n              \"content\": \"这是默认折叠状态下的内容，用户需要手动点击标题才能查看。\"\n            }\n          ]\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**标题带背景色且默认展开的折叠面板**\"\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": true,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"重要通知（默认展开）\"\n          },\n          \"template\": \"orange\"\n        },\n        \"body\": {\n          \"elements\": [\n            {\n              \"tag\": \"markdown\",\n              \"content\": \"此面板默认展开，并且标题带有橙色背景以突出显示重要信息。\"\n            }\n          ]\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**无边框折叠面板**\"\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": false,\n        \"borderless\": true,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"无边框样式面板\"\n          }\n        },\n        \"body\": {\n          \"elements\": [\n            {\n              \"tag\": \"markdown\",\n              \"content\": \"该面板去除了外边框，适用于嵌入其他内容区域或追求简洁视觉效果的场景。\"\n            }\n          ]\n        }\n      }\n    ]\n  }\n}",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.706,
+    "total": 0.956,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "hr",
+        "markdown",
+        "collapsible_panel",
+        "hr",
+        "markdown",
+        "collapsible_panel"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

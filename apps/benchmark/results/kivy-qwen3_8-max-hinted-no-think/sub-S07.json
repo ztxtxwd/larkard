@@ -1,0 +1,52 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本语法使用示例：音频播放器 <audio>\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 默认效果**\\n<audio src=\\\"https://example.com/demo.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 显示时间 (show_time)**\\n<audio src=\\\"https://example.com/demo.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 自定义颜色 (HEX)**\\n<audio src=\\\"https://example.com/demo.mp3\\\" config.style.color=\\\"#FF6A00\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. 枚举色 (red / green / blue / grey)**\\n<audio src=\\\"https://example.com/demo.mp3\\\" config.style.color=\\\"red\\\"></audio>\\n<audio src=\\\"https://example.com/demo.mp3\\\" config.style.color=\\\"green\\\"></audio>\\n<audio src=\\\"https://example.com/demo.mp3\\\" config.style.color=\\\"blue\\\"></audio>\\n<audio src=\\\"https://example.com/demo.mp3\\\" config.style.color=\\\"grey\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**5. 语音样式 (style=speak)**\\n<audio src=\\\"https://example.com/demo.mp3\\\" style=\\\"speak\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**6. Fallback 兜底文案**\\n<audio src=\\\"https://example.com/demo.mp3\\\">当前环境不支持音频播放，请升级飞书版本</audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**7. 不同 text_size 下的播放器**\\n<text_size size=\\\"normal\\\"><audio src=\\\"https://example.com/demo.mp3\\\" show_time=\\\"true\\\"></audio></text_size>\\n<text_size size=\\\"small\\\"><audio src=\\\"https://example.com/demo.mp3\\\" show_time=\\\"true\\\"></audio></text_size>\\n<text_size size=\\\"notation\\\"><audio src=\\\"https://example.com/demo.mp3\\\" show_time=\\\"true\\\"></audio></text_size>\"\n      }\n    ]\n  }\n}",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.519,
+    "total": 0.928,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

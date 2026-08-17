@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 picker_datetime。\n根据飞书卡片 JSON 2.0 官方组件规范，日期时间选择器组件的 tag 为 picker_datetime。",
+  "extracted": "picker_datetime",
+  "correct": true,
+  "weight": 20
+}

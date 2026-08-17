@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q01",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 divider。飞书卡片 JSON 2.0 规范中，分隔线组件的 tag 定义为 \"divider\"。",
+  "extracted": "divider",
+  "correct": false,
+  "weight": 25
+}

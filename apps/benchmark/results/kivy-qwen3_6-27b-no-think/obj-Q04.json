@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 folding。折叠面板容器组件在飞书卡片消息模板中的 tag 定义为 folding。",
+  "extracted": "folding",
+  "correct": false,
+  "weight": 15
+}

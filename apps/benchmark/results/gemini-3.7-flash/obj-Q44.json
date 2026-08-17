@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。在飞书卡片 2.0 规范中，callback 交互行为的 value 字段必须为 Map/Object（对象）类型，用于存放回传业务数据的键值对。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

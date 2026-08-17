@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 5。page_size 的默认值为 5。",
+  "extracted": "5",
+  "correct": true,
+  "weight": 15
+}

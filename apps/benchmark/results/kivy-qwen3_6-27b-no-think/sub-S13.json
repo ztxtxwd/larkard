@@ -1,0 +1,52 @@
+{
+  "kind": "subjective",
+  "taskId": "S13",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"业务做大做强\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**项目名称**：业务做大做强\\n\\n请填写以下表单信息以推进项目流程。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"elements\": [\n                  {\n                    \"tag\": \"select_person\",\n                    \"name\": \"handler\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"经办人\"\n                    },\n                    \"required\": true,\n                    \"initial_value\": {\n                      \"open_id\": \"ou_demo123\"\n                    }\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"elements\": [\n                  {\n                    \"tag\": \"select_static\",\n                    \"name\": \"priority\",\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"优先级\"\n                    },\n                    \"required\": true,\n                    \"options\": [\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"高\"\n                        },\n                        \"value\": \"high\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"中\"\n                        },\n                        \"value\": \"medium\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"低\"\n                        },\n                        \"value\": \"low\"\n                      }\n                    ],\n                    \"initial_value\": {\n                      \"value\": \"medium\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"description\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"描述\"\n            },\n            \"required\": false,\n            \"initial_value\": {\n              \"text\": \"\"\n            },\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入详细描述...\"\n            }\n          },\n          {\n            \"tag\": \"actions\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"type\": \"primary\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"提交\"\n                },\n                \"behaviors\": [\n                  {\n                    \"type\": \"submit_form\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"button\",\n                \"type\": \"default\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"重置\"\n                },\n                \"behaviors\": [\n                  {\n                    \"type\": \"reset_form\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.667,
+    "total": 0.8,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/name: Invalid input: expected string, received undefined",
+        "/body/elements/2/elements/2/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "form",
+        "column_set",
+        "select_person",
+        "select_static",
+        "input",
+        "actions",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "form",
+        "column_set",
+        "markdown",
+        "select_person",
+        "column_set",
+        "markdown",
+        "select_static",
+        "column_set",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

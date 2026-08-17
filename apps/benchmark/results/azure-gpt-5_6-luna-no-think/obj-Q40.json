@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 D。`icon_expanded_angle` 的取值范围为 -180 至 180（不含 180）。",
+  "extracted": "D",
+  "correct": false,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。在飞书卡片中，按钮等交互组件配置表单行为时，form_action_type 为 submit 表示提交表单数据。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

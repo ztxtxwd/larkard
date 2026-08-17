@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 user。在飞书卡片 JSON 2.0 的 table 组件中，当列数据类型为人员时，data_type 字段的枚举值为 user。",
+  "extracted": "user",
+  "correct": false,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 trisect。飞书卡片规范中 column_set 的 flex_mode 字段通过 trisect 枚举值实现窄屏/移动端下的三列等分展示。",
+  "extracted": "trisect",
+  "correct": true,
+  "weight": 15
+}

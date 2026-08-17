@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 90。理由：飞书卡片折叠面板 header 图标展开时默认旋转 90 度。",
+  "extracted": "90",
+  "correct": false,
+  "weight": 10
+}

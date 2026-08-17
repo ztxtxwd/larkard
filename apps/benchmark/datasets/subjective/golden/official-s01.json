@@ -1,0 +1,43 @@
+{
+  "schema": "2.0",
+  "body": {
+    "direction": "vertical",
+    "padding": "12px 12px 12px 12px",
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "plain_text",
+          "content": "普通文本示例",
+          "text_size": "normal",
+          "text_align": "left",
+          "text_color": "default"
+        },
+        "margin": "0px 0px 0px 0px"
+      },
+      {
+        "tag": "hr",
+        "margin": "0px 0px 0px 0px"
+      },
+      {
+        "tag": "button",
+        "text": {
+          "tag": "plain_text",
+          "content": "查看更多"
+        },
+        "type": "primary",
+        "width": "default",
+        "size": "medium",
+        "margin": "0px 0px 0px 0px",
+        "behaviors": [
+          {
+            "type": "callback",
+            "value": {
+              "from": "official-doc-normalize"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

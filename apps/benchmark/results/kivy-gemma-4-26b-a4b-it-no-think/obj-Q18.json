@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。表单容器（form）在飞书卡片架构中是顶层容器之一，不能作为子组件嵌套在 column、div 等其他布局组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

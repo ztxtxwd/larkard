@@ -1,0 +1,49 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"style\": {\n      \"color\": {\n        \"audio_custom\": {\n          \"light_mode\": \"#3370FF\",\n          \"dark_mode\": \"#4C88FF\"\n        }\n      }\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本语法使用示例：音频播放器\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**默认效果**\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**显示播放时间（show_time）**\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**自定义颜色**\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" color=\\\"audio_custom\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**枚举色**\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" color=\\\"blue\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**语音样式（style=speak）**\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" style=\\\"speak\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**降级文本（fallback）**\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" show_time=\\\"true\\\" fallback=\\\"当前客户端暂不支持播放音频，请升级后重试。\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**不同 text_size 下的播放器**\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"notation\",\n        \"content\": \"notation\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"normal\",\n        \"content\": \"normal\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading\",\n        \"content\": \"heading\\n<audio src=\\\"https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupkbps/audio-demo.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.833,
+    "total": 0.975,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

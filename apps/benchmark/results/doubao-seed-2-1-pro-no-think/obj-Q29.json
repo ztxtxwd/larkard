@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 stretch_horizontal。\n理由：飞书卡片 img 组件的 scale_type 枚举中，stretch_horizontal 对应水平方向拉伸贴齐容器左右边缘、垂直方向保持原图比例的显示模式。",
+  "extracted": "stretch_horizontal",
+  "correct": false,
+  "weight": 12
+}

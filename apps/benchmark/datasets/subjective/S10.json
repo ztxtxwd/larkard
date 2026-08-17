@@ -1,6 +1,8 @@
 {
   "id": "S10",
-  "difficulty": "medium",
-  "prompt": "生成一张审批操作卡片：两个按钮并排等宽铺满一行——左边「批准」（主样式，回调动作 approve），右边「驳回」（危险样式，回调动作 reject），按钮点击通过 callback 回传 {\"action\": ...}。",
-  "golden": "g-s10.json"
+  "difficulty": "hard",
+  "prompt": "按飞书卡片 JSON 2.0 官方「按钮」组件示例，生成蓝色标题为 Buttons 的完整卡片：用分栏展示多种按钮样式（镭射、禁用、primary/default 等），交互配置对齐文档示例。",
+  "golden": "official-s10.json",
+  "source": "/feishu-cards/card-json-v2-components/interactive-components/button",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

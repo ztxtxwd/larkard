@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 D。\n\n折叠面板 `icon_expanded_angle` 的合法取值范围为 -180~180（不含 180），因此 180 不合法。",
+  "extracted": "D",
+  "correct": false,
+  "weight": 10
+}

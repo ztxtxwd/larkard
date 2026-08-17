@@ -1,6 +1,8 @@
 {
   "id": "S07",
   "difficulty": "medium",
-  "prompt": "生成一张订单发货通知卡片：用两列布局，左列（占满剩余宽度）加粗显示「订单已发货」和说明「预计 3 天内送达」，右列（宽度自适应内容）放一个「查看物流」按钮，点击打开 https://open.feishu.cn。",
-  "golden": "g-s07.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「富文本（Markdown）」文档中的「富文本语法使用示例」，生成一张完整卡片：用多个 markdown 组件展示文档示例里的 <audio> 音频播放器写法（含默认效果、show_time、自定义颜色/枚举色、style=speak、fallback、以及不同 text_size 下的播放器等），并保留示例中的 config.style.color 与 header。",
+  "golden": "official-s07.json",
+  "source": "/feishu-cards/card-json-v2-components/content-components/rich-text",
+  "sourceNote": "官方文档示例抽取自 富文本语法使用示例.md（音频播放器示例）；仅做 schema 兼容最小修补"
 }

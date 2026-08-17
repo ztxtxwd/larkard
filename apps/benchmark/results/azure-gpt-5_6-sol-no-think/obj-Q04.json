@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 collapsible_panel。该 tag 用于标识折叠面板容器组件。",
+  "extracted": "collapsible_panel",
+  "correct": true,
+  "weight": 15
+}

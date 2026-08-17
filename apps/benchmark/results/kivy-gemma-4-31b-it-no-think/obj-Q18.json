@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。<理由>表单容器（form）作为布局组件的一种，可以被放置在 column 或其他支持子组件的容器内部。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 20
+}

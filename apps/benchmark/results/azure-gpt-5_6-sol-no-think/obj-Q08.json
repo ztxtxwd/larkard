@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q08",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 time_picker。该 tag 表示仅选择时间、不包含日期的时间选择器组件。",
+  "extracted": "time_picker",
+  "correct": false,
+  "weight": 20
+}

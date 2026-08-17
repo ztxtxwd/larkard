@@ -7,31 +7,38 @@ import { aggregate } from '../src/metrics.js';
 import { renderMarkdown } from '../src/report.js';
 import { formatScorecard, loadSelfEval, saveSelfEval } from '../src/self-eval.js';
 import type { ObjectiveResult, SubjectiveResult } from '../src/types.js';
+import { loadObjectiveTasks } from '../src/tasks.js';
 
 test('formatScorecard 列出客观错题与正确答案', () => {
+  const tasks = loadObjectiveTasks();
+  const sample = tasks.find((t) => t.format === 'fill' && t.answer === 'hr') ?? tasks[0];
   const wrong: ObjectiveResult = {
     kind: 'objective',
-    taskId: 'Q18',
-    category: '组件',
-    response: '答案是 A。',
-    extracted: 'A',
+    taskId: sample.id,
+    category: sample.category,
+    format: sample.format ?? 'fill',
+    response: '答案是 divider。',
+    extracted: 'divider',
     correct: false,
+    weight: 25,
   };
   const right: ObjectiveResult = {
     kind: 'objective',
-    taskId: 'Q01',
+    taskId: 'Q41',
     category: '基础结构',
-    response: '答案是 B。',
-    extracted: 'B',
+    format: 'fill',
+    response: '答案是 2.0。',
+    extracted: '2.0',
     correct: true,
+    weight: 10,
   };
   const text = formatScorecard('demo', [wrong, right]);
   assert.match(text, /【成绩单】/);
   assert.match(text, /客观题 1\/2/);
-  assert.match(text, /Q18/);
-  assert.match(text, /正确答案：B/);
-  assert.match(text, /你的答案：A/);
-  assert.doesNotMatch(text, /Q01 \[/);
+  assert.match(text, new RegExp(sample.id));
+  assert.match(text, new RegExp(`正确答案：${sample.answer}`));
+  assert.match(text, /你的答案：divider/);
+  assert.doesNotMatch(text, /Q41 \[/);
 });
 
 test('formatScorecard 摘要主观题 schema 报错', () => {
@@ -74,16 +81,21 @@ test('报告渲染包含模型自评；self-eval.json 不计入题数', () => {
       kind: 'objective' as const,
       taskId: 'Q01',
       category: '基础结构',
-      response: 'B',
-      extracted: 'B',
+      format: 'fill' as const,
+      response: 'hr',
+      extracted: 'hr',
       correct: true,
+      weight: 25,
     },
   ];
   const report = aggregate(results);
   report.model = 'demo';
   report.selfEval = loadSelfEval(dir);
   assert.equal(report.taskCount, 1);
+  assert.equal(report.objectiveAccuracy, 1);
+  assert.equal(report.objectiveRawAccuracy, 1);
   const md = renderMarkdown({ generatedAt: 't', models: [report] });
   assert.match(md, /### 模型自评/);
   assert.match(md, /领域知识不足/);
+  assert.match(md, /领域知识\(加权\)/);
 });

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit_form。该枚举值用于 form 容器内 button 组件的 form_action_type 字段，表示点击按钮时触发表单提交行为。",
+  "extracted": "submit_form",
+  "correct": false,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 128。<理由>根据飞书开放平台文档，element_id 用于唯一标识卡片中的交互元素，其最大长度限制为 128 个字符。",
+  "extracted": "128",
+  "correct": false,
+  "weight": 15
+}

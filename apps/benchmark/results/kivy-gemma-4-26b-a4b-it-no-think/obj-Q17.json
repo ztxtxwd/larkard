@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。在飞书卡片表单容器中，只有配置了 `name` 属性的组件，其值才会被包含在表单提交的 `value` 对象中。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

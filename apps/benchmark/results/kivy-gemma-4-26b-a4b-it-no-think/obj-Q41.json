@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 biz_version。根据飞书卡片 JSON 2.0 规范，根对象必须通过该字段声明使用的版本。",
+  "extracted": "biz_version",
+  "correct": false,
+  "weight": 10
+}

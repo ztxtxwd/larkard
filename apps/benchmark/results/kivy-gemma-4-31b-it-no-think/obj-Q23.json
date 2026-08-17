@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>在 JSON 2.0 规范中，卡片内容必须包裹在 `body` 字段中，根对象不再支持直接定义 `elements`。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

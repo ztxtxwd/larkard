@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 value。\n\n在飞书卡片 2.0 的交互回传中，`behaviors` 定义的动作触发后，其携带的参数值通过 `value` 字段传递给后端。",
+  "extracted": "value",
+  "correct": false,
+  "weight": 20
+}

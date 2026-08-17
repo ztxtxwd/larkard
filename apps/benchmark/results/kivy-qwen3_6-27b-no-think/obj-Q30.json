@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 auto。在飞书卡片 JSON 2.0 中，column 组件的 width 字段设置为 \"auto\" 时，表示该列宽度将根据 weight 属性按比例自动分配剩余空间。",
+  "extracted": "auto",
+  "correct": false,
+  "weight": 20
+}

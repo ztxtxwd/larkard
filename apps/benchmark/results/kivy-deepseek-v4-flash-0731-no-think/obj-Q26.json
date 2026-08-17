@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 text_size。</br>理由：飞书卡片 div 的 plain_text 中，通过 text_size 字段控制字号，辅助说明的备注字号枚举值为 text_size 的较小档位（如 text_size 的备注档）。",
+  "extracted": "text_size",
+  "correct": false,
+  "weight": 20
+}

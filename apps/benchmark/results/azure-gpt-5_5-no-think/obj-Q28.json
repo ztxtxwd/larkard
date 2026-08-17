@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 default。button 的 type 中 default 表示蓝底白字的填充按钮，而 primary 是蓝字有边框的文案按钮。",
+  "extracted": "default",
+  "correct": false,
+  "weight": 15
+}

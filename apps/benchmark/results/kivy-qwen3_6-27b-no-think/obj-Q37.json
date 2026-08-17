@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 dataId。在飞书卡片 Table 组件中，column 对象必须包含 dataId 字段，该值需与 rows 数组中每个 row 对象的键名一一对应，以建立列与数据的映射关系。",
+  "extracted": "dataId",
+  "correct": false,
+  "weight": 16
+}

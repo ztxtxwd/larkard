@@ -1,6 +1,8 @@
 {
   "id": "S05",
-  "difficulty": "easy",
-  "prompt": "生成一张图片展示卡片：标题「活动海报」，正文先写一句「年度技术沙龙现场照片：」，再展示一张图片（使用示例 img_key：img_v2_demo-key），图片支持点击预览、等比缩放水平贴齐。",
-  "golden": "g-s05.json"
+  "difficulty": "medium",
+  "prompt": "按飞书卡片 JSON 2.0 官方「折叠按钮组（overflow）」文档示例，生成一张完整卡片，展示文档中的 overflow 与相关按钮用法。",
+  "golden": "official-s05.json",
+  "source": "/feishu-cards/card-json-v2-components/interactive-components/overflow",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

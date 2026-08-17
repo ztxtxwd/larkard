@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 text-caption。在飞书卡片 2.0 中，文本字号属性 `text_size` 使用 `text-caption` 表示辅助说明或备注级别的小字号。",
+  "extracted": "text-caption",
+  "correct": false,
+  "weight": 20
+}

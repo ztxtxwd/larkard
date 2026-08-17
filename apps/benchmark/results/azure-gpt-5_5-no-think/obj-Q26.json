@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。普通文本（div/plain_text）中用于辅助说明、比正文更小的备注字号枚举值是 notation。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

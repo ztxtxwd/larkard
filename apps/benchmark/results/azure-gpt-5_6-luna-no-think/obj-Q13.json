@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 FormSubmit。表示提交表单的动作类型。",
+  "extracted": "FormSubmit",
+  "correct": false,
+  "weight": 20
+}

@@ -14,13 +14,16 @@ import { TipsTextSchema } from '../common/text.js';
 /**
  * 按钮组件（button）。
  * 表单内使用时需配置 name 与 form_action_type。
+ *
+ * behaviors：表单外必填（open_url / callback）；进入 form 后可省略（FeishuCardSchema 上下文校验）。
+ * 不要用 1.0 的 multi_url / 顶层 value。
  */
 export const ButtonSchema = z
   .object({
     tag: z.literal('button').describe('组件标签，固定为 button'),
-    /** 交互行为；跳转与回调可同时配置 */
-    behaviors: BehaviorsSchema.describe(
-      '交互行为列表；跳转与回调可同时配置。open_url 示例可用 https://open.feishu.cn；callback.value 用简洁业务字段',
+    /** 交互行为；表单外必填，form 内可省略 */
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填（open_url / callback）；进入 form 后可省略。禁止用 multi_url 或顶层 value',
     ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
@@ -207,7 +210,9 @@ const SelectOptionSchema = z
 export const SelectStaticSchema = z
   .object({
     tag: z.literal('select_static').describe('组件标签，固定为 select_static'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     type: z
@@ -247,7 +252,9 @@ export const MultiSelectStaticSchema = z
       .literal('multi_select_static')
       .describe('组件标签，固定为 multi_select_static'),
     name: z.string().describe('表单项标识，卡片内唯一'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     type: z
@@ -275,7 +282,9 @@ export type MultiSelectStatic = z.infer<typeof MultiSelectStaticSchema>;
 export const SelectPersonSchema = z
   .object({
     tag: z.literal('select_person').describe('组件标签，固定为 select_person'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     type: z
@@ -322,7 +331,9 @@ export const MultiSelectPersonSchema = z
       .literal('multi_select_person')
       .describe('组件标签，固定为 multi_select_person'),
     name: z.string().describe('表单项标识，卡片内唯一'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     type: z
@@ -362,7 +373,9 @@ export type MultiSelectPerson = z.infer<typeof MultiSelectPersonSchema>;
 export const DatePickerSchema = z
   .object({
     tag: z.literal('date_picker').describe('组件标签，固定为 date_picker'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     name: z
@@ -395,7 +408,9 @@ export type DatePicker = z.infer<typeof DatePickerSchema>;
 export const PickerTimeSchema = z
   .object({
     tag: z.literal('picker_time').describe('组件标签，固定为 picker_time'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     name: z
@@ -429,7 +444,9 @@ export const PickerDatetimeSchema = z
     tag: z
       .literal('picker_datetime')
       .describe('组件标签，固定为 picker_datetime'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     name: z
@@ -480,7 +497,9 @@ export const SelectImgSchema = z
           .describe('多图选择选项'),
       )
       .describe('可选图片列表'),
-    behaviors: BehaviorsSchema.describe('交互行为列表'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     multi_select: z

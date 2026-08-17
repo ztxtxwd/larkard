@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 stretch。理由是 img 组件的 scale_type 字段中，stretch 表示水平拉伸以填满容器宽度。",
+  "extracted": "stretch",
+  "correct": false,
+  "weight": 12
+}

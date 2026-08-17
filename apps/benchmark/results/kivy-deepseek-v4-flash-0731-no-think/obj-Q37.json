@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 column_id。理由：飞书卡片 table 组件中，rows 行对象通过 column_id 字段与 table 的 columns 列定义对应。",
+  "extracted": "column_id",
+  "correct": false,
+  "weight": 16
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 user。在飞书卡片表格组件的列配置中，人员数据类型对应的 data_type 枚举值为 user。",
+  "extracted": "user",
+  "correct": false,
+  "weight": 15
+}

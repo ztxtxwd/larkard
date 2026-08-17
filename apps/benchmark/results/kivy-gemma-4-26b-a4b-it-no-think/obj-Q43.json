@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q43",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 2。根据飞书卡片设计规范，文本后缀标签（text_tag_list）最多支持展示 2 个。",
+  "extracted": "2",
+  "correct": false,
+  "weight": 10
+}

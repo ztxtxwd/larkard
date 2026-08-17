@@ -1,0 +1,64 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"点击下方按钮触发交互容器更新，卡片内容将动态替换为新的交互组件。\"\n      },\n      {\n        \"tag\": \"button\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"点击触发展开交互容器\"\n        },\n        \"type\": \"primary\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"expand_interactive_container\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"id\": \"demo_interactive_container\",\n        \"elements\": [\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"lark_md\",\n              \"content\": \"**当前状态：** 等待用户操作...\"\n            }\n          },\n          {\n            \"tag\": \"hr\"\n          },\n          {\n            \"tag\": \"form\",\n            \"name\": \"interactive_form\",\n            \"elements\": [\n              {\n                \"tag\": \"select_static\",\n                \"label\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"选择操作类型\"\n                },\n                \"name\": \"action_type\",\n                \"options\": [\n                  {\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"刷新数据\"\n                    },\n                    \"value\": \"refresh\"\n                  },\n                  {\n                    \"label\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交反馈\"\n                    },\n                    \"value\": \"feedback\"\n                  }\n                ],\n                \"placeholder\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"请选择\"\n                }\n              },\n              {\n                \"tag\": \"input\",\n                \"label\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"备注信息\"\n                },\n                \"name\": \"remark\",\n                \"placeholder\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"请输入备注（可选）\"\n                }\n              },\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"确认提交\"\n                },\n                \"type\": \"primary\",\n                \"form_action_type\": \"submit\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.167,
+    "total": 0.725,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/elements/2/elements/0/options/0/text: Invalid input: expected object, received undefined",
+        "/body/elements/2/elements/2/elements/0/options/1/text: Invalid input: expected object, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "button",
+        "interactive_container",
+        "div",
+        "hr",
+        "form",
+        "select_static",
+        "input",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

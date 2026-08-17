@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。理由是 form_action_type 字段在提交表单时必须设置为 submit 枚举值。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

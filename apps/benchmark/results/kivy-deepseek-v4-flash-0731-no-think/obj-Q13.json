@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。  \n理由：飞书卡片表单的 form_action_type 枚举中，「提交表单」对应的取值字符串为 submit。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 fold_action_group。该组件用于将多个操作按钮折叠收纳为“更多操作”菜单，其 tag 为 fold_action_group。",
+  "extracted": "fold_action_group",
+  "correct": false,
+  "weight": 15
+}

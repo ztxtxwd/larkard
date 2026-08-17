@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。定义 table 的列时，必填字段 name 用于和 rows 行对象中的键名对应。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

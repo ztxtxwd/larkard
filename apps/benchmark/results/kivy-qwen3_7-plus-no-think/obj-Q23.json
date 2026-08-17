@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>飞书卡片 JSON 2.0 规范强制要求交互元素必须包裹在 `body` 字段中，根对象下不再支持直接放置 `elements` 数组。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

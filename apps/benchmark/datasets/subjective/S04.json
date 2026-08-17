@@ -1,6 +1,8 @@
 {
   "id": "S04",
   "difficulty": "easy",
-  "prompt": "生成一张不带标题区的欢迎卡片：正文用一级标题写「欢迎加入」，下面写「这里是团队空间，请先阅读群公告。」。",
-  "golden": "g-s04.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「勾选器（checker）」文档示例，生成一张完整卡片，复现文档 Demo 中的勾选器配置。",
+  "golden": "official-s04.json",
+  "source": "/feishu-cards/card-json-v2-components/interactive-components/checker",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

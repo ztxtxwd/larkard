@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 5。column.weight 的合法整数取值范围上限为 5。",
+  "extracted": "5",
+  "correct": true,
+  "weight": 15
+}

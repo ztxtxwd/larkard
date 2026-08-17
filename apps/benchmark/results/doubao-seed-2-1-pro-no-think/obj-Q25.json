@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片JSON 2.0的markdown组件不再支持旧版通过`[差异化跳转]($urlVal)`配合href属性做变量跳转的旧语法，需使用新版标准的链接/交互语法实现对应能力。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

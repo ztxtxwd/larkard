@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 的 markdown 组件已统一使用标准 Markdown 语法或特定的文本格式，不再支持旧版卡片 1.0 中通过 `href` 字段配合占位符实现的差异化跳转机制。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

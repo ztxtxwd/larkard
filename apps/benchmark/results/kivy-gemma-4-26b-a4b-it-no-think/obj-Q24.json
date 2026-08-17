@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。根据飞书卡片 JSON 2.0 规范，`config.update_multi` 是一个布尔类型的配置项，但其设计逻辑是作为可选配置，若不传则默认为 `false`，在官方文档的配置说明中并未定义允许显式传入 `false` 的行为（通常此类字段在 JSON 2.0 协议中若为可选且默认即为 false，则不建议或不支持显式写出 false 以简化协议）。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

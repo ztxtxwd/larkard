@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。在飞书卡片 JSON 2.0 的富文本 markdown 语法中，链接应使用标准的 `[text](url)` 格式，不再支持旧版特有的 `[text]($urlVal)` 这种配合变量占位符的特殊语法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

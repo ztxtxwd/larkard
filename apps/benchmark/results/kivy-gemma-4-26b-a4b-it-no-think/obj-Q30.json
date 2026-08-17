@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 auto。当 column 的 width 设置为 auto 时，系统会根据 weight 字段定义的权重比例来自动分配宽度。",
+  "extracted": "auto",
+  "correct": false,
+  "weight": 20
+}

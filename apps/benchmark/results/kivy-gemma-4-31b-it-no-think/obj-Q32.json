@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 equally。理由是 `flex_mode` 设置为 `equally` 时，无论在宽屏还是窄屏下，各列均会等分宽度。",
+  "extracted": "equally",
+  "correct": false,
+  "weight": 15
+}

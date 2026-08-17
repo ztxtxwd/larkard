@@ -1,0 +1,25 @@
+{
+  "schema": "2.0",
+  "body": {
+    "elements": [
+      {
+        "tag": "div",
+        "element_id": "div01",
+        "text": {
+          "tag": "plain_text",
+          "element_id": "plaintext01",
+          "content": "这是示例文本。",
+          "text_size": "normal",
+          "text_align": "center",
+          "text_color": "default"
+        },
+        "icon": {
+          "tag": "standard_icon",
+          "token": "reply-cn_filled",
+          "color": "blue"
+        },
+        "margin": "0px 0px 0px 0px"
+      }
+    ]
+  }
+}

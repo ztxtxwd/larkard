@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B. 在飞书卡片交互行为的 callback 类型中，value 字段用于承载传递给回调接口的数据，其规范要求必须为对象类型。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

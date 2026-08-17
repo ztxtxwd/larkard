@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。<理由>飞书卡片 JSON 2.0 中，交互数据回传必须通过 `actions` 配置（如 `submit` 或自定义 action），不再支持 1.0 版本中组件顶层 `value` 字段直接作为隐式回传数据的写法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

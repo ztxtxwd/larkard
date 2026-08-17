@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form_submit。form_action_type 取值为 form_submit 时表示提交表单。",
+  "extracted": "form_submit",
+  "correct": false,
+  "weight": 20
+}

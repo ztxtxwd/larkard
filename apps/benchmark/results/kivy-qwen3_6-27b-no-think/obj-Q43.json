@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q43",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 3。\n理由：根据飞书卡片消息模板文档，普通文本组件（plain_text）中的 text_tag_list 字段最多支持配置 3 个标签，超出部分将被忽略。",
+  "extracted": "3",
+  "correct": true,
+  "weight": 10
+}

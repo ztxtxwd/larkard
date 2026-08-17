@@ -1,0 +1,34 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"img_combination\",\n        \"img_arr\": [\n          {\n            \"img_key\": \"img_v2_demo-key-1\",\n            \"alt\": \"图片1\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-2\",\n            \"alt\": \"图片2\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-3\",\n            \"alt\": \"图片3\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-4\",\n            \"alt\": \"图片4\"\n          }\n        ],\n        \"layout\": \"grid\",\n        \"gap\": 8,\n        \"corner_radius\": 8\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**说明：** 上方为多图混排组件，支持网格布局、间距与圆角设置。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.5,
+    "total": 0.425,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/0/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/0/corner_radius: Invalid input: expected string, received number",
+        "/body/elements/2/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "img_combination",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

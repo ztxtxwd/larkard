@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 是。table 组件可以作为子组件嵌套在 column、container 等其他布局组件内部。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 12
+}

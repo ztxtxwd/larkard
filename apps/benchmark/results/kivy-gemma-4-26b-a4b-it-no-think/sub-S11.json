@@ -1,0 +1,44 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"columns\": [\n          {\n            \"column_id\": \"col_name\",\n            \"width\": 120,\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"客户名称\"\n            }\n          },\n          {\n            \"column_id\": \"col_size\",\n            \"width\": 80,\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"规模\"\n            }\n          },\n          {\n            \"column_id\": \"col_arr\",\n            \"width\": 80,\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"ARR\"\n            }\n          },\n          {\n            \"column_id\": \"col_owner\",\n            \"width\": 80,\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"跟进人\"\n            }\n          },\n          {\n            \"column_id\": \"col_date\",\n            \"width\": 90,\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"签约日期\"\n            }\n          },\n          {\n            \"column_id\": \"col_img\",\n            \"width\": 60,\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"Logo\"\n            }\n          },\n          {\n            \"column_id\": \"col_link\",\n            \"width\": 60,\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"详情\"\n            }\n          }\n        ],\n        \"rows\": [\n          {\n            \"cells\": [\n              {\n                \"column_id\": \"col_name\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"飞书科技\"\n                }\n              },\n              {\n                \"column_id\": \"col_size\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"大型\"\n                }\n              },\n              {\n                \"column_id\": \"col_arr\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"$1.2M\"\n                }\n              },\n              {\n                \"column_id\": \"col_owner\",\n                \"content\": {\n                  \"tag\": \"text\",\n                  \"text\": \"张三\",\n                  \"text_size\": \"normal\"\n                }\n              },\n              {\n                \"column_id\": \"col_date\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"2023-10-12\"\n                }\n              },\n              {\n                \"column_id\": \"col_img\",\n                \"content\": {\n                  \"tag\": \"img\",\n                  \"img_key\": \"img_v2_demo-key\"\n                }\n              },\n              {\n                \"column_id\": \"col_link\",\n                \"content\": {\n                  \"tag\": \"button\",\n                  \"text\": {\n                    \"tag\": \"plain_text\",\n                    \"content\": \"查看\"\n                  },\n                  \"type\": \"primary\",\n                  \"behaviors\": [\n                    {\n                      \"type\": \"open_url\",\n                      \"url\": \"https://www.feishu.cn\"\n                    }\n                  ]\n                }\n              }\n            ]\n          },\n          {\n            \"cells\": [\n              {\n                \"column_id\": \"col_name\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"字节跳动\"\n                }\n              },\n              {\n                \"column_id\": \"col_size\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"超大型\"\n                }\n              },\n              {\n                \"column_id\": \"col_arr\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"$5.5M\"\n                }\n              },\n              {\n                \"column_id\": \"col_owner\",\n                \"content\": {\n                  \"tag\": \"text\",\n                  \"text\": \"李四\",\n                  \"text_size\": \"normal\"\n                }\n              },\n              {\n                \"column_id\": \"col_date\",\n                \"content\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"2023-11-05\"\n                }\n              },\n              {\n                \"column_id\": \"col_img\",\n                \"content\": {\n                  \"tag\": \"img\",\n                  \"img_key\": \"img_v2_demo-key\"\n                }\n              },\n              {\n                \"column_id\": \"col_link\",\n                \"content\": {\n                  \"tag\": \"button\",\n                  \"text\": {\n                    \"tag\": \"plain_text\",\n                    \"content\": \"查看\"\n                  },\n                  \"type\": \"primary\",\n                  \"behaviors\": [\n                    {\n                      \"type\": \"open_url\",\n                      \"url\": \"https://www.bytedance.com\"\n                    }\n                  ]\n                }\n              }\n            ]\n          }\n        ],\n        \"page_size\": 10\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"💡 提示：点击“查看”按钮可跳转至客户详情页。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.5,
+    "total": 0.425,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/0/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/columns/0/width: Invalid input: expected string, received number",
+        "/body/elements/0/columns/1/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/columns/1/width: Invalid input: expected string, received number",
+        "/body/elements/0/columns/2/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/columns/2/width: Invalid input: expected string, received number",
+        "/body/elements/0/columns/3/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/columns/3/width: Invalid input: expected string, received number",
+        "/body/elements/0/columns/4/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/columns/4/width: Invalid input: expected string, received number",
+        "/body/elements/0/columns/5/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/columns/5/width: Invalid input: expected string, received number",
+        "/body/elements/0/columns/6/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/columns/6/width: Invalid input: expected string, received number"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

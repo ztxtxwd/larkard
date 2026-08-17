@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 action。在飞书卡片消息模板中，`action` 组件用于承载按钮等可点击的交互元素，支持配置点击后的跳转或回调动作。",
+  "extracted": "action",
+  "correct": false,
+  "weight": 15
+}

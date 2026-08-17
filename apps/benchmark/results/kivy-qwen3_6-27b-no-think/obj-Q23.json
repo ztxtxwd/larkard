@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 规范强制要求卡片内容必须包裹在 body 对象中，根对象不再直接支持 elements 字段。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

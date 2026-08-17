@@ -1,0 +1,30 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"auto\",\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"persons\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"link\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"company_image\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"image\",\n            \"width\": \"auto\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"飞书科技有限公司\",\n            \"scale\": \"1000-5000人\",\n            \"arr\": \"¥1,200,000\",\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\"\n              }\n            ],\n            \"sign_date\": 1704038400000,\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"示例智能制造集团\",\n            \"scale\": \"5000人以上\",\n            \"arr\": \"¥3,500,000\",\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\"\n              }\n            ],\n            \"sign_date\": 1706716800000,\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"示例零售有限公司\",\n            \"scale\": \"500-1000人\",\n            \"arr\": \"¥680,000\",\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\"\n              }\n            ],\n            \"sign_date\": 1709222400000,\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"示例互联网服务公司\",\n            \"scale\": \"1000-5000人\",\n            \"arr\": \"¥980,000\",\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\"\n              }\n            ],\n            \"sign_date\": 1711900800000,\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"示例金融科技公司\",\n            \"scale\": \"500-1000人\",\n            \"arr\": \"¥1,560,000\",\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\"\n              }\n            ],\n            \"sign_date\": 1714492800000,\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": \"示例教育科技公司\",\n            \"scale\": \"100-500人\",\n            \"arr\": \"¥320,000\",\n            \"owner\": [\n              {\n                \"id\": \"ou_demo123\"\n              }\n            ],\n            \"sign_date\": 1717171200000,\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"company_image\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

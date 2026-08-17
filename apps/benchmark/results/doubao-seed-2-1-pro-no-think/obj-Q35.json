@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。\n理由：飞书卡片 table 组件的 columns 配置中，人员类型列对应的 data_type 枚举值为 person，用于渲染人员相关展示内容。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

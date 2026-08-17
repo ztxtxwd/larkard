@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 column_id。<理由>在飞书卡片 JSON 2.0 的 table 组件中，columns 数组里的每个列对象必须包含 column_id 字段，该字段的值将作为 rows 数组中每个行对象（row）里的键名，用于映射该列的具体数据。",
+  "extracted": "column_id",
+  "correct": false,
+  "weight": 16
+}

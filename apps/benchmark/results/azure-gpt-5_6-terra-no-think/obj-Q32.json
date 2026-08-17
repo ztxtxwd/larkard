@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 stretch。该枚举值表示在窄屏下三列等分拉伸布局。",
+  "extracted": "stretch",
+  "correct": false,
+  "weight": 15
+}

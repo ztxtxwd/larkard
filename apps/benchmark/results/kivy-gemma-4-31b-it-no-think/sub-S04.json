@@ -1,0 +1,37 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"header\",\n        \"title\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"勾选器示例\"\n        },\n        \"template\": \"blue\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"请选择您感兴趣的领域：\"\n      },\n      {\n        \"tag\": \"form\",\n        \"elements\": [\n          {\n            \"tag\": \"checker\",\n            \"name\": \"interest_fields\",\n            \"options\": [\n              {\n                \"value\": \"tech\",\n                \"label\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"技术研发\"\n                }\n              },\n              {\n                \"value\": \"product\",\n                \"label\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"产品设计\"\n                }\n              },\n              {\n                \"value\": \"marketing\",\n                \"label\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"市场营销\"\n                }\n              },\n              {\n                \"value\": \"ops\",\n                \"label\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"运营管理\"\n                }\n              }\n            ],\n            \"default_value\": [\n              \"tech\",\n              \"product\"\n            ]\n          },\n          {\n            \"tag\": \"submit\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交选择\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.25,
+    "total": 0.663,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/2/name: Invalid input: expected string, received undefined",
+        "/body/elements/2/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "header",
+        "markdown",
+        "form",
+        "checker",
+        "submit"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 24。飞书卡片规范中 extra_large 间距 token 对应的像素值为 24px。",
+  "extracted": "24",
+  "correct": false,
+  "weight": 10
+}

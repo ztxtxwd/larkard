@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。在 JSON 2.0 中已废弃 `action` 交互模块容器，交互组件可直接平铺在卡片主体或嵌套在 `column_set`、`form` 等容器组件中。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片JSON 2.0已将原1.0的tag=action交互模块废弃，交互按钮等交互元素需通过交互容器等新结构承载，不再支持tag=action的模块定义。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

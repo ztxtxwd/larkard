@@ -1,0 +1,60 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器 (Interactive Container) 示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"交互容器支持将整块区域包裹并绑定点击行为（支持 URL 跳转或业务回调）：\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"background_style\": \"c2c_grey\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px 16px 12px 16px\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn/document\"\n          }\n        ],\n        \"hover_tips\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"点击查看飞书开放平台文档\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"background_style\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"img\",\n                    \"img_key\": \"img_v2_demo-key\",\n                    \"alt\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"文档图标\"\n                    },\n                    \"mode\": \"fit_horizontal\",\n                    \"preview\": false\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"vertical_align\": \"center\",\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**飞书开放平台开发者文档**\\n<font color='grey'>点击整块卡片直接跳转文档中心了解更多</font>\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"background_style\": \"grey\",\n        \"corner_radius\": \"6px\",\n        \"padding\": \"10px 12px 10px 12px\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"item_selected\",\n              \"target_id\": \"container_card_001\"\n            }\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"🎯 **点击触发服务端 Callback**\\n<font color='grey'>此容器配置了回传交互，点击整行可向服务端上报数据</font>\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.91,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown",
+        "hr",
+        "interactive_container",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

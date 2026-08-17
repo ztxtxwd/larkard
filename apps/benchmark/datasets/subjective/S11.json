@@ -1,6 +1,8 @@
 {
   "id": "S11",
-  "difficulty": "medium",
-  "prompt": "生成一张团队数据周报卡片：标题带主题色，正文包含本周概览（Markdown 要点列表）、核心指标（用多列布局展示 3 个 KPI）、以及底部备注说明统计口径。内容可自行合理虚构。",
-  "golden": null
+  "difficulty": "hard",
+  "prompt": "按飞书卡片 JSON 2.0 官方「表格」组件 Demo，生成蓝色标题「表格组件示例」的完整卡片：列含客户名称、规模、ARR、跟进人、签约日期、链接、企业图片等，行数据与 page_size 等配置对齐文档。",
+  "golden": "official-s11.json",
+  "source": "/feishu-cards/card-json-v2-components/content-components/table",
+  "sourceNote": "官方文档示例抽取自 Demo_示例.md；仅做 schema 兼容最小修补"
 }

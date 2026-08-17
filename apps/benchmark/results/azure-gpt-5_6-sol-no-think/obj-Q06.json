@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 interactive_container。该 tag 用于定义可点击的交互容器组件。",
+  "extracted": "interactive_container",
+  "correct": true,
+  "weight": 15
+}

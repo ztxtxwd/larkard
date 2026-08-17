@@ -34,3 +34,103 @@ test('deprecated props produce warnings', () => {
   }`);
   assert.ok(ds.some((d) => d.code === 'deprecated-prop'));
 });
+
+test('表单外 button 缺 behaviors 报错', () => {
+  const ds = validate(`{
+    "schema": "2.0",
+    "body": {
+      "elements": [
+        {
+          "tag": "button",
+          "text": { "tag": "plain_text", "content": "去看看" },
+          "type": "primary"
+        }
+      ]
+    }
+  }`);
+  assert.ok(
+    ds.some(
+      (d) =>
+        d.severity === 'error' &&
+        d.path.includes('behaviors') &&
+        d.message.includes('表单外'),
+    ),
+    JSON.stringify(ds),
+  );
+});
+
+test('form 内 button/select 可不写 behaviors', () => {
+  const ds = validate(`{
+    "schema": "2.0",
+    "body": {
+      "elements": [
+        {
+          "tag": "form",
+          "name": "f1",
+          "elements": [
+            {
+              "tag": "select_static",
+              "name": "t",
+              "options": [
+                { "text": { "tag": "plain_text", "content": "A" }, "value": "a" }
+              ]
+            },
+            {
+              "tag": "button",
+              "text": { "tag": "plain_text", "content": "提交" },
+              "type": "primary",
+              "name": "submit",
+              "form_action_type": "submit"
+            }
+          ]
+        }
+      ]
+    }
+  }`);
+  assert.equal(
+    ds.filter((d) => d.severity === 'error').length,
+    0,
+    JSON.stringify(ds),
+  );
+});
+
+test('form 内 column_set 嵌套的 button 也可省略 behaviors', () => {
+  const ds = validate(`{
+    "schema": "2.0",
+    "body": {
+      "elements": [
+        {
+          "tag": "form",
+          "name": "f1",
+          "elements": [
+            {
+              "tag": "column_set",
+              "columns": [
+                {
+                  "tag": "column",
+                  "width": "weighted",
+                  "weight": 1,
+                  "elements": [
+                    {
+                      "tag": "button",
+                      "width": "fill",
+                      "text": { "tag": "plain_text", "content": "同意" },
+                      "type": "primary",
+                      "name": "ok",
+                      "form_action_type": "submit"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }`);
+  assert.equal(
+    ds.filter((d) => d.severity === 'error').length,
+    0,
+    JSON.stringify(ds),
+  );
+});

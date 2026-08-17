@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 2.0。<理由>飞书卡片 JSON 2.0 规范规定，根对象中 `schema` 字段的值必须为字符串 \"2.0\" 以标识版本。",
+  "extracted": "2.0",
+  "correct": true,
+  "weight": 10
+}

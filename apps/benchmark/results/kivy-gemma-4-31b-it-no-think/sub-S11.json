@@ -1,0 +1,29 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"客户名称\"\n            },\n            \"width\": \"fixed\",\n            \"width_value\": 120\n          },\n          {\n            \"name\": \"scale\",\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"规模\"\n            },\n            \"width\": \"fixed\",\n            \"width_value\": 80\n          },\n          {\n            \"name\": \"arr\",\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"ARR\"\n            },\n            \"width\": \"fixed\",\n            \"width_value\": 80\n          },\n          {\n            \"name\": \"owner\",\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"跟进人\"\n            },\n            \"width\": \"fixed\",\n            \"width_value\": 100\n          },\n          {\n            \"name\": \"sign_date\",\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"签约日期\"\n            },\n            \"width\": \"fixed\",\n            \"width_value\": 100\n          },\n          {\n            \"name\": \"link\",\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"链接\"\n            },\n            \"width\": \"fixed\",\n            \"width_value\": 80\n          },\n          {\n            \"name\": \"logo\",\n            \"title\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"企业图片\"\n            },\n            \"width\": \"fixed\",\n            \"width_value\": 60\n          }\n        ],\n        \"data\": [\n          {\n            \"customer_name\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"飞书科技\"\n            },\n            \"scale\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"1000+\"\n            },\n            \"arr\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"￥50W\"\n            },\n            \"owner\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"张三\"\n            },\n            \"sign_date\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"2023-10-01\"\n            },\n            \"link\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"查看\",\n              \"behaviors\": [\n                {\n                  \"type\": \"open_url\",\n                  \"url\": \"https://www.feishu.cn\"\n                }\n              ]\n            },\n            \"logo\": {\n              \"tag\": \"img\",\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"customer_name\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"字节跳动\"\n            },\n            \"scale\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"5000+\"\n            },\n            \"arr\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"￥200W\"\n            },\n            \"owner\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"李四\"\n            },\n            \"sign_date\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"2023-11-15\"\n            },\n            \"link\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"查看\",\n              \"behaviors\": [\n                {\n                  \"type\": \"open_url\",\n                  \"url\": \"https://www.bytedance.com\"\n                }\n              ]\n            },\n            \"logo\": {\n              \"tag\": \"img\",\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          }\n        ],\n        \"page_size\": 10\n      }\n    ]\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.925,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/rows: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weight。width 支持取值 `weight`，表示按 weight 权重分配列宽。",
+  "extracted": "weight",
+  "correct": false,
+  "weight": 20
+}

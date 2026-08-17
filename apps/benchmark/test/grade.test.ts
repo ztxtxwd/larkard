@@ -7,38 +7,73 @@ import { bagF1, gradeSubjective, tagSequence } from '../src/grade-subjective.js'
 import { loadObjectiveTasks, loadSubjectiveTasks, loadGolden } from '../src/tasks.js';
 import type { ObjectiveTask, SubjectiveTask } from '../src/types.js';
 
-test('客观题判分：提取字母并比对', () => {
+test('客观题判分：单选提取字母并比对', () => {
   const task: ObjectiveTask = {
     id: 'T1',
     category: '测试',
+    format: 'mcq',
     question: 'q',
     options: ['a', 'b', 'c', 'd'],
     answer: 'B',
     explanation: '',
+    specificity: 3,
+    frequency: 3,
   };
   assert.equal(gradeObjective(task, '答案是 B').correct, true);
   assert.equal(gradeObjective(task, '答案是 C').correct, false);
   assert.equal(gradeObjective(task, '不知道').extracted, null);
+  assert.equal(gradeObjective(task, '答案是 B').weight, 9);
+});
+
+test('客观题判分：填空与是否', () => {
+  const fill: ObjectiveTask = {
+    id: 'T2',
+    category: '测试',
+    format: 'fill',
+    question: '分隔线 tag？',
+    answer: 'hr',
+    accept: [],
+    explanation: '',
+    specificity: 5,
+    frequency: 5,
+  };
+  assert.equal(gradeObjective(fill, '答案是 hr。').correct, true);
+  assert.equal(gradeObjective(fill, '答案是 divider').correct, false);
+  assert.equal(gradeObjective(fill, '答案是 hr。').weight, 25);
+
+  const boolTask: ObjectiveTask = {
+    id: 'T3',
+    category: '测试',
+    format: 'bool',
+    question: '是否支持 note？',
+    answer: '否',
+    explanation: '',
+  };
+  assert.equal(gradeObjective(boolTask, '答案是 否。').correct, true);
+  assert.equal(gradeObjective(boolTask, '答案是 是').correct, false);
 });
 
 test('题库加载：客观题字段合法', () => {
   const tasks = loadObjectiveTasks();
   assert.ok(tasks.length >= 30, `客观题数量不足: ${tasks.length}`);
+  const formats = new Set(tasks.map((t) => t.format ?? 'mcq'));
+  assert.ok(formats.has('fill'), '应包含填空题');
+  assert.ok(formats.has('bool'), '应包含是否题');
 });
 
 test('题库加载：主观题字段合法且 golden 可读', () => {
   const tasks = loadSubjectiveTasks();
   assert.ok(tasks.length >= 10);
   for (const t of tasks) {
-    if (t.golden) {
-      const golden = loadGolden(t);
-      assert.equal(typeof golden, 'object');
-    }
+    assert.ok(t.golden, `${t.id} 应有官方 golden`);
+    assert.ok(t.source, `${t.id} 应标注官方文档 source`);
+    const golden = loadGolden(t);
+    assert.equal(typeof golden, 'object');
   }
 });
 
 test('bagF1 多重集合相似度', () => {
-  assert.equal(bagF1(['markdown', 'hr', 'note'], ['markdown', 'hr', 'note']), 1);
+  assert.equal(bagF1(['markdown', 'hr', 'div'], ['markdown', 'hr', 'div']), 1);
   assert.equal(bagF1([], []), 1);
   assert.equal(bagF1(['markdown'], []), 0);
   const f1 = bagF1(['markdown', 'button', 'button'], ['button', 'button', 'img']);

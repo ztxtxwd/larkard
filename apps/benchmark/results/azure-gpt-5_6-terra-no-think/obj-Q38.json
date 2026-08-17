@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。table 组件不支持嵌套在其它组件内部，只能作为卡片主体的顶层组件使用。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

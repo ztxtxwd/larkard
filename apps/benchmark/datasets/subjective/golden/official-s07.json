@@ -1,0 +1,116 @@
+{
+  "schema": "2.0",
+  "config": {
+    "wide_screen_mode": true,
+    "enable_forward": false,
+    "update_multi": true,
+    "enable_forward_interaction": true,
+    "style": {
+      "color": {
+        "color_0": {
+          "light_mode": "rgba(20,86,240,1.000000)",
+          "dark_mode": "rgba(20,86,240,1.000000)"
+        },
+        "color_1": {
+          "light_mode": "rgba(149,229,153,1.000000)",
+          "dark_mode": "rgba(149,229,153,1.000000)"
+        },
+        "color_2": {
+          "light_mode": "rgba(253,198,196,1.000000)",
+          "dark_mode": "rgba(253,198,196,1.000000)"
+        }
+      }
+    }
+  },
+  "body": {
+    "direction": "vertical",
+    "padding": "12px 12px 12px 12px",
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "参数全默认效果示例：\n<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='1' >",
+        "text_align": "left"
+      },
+      {
+        "tag": "markdown",
+        "content": "显示时间示例：\n<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='111' show_time=true >",
+        "text_align": "left"
+      },
+      {
+        "tag": "markdown",
+        "content": "自定义颜色 background_color='rgba(20,86,240,1.000000)' fill_color='rgba(253,198,196,1.000000)' 示例：\n<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='2' show_time=true background_color='color_0' fill_color='color_2'>",
+        "text_align": "left"
+      },
+      {
+        "tag": "markdown",
+        "content": "使用颜色枚举值 background_color='grey-200' fill_color='blue-800' 示例：\n<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='3' show_time=true background_color='grey-200' fill_color='blue-800'>",
+        "text_align": "left"
+      },
+      {
+        "tag": "markdown",
+        "content": "播放器按钮语音样式（style=speak）示例：\n<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='5' show_time=true style='speak' >",
+        "text_align": "left"
+      },
+      {
+        "tag": "markdown",
+        "content": "低于飞书 V7.49 版本，设置兜底文本与链接示例：\n<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='6' show_time=true fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left"
+      },
+      {
+        "tag": "markdown",
+        "content": "#### 不同字体下，音频播放器大小示例：",
+        "text_align": "left"
+      },
+      {
+        "tag": "markdown",
+        "content": "heading-0<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='7' show_time=true background_color='grey-200' fill_color='blue-800' fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left",
+        "text_size": "heading-0"
+      },
+      {
+        "tag": "markdown",
+        "content": "heading-1<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='8' show_time=true background_color='grey-200' fill_color='blue-800' fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left",
+        "text_size": "heading-1"
+      },
+      {
+        "tag": "markdown",
+        "content": "heading-2<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='9' show_time=true background_color='grey-200' fill_color='blue-800' fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left",
+        "text_size": "heading-2"
+      },
+      {
+        "tag": "markdown",
+        "content": "heading-3<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='10' show_time=true background_color='grey-200' fill_color='blue-800' fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left",
+        "text_size": "heading-3"
+      },
+      {
+        "tag": "markdown",
+        "content": "heading<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='11' show_time=true background_color='grey-200' fill_color='blue-800' fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left",
+        "text_size": "heading"
+      },
+      {
+        "tag": "markdown",
+        "content": "normal<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='12' show_time=true background_color='grey-200' fill_color='blue-800' fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left",
+        "text_size": "normal"
+      },
+      {
+        "tag": "markdown",
+        "content": "notation<audio file_key='file_v3_00or_f2c1276b-9f24-463d-8911-xxxxxxxx' audio_id='13' show_time=true background_color='grey-200' fill_color='blue-800' fallback_url='https://open.feishu.cn/'> fallback_text='[音频链接]'",
+        "text_align": "left",
+        "text_size": "notation"
+      }
+    ]
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "Markdown 音频播放器示例"
+    },
+    "template": "blue",
+    "padding": "12px 12px 12px 12px"
+  }
+}

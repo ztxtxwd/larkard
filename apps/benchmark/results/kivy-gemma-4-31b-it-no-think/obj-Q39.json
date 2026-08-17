@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 180。在飞书卡片折叠面板组件中，展开状态下的图标旋转角度默认值为 180 度。",
+  "extracted": "180",
+  "correct": true,
+  "weight": 10
+}

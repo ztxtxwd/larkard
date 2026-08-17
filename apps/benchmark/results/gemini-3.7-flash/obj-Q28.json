@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary。在飞书卡片规范中，button 组件的 `type` 为 `primary` 时渲染为蓝底白字的主按钮样式。",
+  "extracted": "primary",
+  "correct": false,
+  "weight": 15
+}

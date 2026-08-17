@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片表单容器（form）内的输入组件在填写过程中默认不会触发服务端回调，仅在用户点击提交按钮或通过 behaviors 显式配置了 callback 的交互事件时才会发送请求。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

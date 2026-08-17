@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 form_id。  \n理由：飞书卡片表单容器通过 form_id 字段唯一标识提交的表单。",
+  "extracted": "form_id",
+  "correct": false,
+  "weight": 12
+}

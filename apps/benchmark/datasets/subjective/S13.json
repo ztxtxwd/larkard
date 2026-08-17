@@ -1,6 +1,8 @@
 {
   "id": "S13",
   "difficulty": "hard",
-  "prompt": "生成一张报销审批卡片：蓝色标题「报销审批」；正文上半部分两列布局——左列加粗展示申请人（张三）、金额（¥1,280.00）、事由（客户拜访差旅），右列放一张报销凭证图片（示例 img_key：img_v2_demo-key）；加分隔线后是一个审批表单：审批意见输入框 + 「同意」「驳回」两个并排等宽的提交按钮（分别回传 approve / reject）。",
-  "golden": "g-s13.json"
+  "prompt": "按飞书卡片 JSON 2.0 官方「表单容器」示例，生成一张完整卡片：顶部 Markdown 显示项目名称「业务做大做强」，表单内用分栏布置经办人（人员选择）、优先级（下拉）、描述（输入框）等，以及提交/重置按钮；字段 name 与布局对齐文档示例。",
+  "golden": "official-s13.json",
+  "source": "/feishu-cards/card-json-v2-components/containers/form-container",
+  "sourceNote": "官方文档示例抽取自 示例代码.md；仅做 schema 兼容最小修补"
 }

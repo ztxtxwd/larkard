@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。<理由>飞书卡片 JSON 2.0 规范中已移除 `note` 组件，相关展示需求通常通过 `text` 组件配合样式或 `markdown` 实现。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

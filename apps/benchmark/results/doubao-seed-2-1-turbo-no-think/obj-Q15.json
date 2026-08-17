@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。\n理由：飞书卡片 JSON 2.0 中，表单容器外的独立 button 已不支持使用组件顶层的 value 字段做回传交互，需通过配置 `behavior` 为 `form_submit` 并结合表单容器的 `name` 等字段实现回传，或使用 `callback` 行为的 `value` 需在对应行为配置中定义而非组件顶层。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

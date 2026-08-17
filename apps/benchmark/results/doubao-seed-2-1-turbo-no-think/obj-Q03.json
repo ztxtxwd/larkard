@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 SelectMulti。\n理由：根据飞书卡片官方组件约定，下拉选择-多选（静态选项）组件的 tag 为 SelectMulti。",
+  "extracted": "SelectMulti",
+  "correct": false,
+  "weight": 20
+}

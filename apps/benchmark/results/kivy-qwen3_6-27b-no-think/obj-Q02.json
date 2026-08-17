@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 input。理由：在飞书卡片消息模板中，人员选择器（包括单选和多选）均通过 `input` 组件实现，并通过其内部的 `value` 对象中的 `type` 字段指定为 `person_select` 来区分具体类型。",
+  "extracted": "input",
+  "correct": false,
+  "weight": 20
+}

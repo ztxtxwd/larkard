@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中回传交互统一通过 behaviors 数组中的 callback 行为配置，顶层的 value 字段仅作为表单组件的表单值，不再直接承载独立的回传交互。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

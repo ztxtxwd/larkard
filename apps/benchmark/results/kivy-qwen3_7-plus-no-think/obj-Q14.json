@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 action。在飞书卡片 JSON 2.0 中，当用户触发绑定了 behaviors 的组件交互时，回传 payload 中的 type 字段固定为 action。",
+  "extracted": "action",
+  "correct": false,
+  "weight": 20
+}

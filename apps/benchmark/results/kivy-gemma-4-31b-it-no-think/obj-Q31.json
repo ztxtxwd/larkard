@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 10000。根据飞书卡片 JSON 2.0 规范，column 组件的 weight 字段合法取值范围为 1 到 10000。",
+  "extracted": "10000",
+  "correct": false,
+  "weight": 15
+}

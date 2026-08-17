@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片中的表单组件（如输入框、下拉菜单）在用户填写过程中仅在前端进行状态更新，不会实时触发服务端回调，只有当用户点击提交按钮时才会通过 `submit` 交互事件将数据发送给服务端。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

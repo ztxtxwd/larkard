@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 10。根据飞书卡片 table 组件文档，page_size 的默认值为 10。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

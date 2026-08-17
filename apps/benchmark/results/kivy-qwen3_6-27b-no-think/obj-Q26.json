@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 small。在飞书卡片 JSON 2.0 中，`div` 组件的 `text` 字段若为 `plain_text` 类型，其 `size` 属性支持枚举值 `small`，用于渲染比默认正文更小的辅助说明文字。",
+  "extracted": "small",
+  "correct": false,
+  "weight": 20
+}

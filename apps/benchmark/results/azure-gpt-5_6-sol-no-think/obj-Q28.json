@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary_filled。button 的 `type` 设为 `primary_filled` 时显示为蓝底白字填充按钮。",
+  "extracted": "primary_filled",
+  "correct": true,
+  "weight": 15
+}

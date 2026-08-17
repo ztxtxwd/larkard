@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 JSON 2.0 规范要求卡片正文组件必须包含在 `body` 对象的 `elements` 数组中，根对象上的 `elements` 仅用于旧版 1.0 结构。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

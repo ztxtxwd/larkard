@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。<理由>飞书卡片表单组件（如 input、select）仅在用户点击提交按钮触发 `form_submit` 事件时才会向服务端发送数据，填写过程中的变更不会单独触发回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

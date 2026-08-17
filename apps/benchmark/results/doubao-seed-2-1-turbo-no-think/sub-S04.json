@@ -1,0 +1,43 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器（checker）配置示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**基础用法**：勾选器支持单选、多选两种模式，可用于表单内的选项选择场景。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"checker_demo_form\",\n        \"elements\": [\n          {\n            \"tag\": \"input\",\n            \"name\": \"username\",\n            \"label\": \"姓名\",\n            \"placeholder\": \"请输入您的姓名\",\n            \"required\": true\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"gender\",\n            \"label\": \"性别\",\n            \"required\": true,\n            \"mode\": \"single\",\n            \"options\": [\n              {\n                \"text\": \"男\",\n                \"value\": \"male\"\n              },\n              {\n                \"text\": \"女\",\n                \"value\": \"female\"\n              },\n              {\n                \"text\": \"保密\",\n                \"value\": \"secret\"\n              }\n            ],\n            \"initial_value\": \"secret\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"hobbies\",\n            \"label\": \"兴趣爱好（多选）\",\n            \"required\": false,\n            \"mode\": \"multi\",\n            \"options\": [\n              {\n                \"text\": \"阅读\",\n                \"value\": \"reading\"\n              },\n              {\n                \"text\": \"运动\",\n                \"value\": \"sports\"\n              },\n              {\n                \"text\": \"音乐\",\n                \"value\": \"music\"\n              },\n              {\n                \"text\": \"旅行\",\n                \"value\": \"travel\"\n              },\n              {\n                \"text\": \"美食\",\n                \"value\": \"food\"\n              }\n            ],\n            \"initial_value\": [\"reading\", \"music\"]\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"agreement\",\n            \"label\": \"服务协议\",\n            \"required\": true,\n            \"mode\": \"single\",\n            \"options\": [\n              {\n                \"text\": \"我已阅读并同意《用户服务协议》和《隐私政策》\",\n                \"value\": \"agree\"\n              }\n            ],\n            \"initial_value\": \"\"\n          },\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\",\n                    \"action_type\": \"form_submit\",\n                    \"name\": \"submit_btn\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\",\n                    \"action_type\": \"form_reset\",\n                    \"name\": \"reset_btn\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"说明：勾选器（checker）需放在 form 组件内使用，提交时会将选中值随表单一起提交。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.76,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/elements/0/placeholder: Invalid input: expected object, received string",
+        "/body/elements/2/elements/0/label: Invalid input: expected object, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "form",
+        "input",
+        "checker",
+        "checker",
+        "checker",
+        "column_set",
+        "button",
+        "button",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

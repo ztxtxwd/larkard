@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary。理由是 button 组件的 type 属性中，primary 表示主按钮（蓝底白字），danger 表示危险按钮（红底白字），default 表示默认按钮（灰底黑字）。",
+  "extracted": "primary",
+  "correct": false,
+  "weight": 15
+}

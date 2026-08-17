@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 column_id。\n\n在 table 组件中，columns 数组里每个列对象通过 column_id 标识该列，而 rows 数组中每个行对象的字段名需与对应的 column_id 一致以映射单元格数据。",
+  "extracted": "column_id",
+  "correct": false,
+  "weight": 16
+}

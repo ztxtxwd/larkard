@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 是。根据飞书卡片官方组件约定，table 组件作为可嵌入的块级组件，支持嵌套在 column 等容器类组件内部使用。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 12
+}

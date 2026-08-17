@@ -1,0 +1,47 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**默认折叠**\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"点击展开查看详情\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**标题带背景色且默认展开**\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"此面板默认展开，标题带有背景色\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"**无边框**\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"markdown\",\n          \"content\": \"此面板无边框样式\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0.35,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/1/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/2/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/3/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/4/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\"",
+        "/body/elements/5/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "div",
+        "div",
+        "div",
+        "div",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

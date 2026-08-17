@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 stretch。\n理由：根据飞书卡片官方文档，column_set 的 flex_mode 枚举中，stretch 表示在窄屏下所有列等分宽度，对应题目中“三列等分”的效果。",
+  "extracted": "stretch",
+  "correct": false,
+  "weight": 15
+}

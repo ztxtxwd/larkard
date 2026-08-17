@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。<理由>在飞书卡片 JSON 2.0 规范中，图片组件不再提供专门的通栏开关属性，官方推荐通过设置负的 margin 值来抵消容器内边距，从而实现视觉上的通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 A. -180。<理由>在飞书卡片设计规范中，`icon_expanded_angle` 的取值范围通常为 -90、0、90、180 等特定角度，且 -180 不在标准定义的合法旋转角度枚举或有效范围内。",
+  "extracted": "A",
+  "correct": false,
+  "weight": 10
+}

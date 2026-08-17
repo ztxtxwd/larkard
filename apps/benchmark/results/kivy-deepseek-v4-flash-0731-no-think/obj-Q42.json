@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 32。element_id 在飞书卡片中限制为最多 32 个字符。",
+  "extracted": "32",
+  "correct": false,
+  "weight": 15
+}
