@@ -35,6 +35,13 @@ const KEY_RENAME: Record<string, string> = {
   tag_style: 'tagStyle',
   scale_type: 'scaleType',
   drop_invalid_user_id: 'dropInvalidUserID',
+  // video / audio
+  file_key: 'fileID',
+  audio_id: 'audioID',
+  show_progress_bar: 'showProgressBar',
+  show_time: 'showTime',
+  enable_download: 'enableDownload',
+  fill_color: 'fillColor',
 };
 
 /** 需要把「文本叶子」归一成 { tag:'plain_text', property:{content} } 的字段名 */
@@ -118,6 +125,27 @@ function convertEl(el: Record<string, unknown>): CardElement {
   // 否则渲染期只能当纯文本，"<font color='green'>**▲**</font>" 会原样漏到 HTML。
   if (tag === 'table') {
     return { tag, property: convertTableProperty(el) };
+  }
+
+  // audio / video：width 枚举 → widthValue；视频封面 image_key → coverImageID。
+  if (tag === 'audio' || tag === 'video') {
+    const property = buildProperty(el, tag);
+    if (tag === 'audio' && el.width != null) {
+      delete (property as Record<string, unknown>).width;
+      if (el.width === 'fill' || el.width === 'default') {
+        property.widthValue = { type: 'builtin_width', value: el.width };
+      } else if (typeof el.width === 'string') {
+        const px = pxValue(el.width);
+        if (px != null) property.widthValue = { type: 'pixels', value: px };
+      }
+    }
+    if (tag === 'video') {
+      const cover = el.image_key ?? el.cover_image_key ?? el.coverImageID;
+      if (typeof cover === 'string' && cover) property.coverImageID = cover;
+      delete (property as Record<string, unknown>).image_key;
+      delete (property as Record<string, unknown>).cover_image_key;
+    }
+    return { tag, property };
   }
 
   return { tag, property: buildProperty(el, tag) };

@@ -11,7 +11,8 @@
  * 保持零依赖。支持：
  *   行内：加粗 ** **、斜体 * */ /* _、删除线 ~~、行内代码 ` `、链接 [t](u)、
  *         <font color='x'>、<at id=x>、<at id=all>、<text_tag color='x'>、
- *         <person id='x' show_name=true show_avatar=true style='normal'>
+ *         <person id='x' show_name=true show_avatar=true style='normal'>、
+ *         <audio file_key='…' audio_id='1' show_time=true …>
  *   块级：# 标题、- / 1. 列表（含缩进层级）、> 引用、``` 代码块、--- 分割线、软换行
  * 未覆盖的构造（如表格）按纯文本降级——渲染器无对应组件，literal 输出即可。
  */
@@ -176,6 +177,18 @@ export function parseInline(text: string): CardElement[] {
       }
     }
 
+    // <audio file_key='…' audio_id='1' show_time=true …>
+    // 公开 DSL 富文本内嵌音频 → RAW markdown_audio（与真机一致）。
+    // 官方示例多为未闭合开标签 `<audio …>`；同时兼容 `/>` 与 `></audio>`。
+    if (startsWith('<audio')) {
+      const m = /^<audio\b([^>]*?)(?:\/>|>\s*<\/audio>|>)/.exec(text.slice(i));
+      if (m) {
+        flush();
+        out.push({ tag: 'markdown_audio', property: audioAttrsToProperty(parseHtmlAttrs(m[1])) });
+        i += m[0].length; continue;
+      }
+    }
+
     buf += c;
     i += 1;
   }
@@ -192,6 +205,43 @@ function parseHtmlAttrs(s: string): Record<string, string> {
     out[m[1]] = m[2] ?? m[3] ?? m[4] ?? '';
   }
   return out;
+}
+
+/** HTML 布尔属性：缺省/非 false → true；显式 false/0 → false */
+function attrBool(v: string | undefined): boolean | undefined {
+  if (v == null) return undefined;
+  return v !== 'false' && v !== '0';
+}
+
+/**
+ * DSL `<audio …>` 属性 → RAW markdown_audio.property。
+ * 对齐公开文档：file_key / audio_id / show_time / background_color / fill_color /
+ * fallback_url（→ url）等；渲染器读 camelCase。
+ */
+function audioAttrsToProperty(attrs: Record<string, string>): CardElement['property'] {
+  const property: CardElement['property'] = {};
+  const fileID = attrs.file_key || attrs.fileID || attrs.file_id;
+  if (fileID) property!.fileID = fileID;
+  const audioID = attrs.audio_id || attrs.audioID;
+  if (audioID) property!.audioID = audioID;
+  const showTime = attrBool(attrs.show_time ?? attrs.showTime);
+  if (showTime != null) property!.showTime = showTime;
+  const showProgress = attrBool(attrs.show_progress_bar ?? attrs.showProgressBar);
+  if (showProgress != null) property!.showProgressBar = showProgress;
+  const disabled = attrBool(attrs.disabled);
+  if (disabled != null) property!.disabled = disabled;
+  const bg = attrs.background_color || attrs.backgroundColor;
+  if (bg) property!.backgroundColor = bg;
+  const fill = attrs.fill_color || attrs.fillColor;
+  if (fill) property!.fillColor = fill;
+  // 旧客户端降级链：真机 RAW 常挂 { url }；无 fileID 时 resolveMediaSrc 才可能用到
+  const fallback = attrs.fallback_url || attrs.fallbackUrl;
+  if (fallback) property!.url = { url: fallback };
+  // style=speak|normal：预留给后续 speak 样式；不覆盖图标 style 对象字段名冲突时用 audioStyle
+  if (attrs.style === 'speak' || attrs.style === 'normal') {
+    property!.audioStyle = attrs.style;
+  }
+  return property;
 }
 
 function isWord(ch: string | undefined): boolean {

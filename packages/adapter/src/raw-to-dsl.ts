@@ -24,6 +24,14 @@ const CAMEL_RENAME: Record<string, string> = {
   scaleType: 'scale_type',
   dropInvalidUserID: 'drop_invalid_user_id',
   udIcon: 'ud_icon',
+  // video / audio
+  fileID: 'file_key',
+  coverImageID: 'image_key',
+  showTime: 'show_time',
+  enableDownload: 'enable_download',
+  audioID: 'audio_id',
+  showProgressBar: 'show_progress_bar',
+  fillColor: 'fill_color',
 };
 
 /** 已知公开 DSL 组件 tag 集合；不在此列的视为私有/未知 */
@@ -36,7 +44,7 @@ const KNOWN_TAGS = new Set([
   'vote', 'lottery', 'calender', 'schedule', 'share_chat', 'share_user', 'add_on',
   'whole_text', 'cropper_image', 'highlight', 'local_file', 'file_preview',
   'input_select', 'picker_datetime', 'picker_multi', 'rule', 'statistic', 'task',
-  'card_header', 'body', 'unknown',
+  'card_header', 'body', 'audio', 'video', 'markdown_audio', 'unknown',
 ]);
 
 function isRecord(v: unknown): v is Record<string, unknown> {

@@ -5,7 +5,7 @@ import type {
   CardElement, ComponentFn, ElementProperty, PersonInfo, RenderContext, TextStyle, VNode,
 } from './types';
 import {
-  BASE_FONT_SIZE, paletteColor,
+  BASE_FONT_SIZE, PALETTE, TEXT_FONT_COLOR_TOKEN, paletteColor,
   PERSON_AVATAR_BASE, PERSON_AVATAR_SUFFIX, TEXT_SIZE_MAP,
 } from './constants';
 
@@ -70,7 +70,37 @@ export function resolveColor(raw: unknown): string | undefined {
   return paletteColor(v);
 }
 
-/** textStyle -> CSS style 对象 */
+/**
+ * 正文色名 → 色阶 token（orange→O400 等，见 TEXT_FONT_COLOR_TOKEN）。
+ * 自定义 #hex/rgb 返回 undefined（调用方走直通）。
+ */
+export function resolveTextFontToken(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const v = raw.trim();
+  if (!v || v === 'default' || /^(#|rgb|hsl)/i.test(v)) return undefined;
+  if (TEXT_FONT_COLOR_TOKEN[v]) return TEXT_FONT_COLOR_TOKEN[v];
+  if (PALETTE[v]) return v; // 已是色阶 token（O400 / B600）
+  return undefined;
+}
+
+/**
+ * textStyle → BEM 修饰名（不含前缀）。对齐真机：
+ *   color:"orange" + bold → ["orange","bold"] → .universal-card-text--orange/--bold
+ * strikethrough 真机类名是 through。
+ */
+export function textStyleToModifiers(textStyle: TextStyle | undefined): string[] {
+  if (!textStyle) return [];
+  const out: string[] = [];
+  const color = textStyle.color?.trim();
+  if (color && color !== 'default' && !/^(#|rgb|hsl)/i.test(color)) out.push(color);
+  const attrs = textStyle.attributes || [];
+  if (attrs.includes('bold')) out.push('bold');
+  if (attrs.includes('italic')) out.push('italic');
+  if (attrs.includes('strikethrough')) out.push('through');
+  return out;
+}
+
+/** textStyle -> CSS style 对象（颜色走 var(--TOKEN)，对齐真机 he()） */
 export function textStyleToStyle(textStyle: TextStyle | undefined): Record<string, string> {
   const style: Record<string, string> = {};
   if (!textStyle) return style;
@@ -79,8 +109,12 @@ export function textStyleToStyle(textStyle: TextStyle | undefined): Record<strin
   if (attrs.includes('italic')) style.fontStyle = 'italic';
   if (attrs.includes('strikethrough')) style.textDecoration = 'line-through';
   if (textStyle.color) {
-    const c = resolveColor(textStyle.color);
-    if (c) style.color = c;
+    const token = resolveTextFontToken(textStyle.color);
+    if (token) style.color = `var(--${token})`;
+    else {
+      const c = resolveColor(textStyle.color);
+      if (c) style.color = c;
+    }
   }
   const sizeName = textStyle.size || (textStyle.platformSize && (textStyle.platformSize.pc || textStyle.platformSize.mobile));
   // TEXT_SIZE_MAP 覆盖 RAW textStyle.size 全量枚举（含 notation/heading），
@@ -162,6 +196,38 @@ export function resolveImageSrc(p: ElementProperty, ctx: RenderContext): string 
   if (p.img_url) return p.img_url;
   if (p.imageID && ctx.options.imageBaseURL) return ctx.options.imageBaseURL + p.imageID;
   return null;
+}
+
+/**
+ * 音视频地址解析：options.resolveMedia -> src -> mediaBaseURL+fileID -> url。
+ * RAW 用 fileID（file_v3_...）；DSL 用 file_key（dual-read）。
+ * 飞书真机 src 走带鉴权的 uni_api/download；离线渲染需 caller 注入 resolveMedia / mediaBaseURL。
+ *
+ * 注意：markdown_audio 的 property.url 是降级跳转链接（如 open.feishu.cn），不是可播地址；
+ * 有 fileID 时绝不能用它顶替媒体源。
+ */
+export function resolveMediaSrc(
+  p: ElementProperty,
+  kind: 'video' | 'audio',
+  ctx: RenderContext,
+): string | null {
+  if (ctx.options.resolveMedia) {
+    const r = ctx.options.resolveMedia(p, kind);
+    if (r) return r;
+  }
+  if (typeof p.src === 'string' && p.src) return p.src;
+  const fileID = (p.fileID ?? p.file_key) as string | undefined;
+  if (fileID && ctx.options.mediaBaseURL) return ctx.options.mediaBaseURL + fileID;
+  // 无 fileID 时才回退 url（少数直链场景）；有 fileID 则 url 多为 markdown_audio 降级链
+  if (!fileID && p.url) return resolveURL(p.url) || null;
+  return null;
+}
+
+/** 视频封面：coverImageID（RAW，常为 img_v3_...）/ image_key · cover_image_key（DSL）→ 走图片解析 */
+export function resolveVideoCoverSrc(p: ElementProperty, ctx: RenderContext): string | null {
+  const coverId = (p.coverImageID ?? p.image_key ?? p.cover_image_key) as string | undefined;
+  if (!coverId) return null;
+  return resolveImageSrc({ imageID: coverId }, ctx);
 }
 
 /** 按 open_id 从 ctx 的人员表反查 PersonInfo（姓名 + 头像 key） */

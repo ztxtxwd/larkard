@@ -27,8 +27,19 @@ import {
   alignToStyle, bgStyleToColor, boxToStyle, extractPlainText, extractText, getChildElements,
   lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
-  resolveColor, resolveImageSrc, resolveTextSizeKey, resolveURL, sizeToPx, spacingToPx, textStyleToStyle,
+  resolveColor, resolveImageSrc, resolveMediaSrc, resolveTextSizeKey, resolveURL,
+  resolveVideoCoverSrc, sizeToPx, spacingToPx, textStyleToModifiers, textStyleToStyle,
 } from './registry';
+import {
+  AUDIO_PAUSE_FLAT_ICON_SVG, AUDIO_PAUSE_ICON_SVG,
+  AUDIO_PLAY_FLAT_ICON_SVG, AUDIO_PLAY_ICON_SVG,
+  audioInlineMetrics,
+} from './audio-hydrate';
+
+/** 视频封面中央播放钮（简化圆底三角，对齐 .universal-card-video__play-btn） */
+const VIDEO_PLAY_ICON_SVG =
+  '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
+  + '<path d="M8 5.14v14l11-7-11-7z"/></svg>';
 
 let registered = false;
 
@@ -191,7 +202,8 @@ function renderPersonChip(
   if (showName) {
     const nameStyle: Record<string, string> = {
       fontSize: fontSize + 'px',
-      lineHeight: lineHeight + 'px',
+      // markdown 内联跟父级行高，避免 22px 盒子在 1.6 行里把整段顶矮/顶歪
+      lineHeight: follow ? 'inherit' : lineHeight + 'px',
     };
     if (capsule) {
       const pad = largeType ? 10 : 6;
@@ -483,10 +495,18 @@ registerComponent('markdown', (el, ctx) => {
 });
 
 // plain_text：纯文本。类名对齐真机 .universal-card-text（break-spaces 保留连续空格）。
+// 颜色/加粗走修饰类 + color:var(--TOKEN)（引擎 he()），例如：
+//   .universal-card-text--orange.universal-card-text--bold { color: var(--O400) }
 registerComponent('plain_text', (el) => {
   const p = el.property || {};
+  const mods = textStyleToModifiers(p.textStyle);
+  const className = [`${CLS}-text`, ...mods.map((m) => `${CLS}-text--${m}`)].join(' ');
   const style = textStyleToStyle(p.textStyle);
-  return h('span', { className: `${CLS}-text`, style }, p.content != null ? String(p.content) : '');
+  // 属性已落到 --bold/--italic/--through，不再内联 fontWeight 等（对齐真机 DOM）
+  delete style.fontWeight;
+  delete style.fontStyle;
+  delete style.textDecoration;
+  return h('span', { className, style }, p.content != null ? String(p.content) : '');
 });
 
 // br：换行
@@ -518,6 +538,11 @@ registerComponent('div', (el, ctx) => {
   }
   return h('div', { className: `${CLS}-div` }, content);
 });
+
+// note：备注（小字灰色）
+registerComponent('note', (el, ctx) =>
+  h('div', { className: `${CLS}-note` }, renderElements(el.property?.elements, ctx))
+);
 
 // ---- 布局 ----
 
@@ -611,6 +636,160 @@ registerComponent('img', (el, ctx) => {
   );
 });
 
+// video：视频。真机网页版有 src 时直接 <video controls>；无 src 时出封面 + 播放钮。
+// RAW：fileID / coverImageID / showTime / enableDownload；DSL：file_key / image_key / show_time。
+registerComponent('video', (el, ctx) => {
+  const p = el.property || {};
+  const src = resolveMediaSrc(p, 'video', ctx);
+  const cover = resolveVideoCoverSrc(p, ctx);
+  const showTime = p.showTime !== false && p.show_time !== false;
+  const enableDownload = p.enableDownload === true || p.enable_download === true;
+  // 有可播放地址：对齐真机 <video class="universal-card-video" controls preload="metadata">
+  if (src) {
+    const props: Record<string, unknown> = {
+      className: `${CLS}-video`,
+      src,
+      controls: true,
+      preload: 'metadata',
+    };
+    // 禁止下载时收紧 controlslist（浏览器支持度不一，尽力对齐）
+    if (!enableDownload) props.controlslist = 'nodownload';
+    if (cover) props.poster = cover;
+    return h('video', props);
+  }
+  // 无 src：封面态（播放钮 + 可选时长角标）。时长真机运行期从媒体元数据取，离线未知 → 不写假数字。
+  return h('div', { className: `${CLS}-video` },
+    h('div', { className: `${CLS}-video__cover` },
+      cover
+        ? h('img', { className: `${CLS}-video__host-image`, src: cover, alt: '' })
+        : h('div', { className: `${CLS}-video__default-cover` })
+    ),
+    h('div', {
+      className: `${CLS}-video__play-btn`,
+      dangerouslySetInnerHTML: { __html: VIDEO_PLAY_ICON_SVG },
+    }),
+    showTime ? h('div', { className: `${CLS}-video__duration` }, '--:--') : null,
+  );
+});
+
+// audio：音频播放器壳（播放钮 + 进度条 + 时长）。真机是自定义 UI，非原生 <audio controls>。
+// 有 resolveMedia 时内嵌隐藏 <audio>，外壳负责观感；完整交互需宿主页自行绑事件（或后续 hydrate）。
+//
+// markdown_audio：与顶层 audio 共用渲染函数 Ln，但 markdown 分发时注入 isInline=true →
+// 胶囊样式（--inline）、扁平图标、随父字号缩放；进度条仅显式 showProgressBar 时才画。
+function renderAudio(el: CardElement, ctx: RenderContext) {
+  const p = el.property || {};
+  const isInline = el.tag === 'markdown_audio';
+  const src = resolveMediaSrc(p, 'audio', ctx);
+  const disabled = p.disabled === true;
+  // 真机：showProgressBar 按真值渲染。顶层 DSL 常显式 true；markdown_audio 样本常省略 → 无进度条。
+  // 顶层仍对「未声明」默认画出（兼容既有卡片）；inline 严格按真值，避免胶囊里塞满进度条。
+  const showProgress = isInline
+    ? (p.showProgressBar === true || p.show_progress_bar === true)
+    : (p.showProgressBar !== false && p.show_progress_bar !== false);
+  const showTime = p.showTime !== false && p.show_time !== false;
+  const wv = p.widthValue as { type?: string; value?: string | number } | undefined;
+  const widthTok = (p.width ?? wv?.value) as string | number | undefined;
+
+  const wrapCls = `${CLS}-audio__wrapper`
+    + (isInline ? ` ${CLS}-audio__wrapper--inline` : '')
+    + (showTime ? ` ${CLS}-audio__wrapper--show-time` : '')
+    + (disabled ? ` ${CLS}-audio__wrapper--disabled` : '');
+  const style: Record<string, string> = {};
+
+  if (isInline) {
+    // 真机 inline：强制 width:auto；尺寸跟父 markdown 字号（ctx.textMetrics）
+    style.width = 'auto';
+    const parentFs = ctx.textMetrics?.fontSize ?? BASE_FONT_SIZE;
+    const { iconSize, fontSize, top } = audioInlineMetrics(parentFs);
+    style['--universal-card-audio-icon-size'] = iconSize + 'px';
+    style['--universal-card-audio-time-font-size'] = fontSize + 'px';
+    style.verticalAlign = 'top';
+    if (top) style.top = top + 'px';
+  } else if (widthTok === 'fill') {
+    style.width = '100%';
+  } else if (typeof widthTok === 'number') {
+    style.width = widthTok + 'px';
+  } else if (typeof widthTok === 'string' && /^\d+(\.\d+)?px$/.test(widthTok)) {
+    style.width = widthTok;
+  } else {
+    // 真机 Default：width:auto；进度条+时长时 minWidth:164px
+    style.width = 'auto';
+    if (showProgress && showTime) style.minWidth = '164px';
+  }
+
+  const pad = boxToStyle(p.padding as never);
+  if (pad) style.padding = pad;
+  // markdown_audio 用 backgroundColor；顶层 audio 偶见 backgroundStyle——都写入 CSS 变量（对齐真机）
+  const bg = bgStyleToColor(
+    p.backgroundColor ?? p.background_color ?? p.background_style ?? p.backgroundStyle,
+  );
+  if (bg) style['--universal-card-audio-bg'] = bg;
+  if (typeof p.fill_color === 'string' || typeof p.fillColor === 'string') {
+    const fill = resolveColor((p.fill_color ?? p.fillColor) as string);
+    if (fill) style['--universal-card-audio-fill-color'] = fill;
+  }
+
+  const children: Array<ReturnType<typeof h> | null> = [];
+  // 可播放地址：藏原生 audio，宿主可用 querySelector 驱动；controls 不画，避免双 UI。
+  if (src && !disabled) {
+    children.push(h('audio', {
+      className: `${CLS}-audio__native`,
+      src,
+      preload: 'metadata',
+      'data-audio-id': p.audioID || p.audio_id || '',
+    }));
+  }
+
+  // inline → 扁平 PlayFilled/PauseFilled；块级 → RoundFilled
+  const playSvg = isInline ? AUDIO_PLAY_FLAT_ICON_SVG : AUDIO_PLAY_ICON_SVG;
+  const pauseSvg = isInline ? AUDIO_PAUSE_FLAT_ICON_SVG : AUDIO_PAUSE_ICON_SVG;
+
+  // 播放/暂停双图标同时输出，靠 .wrapper--playing CSS 显隐（避免 hydrate 改 innerHTML 丢 SVG）
+  const controlKids: Array<ReturnType<typeof h> | null> = [
+    h('div', { className: `${CLS}-audio__ctrl` },
+      h('span', { className: `${CLS}-audio__ctrl-icon` },
+        h('span', {
+          className: `${CLS}-audio__icon ${CLS}-audio__icon--play`,
+          dangerouslySetInnerHTML: { __html: playSvg },
+        }),
+        h('span', {
+          className: `${CLS}-audio__icon ${CLS}-audio__icon--pause`,
+          dangerouslySetInnerHTML: { __html: pauseSvg },
+        }),
+      )
+    ),
+  ];
+  if (showProgress) {
+    controlKids.push(
+      h('div', { className: `${CLS}-audio__slider` },
+        h('div', { className: `${CLS}-audio__slider-bg` },
+          h('div', { className: `${CLS}-audio__process`, style: { width: '0%' } })
+        ),
+        h('div', { className: `${CLS}-audio__slider-strip`, style: { left: '0%' } })
+      )
+    );
+  }
+  if (showTime) {
+    controlKids.push(h('div', { className: `${CLS}-audio__time` }, '--:--'));
+  }
+
+  children.push(
+    h('div', { className: `${CLS}-audio__component` },
+      h('div', { className: `${CLS}-audio__control${widthTok === 'fill' ? ` ${CLS}-audio__control--fill` : ''}` },
+        controlKids.filter(Boolean) as never
+      )
+    )
+  );
+
+  const props: Record<string, unknown> = { className: wrapCls };
+  if (Object.keys(style).length) props.style = style;
+  if (src) props['data-src'] = src;
+  return h('div', props, children.filter(Boolean) as never);
+}
+registerComponent('audio', renderAudio);
+registerComponent('markdown_audio', renderAudio);
+
 // interactive_container：可点击的交互容器（整块可点，带 hover 提示/背景）
 // 注意：容器内常含 link 等 <a>，故外层必须用 <div> 而非 <a>——嵌套 <a> 是非法 HTML，
 // 浏览器会把外层锚点提前闭合，导致结构错乱。点击交给内部链接，URL 存到 data-url。
@@ -638,8 +817,9 @@ registerComponent('interactive_container', (el, ctx) => {
   if (borderColor) style.border = `1px solid ${borderColor}`;
   // corner_radius："8px" / 数字 → border-radius（缺省走 CSS 的 6px）
   if (p.corner_radius != null) style.borderRadius = sizeToPx(p.corner_radius);
-  // width:"fill" → 撑满所在列（对齐真机 width:100%）
-  if (p.width === 'fill') style.width = '100%';
+  // width:"fill" → 撑满所在列（对齐真机 width:100%）。RAW 用 widthValue.builtin_*_width。
+  const icWv = p.widthValue as { type?: string; value?: string | number } | undefined;
+  if ((p.width ?? icWv?.value) === 'fill') style.width = '100%';
   const props: Record<string, unknown> = { className: cls };
   if (Object.keys(style).length) props.style = style;
   // disabled 时不挂跳转与 hover 提示，避免仍可点/仍出 tip
@@ -757,10 +937,13 @@ registerComponent('button', (el, ctx) => {
     ? resolveURL((p.actions.find((a) => (a as { type?: string }).type === 'open_url') as { action?: { url?: unknown } } | undefined)?.action?.url)
     : '';
   const url = actionUrl || resolveURL(p.url) || p.behaviors?.[0]?.default_url?.url;
-  // width:"fill" → 撑满所在列（block）。对齐真机：text 系（text/primary_text/danger_text）
-  // 是纯文字按钮，始终按内容宽（auto），不吃 fill；其余样式才随 fill 变 block。
+  // width:"fill" → 撑满所在列（block）。真机 RAW 用 widthValue:{type:'builtin_width',value:'fill'}，
+  // DSL / 部分路径仍可能直接带 width:"fill"——两处都认（对齐 audio）。
+  // text 系（text/primary_text/danger_text）是纯文字按钮，始终按内容宽（auto），不吃 fill。
   const isText = type === 'text' || type === 'primary_text' || type === 'danger_text';
-  const block = p.width === 'fill' && !isText;
+  const wv = p.widthValue as { type?: string; value?: string | number } | undefined;
+  const widthTok = (p.width ?? wv?.value) as string | number | undefined;
+  const block = widthTok === 'fill' && !isText;
   const base = `${CLS}-button ${CLS}-button--${type}${block ? ` ${CLS}-button--block` : ''}`;
   // 只有"点击跳转外链"（open_url / 直链）才保留为可点链接；
   // 其余动作（form_submit / action_request / 回调）在预览里无意义——
@@ -1139,7 +1322,11 @@ registerComponent('heading', (el, ctx) => {
     marginTop: lv.marginTop + 'px',
     marginBottom: lv.marginBottom + 'px',
   };
-  return h('div', { className: `${CLS}-markdown-heading`, style }, renderElements(p.elements, ctx));
+  const childCtx: RenderContext = {
+    ...ctx,
+    textMetrics: { fontSize: lv.fontSize, lineHeight: lv.lineHeight },
+  };
+  return h('div', { className: `${CLS}-markdown-heading`, style }, renderElements(p.elements, childCtx));
 });
 
 // blockquote：引用块

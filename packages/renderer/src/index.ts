@@ -12,6 +12,7 @@ import {
   getComponent, registerComponent, renderElement, renderElements,
 } from './registry';
 import { registerBuiltins, ensureBaseStylesInjected } from './components';
+import { hydrateFeishuAudios } from './audio-hydrate';
 import { dslToRaw } from '@open-feishu-card/adapter';
 
 // 模块加载时注册全部内置组件（显式调用，避免被 tree-shake）
@@ -76,6 +77,10 @@ export function renderCard(card: CardInput, options: RenderOptions = {}): Node {
   if (!doc) throw new Error('[FeishuCard] renderCard 需要 DOM 环境；Node 端请用 renderCardToString');
   const dom = vnodeToDom(buildCardVNode(card, options), doc);
   if (!dom) throw new Error('[FeishuCard] 渲染结果为空');
+  // 音频交互（播放/暂停图标切换、进度条）在浏览器端自动接线
+  if (dom instanceof Element || typeof (dom as ParentNode).querySelectorAll === 'function') {
+    hydrateFeishuAudios(dom as ParentNode);
+  }
   return dom;
 }
 
@@ -112,6 +117,11 @@ export {
   feishuChartHydrateScript, feishuChartHydrateJs,
   CHART_SPEC_ATTR, CHART_HYDRATED_ATTR,
 } from './chart-hydrate';
+export {
+  hydrateFeishuAudios,
+  feishuAudioHydrateScript, feishuAudioHydrateJs,
+  AUDIO_HYDRATED_ATTR, AUDIO_PLAY_ICON_SVG, AUDIO_PAUSE_ICON_SVG,
+} from './audio-hydrate';
 export { CHART_PALETTE } from './constants';
 export * from './types';
 // 异步渲染（按 access token 自动拉图 / 按 message_id 拉取整条消息）。
@@ -119,5 +129,6 @@ export * from './types';
 // 不在模块加载期触发，故此处的循环引用是安全的。
 export {
   renderCardToStringAsync, renderCardAsync,
-  fetchCardMessage, fetchImageDataUri, prefetchImages, arrayBufferToBase64,
+  fetchCardMessage, mergeMentionsIntoPersons, fetchImageDataUri, prefetchImages, arrayBufferToBase64,
 } from './remote';
+export type { FetchedCardMessage } from './remote';

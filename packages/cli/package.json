@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "飞书卡片命令行工具：lint 校验、validate、clean 净化非标属性、format 格式化",
   "type": "module",
   "bin": {

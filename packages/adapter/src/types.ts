@@ -107,6 +107,28 @@ export interface ElementProperty {
   mode?: string;
   corner_radius?: number | string;
 
+  // ---- video / audio ----
+  // RAW：fileID（file_v3_...）；DSL：file_key。封面 coverImageID（常直接是 img_v3_...）。
+  /** 媒体文件 key（视频/音频） */
+  fileID?: string;
+  file_key?: string;
+  /** 视频封面图 key / 局部 imageID */
+  coverImageID?: string;
+  image_key?: string;
+  cover_image_key?: string;
+  /** 是否显示时长（视频角标 / 音频时间） */
+  showTime?: boolean;
+  show_time?: boolean;
+  /** 视频是否允许下载（透传，预览期仅影响 controlslist） */
+  enableDownload?: boolean;
+  enable_download?: boolean;
+  /** 音频实例 id（卡片更新时保持播放状态） */
+  audioID?: string;
+  audio_id?: string;
+  /** 是否显示进度条（音频） */
+  showProgressBar?: boolean;
+  show_progress_bar?: boolean;
+
   // ---- button ----
   type?: string;
   text?: CardElement;
@@ -288,6 +310,13 @@ export interface RenderOptions {
   /** 图片地址前缀：最终 src = imageBaseURL + imageID */
   imageBaseURL?: string;
   /**
+   * 自定义音视频地址解析：返回最终可播放 src。
+   * 真机走鉴权下载；同步渲染无 token 时需 caller 注入，否则 video/audio 只出壳/封面。
+   */
+  resolveMedia?: (property: ElementProperty, kind: 'video' | 'audio') => string | null | undefined;
+  /** 音视频地址前缀：最终 src = mediaBaseURL + fileID */
+  mediaBaseURL?: string;
+  /**
    * 人员表（open_id -> { content 姓名, avatar_key 头像 }）。
    * person_v1 / person_list 元素只带 ID，姓名/头像在此反查。
    * 异步渲染（renderCardToStringAsync）会自动从 json_attachment.persons 填入；
@@ -306,8 +335,9 @@ export interface RenderOptions {
 }
 
 /**
- * 人员信息：person_v1 / person_list 元素只带 ID，姓名与头像 key 在这里。
- * 取自飞书消息 content 的 json_attachment.persons（按 open_id「ou_...」索引）。
+ * 人员信息：person_v1 / person_list / at 元素只带 ID，姓名与头像 key 在这里。
+ * 取自飞书消息 content 的 json_attachment.persons（按 open_id「ou_...」索引）；
+ * fetchCardMessage 还会把信封 mentions 与 at_users 合并进来（含 @_user_N 别名键）。
  * avatar_key 是公开可访问的头像图 key（无需鉴权，见 PERSON_AVATAR_BASE）。
  */
 export interface PersonInfo {
@@ -320,14 +350,58 @@ export interface PersonInfo {
 }
 
 /**
+ * 消息信封上的 @ 提及（data.items[0].mentions），不在 body.content 内。
+ * 带 `user_id_type=open_id` 拉取时 id 为 open_id（ou_...）。
+ */
+export interface MessageMention {
+  /** 用户 ID（open_id / user_id，取决于请求的 user_id_type） */
+  id: string;
+  id_type?: string;
+  /** 提及占位键，如 "@_user_1"（部分 RAW at.userID 用此键） */
+  key?: string;
+  /** 显示名 */
+  name?: string;
+  tenant_key?: string;
+}
+
+/**
+ * json_attachment.at_users 单条：与信封 mentions 互补，供 @ 渲染补全姓名。
+ * key / mention_key 形如 "@_user_1"。
+ */
+export interface AtUserInfo {
+  content?: string;
+  name?: string;
+  person_id?: string;
+  id?: string;
+  open_id?: string;
+  key?: string;
+  mention_key?: string;
+  avatar_key?: string;
+}
+
+/**
  * 消息附件表：把卡片里 img 元素的局部序号（property.imageID，如 "19"）
  * 映射到飞书图床真实 key（origin_key，形如 img_v3_...）。
  * 取自飞书消息 content 的 json_attachment 字段。
+ *
+ * - persons：人员姓名/头像（open_id → PersonInfo）
+ * - at_users：content 内的 @ 用户表（仍在 attachment；信封 mentions 见 MessageMention）
+ * - images / videos / audios：媒体资源索引
  */
 export interface JsonAttachment {
   images?: Record<string, { origin_key?: string }>;
   /** 人员表：open_id（ou_...） -> { content 姓名, avatar_key 头像 } */
   persons?: Record<string, PersonInfo>;
+  /**
+   * @ 提及用户表（仍在 body.content.json_attachment 内）。
+   * 可为 open_id / @_user_N 索引的对象，或数组。
+   * fetchCardMessage 会把它与信封 mentions 一并合并进 persons。
+   */
+  at_users?: Record<string, AtUserInfo> | AtUserInfo[];
+  /** 视频附件表：fileID -> { key }（真机仅索引，可播放 URL 仍需鉴权下载） */
+  videos?: Record<string, { key?: string }>;
+  /** 音频附件表：fileID -> { key } */
+  audios?: Record<string, { key?: string }>;
 }
 
 /**

@@ -11,6 +11,8 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   target: 'es2020',
+  // workspace 依赖不打包进产物，由消费者解析 @open-feishu-card/adapter
+  external: ['@open-feishu-card/adapter'],
   loader: { '.css': 'copy' },
   publicDir: false,
   async onSuccess() {

@@ -5,8 +5,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  renderCardToString, renderCardToStringAsync, fetchCardMessage,
+  renderCardToString, renderCardToStringAsync, fetchCardMessage, mergeMentionsIntoPersons,
   arrayBufferToBase64, registerComponent, h, renderDslToString,
+  feishuAudioHydrateJs, AUDIO_PAUSE_ICON_SVG,
 } from '../dist/index.js';
 
 const card = {
@@ -30,16 +31,237 @@ test('renders header with template color', () => {
   assert.match(html, /标题/);
 });
 
-test('named color green = #1a7526, bold applied, center align', () => {
+test('named color green = var(--G600), bold class, center align', () => {
   const html = renderCardToString(card);
-  assert.match(html, /#1a7526/);
-  assert.match(html, /font-weight:600/);
+  assert.match(html, /var\(--G600\)/);
+  assert.match(html, /universal-card-text--green/);
+  assert.match(html, /universal-card-text--bold/);
   assert.match(html, /text-align:center/);
+});
+
+test('named color orange = var(--O400)（引擎特例，非 O600）', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'plain_text',
+            property: {
+              content: '▲ +4s',
+              textStyle: { attributes: ['bold'], color: 'orange' },
+            },
+          }],
+        },
+      },
+    },
+  });
+  assert.match(html, /universal-card-text--orange/);
+  assert.match(html, /universal-card-text--bold/);
+  assert.match(html, /color:var\(--O400\)/);
+  assert.doesNotMatch(html, /#a44904/i);
+  assert.doesNotMatch(html, /font-weight/);
 });
 
 test('hr renders', () => {
   const html = renderCardToString(card);
   assert.match(html, /universal-card-hr/);
+});
+
+// video / audio：无 resolveMedia 时出封面壳 / 播放条；有 src 时 video 走原生 controls。
+test('video: 无 src 时渲染封面壳 + 播放钮', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'video',
+            property: {
+              fileID: 'file_v3_demo',
+              coverImageID: 'img_v3_cover',
+              showTime: true,
+              enableDownload: true,
+            },
+          }],
+        },
+      },
+    },
+  }, {
+    resolveImage: (p) => (p.imageID === 'img_v3_cover' ? 'https://example.com/cover.jpg' : null),
+  });
+  assert.match(html, /universal-card-video/);
+  assert.match(html, /universal-card-video__cover/);
+  assert.match(html, /universal-card-video__play-btn/);
+  assert.match(html, /https:\/\/example\.com\/cover\.jpg/);
+  assert.match(html, /universal-card-video__duration/);
+  assert.doesNotMatch(html, /<video[\s>]/);
+});
+
+test('video: resolveMedia 有 src 时渲染原生 <video controls>', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'video',
+            property: { fileID: 'file_v3_demo', enableDownload: false },
+          }],
+        },
+      },
+    },
+  }, {
+    resolveMedia: (p, kind) => (kind === 'video' && p.fileID === 'file_v3_demo'
+      ? 'https://example.com/a.mp4' : null),
+  });
+  assert.match(html, /<video[^>]*class="universal-card-video"/);
+  assert.match(html, /src="https:\/\/example\.com\/a\.mp4"/);
+  assert.match(html, /controls=/);
+  assert.match(html, /controlslist="nodownload"/);
+});
+
+test('audio: 渲染播放条壳 + fill 宽度', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'audio',
+            property: {
+              fileID: 'file_v3_audio',
+              audioID: 'a1',
+              showProgressBar: true,
+              showTime: true,
+              style: 'normal',
+              widthValue: { type: 'builtin_width', value: 'fill' },
+            },
+          }],
+        },
+      },
+    },
+  }, {
+    resolveMedia: (p) => (p.fileID === 'file_v3_audio' ? 'https://example.com/a.opus' : null),
+  });
+  assert.match(html, /universal-card-audio__wrapper/);
+  assert.match(html, /universal-card-audio__wrapper--show-time/);
+  assert.match(html, /width:100%/);
+  assert.match(html, /universal-card-audio__slider/);
+  assert.match(html, /universal-card-audio__time/);
+  assert.match(html, /PlayRoundFilled/);
+  assert.match(html, /<audio[^>]*src="https:\/\/example\.com\/a\.opus"/);
+});
+
+// 真机 RAW：音频常嵌在 markdown.elements 里，tag 为 markdown_audio（非顶层 audio）。
+// 与块级 audio 共用组件，但走 --inline 胶囊：扁平图标、无进度条（未显式声明时）、随父字号缩放。
+test('markdown_audio: inline 胶囊样式，且不误用降级 url', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'markdown',
+            property: {
+              // 对齐样本 size=notation → 12px → cn 后 icon/time 均为 12
+              textStyle: { size: 'notation' },
+              elements: [{
+                tag: 'markdown_audio',
+                property: {
+                  audioID: 'a-md',
+                  fileID: 'file_v3_md_audio',
+                  backgroundColor: 'grey-200',
+                  fillColor: 'blue-800',
+                  showTime: true,
+                  url: { url: 'https://open.feishu.cn/' },
+                },
+              }],
+            },
+          }],
+        },
+      },
+    },
+  }, {
+    resolveMedia: (p, kind) => (
+      kind === 'audio' && p.fileID === 'file_v3_md_audio' ? 'https://example.com/md.opus' : null
+    ),
+  });
+  assert.match(html, /universal-card-audio__wrapper--inline/);
+  assert.match(html, /<audio[^>]*src="https:\/\/example\.com\/md\.opus"/);
+  assert.doesNotMatch(html, /src="https:\/\/open\.feishu\.cn\//);
+  assert.doesNotMatch(html, /universal-card-audio__slider/); // 未声明 showProgressBar → 无进度条
+  assert.match(html, /data-icon="PlayFilled"/); // 扁平图标，非 Round
+  assert.match(html, /data-icon="PauseFilled"/);
+  assert.doesNotMatch(html, /PlayRoundFilled/);
+  assert.match(html, /--universal-card-audio-bg:#eff0f1/); // grey-200
+  assert.match(html, /--universal-card-audio-fill-color:#002f9e/); // blue-800
+  assert.match(html, /--universal-card-audio-icon-size:12px/);
+  assert.match(html, /--universal-card-audio-time-font-size:12px/);
+});
+
+test('DSL audio/video → RAW 字段映射后可渲染', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'video',
+          file_key: 'file_v3_v',
+          image_key: 'img_v3_c',
+          show_time: true,
+        },
+        {
+          tag: 'audio',
+          file_key: 'file_v3_a',
+          audio_id: '1',
+          width: 'fill',
+          show_progress_bar: true,
+          show_time: true,
+        },
+      ],
+    },
+  }, {
+    resolveMedia: (p, kind) => {
+      if (kind === 'video' && p.fileID === 'file_v3_v') return 'https://cdn/v.mp4';
+      if (kind === 'audio' && p.fileID === 'file_v3_a') return 'https://cdn/a.opus';
+      return null;
+    },
+    resolveImage: (p) => (p.imageID === 'img_v3_c' ? 'https://cdn/c.jpg' : null),
+  });
+  assert.match(html, /<video[^>]*src="https:\/\/cdn\/v\.mp4"/);
+  assert.match(html, /poster="https:\/\/cdn\/c\.jpg"/);
+  assert.match(html, /universal-card-audio__wrapper/);
+  assert.match(html, /src="https:\/\/cdn\/a\.opus"/);
+});
+
+test('audio: 双图标输出 + hydrate 切换 --playing 类', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'audio',
+            property: { fileID: 'file_v3_a', showTime: true },
+          }],
+        },
+      },
+    },
+  }, { resolveMedia: () => 'https://example.com/a.opus' });
+  assert.match(html, /universal-card-audio__icon--play/);
+  assert.match(html, /universal-card-audio__icon--pause/);
+  assert.match(html, /PlayRoundFilled/);
+  assert.match(html, /PauseRoundFilled/);
+  assert.match(html, /ZM7\.5 9a1\.5 1\.5/); // 飞书网页版 PauseRoundFilled path
+  const js = feishuAudioHydrateJs();
+  assert.match(js, /wrapper--playing/);
+  assert.match(js, /audio\.play/);
+  assert.match(js, /audio\.pause/);
+  // 回归：多音频时 click 闭包不能共用循环 var（否则全绑到最后一个）
+  assert.match(js, /function bindOne\(/);
+  assert.match(AUDIO_PAUSE_ICON_SVG, /PauseRoundFilled/);
+  assert.match(AUDIO_PAUSE_ICON_SVG, /ZM7\.5 9a1\.5 1\.5/);
 });
 
 // 真机 RAW：DSL text_size 被归一进 textStyle.size / platformSize，不再保留 text_size 字段。
@@ -142,6 +364,47 @@ test('img with resolveImage returning null does not crash (renders placeholder)'
   } } } }, { resolveImage: () => null });
   assert.match(html, /universal-card-body/);
   assert.match(html, /universal-card-image__placeholder/);
+});
+
+test('button: RAW widthValue.fill → block（撑满列）', () => {
+  // 真机 RAW 按钮用 widthValue:{type:'builtin_width',value:'fill'}，不是扁平 width:"fill"
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'button', property: {
+      type: 'primary_filled',
+      widthValue: { type: 'builtin_width', value: 'fill' },
+      actions: [{ type: 'open_url', action: { url: 'https://open.feishu.cn' } }],
+      text: { tag: 'plain_text', property: { content: '全量发布' } },
+    } },
+    { tag: 'button', property: {
+      type: 'default',
+      widthValue: { type: 'builtin_width', value: 'fill' },
+      actions: [{ type: 'open_url', action: { url: 'https://open.feishu.cn' } }],
+      text: { tag: 'plain_text', property: { content: '继续观察' } },
+    } },
+  ] } } } });
+  assert.match(html, /universal-card-button--primary_filled universal-card-button--block/);
+  assert.match(html, /universal-card-button--default universal-card-button--block/);
+  assert.match(html, /全量发布/);
+  assert.match(html, /继续观察/);
+});
+
+test('button: DSL width=fill 与 text 系不吃 fill', () => {
+  const filled = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'button', property: {
+      type: 'primary', width: 'fill',
+      text: { tag: 'plain_text', property: { content: 'A' } },
+    } },
+  ] } } } });
+  assert.match(filled, /universal-card-button--block/);
+
+  const textBtn = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'button', property: {
+      type: 'primary_text',
+      widthValue: { type: 'builtin_width', value: 'fill' },
+      text: { tag: 'plain_text', property: { content: 'B' } },
+    } },
+  ] } } } });
+  assert.doesNotMatch(textBtn, /universal-card-button--block/);
 });
 
 test('button: markdown text flattened to plain text (no rich formatting / no <br>)', () => {
@@ -311,6 +574,73 @@ test('async: messageId WITHOUT token throws', async () => {
     () => fetchCardMessage('om_test', {}),
     /accessToken/,
   );
+});
+
+test('fetchCardMessage: requests user_id_type=open_id and merges mentions into persons', async () => {
+  let requestedUrl = '';
+  const fetchImpl = async (url) => {
+    requestedUrl = url;
+    const jsonCard = JSON.stringify({
+      schema: '2.0',
+      body: { tag: 'body', property: { elements: [
+        { tag: 'at', property: { userID: 'ou_ztx' } },
+        { tag: 'at', property: { userID: '@_user_1' } },
+      ] } },
+    });
+    const content = JSON.stringify({
+      json_card: jsonCard,
+      json_attachment: {
+        at_users: {
+          ou_from_att: { content: '附件用户', key: '@_user_2' },
+        },
+      },
+    });
+    return {
+      ok: true,
+      json: async () => ({
+        code: 0,
+        data: {
+          items: [{
+            message_id: 'om_at',
+            mentions: [{
+              id: 'ou_ztx',
+              id_type: 'open_id',
+              key: '@_user_1',
+              name: '赵天雄',
+              tenant_key: 'tk',
+            }],
+            body: { content },
+          }],
+        },
+      }),
+    };
+  };
+
+  const msg = await fetchCardMessage('om_at', { accessToken: 't-xxx', fetch: fetchImpl });
+  assert.match(requestedUrl, /card_msg_content_type=raw_card_content/);
+  assert.match(requestedUrl, /user_id_type=open_id/);
+  assert.equal(msg.mentions?.[0]?.name, '赵天雄');
+  assert.equal(msg.json_attachment?.persons?.ou_ztx?.content, '赵天雄');
+  assert.equal(msg.json_attachment?.persons?.['@_user_1']?.content, '赵天雄');
+  assert.equal(msg.json_attachment?.persons?.ou_from_att?.content, '附件用户');
+  assert.equal(msg.json_attachment?.persons?.['@_user_2']?.content, '附件用户');
+
+  // 不传额外 persons，异步渲染应出真名而非 @张三
+  const html = await renderCardToStringAsync('om_at', { accessToken: 't-xxx', fetch: fetchImpl });
+  assert.match(html, /@赵天雄/);
+  assert.doesNotMatch(html, /@张三/);
+});
+
+test('mergeMentionsIntoPersons: does not wipe richer existing persons', () => {
+  const merged = mergeMentionsIntoPersons(
+    {
+      persons: { ou_a: { content: '已有名', avatar_key: 'v3_keep' } },
+      at_users: { ou_a: { name: '较空名' } },
+    },
+    [{ id: 'ou_a', name: '' }],
+  );
+  assert.equal(merged.persons.ou_a.content, '已有名');
+  assert.equal(merged.persons.ou_a.avatar_key, 'v3_keep');
 });
 
 test('async: only references images actually used by img elements (skips orphan attachment keys)', async () => {
@@ -607,14 +937,47 @@ test('markdown inline <person>: 跟随正文字号（14px / 头像 18px），不
       }],
     },
   });
-  // 跟正文 14：字号 14、行高 22、头像 18（PERSON_FOLLOW_FONT）
+  // 跟正文 14：字号 14、行高跟父级、头像 18（PERSON_FOLLOW_FONT）
   assert.match(html, /font-size:14px/);
-  assert.match(html, /line-height:22px/);
+  assert.match(html, /line-height:inherit/);
   assert.match(html, /width:18px/);
   assert.match(html, /height:18px/);
   // 不应落到独立 person 的 medium（字号 20 / 头像 30）
   assert.doesNotMatch(html, /font-size:20px/);
   assert.doesNotMatch(html, /width:30px/);
+});
+
+test('markdown inline <person> 仅姓名：行高跟正文 inherit，不带 --avatar', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "这些场景都 <person id='ou_a' show_name=true show_avatar=false></person>",
+      }],
+    },
+  });
+  assert.match(html, /这些场景都/);
+  assert.match(html, /universal-card-person--name/);
+  assert.doesNotMatch(html, /universal-card-person--avatar/);
+  assert.match(html, /line-height:inherit/);
+  assert.doesNotMatch(html, /person__internal-avatar|person__avatar-wrapper/);
+});
+
+test('markdown heading 内联 <person> 跟随标题字号（h1=17px / 头像 22px）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "# 负责人 <person id='ou_a' show_name=true show_avatar=true></person>",
+      }],
+    },
+  });
+  assert.match(html, /markdown-heading/);
+  assert.match(html, /font-size:17px/);
+  assert.match(html, /width:22px/);
+  assert.match(html, /height:22px/);
 });
 
 test('standalone person_v1 无 size 仍为 medium（不受 markdown 跟随影响）', () => {

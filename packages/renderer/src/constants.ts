@@ -124,13 +124,17 @@ export function paletteColor(raw: string | undefined): string | undefined {
 
 /**
  * header template -> {bg,text}。规则取自 --udtoken-message-card-*（light）：
- * bg = 该色的 -100 档（neutral 例外用 N500）；text 多数 -600，
- * 但 orange→O500、yellow→Y500、neutral→N00(白)；default 为中性灰底深字。
+ * bg = 该色的 -100 档；text 多数 -600。
+ * 例外：orange→O500、yellow→Y500；
+ * grey / neutral → bg N500 + text N00（白字中灰底；飞书 token 为
+ * --udtoken-message-card-*-neutral。高光用通用强纹理 aac0718d1d，
+ * 叠加后观感对齐官方样图 / 真机，避免旧弱纹理显得过深）；
+ * default 为浅灰底深字（N50 / N900）。
  */
 export const HEADER_TEMPLATE: Record<HeaderTemplate, { bg: string; text: string }> = (() => {
-  const bgException: Record<string, string> = { neutral: 'N500' };
+  const bgException: Record<string, string> = { neutral: 'N500', grey: 'N500' };
   const textException: Record<string, string> = {
-    orange: 'O500', yellow: 'Y500', neutral: 'N00',
+    orange: 'O500', yellow: 'Y500', neutral: 'N00', grey: 'N00',
   };
   const names: HeaderTemplate[] = [
     'blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red',
@@ -149,14 +153,25 @@ export const HEADER_TEMPLATE: Record<HeaderTemplate, { bg: string; text: string 
 })();
 
 /**
- * 命名文字色 -> hex。卡片正文里 <font color>/textStyle.color 走「颜色名→色阶→hex」，
- * 无后缀名落 -600（grey→N600）。带后缀（blue-500 等）由 paletteColor 在运行期解析，
- * 此表仅保留无后缀族名的便捷映射（兼容旧引用）。
+ * 正文 font_color / textStyle.color 色名 → 色阶 token。
+ * 基表同 default_color_tokens（无后缀落 -600）；引擎 fallbackStyle 再覆盖
+ * `markdown.font_color.orange = "O400"`（见 be8b738f），故 orange 特例走 O400，
+ * 渲染为 `color: var(--O400)`，不是文档枚举表里的 #A44904 / O600。
+ */
+export const TEXT_FONT_COLOR_TOKEN: Record<string, string> = {
+  ...COLOR_NAME_TO_TOKEN,
+  orange: 'O400',
+};
+
+/**
+ * 命名文字色 -> hex。卡片正文里 <font color>/textStyle.color 走 TEXT_FONT_COLOR_TOKEN，
+ * 无后缀名多数落 -600；orange 例外为 O400。带后缀由 paletteColor / TEXT_FONT_COLOR_TOKEN 解析。
  */
 export const NAMED_TEXT_COLOR: Record<NamedColor, string> = (() => {
   const out = {} as Record<NamedColor, string>;
   for (const n of Object.keys(COLOR_FAMILY) as NamedColor[]) {
-    out[n] = PALETTE[COLOR_FAMILY[n] + '600'];
+    const token = TEXT_FONT_COLOR_TOKEN[n] || COLOR_FAMILY[n] + '600';
+    out[n] = PALETTE[token];
   }
   return out;
 })();
