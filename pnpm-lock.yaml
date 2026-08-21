@@ -85,6 +85,9 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       tsx:
         specifier: ^4.19.3
         version: 4.23.12
@@ -110,6 +113,9 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       tsx:
         specifier: ^4.19.3
         version: 4.23.12
@@ -129,6 +135,9 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       tsx:
         specifier: ^4.19.3
         version: 4.23.12
@@ -157,6 +166,9 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       tsx:
         specifier: ^4.19.3
         version: 4.23.12
@@ -173,6 +185,9 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       tsx:
         specifier: ^4.19.3
         version: 4.23.12
@@ -185,6 +200,9 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       tsx:
         specifier: ^4.19.3
         version: 4.23.12
@@ -214,6 +232,9 @@ importers:
         specifier: ^4.0.0
         version: 4.4.3
     devDependencies:
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -230,6 +251,9 @@ importers:
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
       tsx:
         specifier: ^4.19.3
         version: 4.23.12
@@ -4448,6 +4472,33 @@ snapshots:
       tree-kill: 1.2.2
     optionalDependencies:
       typescript: 5.9.3
+    transitivePeerDependencies:
+      - jiti
+      - supports-color
+      - tsx
+      - yaml
+
+  tsup@8.5.1(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0):
+    dependencies:
+      bundle-require: 5.1.0(esbuild@0.27.7)
+      cac: 6.7.14
+      chokidar: 4.0.3
+      consola: 3.4.2
+      debug: 4.4.3
+      esbuild: 0.27.7
+      fix-dts-default-cjs-exports: 1.0.1
+      joycon: 3.1.1
+      picocolors: 1.1.1
+      postcss-load-config: 6.0.1(tsx@4.23.12)(yaml@2.9.0)
+      resolve-from: 5.0.0
+      rollup: 4.62.4
+      source-map: 0.7.6
+      sucrase: 3.35.1
+      tinyexec: 0.3.2
+      tinyglobby: 0.2.17
+      tree-kill: 1.2.2
+    optionalDependencies:
+      typescript: 7.0.2
     transitivePeerDependencies:
       - jiti
       - supports-color

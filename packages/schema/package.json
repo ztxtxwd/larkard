@@ -1,21 +1,23 @@
 {
   "name": "@open-feishu-card/schema",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "飞书卡片 JSON Schema 2.0 的 Zod 规范定义与类型导出",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup && tsc -p tsconfig.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "echo no tests"
   },
@@ -23,6 +25,7 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "tsup": "^8.3.5",
     "typescript": "^7.0.2"
   },
   "license": "MIT",

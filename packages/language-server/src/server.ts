@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * LSP stdio 服务器：Content-Length 分帧的 JSON-RPC 2.0。
  * 可直接 `npx open-feishu-card-language-server` 启动，供 VS Code / Neovim 等客户端接入。

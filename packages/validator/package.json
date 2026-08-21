@@ -1,21 +1,23 @@
 {
   "name": "@open-feishu-card/validator",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "对比 AST 与 Schema 2.0，输出精确定位到源码字符级的诊断信息",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup && tsc -p tsconfig.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "tsx --test test/*.test.ts"
   },
@@ -24,6 +26,7 @@
     "@open-feishu-card/schema": "workspace:*"
   },
   "devDependencies": {
+    "tsup": "^8.3.5",
     "tsx": "^4.19.3",
     "typescript": "^7.0.2",
     "@types/node": "^22.20.1"

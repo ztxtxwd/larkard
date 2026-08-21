@@ -1,0 +1,21 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  entry: ['src/index.ts', 'src/cli.ts'],
+  format: ['esm', 'cjs'],
+  outExtension({ format }) {
+    return { js: format === 'cjs' ? '.cjs' : '.js' };
+  },
+  dts: false,
+  sourcemap: false,
+  clean: true,
+  treeshake: true,
+  splitting: false,
+  target: 'es2022',
+  external: [
+    '@open-feishu-card/compiler',
+    '@open-feishu-card/linter',
+    '@open-feishu-card/parser',
+    '@open-feishu-card/validator',
+  ],
+});

@@ -1,21 +1,23 @@
 {
   "name": "@open-feishu-card/linter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "飞书卡片静态规则检查：嵌套深度、可读性、废弃属性等最佳实践",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup && tsc -p tsconfig.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "tsx --test test/*.test.ts"
   },
@@ -23,6 +25,7 @@
     "@open-feishu-card/parser": "workspace:*"
   },
   "devDependencies": {
+    "tsup": "^8.3.5",
     "tsx": "^4.19.3",
     "typescript": "^7.0.2",
     "@types/node": "^22.20.1"

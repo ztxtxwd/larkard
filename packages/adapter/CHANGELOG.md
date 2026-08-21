@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.2.1
+
+### Patch Changes
+
+- 为库包增加 CommonJS 双格式构建（ESM + CJS），可通过 `require` 使用。
+
 ## 0.2.0
 
 ### Minor Changes
