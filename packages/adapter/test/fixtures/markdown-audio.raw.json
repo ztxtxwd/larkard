@@ -1,0 +1,14 @@
+{
+  "json_card": "{\"schema\":\"2.0\",\"body\":{\"tag\":\"body\",\"property\":{\"elements\":[{\"tag\":\"markdown\",\"property\":{\"textAlign\":\"left\",\"textStyle\":{\"size\":\"notation\",\"platformSize\":{\"mobile\":\"notation\",\"pc\":\"notation\"}},\"elements\":[{\"tag\":\"markdown_audio\",\"property\":{\"audioID\":\"4fbd222d-659a-43ad-b62c-e4cea7ae177c\",\"backgroundColor\":\"grey-200\",\"fillColor\":\"blue-800\",\"fileID\":\"file_v3_0014e_69d48a39-571c-4bb6-8974-70fdf73711bg\",\"showTime\":true,\"url\":{\"url\":\"https://open.feishu.cn/\"},\"fallbackText\":{\"tag\":\"plain_text\",\"property\":{\"textAlign\":\"left\"}}}}]},\"id\":\"_23\"},{\"tag\":\"markdown\",\"property\":{\"textAlign\":\"left\",\"textStyle\":{\"size\":\"notation\"},\"elements\":[{\"tag\":\"plain_text\",\"property\":{\"content\":\"旁白：\"}},{\"tag\":\"markdown_audio\",\"property\":{\"audioID\":\"9c41d7e0-5b2a-4f68-8d3e-1a7f60c9b2e5\",\"backgroundColor\":\"grey-200\",\"fillColor\":\"blue-800\",\"fileID\":\"file_v3_0014e_a372dd32-d342-409d-b8d3-97d8277a6d8g\",\"showTime\":true,\"style\":\"speak\",\"url\":{\"url\":\"https://open.feishu.cn/\"},\"fallbackText\":{\"tag\":\"plain_text\",\"property\":{\"content\":\"[音频链接]\",\"textAlign\":\"left\"}}}}]},\"id\":\"_24\"}]},\"id\":\"_1\"},\"header\":{\"tag\":\"card_header\",\"property\":{\"template\":\"green\",\"title\":{\"tag\":\"plain_text\",\"property\":{\"content\":\"markdown audio\"}}}},\"config\":{\"convertVersion\":1}}",
+  "json_attachment": {
+    "audios": {
+      "file_v3_0014e_69d48a39-571c-4bb6-8974-70fdf73711bg": {
+        "key": "file_v3_0014e_69d48a39-571c-4bb6-8974-70fdf73711bg"
+      },
+      "file_v3_0014e_a372dd32-d342-409d-b8d3-97d8277a6d8g": {
+        "key": "file_v3_0014e_a372dd32-d342-409d-b8d3-97d8277a6d8g"
+      }
+    }
+  },
+  "card_schema": 2
+}

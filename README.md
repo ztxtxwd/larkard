@@ -10,7 +10,7 @@
 | `@open-feishu-card/schema` | 基于 Zod 的卡片 Schema 2.0 规范与类型导出 | Universal |
 | `@open-feishu-card/validator` | AST × Schema 对比，输出字符级精确定位诊断 | Universal |
 | `@open-feishu-card/linter` | 嵌套深度、可读性、废弃属性等静态最佳实践检查 | Universal |
-| `@open-feishu-card/adapter` | 公开 DSL ↔ 飞书内部 RAW JSON 双向适配，未知组件自动降级 (Fallback) | Universal |
+| `@open-feishu-card/adapter` | 公开 DSL ↔ 飞书内部 RAW JSON 双向适配（raw→DSL 对齐 feishu-raw-card-to-dsl） | Universal |
 | `@open-feishu-card/compiler` | DSL → 标准 RAW 编译器 + 非标属性净化器 (Sanitizer) | Universal |
 | `@open-feishu-card/renderer` | 零框架依赖渲染引擎：HTML 字符串 / 真实 DOM / SSR | Browser / Node |
 | `@open-feishu-card/language-server` | LSP 语言服务器：诊断、补全、Hover、Quick Fix | Node / WebWorker |
@@ -56,9 +56,11 @@ const html = renderDslToString({ schema: '2.0', body: { elements: [...] } });
 **双向适配（adapter）**
 
 ```typescript
-import { dslToRaw, rawToDsl } from '@open-feishu-card/adapter';
+import { dslToRaw, rawToDsl, degradeUnknown } from '@open-feishu-card/adapter';
 const raw = dslToRaw(dsl);          // 公开 DSL → 渲染器 RAW
-const back = rawToDsl(rawEnvelope); // 飞书下发 RAW → 公开 DSL，未知组件降级为 { tag:'unknown', fallback }
+const back = rawToDsl(rawEnvelope); // 飞书下发 RAW envelope → 公开 DSL（对齐 feishu-raw-card-to-dsl）
+// 可选：对私有/未知元素手动降级为 { tag:'unknown', raw_tag, fallback }
+// const safe = degradeUnknown(el);
 ```
 
 ## 架构数据流
@@ -67,5 +69,5 @@ const back = rawToDsl(rawEnvelope); // 飞书下发 RAW → 公开 DSL，未知�
 源码 JSONC ─ parser(AST+位置) ─ validator(schema 诊断) ┐
                          └───── linter(规则诊断)        ├─ language-server ─ vscode 插件
 DSL 对象 ─ compiler.sanitize(净化) ─ adapter.dslToRaw ─ renderer(DOM/HTML/SSR)
-飞书 RAW envelope ─ adapter.rawToDsl(降级) ─ DSL
+飞书 RAW envelope ─ adapter.rawToDsl ─ DSL
 ```

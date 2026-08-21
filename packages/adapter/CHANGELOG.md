@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.0
+
+### Minor Changes
+
+- raw→DSL 完整对齐 `feishu-raw-card-to-dsl`：移植 envelope/`json_attachment`、markdown 拼回、table/chart/person/button/video 等专用路径；新增 `rawCardToDsl` / `isRawCardEnvelope`；`degradeUnknown` 改为可选手动降级（不再自动套用）。
+
 ## 0.2.1
 
 ### Patch Changes
