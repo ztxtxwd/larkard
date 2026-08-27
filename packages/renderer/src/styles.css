@@ -324,6 +324,9 @@
 /* ---- 布局：column_set / column ---- */
 .universal-card-column-set { display: flex; }
 .universal-card-column { box-sizing: border-box; overflow-wrap: anywhere; }
+/* 真机：有背景才挂 --bg。column_set 额外 4px 内边距；column 只圆角、不加默认 padding。 */
+.universal-card-column-set--bg { padding: 4px; border-radius: 6px; }
+.universal-card-column--bg { border-radius: 6px; }
 /* 列内纵向间距唯一来源是 column 组件输出的 flex row-gap（默认 8px，可被 vertical_spacing 覆盖）。
    这里不再给相邻子元素设 margin-top——否则与 row-gap 叠加，间距翻倍。 */
 

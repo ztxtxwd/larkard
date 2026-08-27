@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.5
+
+### Patch Changes
+
+- 对齐真机：`column_set` 有背景时加 4px 内边距与 6px 圆角；`column` 有背景时只加圆角。
+
 ## 0.2.4
 
 ### Patch Changes

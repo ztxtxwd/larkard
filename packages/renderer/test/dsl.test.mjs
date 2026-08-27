@@ -139,6 +139,23 @@ test('column_set: background_style=grey → var(--bg-float-overlay)（真机 lig
   assert.match(html, /background:var\(--bg-float-overlay\)/);
   assert.doesNotMatch(html, /background:#646a73/); // 不是正文色 grey→N600
   assert.match(ALL_CSS, /--bg-float-overlay:\s*var\(--N50\)/); // light 落到 N50=#f5f6f7
+  // 真机 .universal-card-column-set--bg { padding:4px; border-radius:6px }
+  assert.match(ALL_CSS, /\.universal-card-column-set--bg[^}]*padding:\s*4px/);
+  assert.match(ALL_CSS, /\.universal-card-column-set--bg[^}]*border-radius:\s*6px/);
+});
+
+test('column: background_style 有色 → --bg 圆角，不自动加 padding', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [
+      { tag: 'column_set', columns: [
+        { tag: 'column', background_style: 'green-50', elements: [{ tag: 'markdown', content: 'KPI' }] },
+      ] },
+    ] },
+  });
+  assert.match(html, /universal-card-column--bg/);
+  assert.match(ALL_CSS, /\.universal-card-column--bg[^}]*border-radius:\s*6px/);
+  assert.doesNotMatch(ALL_CSS, /\.universal-card-column--bg[^}]*padding/);
 });
 
 test('column: width="120px" → widthValue 定宽', () => {

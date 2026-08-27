@@ -568,7 +568,8 @@ registerComponent('column_set', (el, ctx) => {
   // margin：分栏容器自身的外边距（可为负，如 -8px 上移，紧贴上一块）——如实透传。
   const mg = boxToStyle(p.margin);
   if (mg) style.margin = mg;
-  // 背景：DSL background_style / RAW backgroundStyle。grey → var(--bg-float-overlay)（真机同款）。
+  // 背景：DSL background_style / RAW backgroundStyle。grey → var(--bg-float-overlay)。
+  // 有底色挂 --bg：真机 CSS 给 padding:4px + border-radius:6px。DSL padding 仍可覆盖。
   const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
@@ -607,14 +608,15 @@ registerComponent('column', (el, ctx) => {
   // 注意不要再叠加 CSS 的相邻兄弟 margin，否则间距翻倍——故 styles.css 里不给 column 子元素设 margin。
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
   style.rowGap = (vGap != null ? spacingToPx(vGap as number | string) : 8) + 'px';
-  // 背景色 + 内边距（彩色提示块，如「核心观点」绿底）：有背景时给个圆角更贴近原版
+  // 背景：有底色挂 --bg（CSS 给 6px 圆角；默认 padding 仍是 0，内边距须 DSL 显式写）。
   const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
-  if (bg) { style.background = bg; style.borderRadius = '6px'; }
+  if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
   const mg = boxToStyle(p.margin);
   if (mg) style.margin = mg;
-  return h('div', { className: `${CLS}-column`, style }, renderElements(p.elements, ctx));
+  const cls = `${CLS}-column` + (bg ? ` ${CLS}-column--bg` : '');
+  return h('div', { className: cls, style }, renderElements(p.elements, ctx));
 });
 
 // ---- 内容 / 交互 ----
