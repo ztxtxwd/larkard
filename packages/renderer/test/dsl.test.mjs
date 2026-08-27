@@ -126,6 +126,21 @@ test('padding: 两值简写 = 上下/左右', () => {
 
 /* ---- column 定宽 width → widthValue ---- */
 
+test('column_set: background_style=grey → var(--bg-float-overlay)（真机 light alias N50）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [
+      { tag: 'column_set', background_style: 'grey', columns: [
+        { tag: 'column', elements: [{ tag: 'markdown', content: 'AI 贯穿始终' }] },
+      ] },
+    ] },
+  });
+  assert.match(html, /universal-card-column-set--bg/);
+  assert.match(html, /background:var\(--bg-float-overlay\)/);
+  assert.doesNotMatch(html, /background:#646a73/); // 不是正文色 grey→N600
+  assert.match(ALL_CSS, /--bg-float-overlay:\s*var\(--N50\)/); // light 落到 N50=#f5f6f7
+});
+
 test('column: width="120px" → widthValue 定宽', () => {
   const raw = dslToRaw({ body: { elements: [
     { tag: 'column_set', columns: [{ tag: 'column', width: '120px', elements: [] }] },

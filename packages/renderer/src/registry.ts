@@ -297,13 +297,15 @@ export function boxToStyle(box: Spacing4 | undefined): string | null {
 
 /**
  * 容器 backgroundStyle -> CSS background 值。
- * 支持任意 "<族名>-<档位>"（green-50 / blue-100 …）、裸色阶 token、自定义 #hex；
- * 无档位族名默认 -600（同 paletteColor 规则）。"default"/"none"/空 -> 无背景（null）。
- * 注：容器底色语义上通常用浅档（-50），但引擎允许任意档位，这里如实解析。
+ * 枚举 grey（及历史值 1）：真机写 `background: var(--bg-float-overlay)`，
+ * light 主题 alias 为 `--N50`（#f5f6f7），不是正文色 grey→N600。
+ * 带档位色名（green-50 / blue-100）、裸色阶 token、自定义 #hex 走色板。
+ * "default"/"none"/空 -> 无背景。
  */
 export function bgStyleToColor(style: unknown): string | null {
   if (typeof style !== 'string') return null;
   const v = style.trim();
   if (!v || v === 'default' || v === 'none' || v === 'transparent') return null;
+  if (v === 'grey' || v === 'gray' || v === '1') return 'var(--bg-float-overlay)';
   return resolveColor(v) || null;
 }

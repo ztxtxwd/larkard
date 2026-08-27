@@ -186,6 +186,8 @@
   --Y800: #573601;
   --Y900: #382201;
   /* END PALETTE VARS */
+  /* 真机 light：--bg-float-overlay: var(--N50)。column_set background_style=grey 走此 token */
+  --bg-float-overlay: var(--N50);
 }
 .universal-card-root *,
 .universal-card-root *::before,

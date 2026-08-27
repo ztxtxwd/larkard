@@ -568,7 +568,13 @@ registerComponent('column_set', (el, ctx) => {
   // margin：分栏容器自身的外边距（可为负，如 -8px 上移，紧贴上一块）——如实透传。
   const mg = boxToStyle(p.margin);
   if (mg) style.margin = mg;
-  return h('div', { className: `${CLS}-column-set`, style }, renderElements(p.columns, ctx));
+  // 背景：DSL background_style / RAW backgroundStyle。grey → var(--bg-float-overlay)（真机同款）。
+  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  if (bg) style.background = bg;
+  const pad = boxToStyle(p.padding);
+  if (pad) style.padding = pad;
+  const cls = `${CLS}-column-set` + (bg ? ` ${CLS}-column-set--bg` : '');
+  return h('div', { className: cls, style }, renderElements(p.columns, ctx));
 });
 
 // column：单栏
@@ -602,7 +608,7 @@ registerComponent('column', (el, ctx) => {
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
   style.rowGap = (vGap != null ? spacingToPx(vGap as number | string) : 8) + 'px';
   // 背景色 + 内边距（彩色提示块，如「核心观点」绿底）：有背景时给个圆角更贴近原版
-  const bg = bgStyleToColor(p.backgroundStyle);
+  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
   if (bg) { style.background = bg; style.borderRadius = '6px'; }
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
@@ -809,7 +815,7 @@ registerComponent('interactive_container', (el, ctx) => {
     + (hasBorder && !borderColor ? ` ${CLS}-interactive-container--bordered` : '')
     + (disabled ? ` ${CLS}-interactive-container--disabled` : '');
   const style: Record<string, string> = {};
-  const bg = bgStyleToColor(p.backgroundStyle);
+  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;

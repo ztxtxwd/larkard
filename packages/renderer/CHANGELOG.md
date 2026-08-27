@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.4
+
+### Patch Changes
+
+- 修复 `column_set` 的 `background_style: grey` 未渲染：对齐真机写入 `var(--bg-float-overlay)`（light 主题为 N50）。
+
 ## 0.2.3
 
 ### Patch Changes
