@@ -15,7 +15,7 @@
 | `@open-feishu-card/renderer` | 零框架依赖渲染引擎：HTML 字符串 / 真实 DOM / SSR | Browser / Node |
 | `@open-feishu-card/language-server` | LSP 语言服务器：诊断、补全、Hover、Quick Fix | Node / WebWorker |
 | `@open-feishu-card/cli` | 终端工具：`lint` / `validate` / `clean` / `format` / `build` | Node CLI |
-| `open-feishu-card-vscode` | VS Code 插件：LSP 客户端 + Webview 实时预览画布 | VS Code |
+| `lark-card-preview` | VS Code 插件（显示名 Open Feishu Card，Marketplace：`TianxiongZhao.lark-card-preview`）：LSP + Webview 预览 | VS Code |
 | `@open-feishu-card/benchmark` | 大模型飞书卡片生成能力评测：客观题 + 主观题（工具链自动判分） | Node CLI |
 
 ## 快速开始

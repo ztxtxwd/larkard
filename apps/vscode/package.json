@@ -1,10 +1,10 @@
 {
-  "name": "open-feishu-card-vscode",
+  "name": "lark-card-preview",
   "displayName": "Open Feishu Card",
   "description": "飞书卡片 (Card Schema 2.0) 开发套件：LSP 智能提示 + Webview 实时预览 + 一键净化非标属性",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "publisher": "open-feishu-card",
+  "publisher": "TianxiongZhao",
   "license": "MIT",
   "type": "commonjs",
   "engines": {
@@ -19,12 +19,18 @@
     "lark",
     "feishu",
     "card",
-    "universal card"
+    "universal card",
+    "lsp",
+    "preview"
   ],
   "icon": "media/icon.png",
   "main": "./dist/extension.js",
   "activationEvents": [
-    "workspaceContains:**/*.card"
+    "workspaceContains:**/*.card",
+    "onCommand:larkCardPreview.openPreview",
+    "onCommand:larkCardPreview.openSample",
+    "onCommand:larkCardPreview.showSource",
+    "onCommand:larkCardPreview.refresh"
   ],
   "contributes": {
     "commands": [
@@ -55,7 +61,7 @@
     "customEditors": [
       {
         "viewType": "openFeishuCard.editor",
-        "displayName": "Open Feishu Card Preview",
+        "displayName": "Open Feishu Card",
         "selector": [
           {
             "filenamePattern": "*.card"
@@ -141,7 +147,9 @@
     "lint": "tsc --noEmit -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "echo no tests",
-    "build": "node esbuild.mjs"
+    "build": "node esbuild.mjs",
+    "publish:marketplace": "vsce publish --no-dependencies",
+    "publish:ovsx": "ovsx publish --no-dependencies"
   },
   "dependencies": {
     "@open-feishu-card/renderer": "workspace:*",
@@ -154,11 +162,13 @@
     "@types/node": "^22.20.1",
     "@types/vscode": "^1.92.0",
     "esbuild": "^0.25.0",
+    "ovsx": "^0.10.12",
     "typescript": "^7.0.2",
     "@vscode/vsce": "^3.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/open-feishu-card/open-feishu-card.git"
-  }
+    "url": "https://github.com/ztxtxwd/open-feishu-card-monorepo.git"
+  },
+  "homepage": "https://marketplace.visualstudio.com/items?itemName=TianxiongZhao.lark-card-preview"
 }

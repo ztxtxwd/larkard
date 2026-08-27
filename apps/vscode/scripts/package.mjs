@@ -30,7 +30,7 @@ const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 delete pkg.dependencies; // 全量 bundle，运行时零依赖
 delete pkg.scripts;
 writeFileSync(join(stage, 'package.json'), JSON.stringify(pkg, null, 2) + '\n');
-for (const f of ['LICENSE', 'README.md', '.vscodeignore']) {
+for (const f of ['LICENSE', 'README.md', 'CHANGELOG.md', '.vscodeignore']) {
   const src = join(root, f);
   if (existsSync(src)) cpSync(src, join(stage, f));
 }

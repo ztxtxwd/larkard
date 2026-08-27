@@ -1,0 +1,105 @@
+name: Publish VS Code Extension
+
+on:
+  push:
+    tags:
+      - 'vscode-v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only package the VSIX, do not publish'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Package and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace dependencies
+        run: pnpm --filter ./apps/vscode... build
+
+      - name: Typecheck extension
+        run: pnpm --filter ./apps/vscode typecheck
+
+      - name: Resolve package metadata
+        id: meta
+        working-directory: apps/vscode
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "vsix=${NAME}-${VERSION}.vsix" >> "$GITHUB_OUTPUT"
+
+      - name: Verify tag matches package.json version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG="${GITHUB_REF_NAME#vscode-v}"
+          EXPECTED="${{ steps.meta.outputs.version }}"
+          if [ "$TAG" != "$EXPECTED" ]; then
+            echo "Tag version ($TAG) does not match apps/vscode package.json version ($EXPECTED)"
+            exit 1
+          fi
+
+      - name: Package VSIX
+        run: pnpm --filter ./apps/vscode package
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.vsix }}
+          path: apps/vscode/${{ steps.meta.outputs.vsix }}
+          if-no-files-found: error
+
+      - name: Publish to VS Code Marketplace
+        if: ${{ github.event_name == 'push' || github.event.inputs.dry_run == 'false' }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        working-directory: apps/vscode
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "Skipping Marketplace publish: repository secret VSCE_PAT is not set."
+            exit 0
+          fi
+          npx --no-install vsce publish --no-dependencies --packagePath "${{ steps.meta.outputs.vsix }}" -p "$VSCE_PAT"
+
+      - name: Publish to Open VSX
+        if: ${{ github.event_name == 'push' || github.event.inputs.dry_run == 'false' }}
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        working-directory: apps/vscode
+        run: |
+          if [ -z "$OVSX_PAT" ]; then
+            echo "Skipping Open VSX publish: repository secret OVSX_PAT is not set."
+            exit 0
+          fi
+          npx --no-install ovsx publish "${{ steps.meta.outputs.vsix }}" -p "$OVSX_PAT"
+
+      - name: Attach VSIX to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: apps/vscode/${{ steps.meta.outputs.vsix }}
+          fail_on_unmatched_files: true
+          generate_release_notes: true

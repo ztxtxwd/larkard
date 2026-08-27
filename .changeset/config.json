@@ -8,7 +8,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "open-feishu-card-vscode",
+    "lark-card-preview",
     "@open-feishu-card/benchmark"
   ]
 }

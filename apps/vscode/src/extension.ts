@@ -84,6 +84,7 @@ export function activate(context: vscode.ExtensionContext): void {
         `Sanitized: stripped ${stripped.length} non-standard propert${stripped.length === 1 ? 'y' : 'ies'}:\n${stripped.join('\n')}`,
       );
     }),
+    ...legacyCommandAliases(),
   );
 }
 
@@ -91,14 +92,46 @@ export function deactivate(): Promise<void> | undefined {
   return undefined;
 }
 
+const LEGACY_COMMANDS: Array<[legacy: string, current: string]> = [
+  ['larkCardPreview.openPreview', 'openFeishuCard.openPreview'],
+  ['larkCardPreview.openSample', 'openFeishuCard.openSample'],
+  ['larkCardPreview.showSource', 'openFeishuCard.showSource'],
+  ['larkCardPreview.refresh', 'openFeishuCard.refresh'],
+];
+
+function legacyCommandAliases(): vscode.Disposable[] {
+  return LEGACY_COMMANDS.map(([legacy, current]) =>
+    vscode.commands.registerCommand(legacy, (...args: unknown[]) =>
+      vscode.commands.executeCommand(current, ...args),
+    ),
+  );
+}
+
+function cardConfigValue<T>(key: string, fallback: T): T {
+  const next = vscode.workspace.getConfiguration('openFeishuCard').inspect<T>(key);
+  const legacy = vscode.workspace.getConfiguration('larkCardPreview').inspect<T>(key);
+  return (
+    next?.workspaceFolderValue ??
+    next?.workspaceValue ??
+    next?.globalValue ??
+    legacy?.workspaceFolderValue ??
+    legacy?.workspaceValue ??
+    legacy?.globalValue ??
+    next?.defaultValue ??
+    fallback
+  );
+}
+
+function cardConfigChanged(event: vscode.ConfigurationChangeEvent): boolean {
+  return event.affectsConfiguration('openFeishuCard') || event.affectsConfiguration('larkCardPreview');
+}
+
 /* ------------------------------------------------------------------ *
  * Language Server 客户端（诊断 / 补全 / Hover / 快速修复）
  * ------------------------------------------------------------------ */
 
 function createLanguageClient(context: vscode.ExtensionContext): LanguageClient | undefined {
-  const enabled = vscode.workspace
-    .getConfiguration('openFeishuCard')
-    .get<boolean>('languageServer.enabled', true);
+  const enabled = cardConfigValue<boolean>('languageServer.enabled', true);
   if (!enabled) return undefined;
 
   // language-server 已 bundle 为单文件 dist/server.cjs，随 VSIX 分发
@@ -128,16 +161,15 @@ function createLanguageClient(context: vscode.ExtensionContext): LanguageClient 
 
 class CardRenderer {
   render(document: vscode.TextDocument): PreviewPayload {
-    const config = vscode.workspace.getConfiguration('openFeishuCard');
     const settings: PreviewSettings = {
-      theme: config.get<string>('preview.theme', 'auto'),
-      maxWidth: config.get<number>('preview.maxWidth', 650),
+      theme: cardConfigValue<string>('preview.theme', 'auto'),
+      maxWidth: cardConfigValue<number>('preview.maxWidth', 650),
     };
     try {
       const card: unknown = JSON.parse(document.getText());
-      const imageBaseURL = config.get<string>('imageBaseURL', '').trim();
+      const imageBaseURL = cardConfigValue<string>('imageBaseURL', '').trim();
       const html = renderDslToString(getDsl(card), {
-        warnOnUnknownTag: config.get<boolean>('render.warnOnUnknownTag', true),
+        warnOnUnknownTag: cardConfigValue<boolean>('render.warnOnUnknownTag', true),
         ...(imageBaseURL ? { imageBaseURL } : {}),
       });
       return { type: 'render', html, fileName: path.basename(document.fileName), ...settings };
@@ -191,7 +223,7 @@ class FeishuCardEditorProvider implements vscode.CustomTextEditorProvider {
       }
     });
     const configuration = vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration('openFeishuCard')) {
+      if (cardConfigChanged(event)) {
         update();
       }
     });
@@ -223,7 +255,7 @@ class PreviewPanelManager implements vscode.Disposable {
       if (entry) this.update(entry.panel, event.document);
     });
     this.configuration = vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration('openFeishuCard')) this.refreshVisible();
+      if (cardConfigChanged(event)) this.refreshVisible();
     });
   }
 
@@ -294,9 +326,8 @@ function createWebviewHtml(
   );
   const appStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'preview.css'));
   const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'preview.js'));
-  const config = vscode.workspace.getConfiguration('openFeishuCard');
-  const maxWidth = config.get<number>('preview.maxWidth', 650);
-  const theme = config.get<string>('preview.theme', 'auto');
+  const maxWidth = cardConfigValue<number>('preview.maxWidth', 650);
+  const theme = cardConfigValue<string>('preview.theme', 'auto');
   const csp = [
     "default-src 'none'",
     `style-src ${webview.cspSource} 'unsafe-inline'`,
