@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.3
+
+### Patch Changes
+
+- 重新生成内嵌 `BASE_STYLES_CSS`，使 SSR / 运行时注入的样式与 `styles.css` 一致。
+
 ## 0.2.2
 
 ### Patch Changes
