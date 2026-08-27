@@ -31,16 +31,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          package-manager-cache: false
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build workspace dependencies
-        run: pnpm --filter ./apps/vscode... build
+        run: pnpm exec turbo run build --filter=lark-card-preview
 
       - name: Typecheck extension
-        run: pnpm --filter ./apps/vscode typecheck
+        run: pnpm --filter lark-card-preview typecheck
 
       - name: Resolve package metadata
         id: meta
@@ -63,7 +62,7 @@ jobs:
           fi
 
       - name: Package VSIX
-        run: pnpm --filter ./apps/vscode package
+        run: pnpm --filter lark-card-preview package
 
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4
