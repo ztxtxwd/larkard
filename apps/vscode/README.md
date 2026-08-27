@@ -4,7 +4,7 @@
 
 - 显示名：**Open Feishu Card**（原「飞书卡片预览」）
 - 扩展 ID 不变：[`TianxiongZhao.lark-card-preview`](https://marketplace.visualstudio.com/items?itemName=TianxiongZhao.lark-card-preview)
-- 源码：[open-feishu-card-monorepo](https://github.com/ztxtxwd/open-feishu-card-monorepo) 的 `apps/vscode`；独立仓库不再维护
+- 源码：[open-feishu-card-monorepo](https://github.com/ztxtxwd/open-feishu-card-monorepo) 的 `apps/vscode`。原独立仓库 `lark-card-preview` 已归档。
 
 已安装旧版的用户会直接收到 `0.2.0` 更新，不必卸了重装。
 
@@ -86,7 +86,7 @@ pnpm --filter lark-card-preview package
 
 `F5` 启动 Extension Development Host 后，打开任意 `.card` 即可同时试预览和 LSP。
 
-发布：打 tag `vscode-v0.2.0`（与 `apps/vscode/package.json` 的 `version` 一致），CI 会发到 Marketplace 与 Open VSX。仓库需要 `VSCE_PAT`、`OVSX_PAT`。
+发布：在 **本仓库** 打 tag `vscode-v*`（须与 `apps/vscode/package.json` 的 `version` 一致），或手动跑 Actions **Publish VS Code Extension**。需要 secrets：`VSCE_PAT`、`OVSX_PAT`。
 
 ## License
 

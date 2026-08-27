@@ -78,8 +78,8 @@ jobs:
         working-directory: apps/vscode
         run: |
           if [ -z "$VSCE_PAT" ]; then
-            echo "Skipping Marketplace publish: repository secret VSCE_PAT is not set."
-            exit 0
+            echo "Missing repository secret VSCE_PAT"
+            exit 1
           fi
           npx --no-install vsce publish --no-dependencies --packagePath "${{ steps.meta.outputs.vsix }}" -p "$VSCE_PAT"
 
@@ -90,8 +90,8 @@ jobs:
         working-directory: apps/vscode
         run: |
           if [ -z "$OVSX_PAT" ]; then
-            echo "Skipping Open VSX publish: repository secret OVSX_PAT is not set."
-            exit 0
+            echo "Missing repository secret OVSX_PAT"
+            exit 1
           fi
           npx --no-install ovsx publish "${{ steps.meta.outputs.vsix }}" -p "$OVSX_PAT"
 
