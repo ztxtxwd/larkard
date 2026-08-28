@@ -6,6 +6,8 @@ import { z } from 'zod';
  * - 表单容器示例中，进入 form 后交互推迟到 submit，这些组件可不写 behaviors。
  *
  * 因此：不在 form 内 → 必填；在 form 内（含 form 里的 column_set 等嵌套）→ 可选。
+ * 豁免：interactive_container 自带 disabled:true（纯视觉强调框，不可交互）时可省略——
+ * 官方组件库的强调框即此用法（白底 + 边框 + 圆角 + disabled，无 behaviors）。
  *
  * @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/containers/form-container
  * @see https://open.feishu.cn/document/feishu-cards/configuring-card-interactions
@@ -80,7 +82,9 @@ function walkNode(
   if (
     BEHAVIORS_REQUIRED_OUTSIDE_FORM.has(tag) &&
     !inForm &&
-    !hasBehaviorsArray(node)
+    !hasBehaviorsArray(node) &&
+    // disabled 的纯视觉 interactive_container 不承载交互，豁免（对齐官方组件库强调框写法）
+    !(tag === 'interactive_container' && node.disabled === true)
   ) {
     ctx.addIssue({
       code: 'custom',
