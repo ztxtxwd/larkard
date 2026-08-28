@@ -49,6 +49,14 @@ jobs:
         with:
           persist-credentials: false
 
+      # changeset version 生成 changelog 时需要本地 git fetch 追溯 changeset 所在提交
+      # （@changesets/git deepenCloneBy）；checkout 已禁用凭据持久化，这里临时注入。
+      - name: Authenticate git for changesets changelog attribution
+        run: >-
+          git config --global
+          url."https://x-access-token:${{ github.token }}@github.com/".insteadOf
+          "https://github.com/"
+
       - uses: pnpm/action-setup@v4
         with:
           version: 10.30.3
