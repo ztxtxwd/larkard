@@ -269,12 +269,48 @@ function convertConfig(_node: Record<string, unknown>): unknown {
 }
 
 function convertHeader(node: Record<string, unknown>, ctx: Ctx): unknown {
-  const property = isRecord(node.property) ? node.property : {};
+  // Raw: { id, tag:'card_header', property:{ title, subtitle, ... } }
+  // Bare / already-DSL: { title, subtitle, template } with no property envelope
+  // (same fallback convertBody uses). Drop tag if the bare form leaked card_header.
+  const property = isRecord(node.property) ? node.property : node;
   const out = convertProperty(property, "header", ctx) as Record<string, unknown>;
-  // Raw stashes the header icon as `udIcon` (an editor-only wrapper around
-  // a standard_icon). Projection happens via convertField; here we just
-  // verify the rename landed correctly.
+  delete out.tag;
   return out;
+}
+
+/**
+ * Project a raw (or already-flat) header title/subtitle to the public
+ * `{ tag:'plain_text'|'lark_md', content }` TextObject.
+ * Returns undefined when the value isn't a text node we recognize, so the
+ * caller can fall through to convertGeneric.
+ */
+function convertHeaderText(rawValue: Record<string, unknown>, ctx: Ctx): Record<string, unknown> | undefined {
+  const tag = typeof rawValue.tag === "string" ? rawValue.tag : "";
+  const wrapped = isRecord(rawValue.property);
+  const property = wrapped ? (rawValue.property as Record<string, unknown>) : rawValue;
+
+  if (tag === "plain_text") {
+    const content = typeof property.content === "string" ? property.content : "";
+    return { tag: "plain_text", content };
+  }
+
+  if (tag === "markdown" || tag === "lark_md") {
+    // RAW: { tag, property:{ elements, originTag } } — re-stitch.
+    // Flat DSL: { tag:'lark_md', content } — keep content, force public tag.
+    if (wrapped && Array.isArray(property.elements)) {
+      const rebuilt = rebuildMarkdown(property, ctx) as Record<string, unknown>;
+      return { tag: "lark_md", content: typeof rebuilt.content === "string" ? rebuilt.content : "" };
+    }
+    const content = typeof property.content === "string" ? property.content : "";
+    return { tag: "lark_md", content };
+  }
+
+  // String-shaped / tag-less { content } (some authors omit tag).
+  if (!wrapped && typeof rawValue.content === "string" && !tag) {
+    return { tag: "plain_text", content: rawValue.content };
+  }
+
+  return undefined;
 }
 
 function convertBody(node: Record<string, unknown>, ctx: Ctx): unknown {
@@ -787,6 +823,17 @@ function convertField(
   if (key === "text" && isRecord(rawValue) && rawValue.tag === "plain_text") {
     const p = isRecord(rawValue.property) ? rawValue.property : {};
     return [key, { tag: "plain_text", content: typeof p.content === "string" ? p.content : "" }];
+  }
+
+  // header.title / header.subtitle: public DSL TextObject is plain_text | lark_md
+  // only (schema rejects tag:'markdown'). Raw stores a lark_md subtitle as
+  // { tag:'markdown', property:{ originTag:'lark_md', elements:[at, …] } };
+  // unwrap() would emit tag:'markdown' and keep text_align. Re-stitch content
+  // and emit the public lark_md text object. Already-flat DSL ({ tag, content })
+  // is passed through so rawToDsl stays idempotent on its own output.
+  if (ownerTag === "header" && (key === "title" || key === "subtitle") && isRecord(rawValue)) {
+    const headerText = convertHeaderText(rawValue, ctx);
+    if (headerText) return [key, headerText];
   }
 
   // header.udIcon → header.icon (rebuilt as standard_icon). The udIcon

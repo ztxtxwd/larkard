@@ -31,6 +31,34 @@ test('renders header with template color', () => {
   assert.match(html, /标题/);
 });
 
+test('header subtitle lark_md / markdown：渲染 @ 提及，不漏字面 <at>', () => {
+  const html = renderCardToString({
+    json_card: {
+      schema: '2.0',
+      header: {
+        tag: 'card_header',
+        property: {
+          template: 'carmine',
+          title: { tag: 'plain_text', property: { content: '事件复盘' } },
+          subtitle: {
+            tag: 'markdown',
+            property: {
+              originTag: 'lark_md',
+              elements: [{ tag: 'at', property: { userID: 'ou_113' } }],
+            },
+          },
+        },
+      },
+      body: { tag: 'body', property: { elements: [] } },
+    },
+  }, { persons: { ou_113: { content: '赵天雄' } } });
+  assert.match(html, /事件复盘/);
+  assert.match(html, /universal-card-header__text-subtitle/);
+  assert.match(html, /@赵天雄/);
+  assert.doesNotMatch(html, /&lt;at/);
+  assert.doesNotMatch(html, /<at id=/);
+});
+
 test('named color green = var(--G600), bold class, center align', () => {
   const html = renderCardToString(card);
   assert.match(html, /var\(--G600\)/);

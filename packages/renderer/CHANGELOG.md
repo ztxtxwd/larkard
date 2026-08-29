@@ -1,5 +1,13 @@
 # @open-feishu-card/renderer
 
+## 0.2.6
+
+### Patch Changes
+
+- header title/subtitle 支持 lark_md：RAW 的 originTag:lark_md 投影为公开 `{ tag:'lark_md', content }`，回写时解析成 markdown 元素树，渲染器画出 @ 提及而不是字面 `<at>`。
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.1
+
 ## 0.2.5
 
 ### Patch Changes

@@ -389,6 +389,33 @@ function resolveChartBoxStyle(
   return style;
 }
 
+/**
+ * header.title / header.subtitle：plain_text 用 content 字符串；
+ * lark_md / markdown 走子元素树（真机 RAW 只有 elements，没有 content）。
+ * 仅有 content 字符串时现场 parseMarkdown，避免 <at> 当字面量漏出。
+ */
+function renderHeaderTextLeaf(
+  node: CardElement | undefined,
+  ctx: RenderContext,
+  className: string,
+): VNode | null {
+  if (!node) return null;
+  const tag = node.tag;
+  const p = node.property || {};
+  const isMd = tag === 'markdown' || tag === 'lark_md';
+  if (isMd) {
+    let elements = Array.isArray(p.elements) ? p.elements : [];
+    if (elements.length === 0 && typeof p.content === 'string' && p.content) {
+      elements = parseMarkdown(p.content);
+    }
+    if (elements.length === 0) return null;
+    return h('div', { className }, renderElements(elements, ctx));
+  }
+  const content = typeof p.content === 'string' ? p.content : '';
+  if (!content) return null;
+  return h('div', { className }, content);
+}
+
 /** 注册全部内置组件（幂等）。index.ts 在加载时调用一次。 */
 export function registerBuiltins(): void {
   if (registered) return;
@@ -416,12 +443,11 @@ export function registerBuiltins(): void {
   //   __bg → __content(row) → [__icon?] + __text(column: title-wrapper + subtitle)
   // text_tag_list（DSL snake_case，兼容 camelCase textTagList）：标题右侧彩色标签。
   // icon / udIcon：标题左侧图标；未指定 color 时继承 header 模板标题色。
+  // title / subtitle 支持 plain_text 与 lark_md（真机 RAW 为 tag:markdown + originTag:lark_md）。
   registerComponent('card_header', (el, ctx) => {
   const p = el.property || {};
   const tplKey = (p.template || 'default') as keyof typeof HEADER_TEMPLATE;
   const tpl = HEADER_TEMPLATE[tplKey] || HEADER_TEMPLATE.default;
-  const title = p.title?.property?.content ?? '';
-  const subtitle = p.subtitle?.property?.content ?? '';
   const tags = (p.text_tag_list || p.textTagList) as CardElement[] | undefined;
   const tagVNodes = Array.isArray(tags) && tags.length ? renderElements(tags, ctx) : [];
 
@@ -440,12 +466,16 @@ export function registerBuiltins(): void {
     if (inner) iconVNode = h('div', { className: `${CLS}-header__icon` }, inner);
   }
 
+  const titleVNode = renderHeaderTextLeaf(p.title, ctx, `${CLS}-header__text-title`)
+    ?? h('div', { className: `${CLS}-header__text-title` });
+  const subtitleVNode = renderHeaderTextLeaf(p.subtitle, ctx, `${CLS}-header__text-subtitle`);
+
   const textChildren: Array<VNode | null> = [
     h('div', { className: `${CLS}-header__text-title-wrapper` },
-      h('div', { className: `${CLS}-header__text-title` }, String(title)),
+      titleVNode,
       tagVNodes.length ? h('div', { className: `${CLS}-header__tags` }, tagVNodes) : null
     ),
-    subtitle ? h('div', { className: `${CLS}-header__text-subtitle` }, String(subtitle)) : null,
+    subtitleVNode,
   ];
 
   return h('div', {

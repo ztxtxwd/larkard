@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { isRawCardEnvelope, rawCardToDsl } from "../src/raw-to-dsl.js";
+import { isRawCardEnvelope, rawCardToDsl, rawToDsl } from "../src/raw-to-dsl.js";
 
 const FIXTURES = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures");
 
@@ -410,6 +410,39 @@ describe("header projection", () => {
     expect(icon).toBeDefined();
     expect(icon?.tag).toBe("standard_icon");
     expect(typeof icon?.token).toBe("string");
+  });
+
+  it("projects header subtitle originTag:lark_md to public { tag:'lark_md', content }", () => {
+    const dsl = rawCardToDsl(loadFixture("header-lark-md.raw.json")) as AnyDsl;
+    const title = dsl.header?.title as Record<string, unknown> | undefined;
+    const subtitle = dsl.header?.subtitle as Record<string, unknown> | undefined;
+    expect(title).toEqual({
+      tag: "plain_text",
+      content: "🛡️ OpenAI 越界入侵 Hugging Face：事件复盘与 5 大安全反思",
+    });
+    expect(subtitle?.tag).toBe("lark_md");
+    expect(subtitle?.content).toBe("<at id=ou_113bce58203b98552a06a738827e95b7></at>");
+    expect(subtitle).not.toHaveProperty("text_align");
+    expect(subtitle).not.toHaveProperty("elements");
+  });
+
+  it("re-projects already-flat header subtitle tag:markdown to lark_md", () => {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      header: {
+        template: "carmine",
+        title: { tag: "plain_text", content: "事件复盘" },
+        subtitle: { tag: "markdown", content: "<at id=ou_abc></at>", text_align: "left" },
+      },
+      body: { elements: [] },
+    }) as AnyDsl;
+    expect(dsl.header).not.toHaveProperty("tag");
+    expect(dsl.header?.title).toEqual({ tag: "plain_text", content: "事件复盘" });
+    expect(dsl.header?.subtitle).toEqual({
+      tag: "lark_md",
+      content: "<at id=ou_abc></at>",
+    });
+    expect(dsl.header?.template).toBe("carmine");
   });
 });
 

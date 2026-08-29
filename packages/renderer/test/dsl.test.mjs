@@ -95,6 +95,34 @@ test('dslToRaw: header 文本叶子 = {tag:plain_text,property:{content}}', () =
   assert.deepEqual(raw.header.property.title, { tag: 'plain_text', property: { content: '关于配合发布会的通知' } });
 });
 
+test('dslToRaw: header subtitle lark_md → markdown elements', () => {
+  const raw = dslToRaw({
+    header: {
+      title: { tag: 'plain_text', content: '事件复盘' },
+      subtitle: { tag: 'lark_md', content: '<at id=ou_113></at>' },
+    },
+    body: { elements: [] },
+  });
+  const subtitle = raw.header.property.subtitle;
+  assert.equal(subtitle.tag, 'markdown');
+  assert.equal(subtitle.property.originTag, 'lark_md');
+  assert.equal(subtitle.property.elements[0].tag, 'at');
+  assert.equal(subtitle.property.elements[0].property.userID, 'ou_113');
+});
+
+test('header subtitle lark_md：渲染 @ 提及', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    header: {
+      title: { tag: 'plain_text', content: '事件复盘' },
+      subtitle: { tag: 'lark_md', content: '<at id=ou_113></at>' },
+    },
+    body: { elements: [] },
+  }, { persons: { ou_113: { content: '赵天雄' } } });
+  assert.match(html, /@赵天雄/);
+  assert.doesNotMatch(html, /&lt;at/);
+});
+
 /* ---- box 简写字符串 → 对象 ---- */
 
 test('padding/margin: CSS 简写 → 四向对象', () => {

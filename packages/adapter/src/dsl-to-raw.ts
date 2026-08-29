@@ -63,6 +63,9 @@ function convertHeader(header: Record<string, unknown>): CardElement {
   const property: ElementProperty = {};
   for (const [k, v] of Object.entries(header)) {
     if (k === 'tag') continue;
+    // title / subtitle：lark_md 必须解析成 markdown 元素树（对齐真机 originTag:lark_md），
+    // 不能走 wrapTextLeaf，否则 <at> 会以字面量留在 content 里、渲染器读不到子元素。
+    if (k === 'title' || k === 'subtitle') { property[k] = wrapHeaderText(v); continue; }
     if (TEXT_LEAF_KEYS.has(k)) { property[k] = wrapTextLeaf(v); continue; }
     // 前置图标：icon / ud_icon（与 body 元素同规则）
     if ((k === 'icon' || k === 'ud_icon') && isRecord(v)) {
@@ -280,6 +283,28 @@ function wrapTextLeaf(v: unknown): CardElement {
     return { tag: typeof v.tag === 'string' ? v.tag : 'plain_text', property };
   }
   return { tag: 'plain_text', property: { content: '' } };
+}
+
+/**
+ * header.title / header.subtitle → RAW 文本节点。
+ * 公开 DSL 允许 tag: plain_text | lark_md；真机把 lark_md 存成
+ * { tag:'markdown', property:{ originTag:'lark_md', elements } }。
+ */
+function wrapHeaderText(v: unknown): CardElement {
+  if (typeof v === 'string') return { tag: 'plain_text', property: { content: v } };
+  if (!isRecord(v)) return { tag: 'plain_text', property: { content: '' } };
+  const tag = typeof v.tag === 'string' ? v.tag : 'plain_text';
+  const content = typeof v.content === 'string' ? v.content : '';
+  if (tag === 'lark_md' || tag === 'markdown') {
+    return {
+      tag: 'markdown',
+      property: {
+        elements: parseMarkdown(content),
+        originTag: 'lark_md',
+      },
+    };
+  }
+  return wrapTextLeaf(v);
 }
 
 /** behaviors:[{type,default_url}] → actions:[{type,action:{url}}]（渲染器读 actions[].action.url） */
