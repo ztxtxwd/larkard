@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import {
+  ColorSchema,
   ElementIdSchema,
   HorizontalAlignSchema,
   SpacingValueSchema,
@@ -47,6 +48,9 @@ export const MarkdownSchema = z
     ),
     text_size: MarkdownTextSizeSchema.optional().describe(
       '文本大小，默认 normal；可为官方枚举或自定义 text_size key。标签/辅助说明可用 notation，数值可用 heading',
+    ),
+    font_color: ColorSchema.optional().describe(
+      '整段 Markdown 文字颜色；可为官方颜色枚举或 config.style.color 自定义 key（如 cus-accent）。内联 <font color> 仍走 content 语法',
     ),
     icon: IconSchema.optional().describe(
       '文本前缀图标；与文内 emoji 二选一，不要叠用。图标颜色应与描述的状态文字一致',

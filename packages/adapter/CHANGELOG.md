@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.2
+
+### Patch Changes
+
+- 飞书回读卡片时 custom_background_style / 丢失的 font_color 归一化：`normalizeStoredCardColors` 还原 cus-N + config.style.color；schema 补充 markdown.font_color 与 column.custom_background_style。
+
 ## 0.3.1
 
 ### Patch Changes
