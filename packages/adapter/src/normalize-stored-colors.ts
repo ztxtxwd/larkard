@@ -5,7 +5,38 @@
 
 export type CustomColorEntry = { light_mode: string; dark_mode: string };
 
-function hexColorToRgba(hex: string): string | undefined {
+export type ColorRegistry = {
+  entries: Record<string, CustomColorEntry>;
+  keyToAlias: Map<string, string>;
+  bgSeq: number;
+  textSeq: number;
+};
+
+export function createColorRegistry(): ColorRegistry {
+  return { entries: {}, keyToAlias: new Map(), bgSeq: 0, textSeq: 0 };
+}
+
+export function colorEntryKey(entry: CustomColorEntry): string {
+  return `${entry.light_mode}|${entry.dark_mode}`;
+}
+
+export function registerColorEntry(
+  registry: ColorRegistry,
+  entry: CustomColorEntry,
+  prefix: 'cus-bg' | 'cus-text',
+): string {
+  const key = colorEntryKey(entry);
+  const existing = registry.keyToAlias.get(key);
+  if (existing) return existing;
+  const alias = prefix === 'cus-bg'
+    ? `cus-bg-${registry.bgSeq++}`
+    : `cus-text-${registry.textSeq++}`;
+  registry.entries[alias] = entry;
+  registry.keyToAlias.set(key, alias);
+  return alias;
+}
+
+export function hexColorToRgba(hex: string): string | undefined {
   const h = hex.trim().replace(/^#/, '');
   if (h.length === 8) {
     const r = parseInt(h.slice(0, 2), 16);
@@ -41,19 +72,23 @@ function readCustomBackgroundStyle(
 /**
  * 将飞书回读的 custom_background_style 还原为可再次发送的 background_style cus-N + config.style.color。
  * 若 markdown 缺少 font_color，按 text_size / 加粗内容补 cus-accent / cus-muted（飞书回读会丢 font_color）。
+ * rawToDsl 可传入已登记的文字自定义色（preRegistered），与背景色一并写入 config.style.color。
  */
-export function normalizeStoredCardColors(dsl: Record<string, unknown>): void {
-  const colorEntries: Record<string, CustomColorEntry> = {};
-  const styleKey = (entry: CustomColorEntry) => `${entry.light_mode}|${entry.dark_mode}`;
-  const keyToAlias = new Map<string, string>();
-  let bgSeq = 0;
+export function normalizeStoredCardColors(
+  dsl: Record<string, unknown>,
+  preRegistered?: ColorRegistry,
+): void {
+  const colorEntries: Record<string, CustomColorEntry> = { ...(preRegistered?.entries ?? {}) };
+  const keyToAlias = new Map<string, string>(preRegistered?.keyToAlias ?? []);
+  let bgSeq = preRegistered?.bgSeq ?? 0;
+  let textSeq = preRegistered?.textSeq ?? 0;
 
   const ensureAlias = (prefix: string, entry: CustomColorEntry): string => {
-    const existing = keyToAlias.get(styleKey(entry));
+    const existing = keyToAlias.get(colorEntryKey(entry));
     if (existing) return existing;
-    const alias = `${prefix}-${bgSeq++}`;
+    const alias = prefix === 'cus-bg' ? `cus-bg-${bgSeq++}` : `cus-text-${textSeq++}`;
     colorEntries[alias] = entry;
-    keyToAlias.set(styleKey(entry), alias);
+    keyToAlias.set(colorEntryKey(entry), alias);
     return alias;
   };
 
@@ -73,13 +108,18 @@ export function normalizeStoredCardColors(dsl: Record<string, unknown>): void {
       }
     }
 
+    if (obj.tag === 'markdown' && typeof obj.content === 'string') {
+      normalizeMarkdownInlineHexColors(obj, ensureAlias);
+    }
+
     for (const value of Object.values(obj)) walk(value);
   };
   walk(dsl.body);
 
   if (Object.keys(colorEntries).length === 0) return;
 
-  const firstBg = colorEntries['cus-bg-0'] ?? Object.values(colorEntries)[0];
+  const firstBgKey = Object.keys(colorEntries).find((k) => k.startsWith('cus-bg-'));
+  const firstBg = firstBgKey ? colorEntries[firstBgKey] : undefined;
   if (firstBg) {
     const m = firstBg.light_mode.match(/^rgba\((\d+),(\d+),(\d+),/);
     if (m) {
@@ -93,6 +133,14 @@ export function normalizeStoredCardColors(dsl: Record<string, unknown>): void {
     light_mode: 'rgba(100,106,115,1)',
     dark_mode: 'rgba(166,166,166,1)',
   };
+
+  const aliasRenames = new Map<string, string>();
+  for (const to of ['cus-accent', 'cus-muted'] as const) {
+    for (const [from, target] of unifyMatchingAlias(colorEntries, 'cus-text', to)) {
+      aliasRenames.set(from, target);
+    }
+  }
+  remapColorReferences(dsl.body, aliasRenames);
 
   const config =
     dsl.config && typeof dsl.config === 'object' ? (dsl.config as Record<string, unknown>) : {};
@@ -126,4 +174,87 @@ export function normalizeStoredCardColors(dsl: Record<string, unknown>): void {
     for (const value of Object.values(obj)) applyDefaultFontColors(value);
   };
   applyDefaultFontColors(dsl.body);
+}
+
+function unifyMatchingAlias(
+  entries: Record<string, CustomColorEntry>,
+  fromPrefix: string,
+  to: string,
+): Map<string, string> {
+  const renames = new Map<string, string>();
+  const target = entries[to];
+  if (!target) return renames;
+  for (const alias of Object.keys(entries)) {
+    if (alias === to) continue;
+    if (!alias.startsWith(`${fromPrefix}-`) && alias !== fromPrefix) continue;
+    const entry = entries[alias]!;
+    const matches = to === 'cus-accent' || to === 'cus-muted'
+      ? entry.light_mode === target.light_mode
+      : colorEntryKey(entry) === colorEntryKey(target);
+    if (matches) {
+      renames.set(alias, to);
+      delete entries[alias];
+    }
+  }
+  return renames;
+}
+
+function remapColorReferences(node: unknown, aliasRenames: Map<string, string>): void {
+  const remap = (alias: string | undefined): string | undefined => {
+    if (!alias) return alias;
+    return aliasRenames.get(alias) ?? alias;
+  };
+
+  const walk = (n: unknown): void => {
+    if (Array.isArray(n)) { for (const c of n) walk(c); return; }
+    if (!n || typeof n !== 'object') return;
+    const obj = n as Record<string, unknown>;
+    if (typeof obj.font_color === 'string') obj.font_color = remap(obj.font_color);
+    if (typeof obj.content === 'string' && obj.content.includes('<font')) {
+      obj.content = obj.content.replace(
+        /<font color=['"]([^'"]+)['"]>/g,
+        (_m, color: string) => {
+          const next = remap(color);
+          return next ? `<font color='${next}'>` : _m;
+        },
+      );
+    }
+    for (const value of Object.values(obj)) walk(value);
+  };
+  walk(node);
+}
+
+/** Safety net: hoist or replace inline #hex / rgba in markdown content. */
+function normalizeMarkdownInlineHexColors(
+  obj: Record<string, unknown>,
+  ensureAlias: (prefix: string, entry: CustomColorEntry) => string,
+): void {
+  const content = obj.content as string;
+  const hexColor = (raw: string): CustomColorEntry | undefined => {
+    const v = raw.trim();
+    if (v.startsWith('#')) {
+      const rgba = hexColorToRgba(v);
+      return rgba ? { light_mode: rgba, dark_mode: rgba } : undefined;
+    }
+    if (/^rgba?\(/i.test(v)) return { light_mode: v, dark_mode: v };
+    return undefined;
+  };
+
+  const single = content.match(/^<font color=['"]([^'"]+)['"]\s*>([\s\S]*)<\/font>$/);
+  if (single) {
+    const entry = hexColor(single[1]!);
+    if (entry) {
+      const alias = ensureAlias('cus-text', entry);
+      if (obj.font_color === undefined) obj.font_color = alias;
+      obj.content = single[2]!;
+      return;
+    }
+  }
+
+  obj.content = content.replace(/<font color=['"]([^'"]+)['"]>/g, (match, raw: string) => {
+    const entry = hexColor(raw);
+    if (!entry) return match;
+    const alias = ensureAlias('cus-text', entry);
+    return `<font color='${alias}'>`;
+  });
 }

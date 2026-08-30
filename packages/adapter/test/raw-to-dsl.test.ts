@@ -777,7 +777,7 @@ describe("video cover_image_id → cover.img_key", () => {
 });
 
 describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", () => {
-  it("projects custom text color into inline font tag and normalizes column background", () => {
+  it("registers custom colors in config.style.color and uses font_color instead of inline #hex", () => {
     const dsl = rawToDsl({
       schema: "2.0",
       body: {
@@ -799,6 +799,7 @@ describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", ()
                         {
                           tag: "markdown",
                           property: {
+                            textStyle: { size: "heading" },
                             elements: [
                               {
                                 tag: "plain_text",
@@ -809,6 +810,26 @@ describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", ()
                                     customColor: {
                                       lightMode: "#d96b27ff",
                                       darkMode: "#f08c4bff",
+                                    },
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                        },
+                        {
+                          tag: "markdown",
+                          property: {
+                            textStyle: { size: "small" },
+                            elements: [
+                              {
+                                tag: "plain_text",
+                                property: {
+                                  content: "欺骗差距闭合率",
+                                  textStyle: {
+                                    customColor: {
+                                      lightMode: "#6e737dff",
+                                      darkMode: "#a6a6a6ff",
                                     },
                                   },
                                 },
@@ -828,9 +849,21 @@ describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", ()
     }) as AnyDsl;
 
     const serialized = JSON.stringify(dsl);
-    expect(serialized).toMatch(/<font color='#d96b27ff'>/);
+    expect(serialized).not.toMatch(/#d96b27ff/);
+    expect(serialized).not.toMatch(/#6e737dff/);
     expect(serialized).toMatch(/cus-bg-0/);
     const style = (dsl.config as { style?: { color?: Record<string, unknown> } })?.style;
     expect(style?.color?.["cus-bg-0"]).toBeDefined();
+    expect(style?.color?.["cus-accent"]).toBeDefined();
+
+    const col = ((dsl.body as { elements: unknown[] }).elements[0] as { columns: unknown[] }).columns[0] as {
+      elements: Record<string, unknown>[];
+    };
+    const heading = col.elements[0];
+    const caption = col.elements[1];
+    expect(heading).toMatchObject({ content: "**85%**", font_color: "cus-accent", text_size: "heading" });
+    expect(caption?.font_color).toBeTruthy();
+    expect(caption?.content).toBe("欺骗差距闭合率");
+    expect(String(caption?.content)).not.toContain("<font");
   });
 });

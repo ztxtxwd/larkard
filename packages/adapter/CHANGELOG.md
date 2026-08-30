@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.4
+
+### Patch Changes
+
+- RAW→DSL 自定义文字色：登记到 config.style.color，用 markdown.font_color 引用别名，不再内联 #hex `<font>`。
+
 ## 0.3.3
 
 ### Patch Changes

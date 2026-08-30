@@ -45,8 +45,18 @@
  * downstream sees an unknown field rather than silently losing data.
  */
 
-import { resolveTextStyleColor } from './custom-colors.js';
-import { normalizeStoredCardColors } from './normalize-stored-colors.js';
+import {
+  isCustomHexColor,
+  resolveTextStyleColor,
+  resolveTextStyleCustomColorPair,
+  themePairToColorEntry,
+} from './custom-colors.js';
+import {
+  createColorRegistry,
+  normalizeStoredCardColors,
+  registerColorEntry,
+  type ColorRegistry,
+} from './normalize-stored-colors.js';
 
 type AttachmentImageMap = Record<string, { origin_key?: string }>;
 type AttachmentAtUserMap = Record<string, { user_id?: string; mention_key?: string }>;
@@ -72,16 +82,25 @@ export function rawCardToDsl(envelope: unknown): unknown {
   } catch {
     return envelope;
   }
-  const ctx: Ctx = {
+  const ctx = makeCtx({
     images: env.json_attachment?.images ?? {},
     atUsers: env.json_attachment?.at_users ?? {},
-  };
+  });
   return convertRoot(inner, ctx);
 }
 
 interface Ctx {
   images: AttachmentImageMap;
   atUsers: AttachmentAtUserMap;
+  colors: ColorRegistry;
+}
+
+function makeCtx(partial?: Partial<Pick<Ctx, 'images' | 'atUsers'>>): Ctx {
+  return {
+    images: partial?.images ?? {},
+    atUsers: partial?.atUsers ?? {},
+    colors: createColorRegistry(),
+  };
 }
 
 /* ------------------------------------------------------------------ *
@@ -253,7 +272,7 @@ function convertRoot(root: unknown, ctx: Ctx): unknown {
   out.config = convertConfig(isRecord(root.config) ? root.config : {});
   if (isRecord(root.body)) out.body = convertBody(root.body, ctx);
   if (isRecord(root.header)) out.header = convertHeader(root.header, ctx);
-  normalizeStoredCardColors(out);
+  normalizeStoredCardColors(out, ctx.colors);
   return out;
 }
 
@@ -443,7 +462,7 @@ function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
         // A markdown cell holds a {tag:'markdown'} element — re-stitch to content.
         if (isRecord(value) && value.tag === "markdown" && isRecord(value.property)) {
           const elements = Array.isArray(value.property.elements) ? value.property.elements : [];
-          value = renderChildren(elements, ctx);
+          value = renderChildren(elements, ctx).content;
         }
         r[k] = value;
       }
@@ -1108,8 +1127,9 @@ function resolveAtUserId(prop: Record<string, unknown>, ctx: Ctx): string | unde
 function rebuildMarkdown(property: Record<string, unknown>, ctx: Ctx): unknown {
   const out: Record<string, unknown> = { tag: "markdown" };
   const elements = Array.isArray(property.elements) ? property.elements : [];
-  const content = renderChildren(elements, ctx);
+  const { content, uniformFontColor } = renderChildren(elements, ctx);
   if (content) out.content = content;
+  if (uniformFontColor) out.font_color = uniformFontColor;
 
   for (const [rawKey, rawValue] of Object.entries(property)) {
     if (rawKey === "elements" || rawKey === "markdownElements" || rawKey === "originTag") continue;
@@ -1163,7 +1183,13 @@ function rebuildMarkdown(property: Record<string, unknown>, ctx: Ctx): unknown {
  * whitespace restriction, but moving spaces out is harmless and keeps the two
  * markers nestable.
  */
-function wrapEmphasis(text: string, bold: boolean, color?: string): string {
+function wrapEmphasis(
+  text: string,
+  bold: boolean,
+  color?: string,
+  colorKind?: 'enum' | 'custom',
+  inlineCustomFont = false,
+): string {
   if (!bold && !color) return text;
   const lead = text.match(/^\s*/)![0];
   const trail = text.match(/\s*$/)![0];
@@ -1171,31 +1197,87 @@ function wrapEmphasis(text: string, bold: boolean, color?: string): string {
   if (core.length === 0) return text;
   let wrapped = core;
   if (bold) wrapped = `**${wrapped}**`;
-  if (color) wrapped = `<font color='${color}'>${wrapped}</font>`;
+  if (color) {
+    if (colorKind === 'enum') wrapped = `<font color='${color}'>${wrapped}</font>`;
+    else if (colorKind === 'custom' && inlineCustomFont) wrapped = `<font color='${color}'>${wrapped}</font>`;
+  }
   return lead + wrapped + trail;
 }
 
-function renderChildren(children: unknown[], ctx: Ctx): string {
-  interface Segment { content: string; bold: boolean; color?: string }
+type InlineSegment = {
+  content: string;
+  bold: boolean;
+  color?: string;
+  colorKind?: 'enum' | 'custom';
+};
+
+function resolveInlineStyle(
+  ts: Record<string, unknown> | undefined,
+  ctx: Ctx,
+): Pick<InlineSegment, 'bold' | 'color' | 'colorKind'> {
+  const bold = !!(ts && Array.isArray(ts.attributes) && (ts.attributes as unknown[]).includes("bold"));
+  const customPair = resolveTextStyleCustomColorPair(ts);
+  if (customPair) {
+    const entry = themePairToColorEntry(customPair);
+    if (entry) {
+      const alias = registerColorEntry(ctx.colors, entry, 'cus-text');
+      return { bold, color: alias, colorKind: 'custom' };
+    }
+  }
+  const rawColor = resolveTextStyleColor(ts);
+  const color = rawColor === "default" ? undefined : rawColor;
+  if (!color) return { bold };
+  if (isCustomHexColor(color)) {
+    const rgba = color.startsWith('#')
+      ? themePairToColorEntry({ lightMode: color, darkMode: color })
+      : { light_mode: color, dark_mode: color };
+    if (rgba) {
+      const alias = registerColorEntry(ctx.colors, rgba, 'cus-text');
+      return { bold, color: alias, colorKind: 'custom' };
+    }
+  }
+  return { bold, color, colorKind: 'enum' };
+}
+
+function renderChildren(children: unknown[], ctx: Ctx): { content: string; uniformFontColor?: string } {
+  interface Segment extends InlineSegment {}
   let out = "";
   let buffer: Segment[] = [];
+  let uniformFontColor: string | undefined;
 
   function flushBuffer() {
     if (buffer.length === 0) return;
-    // Group adjacent segments with identical styling, then wrap each group.
+    const customColors = buffer
+      .filter((s) => s.colorKind === 'custom' && s.color)
+      .map((s) => s.color!);
+    const hasEnumColor = buffer.some((s) => s.colorKind === 'enum' && s.color);
+    const uniformCustom = customColors.length > 0
+      && !hasEnumColor
+      && customColors.every((c) => c === customColors[0])
+      ? customColors[0]
+      : undefined;
+    if (uniformCustom) uniformFontColor = uniformCustom;
+
     let group: Segment[] = [];
     function emitGroup() {
       if (group.length === 0) return;
       const inner = group.map((s) => s.content).join("");
-      const { bold, color } = group[0]!;
-      out += wrapEmphasis(inner, bold, color);
+      const { bold, color, colorKind } = group[0]!;
+      const inlineCustomFont = colorKind === 'custom'
+        && !!color
+        && color !== uniformCustom;
+      out += wrapEmphasis(inner, bold, color, colorKind, inlineCustomFont);
       group = [];
     }
     for (const seg of buffer) {
       if (group.length === 0) { group.push(seg); continue; }
       const head = group[0]!;
-      if (head.bold === seg.bold && head.color === seg.color) group.push(seg);
-      else { emitGroup(); group.push(seg); }
+      if (head.bold === seg.bold && head.color === seg.color && head.colorKind === seg.colorKind) {
+        group.push(seg);
+      } else {
+        emitGroup();
+        group.push(seg);
+      }
     }
     emitGroup();
     buffer = [];
@@ -1209,7 +1291,7 @@ function renderChildren(children: unknown[], ctx: Ctx): string {
     out += childToMarkdown(child, ctx);
   }
   flushBuffer();
-  return out;
+  return { content: out, uniformFontColor };
 }
 
 /**
@@ -1220,13 +1302,11 @@ function renderChildren(children: unknown[], ctx: Ctx): string {
 function childToInlineSegment(
   child: Record<string, unknown>,
   ctx: Ctx,
-): { content: string; bold: boolean; color?: string } | undefined {
+): InlineSegment | undefined {
   const tag = child.tag;
   const prop = isRecord(child.property) ? child.property : {};
   const ts = isRecord(prop.textStyle) ? prop.textStyle : undefined;
-  const bold = !!(ts && Array.isArray(ts.attributes) && (ts.attributes as unknown[]).includes("bold"));
-  const rawColor = resolveTextStyleColor(ts);
-  const color = rawColor === "default" ? undefined : rawColor;
+  const { bold, color, colorKind } = resolveInlineStyle(ts, ctx);
 
   switch (tag) {
     case "plain_text":
@@ -1234,18 +1314,20 @@ function childToInlineSegment(
         content: typeof prop.content === "string" ? prop.content : "",
         bold,
         color,
+        colorKind,
       };
     case "code_span":
       return {
         content: `\`${typeof prop.content === "string" ? prop.content : ""}\``,
         bold,
         color,
+        colorKind,
       };
     case "link": {
       const text = typeof prop.content === "string" ? prop.content : "";
       const urlObj = isRecord(prop.url) ? prop.url : undefined;
       const url = urlObj && typeof urlObj.url === "string" ? urlObj.url : "";
-      return { content: `[${text}](${url})`, bold, color };
+      return { content: `[${text}](${url})`, bold, color, colorKind };
     }
     case "at_all":
       return { content: "<at id=all></at>", bold, color };
@@ -1300,10 +1382,8 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
     case "plain_text": {
       const content = typeof prop.content === "string" ? prop.content : "";
       const ts = isRecord(prop.textStyle) ? prop.textStyle : undefined;
-      const rawColor = resolveTextStyleColor(ts);
-      const color = rawColor === "default" ? undefined : rawColor;
-      const attrs = ts && Array.isArray(ts.attributes) ? (ts.attributes as unknown[]) : [];
-      return wrapEmphasis(content, attrs.includes("bold"), color);
+      const { bold, color, colorKind } = resolveInlineStyle(ts, ctx);
+      return wrapEmphasis(content, bold, color, colorKind, colorKind === 'custom');
     }
     case "br":
       return "\n";
@@ -1481,7 +1561,7 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
           const inner = Array.isArray(cellProp.elements) ? cellProp.elements : [];
           // Use renderChildren so adjacent same-styled segments merge
           // (e.g. bold runs spanning a code_span don't get split).
-          const text = renderChildren(inner, ctx);
+          const { content: text } = renderChildren(inner, ctx);
           return text.replace(/\|/g, "\\|").replace(/\n/g, " ");
         });
         return `| ${cells.join(" | ")} |`;
@@ -1645,10 +1725,10 @@ export function rawToDsl(raw: unknown): unknown {
       }
     }
     const attachment = isRecord(raw.json_attachment) ? raw.json_attachment : {};
-    const ctx: Ctx = {
+    const ctx = makeCtx({
       images: (isRecord(attachment.images) ? attachment.images : {}) as AttachmentImageMap,
       atUsers: (isRecord(attachment.at_users) ? attachment.at_users : {}) as AttachmentAtUserMap,
-    };
+    });
     return convertRoot(inner, ctx);
   }
 
@@ -1658,12 +1738,12 @@ export function rawToDsl(raw: unknown): unknown {
     if (typeof card.json_card === "string" || isRecord(card.json_card)) {
       return rawToDsl(card);
     }
-    return convertRoot(card, { images: {}, atUsers: {} });
+    return convertRoot(card, makeCtx());
   }
 
   // Bare card (renderer RAW from dslToRaw, or already-unwrapped json_card)
   if ("body" in raw || "header" in raw || "schema" in raw) {
-    return convertRoot(raw, { images: {}, atUsers: {} });
+    return convertRoot(raw, makeCtx());
   }
 
   return raw;

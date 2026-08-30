@@ -1,5 +1,12 @@
 # @open-feishu-card/compiler
 
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.4
+
 ## 0.1.8
 
 ### Patch Changes
