@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3
+
+- RAW→DSL 自定义文字色：写入 `config.style.color`，用 `font_color` 引用别名，不再内联 `#hex`
+- Bundles updated workspace packages (adapter 0.3.4, renderer 0.2.9, compiler/cli/language-server 0.1.9)
+
 ## 0.2.2
 
 - 预览支持 RAW 自定义颜色：`customBackgroundStyle` / `textStyle.customColor`
