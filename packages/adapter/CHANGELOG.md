@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.6
+
+### Patch Changes
+
+- dslToRaw 保留 config.style.color，并将 cus-* 别名展开为 customBackgroundStyle / textStyle.customColor，修复预览与渲染自定义色。
+
 ## 0.3.5
 
 ### Patch Changes

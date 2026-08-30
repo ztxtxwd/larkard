@@ -585,6 +585,40 @@ test('table: number 精度 + 行数据', () => {
   assert.match(html, /比亚迪汽车/);
 });
 
+test('renderDslToString: config.style.color cus-* backgrounds and text render as rgba', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    config: {
+      update_multi: true,
+      style: {
+        color: {
+          'cus-bg-0': { light_mode: 'rgba(217,107,39,0.08)', dark_mode: 'rgba(217,107,39,0.15)' },
+          'cus-accent': { light_mode: 'rgba(217,107,39,1)', dark_mode: 'rgba(217,107,39,1)' },
+          'cus-text-1': { light_mode: 'rgba(110,115,125,1)', dark_mode: 'rgba(166,166,166,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'column_set',
+        columns: [{
+          tag: 'column',
+          background_style: 'cus-bg-0',
+          elements: [
+            { tag: 'markdown', content: "<font color='cus-accent'>**85%**</font>", text_align: 'center', text_size: 'heading' },
+            { tag: 'markdown', content: "<font color='cus-text-1'>caption</font>", text_align: 'center', text_size: 'small' },
+          ],
+        }],
+      }],
+    },
+  });
+  assert.match(html, /background:rgba\(217,107,39,0\.08\)/);
+  assert.match(html, /color:rgba\(217,107,39,1\)/);
+  assert.match(html, /color:rgba\(110,115,125,1\)/);
+  assert.match(html, /85%/);
+  assert.match(html, /caption/);
+});
+
 test('table: options 渲染成彩色标签', () => {
   const html = renderDslToString(dslTable);
   assert.match(html, /universal-card-text-tag--green/);

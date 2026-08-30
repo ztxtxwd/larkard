@@ -31,6 +31,8 @@ export interface TextStyle {
   color?: NamedColor | string;
   size?: SizeName | string;
   platformSize?: { pc?: SizeName | string; mobile?: SizeName | string };
+  customColor?: { lightMode?: string; darkMode?: string; light_mode?: string; dark_mode?: string };
+  custom_color?: { lightMode?: string; darkMode?: string; light_mode?: string; dark_mode?: string };
 }
 
 /**

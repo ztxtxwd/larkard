@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4
+
+- dslToRaw 展开 `config.style.color` 的 `cus-*` 自定义色，修复预览 KPI 背景与强调色/说明文字渲染
+- Bundles updated workspace packages (adapter 0.3.6, renderer 0.2.11, compiler/cli/language-server 0.1.11)
+
 ## 0.2.3
 
 - RAW→DSL 自定义文字色：写入 `config.style.color`，用 `font_color` 引用别名，不再内联 `#hex`

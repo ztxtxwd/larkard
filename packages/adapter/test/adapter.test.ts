@@ -76,6 +76,48 @@ test('rawToDsl: header lark_md subtitle round-trips through dslToRaw', () => {
   assert.equal(back.header.subtitle.content, '<at id=ou_abc></at>');
 });
 
+test('dslToRaw: expands config.style.color cus-* into renderer raw fields', () => {
+  const dsl = {
+    schema: '2.0',
+    config: {
+      update_multi: true,
+      style: {
+        color: {
+          'cus-bg-0': { light_mode: 'rgba(217,107,39,0.08)', dark_mode: 'rgba(217,107,39,0.15)' },
+          'cus-accent': { light_mode: 'rgba(217,107,39,1)', dark_mode: 'rgba(217,107,39,1)' },
+          'cus-text-1': { light_mode: 'rgba(110,115,125,1)', dark_mode: 'rgba(166,166,166,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'column_set',
+        columns: [{
+          tag: 'column',
+          background_style: 'cus-bg-0',
+          elements: [
+            { tag: 'markdown', content: "<font color='cus-accent'>**85%**</font>", text_size: 'heading' },
+            { tag: 'markdown', content: 'caption', font_color: 'cus-text-1', text_size: 'small' },
+          ],
+        }],
+      }],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  assert.ok(raw.config?.style?.color?.['cus-accent']);
+  const col = raw.body.property.elements[0].property.columns[0].property;
+  assert.deepEqual(col.customBackgroundStyle, {
+    light_mode: 'rgba(217,107,39,0.08)',
+    dark_mode: 'rgba(217,107,39,0.15)',
+  });
+  assert.equal(col.backgroundStyle, 'cus-bg-0');
+  const heading = col.elements[0].property.elements[0].property.textStyle;
+  assert.equal(heading.customColor.lightMode, 'rgba(217,107,39,1)');
+  assert.equal(heading.color, undefined);
+  const caption = col.elements[1].property.elements[0].property.textStyle;
+  assert.equal(caption.customColor.lightMode, 'rgba(110,115,125,1)');
+});
+
 test('degradeUnknown is available as an optional helper', () => {
   const el = degradeUnknown({ tag: 'secret_private_widget', property: { foo: 1 } });
   assert.equal(el.tag, 'unknown');
