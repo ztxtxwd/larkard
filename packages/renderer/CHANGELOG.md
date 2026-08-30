@@ -1,5 +1,13 @@
 # @open-feishu-card/renderer
 
+## 0.2.8
+
+### Patch Changes
+
+- RAW 自定义颜色：`customBackgroundStyle` / `textStyle.customColor` 投影与渲染；`rawToDsl` 输出自动 `normalizeStoredCardColors`。
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.3
+
 ## 0.2.7
 
 ### Patch Changes

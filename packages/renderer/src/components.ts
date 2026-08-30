@@ -25,6 +25,7 @@ import { parseMarkdown } from './md-parse';
 import { h } from './vnode';
 import {
   alignToStyle, bgStyleToColor, boxToStyle, extractPlainText, extractText, getChildElements,
+  propertyBackgroundColor,
   lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
   resolveColor, resolveImageSrc, resolveMediaSrc, resolveTextSizeKey, resolveURL,
@@ -600,7 +601,7 @@ registerComponent('column_set', (el, ctx) => {
   if (mg) style.margin = mg;
   // 背景：DSL background_style / RAW backgroundStyle。grey → var(--bg-float-overlay)。
   // 有底色挂 --bg：真机 CSS 给 padding:4px + border-radius:6px。DSL padding 仍可覆盖。
-  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
@@ -639,7 +640,7 @@ registerComponent('column', (el, ctx) => {
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
   style.rowGap = (vGap != null ? spacingToPx(vGap as number | string) : 8) + 'px';
   // 背景：有底色挂 --bg（CSS 给 6px 圆角；默认 padding 仍是 0，内边距须 DSL 显式写）。
-  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
@@ -847,7 +848,7 @@ registerComponent('interactive_container', (el, ctx) => {
     + (hasBorder && !borderColor ? ` ${CLS}-interactive-container--bordered` : '')
     + (disabled ? ` ${CLS}-interactive-container--disabled` : '');
   const style: Record<string, string> = {};
-  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;

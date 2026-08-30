@@ -775,3 +775,62 @@ describe("video cover_image_id → cover.img_key", () => {
     expect(collectKeys(dsl, (k) => k === "cover_image_id" || k === "video_id")).toEqual([]);
   });
 });
+
+describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", () => {
+  it("projects custom text color into inline font tag and normalizes column background", () => {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "column_set",
+              property: {
+                columns: [
+                  {
+                    tag: "column",
+                    property: {
+                      customBackgroundStyle: {
+                        lightMode: "#d96b2714",
+                        darkMode: "#d96b2726",
+                      },
+                      elements: [
+                        {
+                          tag: "markdown",
+                          property: {
+                            elements: [
+                              {
+                                tag: "plain_text",
+                                property: {
+                                  content: "85%",
+                                  textStyle: {
+                                    attributes: ["bold"],
+                                    customColor: {
+                                      lightMode: "#d96b27ff",
+                                      darkMode: "#f08c4bff",
+                                    },
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+
+    const serialized = JSON.stringify(dsl);
+    expect(serialized).toMatch(/<font color='#d96b27ff'>/);
+    expect(serialized).toMatch(/cus-bg-0/);
+    const style = (dsl.config as { style?: { color?: Record<string, unknown> } })?.style;
+    expect(style?.color?.["cus-bg-0"]).toBeDefined();
+  });
+});

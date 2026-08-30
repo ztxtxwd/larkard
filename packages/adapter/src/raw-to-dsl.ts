@@ -45,6 +45,9 @@
  * downstream sees an unknown field rather than silently losing data.
  */
 
+import { resolveTextStyleColor } from './custom-colors.js';
+import { normalizeStoredCardColors } from './normalize-stored-colors.js';
+
 type AttachmentImageMap = Record<string, { origin_key?: string }>;
 type AttachmentAtUserMap = Record<string, { user_id?: string; mention_key?: string }>;
 
@@ -250,6 +253,7 @@ function convertRoot(root: unknown, ctx: Ctx): unknown {
   out.config = convertConfig(isRecord(root.config) ? root.config : {});
   if (isRecord(root.body)) out.body = convertBody(root.body, ctx);
   if (isRecord(root.header)) out.header = convertHeader(root.header, ctx);
+  normalizeStoredCardColors(out);
   return out;
 }
 
@@ -1221,10 +1225,7 @@ function childToInlineSegment(
   const prop = isRecord(child.property) ? child.property : {};
   const ts = isRecord(prop.textStyle) ? prop.textStyle : undefined;
   const bold = !!(ts && Array.isArray(ts.attributes) && (ts.attributes as unknown[]).includes("bold"));
-  // "default" is the no-op color — emitting <font color='default'> is just
-  // noise (and the raw editor stamps it on otherwise-unstyled text), so treat
-  // it as absent.
-  const rawColor = ts && typeof ts.color === "string" ? ts.color : undefined;
+  const rawColor = resolveTextStyleColor(ts);
   const color = rawColor === "default" ? undefined : rawColor;
 
   switch (tag) {
@@ -1299,7 +1300,8 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
     case "plain_text": {
       const content = typeof prop.content === "string" ? prop.content : "";
       const ts = isRecord(prop.textStyle) ? prop.textStyle : undefined;
-      const color = ts && typeof ts.color === "string" ? ts.color : undefined;
+      const rawColor = resolveTextStyleColor(ts);
+      const color = rawColor === "default" ? undefined : rawColor;
       const attrs = ts && Array.isArray(ts.attributes) ? (ts.attributes as unknown[]) : [];
       return wrapEmphasis(content, attrs.includes("bold"), color);
     }
@@ -1670,7 +1672,8 @@ export function rawToDsl(raw: unknown): unknown {
 /**
  * Optional helper: wrap a private/unknown element as
  * `{ tag: 'unknown', raw_tag, fallback }`.
- * Not applied automatically by `rawToDsl` / `rawCardToDsl` (parity with upstream).
+ * Not applied automatically by `degradeUnknown` (parity with upstream feishu-raw-card-to-dsl).
+ * `convertRoot` / `rawCardToDsl` always run `normalizeStoredCardColors` on output.
  */
 export function degradeUnknown(el: Record<string, unknown>): Record<string, unknown> {
   const rawTag = typeof el.tag === "string" ? el.tag : "undefined";

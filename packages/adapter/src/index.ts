@@ -15,4 +15,10 @@ export {
 } from './raw-to-dsl.js';
 export { normalizeStoredCardColors } from './normalize-stored-colors.js';
 export type { CustomColorEntry } from './normalize-stored-colors.js';
+export {
+  readThemeColorLight,
+  resolveCustomBackgroundLight,
+  resolveTextStyleColor,
+} from './custom-colors.js';
+export type { ThemeColorPair } from './custom-colors.js';
 export type { CardElement, ElementProperty, JsonCard } from './types.js';

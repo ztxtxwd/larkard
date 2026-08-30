@@ -5,6 +5,10 @@ import type {
   CardElement, ComponentFn, ElementProperty, PersonInfo, RenderContext, TextStyle, VNode,
 } from './types';
 import {
+  resolveCustomBackgroundLight,
+  resolveTextStyleColor,
+} from '@open-feishu-card/adapter';
+import {
   BASE_FONT_SIZE, PALETTE, TEXT_FONT_COLOR_TOKEN, paletteColor,
   PERSON_AVATAR_BASE, PERSON_AVATAR_SUFFIX, TEXT_SIZE_MAP,
 } from './constants';
@@ -91,7 +95,7 @@ export function resolveTextFontToken(raw: unknown): string | undefined {
 export function textStyleToModifiers(textStyle: TextStyle | undefined): string[] {
   if (!textStyle) return [];
   const out: string[] = [];
-  const color = textStyle.color?.trim();
+  const color = resolveTextStyleColor(textStyle) ?? textStyle?.color?.trim();
   if (color && color !== 'default' && !/^(#|rgb|hsl)/i.test(color)) out.push(color);
   const attrs = textStyle.attributes || [];
   if (attrs.includes('bold')) out.push('bold');
@@ -108,11 +112,12 @@ export function textStyleToStyle(textStyle: TextStyle | undefined): Record<strin
   if (attrs.includes('bold')) style.fontWeight = '600';
   if (attrs.includes('italic')) style.fontStyle = 'italic';
   if (attrs.includes('strikethrough')) style.textDecoration = 'line-through';
-  if (textStyle.color) {
-    const token = resolveTextFontToken(textStyle.color);
+  const color = resolveTextStyleColor(textStyle) ?? textStyle.color;
+  if (color) {
+    const token = resolveTextFontToken(color);
     if (token) style.color = `var(--${token})`;
     else {
-      const c = resolveColor(textStyle.color);
+      const c = resolveColor(color);
       if (c) style.color = c;
     }
   }
@@ -308,4 +313,16 @@ export function bgStyleToColor(style: unknown): string | null {
   if (!v || v === 'default' || v === 'none' || v === 'transparent') return null;
   if (v === 'grey' || v === 'gray' || v === '1') return 'var(--bg-float-overlay)';
   return resolveColor(v) || null;
+}
+
+/** RAW customBackgroundStyle first, then enum backgroundStyle / background_style. */
+export function propertyBackgroundColor(property: ElementProperty | Record<string, unknown> | undefined | null): string | null {
+  if (!property) return null;
+  const custom = resolveCustomBackgroundLight(property);
+  if (custom) {
+    const c = resolveColor(custom);
+    if (c) return c;
+  }
+  const p = property as Record<string, unknown>;
+  return bgStyleToColor(p.backgroundStyle ?? p.background_style);
 }
