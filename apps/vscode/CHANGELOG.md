@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2
+
+- 预览支持 RAW 自定义颜色：`customBackgroundStyle` / `textStyle.customColor`
+- 飞书回读卡片颜色归一化（`normalizeStoredCardColors`）
+- header subtitle `lark_md` 渲染修复
+- Bundles updated workspace packages (renderer 0.2.8, adapter 0.3.3, compiler/cli/language-server 0.1.8)
+
 ## 0.2.1
 
 - Release pipeline now runs from this monorepo (Marketplace tokens live here)
