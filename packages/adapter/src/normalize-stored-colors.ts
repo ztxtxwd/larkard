@@ -109,7 +109,7 @@ export function normalizeStoredCardColors(
     }
 
     if (obj.tag === 'markdown' && typeof obj.content === 'string') {
-      normalizeMarkdownInlineHexColors(obj, ensureAlias);
+      normalizeMarkdownInlineHexColors(obj, ensureAlias, !!preRegistered);
     }
 
     for (const value of Object.values(obj)) walk(value);
@@ -158,22 +158,24 @@ export function normalizeStoredCardColors(
 
   if (!colorEntries['cus-accent']) return;
 
-  const applyDefaultFontColors = (node: unknown): void => {
-    if (Array.isArray(node)) {
-      for (const child of node) applyDefaultFontColors(child);
-      return;
-    }
-    if (!node || typeof node !== 'object') return;
-    const obj = node as Record<string, unknown>;
-    if (obj.tag === 'markdown' && obj.font_color === undefined) {
-      const size = obj.text_size;
-      const content = typeof obj.content === 'string' ? obj.content : '';
-      if (size === 'small') obj.font_color = 'cus-muted';
-      else if (size === 'heading' || content.includes('**')) obj.font_color = 'cus-accent';
-    }
-    for (const value of Object.values(obj)) applyDefaultFontColors(value);
-  };
-  applyDefaultFontColors(dsl.body);
+  if (!preRegistered) {
+    const applyDefaultFontColors = (node: unknown): void => {
+      if (Array.isArray(node)) {
+        for (const child of node) applyDefaultFontColors(child);
+        return;
+      }
+      if (!node || typeof node !== 'object') return;
+      const obj = node as Record<string, unknown>;
+      if (obj.tag === 'markdown' && obj.font_color === undefined) {
+        const size = obj.text_size;
+        const content = typeof obj.content === 'string' ? obj.content : '';
+        if (size === 'small') obj.font_color = 'cus-muted';
+        else if (size === 'heading' || content.includes('**')) obj.font_color = 'cus-accent';
+      }
+      for (const value of Object.values(obj)) applyDefaultFontColors(value);
+    };
+    applyDefaultFontColors(dsl.body);
+  }
 }
 
 function unifyMatchingAlias(
@@ -228,6 +230,7 @@ function remapColorReferences(node: unknown, aliasRenames: Map<string, string>):
 function normalizeMarkdownInlineHexColors(
   obj: Record<string, unknown>,
   ensureAlias: (prefix: string, entry: CustomColorEntry) => string,
+  keepFontTags = false,
 ): void {
   const content = obj.content as string;
   const hexColor = (raw: string): CustomColorEntry | undefined => {
@@ -241,7 +244,7 @@ function normalizeMarkdownInlineHexColors(
   };
 
   const single = content.match(/^<font color=['"]([^'"]+)['"]\s*>([\s\S]*)<\/font>$/);
-  if (single) {
+  if (single && !keepFontTags) {
     const entry = hexColor(single[1]!);
     if (entry) {
       const alias = ensureAlias('cus-text', entry);

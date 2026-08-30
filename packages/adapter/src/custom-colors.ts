@@ -4,7 +4,7 @@
  *   textStyle.customColor / textStyle.custom_color     → inline text color
  *
  * Public DSL stores custom colors in config.style.color (cus-accent / cus-bg-N …)
- * and references them via markdown.font_color / background_style — not inline #hex.
+ * and references them via <font color> in markdown content / background_style — not inline #hex.
  */
 
 import type { CustomColorEntry } from './normalize-stored-colors.js';

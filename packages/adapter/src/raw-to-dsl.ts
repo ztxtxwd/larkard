@@ -1127,9 +1127,8 @@ function resolveAtUserId(prop: Record<string, unknown>, ctx: Ctx): string | unde
 function rebuildMarkdown(property: Record<string, unknown>, ctx: Ctx): unknown {
   const out: Record<string, unknown> = { tag: "markdown" };
   const elements = Array.isArray(property.elements) ? property.elements : [];
-  const { content, uniformFontColor } = renderChildren(elements, ctx);
+  const { content } = renderChildren(elements, ctx);
   if (content) out.content = content;
-  if (uniformFontColor) out.font_color = uniformFontColor;
 
   for (const [rawKey, rawValue] of Object.entries(property)) {
     if (rawKey === "elements" || rawKey === "markdownElements" || rawKey === "originTag") continue;
@@ -1187,8 +1186,6 @@ function wrapEmphasis(
   text: string,
   bold: boolean,
   color?: string,
-  colorKind?: 'enum' | 'custom',
-  inlineCustomFont = false,
 ): string {
   if (!bold && !color) return text;
   const lead = text.match(/^\s*/)![0];
@@ -1197,10 +1194,7 @@ function wrapEmphasis(
   if (core.length === 0) return text;
   let wrapped = core;
   if (bold) wrapped = `**${wrapped}**`;
-  if (color) {
-    if (colorKind === 'enum') wrapped = `<font color='${color}'>${wrapped}</font>`;
-    else if (colorKind === 'custom' && inlineCustomFont) wrapped = `<font color='${color}'>${wrapped}</font>`;
-  }
+  if (color) wrapped = `<font color='${color}'>${wrapped}</font>`;
   return lead + wrapped + trail;
 }
 
@@ -1239,34 +1233,20 @@ function resolveInlineStyle(
   return { bold, color, colorKind: 'enum' };
 }
 
-function renderChildren(children: unknown[], ctx: Ctx): { content: string; uniformFontColor?: string } {
+function renderChildren(children: unknown[], ctx: Ctx): { content: string } {
   interface Segment extends InlineSegment {}
   let out = "";
   let buffer: Segment[] = [];
-  let uniformFontColor: string | undefined;
 
   function flushBuffer() {
     if (buffer.length === 0) return;
-    const customColors = buffer
-      .filter((s) => s.colorKind === 'custom' && s.color)
-      .map((s) => s.color!);
-    const hasEnumColor = buffer.some((s) => s.colorKind === 'enum' && s.color);
-    const uniformCustom = customColors.length > 0
-      && !hasEnumColor
-      && customColors.every((c) => c === customColors[0])
-      ? customColors[0]
-      : undefined;
-    if (uniformCustom) uniformFontColor = uniformCustom;
 
     let group: Segment[] = [];
     function emitGroup() {
       if (group.length === 0) return;
       const inner = group.map((s) => s.content).join("");
-      const { bold, color, colorKind } = group[0]!;
-      const inlineCustomFont = colorKind === 'custom'
-        && !!color
-        && color !== uniformCustom;
-      out += wrapEmphasis(inner, bold, color, colorKind, inlineCustomFont);
+      const { bold, color } = group[0]!;
+      out += wrapEmphasis(inner, bold, color);
       group = [];
     }
     for (const seg of buffer) {
@@ -1291,7 +1271,7 @@ function renderChildren(children: unknown[], ctx: Ctx): { content: string; unifo
     out += childToMarkdown(child, ctx);
   }
   flushBuffer();
-  return { content: out, uniformFontColor };
+  return { content: out };
 }
 
 /**
@@ -1382,8 +1362,8 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
     case "plain_text": {
       const content = typeof prop.content === "string" ? prop.content : "";
       const ts = isRecord(prop.textStyle) ? prop.textStyle : undefined;
-      const { bold, color, colorKind } = resolveInlineStyle(ts, ctx);
-      return wrapEmphasis(content, bold, color, colorKind, colorKind === 'custom');
+      const { bold, color } = resolveInlineStyle(ts, ctx);
+      return wrapEmphasis(content, bold, color);
     }
     case "br":
       return "\n";

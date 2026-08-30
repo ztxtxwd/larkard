@@ -777,7 +777,7 @@ describe("video cover_image_id → cover.img_key", () => {
 });
 
 describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", () => {
-  it("registers custom colors in config.style.color and uses font_color instead of inline #hex", () => {
+  it("registers custom colors in config.style.color and uses <font color> instead of inline #hex", () => {
     const dsl = rawToDsl({
       schema: "2.0",
       body: {
@@ -861,9 +861,12 @@ describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", ()
     };
     const heading = col.elements[0];
     const caption = col.elements[1];
-    expect(heading).toMatchObject({ content: "**85%**", font_color: "cus-accent", text_size: "heading" });
-    expect(caption?.font_color).toBeTruthy();
-    expect(caption?.content).toBe("欺骗差距闭合率");
-    expect(String(caption?.content)).not.toContain("<font");
+    expect(heading).toMatchObject({
+      content: "<font color='cus-accent'>**85%**</font>",
+      text_size: "heading",
+    });
+    expect(heading).not.toHaveProperty("font_color");
+    expect(caption?.content).toBe("<font color='cus-text-1'>欺骗差距闭合率</font>");
+    expect(caption).not.toHaveProperty("font_color");
   });
 });

@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.5
+
+### Patch Changes
+
+- RAW→DSL 自定义文字色改为在 markdown content 内联 `<font color>` 引用别名，不再写入 `font_color` 字段。
+
 ## 0.3.4
 
 ### Patch Changes
