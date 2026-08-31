@@ -98,6 +98,59 @@ describe('normalizeStoredCardColors', () => {
     expect(ic.border_color).toMatch(/^cus-bg-/);
     expect(ic.custom_border_color).toBeUndefined();
   });
+
+  it('normalizes interactive_container custom_background_style and reuses existing cus-bg tokens', () => {
+    const dsl: Record<string, unknown> = {
+      schema: '2.0',
+      config: {
+        update_multi: true,
+        style: {
+          color: {
+            'cus-bg-0': { light_mode: 'rgba(230,255,61,1)', dark_mode: 'rgba(230,255,61,1)' },
+            'cus-bg-1': { light_mode: 'rgba(10,10,10,1)', dark_mode: 'rgba(10,10,10,1)' },
+            'cus-text-0': { light_mode: 'rgba(245,244,239,1)', dark_mode: 'rgba(245,244,239,1)' },
+          },
+        },
+      },
+      body: {
+        elements: [{
+          tag: 'interactive_container',
+          disabled: true,
+          background_style: 'default',
+          custom_background_style: {
+            light_mode: '#f5f4efff',
+            dark_mode: '#f5f4efff',
+          },
+          elements: [{
+            tag: 'interactive_container',
+            disabled: true,
+            background_style: 'default',
+            custom_background_style: {
+              light_mode: '#0a0a0aff',
+              dark_mode: '#0a0a0aff',
+            },
+            elements: [{ tag: 'markdown', content: 'badge' }],
+          }],
+        }],
+      },
+    };
+    normalizeStoredCardColors(dsl);
+    const outer = (dsl.body as { elements: Record<string, unknown>[] }).elements[0];
+    const inner = (outer.elements as Record<string, unknown>[])[0];
+    expect(outer.background_style).toBe('cus-bg-2');
+    expect(outer.custom_background_style).toBeUndefined();
+    expect(inner.background_style).toBe('cus-bg-1');
+    expect(inner.custom_background_style).toBeUndefined();
+
+    const parsed = FeishuCardV2Schema.safeParse(dsl);
+    expect(parsed.success).toBe(true);
+    const pOuter = parsed.data!.body.elements[0] as Record<string, unknown>;
+    const pInner = (pOuter.elements as Record<string, unknown>[])[0];
+    expect(pOuter.background_style).toBe('cus-bg-2');
+    expect(pInner.background_style).toBe('cus-bg-1');
+    expect(pOuter.custom_background_style).toBeUndefined();
+    expect(pInner.custom_background_style).toBeUndefined();
+  });
 });
 
 describe('MarkdownSchema font_color', () => {

@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.9
+
+### Patch Changes
+
+- `normalizeStoredCardColors` 补齐 `interactive_container` 的 `custom_background_style` 归一化（与 column 一致）；已有 `config.style.color` 时先灌入 registry，避免 cus-bg-N 序号冲突。
+
 ## 0.3.8
 
 ### Patch Changes

@@ -84,6 +84,42 @@ function readCustomBorderColor(node: Record<string, unknown>): CustomColorEntry 
   return readThemeColorPair(node.custom_border_color ?? node.customBorderColor);
 }
 
+/** 卡片已带 config.style.color 时灌入 registry，避免 cus-bg-N 序号与已有 token 冲突。 */
+function seedRegistryFromConfigStyle(
+  dsl: Record<string, unknown>,
+  colorEntries: Record<string, CustomColorEntry>,
+  bgKeyToAlias: Map<string, string>,
+  textKeyToAlias: Map<string, string>,
+): { bgSeq: number; textSeq: number } {
+  let bgSeq = 0;
+  let textSeq = 0;
+  const config = dsl.config;
+  if (!config || typeof config !== 'object') return { bgSeq, textSeq };
+  const style = (config as Record<string, unknown>).style;
+  if (!style || typeof style !== 'object') return { bgSeq, textSeq };
+  const colors = (style as Record<string, unknown>).color;
+  if (!colors || typeof colors !== 'object') return { bgSeq, textSeq };
+
+  for (const [alias, entry] of Object.entries(colors as Record<string, unknown>)) {
+    if (!entry || typeof entry !== 'object') continue;
+    const pair = entry as Record<string, unknown>;
+    if (typeof pair.light_mode !== 'string' || typeof pair.dark_mode !== 'string') continue;
+    const themePair: CustomColorEntry = { light_mode: pair.light_mode, dark_mode: pair.dark_mode };
+    colorEntries[alias] = themePair;
+    const key = colorEntryKey(themePair);
+    if (alias.startsWith('cus-text')) {
+      textKeyToAlias.set(key, alias);
+      const n = /^cus-text-(\d+)$/.exec(alias);
+      if (n) textSeq = Math.max(textSeq, Number(n[1]) + 1);
+    } else {
+      bgKeyToAlias.set(key, alias);
+      const n = /^cus-bg-(\d+)$/.exec(alias);
+      if (n) bgSeq = Math.max(bgSeq, Number(n[1]) + 1);
+    }
+  }
+  return { bgSeq, textSeq };
+}
+
 /**
  * 将飞书回读的 custom_background_style 还原为可再次发送的 background_style cus-N + config.style.color。
  * 若 markdown 缺少内联字色，按 text_size / 加粗内容补 <font color='cus-accent'|'cus-muted'>（飞书回读会丢字色）。
@@ -98,6 +134,12 @@ export function normalizeStoredCardColors(
   const textKeyToAlias = new Map<string, string>(preRegistered?.textKeyToAlias ?? []);
   let bgSeq = preRegistered?.bgSeq ?? 0;
   let textSeq = preRegistered?.textSeq ?? 0;
+
+  if (!preRegistered) {
+    const seeded = seedRegistryFromConfigStyle(dsl, colorEntries, bgKeyToAlias, textKeyToAlias);
+    bgSeq = Math.max(bgSeq, seeded.bgSeq);
+    textSeq = Math.max(textSeq, seeded.textSeq);
+  }
 
   const ensureAlias = (prefix: 'cus-bg' | 'cus-text', entry: CustomColorEntry): string => {
     const map = prefix === 'cus-bg' ? bgKeyToAlias : textKeyToAlias;
@@ -126,6 +168,11 @@ export function normalizeStoredCardColors(
     }
 
     if (obj.tag === 'interactive_container') {
+      const customBg = readCustomBackgroundStyle(obj);
+      if (customBg) {
+        obj.background_style = ensureAlias('cus-bg', customBg);
+        delete obj.custom_background_style;
+      }
       const border = readCustomBorderColor(obj);
       if (border) {
         obj.border_color = ensureAlias('cus-bg', border);
