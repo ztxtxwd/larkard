@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.13
+
+### Patch Changes
+
+- root 默认 `border: 1px solid var(--N300)` 对齐飞书网页版 `--line-border-card`；独立渲染器无消息气泡外包层时在 root 绘制边框
+
 ## 0.2.12
 
 ### Patch Changes
