@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.6
+
+- `normalizeStoredCardColors` 补齐 `interactive_container` 背景色归一化，修复嵌套容器 cus-bg 序号冲突
+- Bundles updated workspace packages (adapter 0.3.9, compiler/cli/language-server 0.1.13)
+
 ## 0.2.5
 
 - 预览对齐真机布局：body padding 0 无白边、interactive_container 纵向间距与仅可点击时 pointer
