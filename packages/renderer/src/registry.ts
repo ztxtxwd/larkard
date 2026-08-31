@@ -288,6 +288,22 @@ export function sizeToPx(v: number | string | undefined): string {
   return typeof v === 'number' ? v + 'px' : String(v);
 }
 
+/** RAW padding/margin 对象或 DSL 简写字符串 → CSS 速记 */
+export function marginToStyle(margin: unknown): string | null {
+  if (typeof margin === 'string' && margin.trim()) return margin.trim();
+  return boxToStyle(margin as Spacing4);
+}
+
+/** RAW cornerRadiusValue / DSL corner_radius → CSS border-radius */
+export function resolveCornerRadius(property: Record<string, unknown> | undefined | null): string | undefined {
+  if (!property) return undefined;
+  const direct = property.corner_radius ?? property.cornerRadius;
+  if (direct != null) return sizeToPx(direct as number | string);
+  const echo = property.cornerRadiusValue as { type?: string; value?: number | string } | undefined;
+  if (echo && typeof echo.value === 'number') return echo.value + 'px';
+  if (echo && typeof echo.value === 'string' && echo.value.trim()) return sizeToPx(echo.value);
+  return undefined;
+}
 /** RAW 的 padding/margin 对象 {top,right,bottom,left:{type:'pixels',value}} -> CSS 速记 */
 type Spacing4 = { top?: { value?: number }; right?: { value?: number }; bottom?: { value?: number }; left?: { value?: number } };
 export function boxToStyle(box: Spacing4 | undefined): string | null {
@@ -296,7 +312,7 @@ export function boxToStyle(box: Spacing4 | undefined): string | null {
   const r = box.right?.value ?? 0;
   const b = box.bottom?.value ?? 0;
   const l = box.left?.value ?? 0;
-  if (!t && !r && !b && !l) return null;
+  // 对象存在即视为显式指定（含全 0），须输出以覆盖 CSS 默认值（如 body padding:12px）。
   return `${t}px ${r}px ${b}px ${l}px`;
 }
 

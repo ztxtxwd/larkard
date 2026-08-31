@@ -19,6 +19,7 @@ export {
   readThemeColorLight,
   readThemeColorDark,
   resolveCustomBackgroundLight,
+  resolveCustomBorderLight,
   resolveTextStyleColor,
   resolveTextStyleCustomColorPair,
   themePairToColorEntry,

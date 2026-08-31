@@ -1,19 +1,24 @@
+import { wrapMarkdownContentWithFontColor } from './expand-dsl-colors.js';
+
 /**
  * 飞书存储卡片时会将 config.style.color 的 cus-N 展开为 custom_background_style（#RRGGBBAA），
- * 并丢弃 config.style 与 markdown.font_color。回读底稿后须 normalize，否则 modify 再发会丢色。
+ * 并丢弃 config.style 与 markdown 内联字色。回读底稿后须 normalize，否则 modify 再发会丢色。
+ * 公开 DSL 用 content 内 <font color='cus-N'> 表达字色（飞书发送接口不接受 markdown.font_color）。
  */
 
 export type CustomColorEntry = { light_mode: string; dark_mode: string };
 
 export type ColorRegistry = {
   entries: Record<string, CustomColorEntry>;
-  keyToAlias: Map<string, string>;
+  /** 背景/边框等同色复用 cus-bg-N，与文字 cus-text-N 分表，避免串 alias */
+  bgKeyToAlias: Map<string, string>;
+  textKeyToAlias: Map<string, string>;
   bgSeq: number;
   textSeq: number;
 };
 
 export function createColorRegistry(): ColorRegistry {
-  return { entries: {}, keyToAlias: new Map(), bgSeq: 0, textSeq: 0 };
+  return { entries: {}, bgKeyToAlias: new Map(), textKeyToAlias: new Map(), bgSeq: 0, textSeq: 0 };
 }
 
 export function colorEntryKey(entry: CustomColorEntry): string {
@@ -26,13 +31,14 @@ export function registerColorEntry(
   prefix: 'cus-bg' | 'cus-text',
 ): string {
   const key = colorEntryKey(entry);
-  const existing = registry.keyToAlias.get(key);
+  const map = prefix === 'cus-bg' ? registry.bgKeyToAlias : registry.textKeyToAlias;
+  const existing = map.get(key);
   if (existing) return existing;
   const alias = prefix === 'cus-bg'
     ? `cus-bg-${registry.bgSeq++}`
     : `cus-text-${registry.textSeq++}`;
   registry.entries[alias] = entry;
-  registry.keyToAlias.set(key, alias);
+  map.set(key, alias);
   return alias;
 }
 
@@ -54,14 +60,15 @@ export function hexColorToRgba(hex: string): string | undefined {
   return undefined;
 }
 
-function readCustomBackgroundStyle(
-  node: Record<string, unknown>,
-): CustomColorEntry | undefined {
-  const raw = node.custom_background_style;
+function readThemeColorPair(raw: unknown): CustomColorEntry | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
   const o = raw as Record<string, unknown>;
-  const lightRaw = typeof o.light_mode === 'string' ? o.light_mode : undefined;
-  const darkRaw = typeof o.dark_mode === 'string' ? o.dark_mode : undefined;
+  const lightRaw = typeof o.light_mode === 'string' ? o.light_mode
+    : typeof o.lightMode === 'string' ? o.lightMode
+    : undefined;
+  const darkRaw = typeof o.dark_mode === 'string' ? o.dark_mode
+    : typeof o.darkMode === 'string' ? o.darkMode
+    : undefined;
   if (!lightRaw || !darkRaw) return undefined;
   const light = lightRaw.startsWith('#') ? hexColorToRgba(lightRaw) : lightRaw;
   const dark = darkRaw.startsWith('#') ? hexColorToRgba(darkRaw) : darkRaw;
@@ -69,9 +76,17 @@ function readCustomBackgroundStyle(
   return { light_mode: light, dark_mode: dark };
 }
 
+function readCustomBackgroundStyle(node: Record<string, unknown>): CustomColorEntry | undefined {
+  return readThemeColorPair(node.custom_background_style);
+}
+
+function readCustomBorderColor(node: Record<string, unknown>): CustomColorEntry | undefined {
+  return readThemeColorPair(node.custom_border_color ?? node.customBorderColor);
+}
+
 /**
  * 将飞书回读的 custom_background_style 还原为可再次发送的 background_style cus-N + config.style.color。
- * 若 markdown 缺少 font_color，按 text_size / 加粗内容补 cus-accent / cus-muted（飞书回读会丢 font_color）。
+ * 若 markdown 缺少内联字色，按 text_size / 加粗内容补 <font color='cus-accent'|'cus-muted'>（飞书回读会丢字色）。
  * rawToDsl 可传入已登记的文字自定义色（preRegistered），与背景色一并写入 config.style.color。
  */
 export function normalizeStoredCardColors(
@@ -79,16 +94,18 @@ export function normalizeStoredCardColors(
   preRegistered?: ColorRegistry,
 ): void {
   const colorEntries: Record<string, CustomColorEntry> = { ...(preRegistered?.entries ?? {}) };
-  const keyToAlias = new Map<string, string>(preRegistered?.keyToAlias ?? []);
+  const bgKeyToAlias = new Map<string, string>(preRegistered?.bgKeyToAlias ?? []);
+  const textKeyToAlias = new Map<string, string>(preRegistered?.textKeyToAlias ?? []);
   let bgSeq = preRegistered?.bgSeq ?? 0;
   let textSeq = preRegistered?.textSeq ?? 0;
 
-  const ensureAlias = (prefix: string, entry: CustomColorEntry): string => {
-    const existing = keyToAlias.get(colorEntryKey(entry));
+  const ensureAlias = (prefix: 'cus-bg' | 'cus-text', entry: CustomColorEntry): string => {
+    const map = prefix === 'cus-bg' ? bgKeyToAlias : textKeyToAlias;
+    const existing = map.get(colorEntryKey(entry));
     if (existing) return existing;
     const alias = prefix === 'cus-bg' ? `cus-bg-${bgSeq++}` : `cus-text-${textSeq++}`;
     colorEntries[alias] = entry;
-    keyToAlias.set(colorEntryKey(entry), alias);
+    map.set(colorEntryKey(entry), alias);
     return alias;
   };
 
@@ -105,6 +122,15 @@ export function normalizeStoredCardColors(
       if (custom) {
         obj.background_style = ensureAlias('cus-bg', custom);
         delete obj.custom_background_style;
+      }
+    }
+
+    if (obj.tag === 'interactive_container') {
+      const border = readCustomBorderColor(obj);
+      if (border) {
+        obj.border_color = ensureAlias('cus-bg', border);
+        delete obj.custom_border_color;
+        delete obj.customBorderColor;
       }
     }
 
@@ -166,11 +192,17 @@ export function normalizeStoredCardColors(
       }
       if (!node || typeof node !== 'object') return;
       const obj = node as Record<string, unknown>;
-      if (obj.tag === 'markdown' && obj.font_color === undefined) {
-        const size = obj.text_size;
-        const content = typeof obj.content === 'string' ? obj.content : '';
-        if (size === 'small') obj.font_color = 'cus-muted';
-        else if (size === 'heading' || content.includes('**')) obj.font_color = 'cus-accent';
+      if (obj.tag === 'markdown' && typeof obj.content === 'string') {
+        delete obj.font_color;
+        const content = obj.content;
+        if (!/<font\s+color=/i.test(content)) {
+          const size = obj.text_size;
+          if (size === 'small') {
+            obj.content = wrapMarkdownContentWithFontColor(content, 'cus-muted');
+          } else if (size === 'heading' || content.includes('**')) {
+            obj.content = wrapMarkdownContentWithFontColor(content, 'cus-accent');
+          }
+        }
       }
       for (const value of Object.values(obj)) applyDefaultFontColors(value);
     };
@@ -229,7 +261,7 @@ function remapColorReferences(node: unknown, aliasRenames: Map<string, string>):
 /** Safety net: hoist or replace inline #hex / rgba in markdown content. */
 function normalizeMarkdownInlineHexColors(
   obj: Record<string, unknown>,
-  ensureAlias: (prefix: string, entry: CustomColorEntry) => string,
+  ensureAlias: (prefix: 'cus-bg' | 'cus-text', entry: CustomColorEntry) => string,
   keepFontTags = false,
 ): void {
   const content = obj.content as string;
@@ -248,8 +280,8 @@ function normalizeMarkdownInlineHexColors(
     const entry = hexColor(single[1]!);
     if (entry) {
       const alias = ensureAlias('cus-text', entry);
-      if (obj.font_color === undefined) obj.font_color = alias;
-      obj.content = single[2]!;
+      delete obj.font_color;
+      obj.content = `<font color='${alias}'>${single[2]!}</font>`;
       return;
     }
   }

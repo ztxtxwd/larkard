@@ -1,5 +1,17 @@
 # @open-feishu-card/adapter
 
+## 0.3.8
+
+### Patch Changes
+
+- RAW→DSL 保留 config.summary；bg/text 色 alias 分表防串台；list.items 内 cus-* 色 dslToRaw 展开；custom_border_color 归一化为 border_color
+
+## 0.3.7
+
+### Patch Changes
+
+- `normalizeStoredCardColors` 不再向 markdown 写入 `font_color`（飞书发送接口不接受）；回读缺色时改为 content 内联 `<font color='cus-N'>`，与 0.3.5 RAW→DSL 约定一致。
+
 ## 0.3.6
 
 ### Patch Changes

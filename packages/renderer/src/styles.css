@@ -18,13 +18,13 @@
   line-height: 1.6;
   color: #1f2329;
   background-color: #fff;
+  position: relative;
   border-radius: 8px;
-  border: 1px solid #dee0e3;
+  /* 真机 root 默认无边框；showCardBorder 时才 outline（见 --has-border） */
   overflow: hidden;
   width: 100%;
   max-width: 605px;
   box-sizing: border-box;
-  box-shadow: 0 4px 14px rgba(31, 35, 41, 0.08);
   /* BEGIN PALETTE VARS (auto-generated from constants.ts PALETTE) */
   /* 正文 color:var(--O400) 等依赖这些变量；与飞书 :root light 色阶对齐 */
   --B50: #f0f4ff;
@@ -189,6 +189,7 @@
   /* 真机 light：--bg-float-overlay: var(--N50)。column_set background_style=grey 走此 token */
   --bg-float-overlay: var(--N50);
 }
+.universal-card-root--has-border { outline: 1px solid #dee0e3; }
 .universal-card-root *,
 .universal-card-root *::before,
 .universal-card-root *::after { box-sizing: border-box; }
@@ -271,7 +272,8 @@
   padding: 12px;
   display: flex;
   flex-direction: column;
-  row-gap: 8px;
+  row-gap: 12px;
+  column-gap: 12px;
   align-items: flex-start;
 }
 .universal-card-body > * { width: 100%; box-sizing: border-box; }
@@ -509,9 +511,12 @@
 .universal-card-interactive-container {
   display: flex; flex-direction: column; box-sizing: border-box;
   border-radius: 6px; padding: 0; text-decoration: none; color: inherit;
-  cursor: pointer; transition: background-color .1s;
+  row-gap: 4px;
+  transition: background-color .1s;
 }
-.universal-card-interactive-container:not(.universal-card-interactive-container--disabled):hover {
+/* 真机：cursor:pointer 与 hover 底只在 __action 层；纯展示容器（无 actions/url）保持默认箭头 */
+.universal-card-interactive-container--action { cursor: pointer; }
+.universal-card-interactive-container--action:not(.universal-card-interactive-container--disabled):hover {
   background-color: rgba(31, 35, 41, 0.05);
 }
 .universal-card-interactive-container--bordered { border: 1px solid #dee0e3; }

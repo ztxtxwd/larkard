@@ -58,24 +58,58 @@ export function expandTextStyleColor(
   };
 }
 
-/** 递归展开 markdown 子树里的 cus-* 文字色 */
+/** border_color / background_style 等 cus-N → customBackgroundStyle 形态（供 RAW 渲染器读取） */
+export function expandColorAlias(
+  style: unknown,
+  registry: ColorRegistry,
+): { light_mode: string; dark_mode: string } | undefined {
+  return expandBackgroundStyleAlias(style, registry);
+}
+
+/** 递归展开 markdown / list 子树里的 cus-* 文字色 */
 export function expandMarkdownElements(
   elements: CardElement[] | undefined,
   registry: ColorRegistry,
 ): CardElement[] | undefined {
   if (!Array.isArray(elements)) return elements;
-  return elements.map((el) => {
-    const property = el.property ? { ...el.property } : undefined;
-    if (!property) return el;
-    if (Array.isArray(property.elements)) {
-      property.elements = expandMarkdownElements(property.elements, registry);
+  return elements.map((el) => expandMarkdownNode(el, registry));
+}
+
+function expandMarkdownNode(el: CardElement, registry: ColorRegistry): CardElement {
+  const property = el.property ? { ...el.property } : undefined;
+  if (!property) return el;
+  let changed = property !== el.property;
+
+  if (Array.isArray(property.elements)) {
+    const next = expandMarkdownElements(property.elements, registry);
+    if (next !== property.elements) {
+      property.elements = next;
+      changed = true;
     }
-    if (property.textStyle) {
-      const expanded = expandTextStyleColor(property.textStyle, registry);
-      if (expanded) property.textStyle = expanded;
+  }
+
+  // list.items[].elements — parseMarkdown 生成的列表项不走 property.elements
+  if (Array.isArray(property.items)) {
+    property.items = property.items.map((item) => {
+      if (!item || typeof item !== 'object') return item;
+      const row = item as Record<string, unknown>;
+      if (!Array.isArray(row.elements)) return item;
+      const next = expandMarkdownElements(row.elements as CardElement[], registry);
+      if (next === row.elements) return item;
+      return { ...row, elements: next };
+    });
+    changed = true;
+  }
+
+  if (property.textStyle) {
+    const expanded = expandTextStyleColor(property.textStyle, registry);
+    if (expanded && expanded !== property.textStyle) {
+      property.textStyle = expanded;
+      changed = true;
     }
-    return property === el.property ? el : { ...el, property };
-  });
+  }
+
+  return changed ? { ...el, property } : el;
 }
 
 /** markdown.font_color 且 content 无 <font> 时，包一层 font 再解析 */

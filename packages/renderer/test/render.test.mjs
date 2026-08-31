@@ -514,6 +514,58 @@ test('RAW: body without tag still renders (tag defaulted to "body")', () => {
   assert.match(html, /正文还在/);
 });
 
+test('RAW: body padding 0 overrides CSS default 12px (no white ring)', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: {
+    padding: { top: { value: 0 }, right: { value: 0 }, bottom: { value: 0 }, left: { value: 0 } },
+    elements: [{
+      tag: 'interactive_container',
+      property: {
+        customBackgroundStyle: { lightMode: '#f5f4ef', darkMode: '#f5f4ef' },
+        padding: { top: { value: 20 }, right: { value: 20 }, bottom: { value: 20 }, left: { value: 20 } },
+        elements: [{ tag: 'markdown', property: { elements: [
+          { tag: 'plain_text', property: { content: '内文' } },
+        ] } }],
+      },
+    }],
+  } } } });
+  assert.match(html, /universal-card-body[^>]*style="padding:0px 0px 0px 0px"/);
+  assert.doesNotMatch(html, /universal-card-root[^>]*border:\s*1px/);
+});
+
+test('RAW: interactive_container verticalSpacingValue → row-gap', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: {
+      verticalSpacingValue: { type: 'pixels', value: 10 },
+      elements: [
+        { tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: 'a' } }] } },
+        { tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: 'b' } }] } },
+      ],
+    },
+  }] } } } });
+  assert.match(html, /universal-card-interactive-container[^>]*row-gap:10px/);
+});
+
+test('RAW: display-only interactive_container has no --action (no pointer cursor)', () => {
+  const display = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: { actions: [], disabled: false, elements: [
+      { tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: '纯展示' } }] } },
+    ] },
+  }] } } } });
+  assert.doesNotMatch(display, /universal-card-interactive-container--action/);
+
+  const linked = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: {
+      actions: [{ action: { url: 'https://example.com' } }],
+      elements: [{ tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: '可点' } }] } }],
+    },
+  }] } } } });
+  assert.match(linked, /universal-card-interactive-container--action/);
+  assert.match(linked, /data-url="https:\/\/example.com"/);
+});
+
 test('RAW: div renders single content from property.text (markdown)', () => {
   // 真实 RAW 的 div 把内容挂在 property.text（单个 markdown），而非 property.elements。
   const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [

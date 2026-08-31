@@ -78,3 +78,11 @@ export function resolveCustomBackgroundLight(property: unknown): string | undefi
   const custom = p.custom_background_style ?? p.customBackgroundStyle;
   return readThemeColorLight(custom);
 }
+
+/** Light hex/rgba from interactive_container custom border color, if any. */
+export function resolveCustomBorderLight(property: unknown): string | undefined {
+  if (!property || typeof property !== 'object') return undefined;
+  const p = property as Record<string, unknown>;
+  const custom = p.custom_border_color ?? p.customBorderColor;
+  return readThemeColorLight(custom);
+}

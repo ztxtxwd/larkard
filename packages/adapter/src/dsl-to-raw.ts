@@ -233,6 +233,20 @@ function buildProperty(el: Record<string, unknown>, tag: string, colors: ColorRe
       continue;
     }
 
+    // interactive_container 边框色 cus-N → customBorderColor
+    if ((k === 'border_color' || k === 'borderColor') && tag === 'interactive_container') {
+      const renamed = renameKey(k);
+      property[renamed] = v as never;
+      const expanded = expandBackgroundStyleAlias(v, colors);
+      if (expanded) {
+        property.customBorderColor = {
+          lightMode: expanded.light_mode,
+          darkMode: expanded.dark_mode,
+        };
+      }
+      continue;
+    }
+
     // column 定宽 "Npx" → widthValue（渲染器 column 靠 widthValue.value 判定定宽；
     // 直接留 width:"100px" 字符串会被当成权重列，图片按列宽渲染会错位）
     if (tag === 'column' && k === 'width' && typeof v === 'string') {

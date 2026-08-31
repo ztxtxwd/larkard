@@ -118,6 +118,61 @@ test('dslToRaw: expands config.style.color cus-* into renderer raw fields', () =
   assert.equal(caption.customColor.lightMode, 'rgba(110,115,125,1)');
 });
 
+test('dslToRaw: expands cus-* colors inside list items', () => {
+  const dsl = {
+    schema: '2.0',
+    config: {
+      update_multi: true,
+      style: {
+        color: {
+          'cus-text-1': { light_mode: 'rgba(10,10,10,1)', dark_mode: 'rgba(10,10,10,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "- <font color='cus-text-1'>**bold**</font><font color='cus-text-1'>: detail</font>\n",
+      }],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  const list = raw.body.property.elements[0].property.elements[0];
+  assert.equal(list.tag, 'list');
+  const ts = list.property.items[0].elements[0].property.textStyle;
+  assert.equal(ts.customColor.lightMode, 'rgba(10,10,10,1)');
+  assert.equal(ts.color, undefined);
+});
+
+test('dslToRaw: expands interactive_container border_color cus-* to customBorderColor', () => {
+  const dsl = {
+    schema: '2.0',
+    config: {
+      update_multi: true,
+      style: {
+        color: {
+          'cus-bg-0': { light_mode: 'rgba(10,10,10,1)', dark_mode: 'rgba(10,10,10,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        has_border: true,
+        border_color: 'cus-bg-0',
+        elements: [{ tag: 'markdown', content: 'q' }],
+      }],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  const ic = raw.body.property.elements[0].property;
+  assert.deepEqual(ic.customBorderColor, {
+    lightMode: 'rgba(10,10,10,1)',
+    darkMode: 'rgba(10,10,10,1)',
+  });
+  assert.equal(ic.border_color ?? ic.borderColor, 'cus-bg-0');
+});
+
 test('degradeUnknown is available as an optional helper', () => {
   const el = degradeUnknown({ tag: 'secret_private_widget', property: { foo: 1 } });
   assert.equal(el.tag, 'unknown');

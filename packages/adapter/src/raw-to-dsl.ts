@@ -287,8 +287,45 @@ function convertRoot(root: unknown, ctx: Ctx): unknown {
  * update_multi — that's a quirk of how those cards were saved, not what the
  * public DSL means. The projection above matches what we'd send today.
  */
-function convertConfig(_node: Record<string, unknown>): unknown {
-  return { update_multi: true };
+function convertConfig(node: Record<string, unknown>): unknown {
+  const out: Record<string, unknown> = { update_multi: true };
+
+  if (node.streamingMode === true || node.streaming_mode === true) {
+    out.streaming_mode = true;
+  }
+  if (node.enableForwardInteraction === true || node.enable_forward_interaction === true) {
+    out.enable_forward_interaction = true;
+  }
+  if (node.enableForward === false || node.enable_forward === false) {
+    out.enable_forward = false;
+  }
+  if (typeof node.widthMode === 'string') out.width_mode = node.widthMode;
+  else if (typeof node.width_mode === 'string') out.width_mode = node.width_mode;
+
+  const summaryRaw = isRecord(node.summary) ? node.summary : undefined;
+  if (summaryRaw) {
+    const summary: Record<string, unknown> = {};
+    if (typeof summaryRaw.content === 'string') summary.content = summaryRaw.content;
+    if (isRecord(summaryRaw.i18nContent)) summary.i18n_content = summaryRaw.i18nContent;
+    else if (isRecord(summaryRaw.i18n_content)) summary.i18n_content = summaryRaw.i18n_content;
+    if (Object.keys(summary).length) out.summary = summary;
+  }
+
+  const streamingRaw = isRecord(node.streamingConfig) ? node.streamingConfig
+    : isRecord(node.streaming_config) ? node.streaming_config
+    : undefined;
+  if (streamingRaw) {
+    const sc: Record<string, unknown> = {};
+    if (streamingRaw.printStrategy != null) sc.print_strategy = streamingRaw.printStrategy;
+    else if (streamingRaw.print_strategy != null) sc.print_strategy = streamingRaw.print_strategy;
+    if (streamingRaw.printFrequencyMs != null) sc.print_frequency_ms = streamingRaw.printFrequencyMs;
+    else if (streamingRaw.print_frequency_ms != null) sc.print_frequency_ms = streamingRaw.print_frequency_ms;
+    if (streamingRaw.printStep != null) sc.print_step = streamingRaw.printStep;
+    else if (streamingRaw.print_step != null) sc.print_step = streamingRaw.print_step;
+    if (Object.keys(sc).length) out.streaming_config = sc;
+  }
+
+  return out;
 }
 
 function convertHeader(node: Record<string, unknown>, ctx: Ctx): unknown {

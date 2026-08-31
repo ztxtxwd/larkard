@@ -25,12 +25,13 @@ import { parseMarkdown } from './md-parse';
 import { h } from './vnode';
 import {
   alignToStyle, bgStyleToColor, boxToStyle, extractPlainText, extractText, getChildElements,
-  propertyBackgroundColor,
+  marginToStyle, propertyBackgroundColor, resolveCornerRadius,
   lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
   resolveColor, resolveImageSrc, resolveMediaSrc, resolveTextSizeKey, resolveURL,
   resolveVideoCoverSrc, sizeToPx, spacingToPx, textStyleToModifiers, textStyleToStyle,
 } from './registry';
+import { resolveCustomBorderLight } from '@open-feishu-card/adapter';
 import {
   AUDIO_PAUSE_FLAT_ICON_SVG, AUDIO_PAUSE_ICON_SVG,
   AUDIO_PLAY_FLAT_ICON_SVG, AUDIO_PLAY_ICON_SVG,
@@ -508,6 +509,8 @@ export function registerBuiltins(): void {
 registerComponent('markdown', (el, ctx) => {
   const p = el.property || {};
   const style = { ...alignToStyle(p.textAlign), ...textStyleToStyle(p.textStyle) };
+  const mg = marginToStyle(p.margin);
+  if (mg) style.margin = mg;
   const sizeKey = resolveTextSizeKey(p);
   // 有显式字号才写死字号/行高；缺省走 CSS（14px / line-height:1.6）
   // 行高取引擎 ce 表：字号≤16 时 = 字号+8（12→20 / 14→22 / 16→24）
@@ -838,13 +841,16 @@ registerComponent('interactive_container', (el, ctx) => {
   // 取首个 open_url 行为的地址；action.url 可能是字符串或多端对象
   const act = Array.isArray(p.actions) ? (p.actions[0] as { action?: { url?: unknown } } | undefined) : undefined;
   const url = resolveURL(act?.action?.url);
+  const hasActions = Array.isArray(p.actions) && p.actions.length > 0;
+  const clickable = !disabled && (Boolean(url) || hasActions);
   const tip = extractText(p.hoverTips as never);
-  // border_color（DSL snake_case，兼容 camelCase borderColor）：命名色/色阶/自定义色 → hex。
-  // 给了颜色即视为有边框（对齐真机：容器 border-color/-style/-width 显式输出）；
-  // 否则退回 has_border 的默认灰边（--bordered 类）。
-  const borderColor = resolveColor((p.border_color ?? (p as { borderColor?: string }).borderColor) as string | undefined);
-  const hasBorder = borderColor != null || p.hasBorder === true;
+  // border_color / customBorderColor：命名色/色阶/自定义色 → hex。
+  const borderNamed = (p.border_color ?? (p as { borderColor?: string }).borderColor) as string | undefined;
+  const borderCustom = resolveCustomBorderLight(p);
+  const borderColor = resolveColor(borderNamed) ?? (borderCustom ? resolveColor(borderCustom) : undefined);
+  const hasBorder = borderColor != null || p.hasBorder === true || p.has_border === true;
   const cls = `${CLS}-interactive-container`
+    + (clickable ? ` ${CLS}-interactive-container--action` : '')
     + (hasBorder && !borderColor ? ` ${CLS}-interactive-container--bordered` : '')
     + (disabled ? ` ${CLS}-interactive-container--disabled` : '');
   const style: Record<string, string> = {};
@@ -852,10 +858,11 @@ registerComponent('interactive_container', (el, ctx) => {
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
-  // 有具体边框色时内联输出整条 border（覆盖 --bordered 的灰边）
   if (borderColor) style.border = `1px solid ${borderColor}`;
-  // corner_radius："8px" / 数字 → border-radius（缺省走 CSS 的 6px）
-  if (p.corner_radius != null) style.borderRadius = sizeToPx(p.corner_radius);
+  const radius = resolveCornerRadius(p as Record<string, unknown>);
+  if (radius != null) style.borderRadius = radius;
+  const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
+  if (vGap != null) style.rowGap = spacingToPx(vGap as number | string) + 'px';
   // width:"fill" → 撑满所在列（对齐真机 width:100%）。RAW 用 widthValue.builtin_*_width。
   const icWv = p.widthValue as { type?: string; value?: string | number } | undefined;
   if ((p.width ?? icWv?.value) === 'fill') style.width = '100%';

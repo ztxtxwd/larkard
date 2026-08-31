@@ -1,5 +1,13 @@
 # @open-feishu-card/renderer
 
+## 0.2.12
+
+### Patch Changes
+
+- body padding 显式 0 覆盖 CSS 默认白边；interactive_container verticalSpacing 与仅可点击时 pointer/hover；去掉 root 默认边框；customBorderColor / cornerRadiusValue / markdown margin 对齐真机
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.8
+
 ## 0.2.11
 
 ### Patch Changes

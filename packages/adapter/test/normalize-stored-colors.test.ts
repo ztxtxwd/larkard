@@ -41,7 +41,62 @@ describe('normalizeStoredCardColors', () => {
     expect(style.color['cus-bg-0']).toBeDefined();
     expect(style.color['cus-accent']).toBeDefined();
     const md = (col.columns[0].elements as Record<string, unknown>[])[0];
-    expect(md.font_color).toBe('cus-accent');
+    expect(md.content).toBe("<font color='cus-accent'>**85%**</font>");
+    expect(md).not.toHaveProperty('font_color');
+  });
+
+  it('keeps separate cus-bg and cus-text aliases when hex matches', () => {
+    const dsl: Record<string, unknown> = {
+      schema: '2.0',
+      config: { update_multi: true },
+      body: {
+        elements: [{
+          tag: 'column_set',
+          columns: [
+            {
+              tag: 'column',
+              custom_background_style: {
+                light_mode: '#0a0a0aff',
+                dark_mode: '#0a0a0aff',
+              },
+              elements: [{
+                tag: 'markdown',
+                content: "<font color='#0a0a0aff'>label</font>",
+              }],
+            },
+          ],
+        }],
+      },
+    };
+    normalizeStoredCardColors(dsl);
+    const col = ((dsl.body as { elements: unknown[] }).elements[0] as { columns: Record<string, unknown>[] }).columns[0];
+    expect(col.background_style).toMatch(/^cus-bg-/);
+    expect(col.background_style).not.toMatch(/^cus-text-/);
+    const md = (col.elements as Record<string, unknown>[])[0] as { content: string };
+    expect(md.content).toMatch(/<font color='cus-/);
+    expect(md.content).not.toContain('#0a0a0a');
+  });
+
+  it('normalizes interactive_container custom_border_color to border_color cus-bg', () => {
+    const dsl: Record<string, unknown> = {
+      schema: '2.0',
+      config: { update_multi: true },
+      body: {
+        elements: [{
+          tag: 'interactive_container',
+          has_border: true,
+          custom_border_color: {
+            light_mode: '#0a0a0aff',
+            dark_mode: '#0a0a0aff',
+          },
+          elements: [{ tag: 'markdown', content: 'quote' }],
+        }],
+      },
+    };
+    normalizeStoredCardColors(dsl);
+    const ic = (dsl.body as { elements: Record<string, unknown>[] }).elements[0];
+    expect(ic.border_color).toMatch(/^cus-bg-/);
+    expect(ic.custom_border_color).toBeUndefined();
   });
 });
 
