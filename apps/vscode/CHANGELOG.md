@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.5
+
+- 预览对齐真机布局：body padding 0 无白边、interactive_container 纵向间距与仅可点击时 pointer
+- RAW→DSL 修复列表色丢失、bg/text alias 串台、config.summary 与边框色归一化
+- Bundles updated workspace packages (adapter 0.3.8, renderer 0.2.12, compiler/cli/language-server 0.1.12)
+
 ## 0.2.4
 
 - dslToRaw 展开 `config.style.color` 的 `cus-*` 自定义色，修复预览 KPI 背景与强调色/说明文字渲染
