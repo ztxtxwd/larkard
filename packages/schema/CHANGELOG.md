@@ -1,5 +1,13 @@
 # @open-feishu-card/schema
 
+## 0.1.5
+
+### Patch Changes
+
+- 对齐官方 card-schema（P0/P1）：新增 `avatar`、`picker_date`、`fallback_text`、`collapse_divider` 组件
+- 交互件补齐 `disabled_tips` / `value` / `required`；`overflow`、`select_img`、`person_list`、`header` 等公开字段
+- `markdown.enable_streaming` / `text_lines`、`img.fallback_img_key`、`UdIconSchema` 支持 `tag: ud_icon`
+
 ## 0.1.4
 
 ### Patch Changes

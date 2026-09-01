@@ -1058,6 +1058,11 @@ function renderStaticField(el: CardElement) {
 registerComponent('input', (el) => renderStaticField(el));
 registerComponent('multi_select_static', (el) => renderStaticField(el));
 registerComponent('select_static', (el) => renderStaticField(el));
+registerComponent('date_picker', (el) => renderStaticField(el));
+registerComponent('picker_time', (el) => renderStaticField(el));
+registerComponent('picker_datetime', (el) => renderStaticField(el));
+registerComponent('select_person', (el) => renderStaticField(el));
+registerComponent('multi_select_person', (el) => renderStaticField(el));
 
 // checker：勾选器（交互组件）。结构对齐网页版飞书引擎：
 // checkbox-container + content（可选删除线/透明度）+ buttons（可选，on_hover 自动隐藏）。
@@ -1273,6 +1278,52 @@ registerComponent('ud_icon', renderIcon);
 registerComponent('person_v1', (el, ctx) => {
   const p = el.property || {};
   return renderPersonChip(p.userID, p, ctx);
+});
+
+/** avatar：仅头像。尺寸枚举 tiny/small/medium/large/huge；custom 时用 customSize(px)。 */
+const AVATAR_SIZE_PX: Record<string, number> = {
+  tiny: 16,
+  small: 24,
+  medium: 32,
+  large: 40,
+  huge: 48,
+};
+
+registerComponent('avatar', (el, ctx) => {
+  const p = el.property || {};
+  const userID = (p.userID || (p as { user_id?: string }).user_id) as string | undefined;
+  const sizeKey = String(p.size ?? 'medium');
+  const custom =
+    typeof p.customSize === 'number'
+      ? p.customSize
+      : typeof (p as { custom_size?: number }).custom_size === 'number'
+        ? (p as { custom_size: number }).custom_size
+        : undefined;
+  const px =
+    sizeKey === 'custom' && typeof custom === 'number' && custom > 0
+      ? custom
+      : AVATAR_SIZE_PX[sizeKey] || AVATAR_SIZE_PX.medium;
+  const { name, src } = resolvePersonDisplay(userID, ctx);
+  return h('div', { className: `${CLS}-avatar`, title: name },
+    renderAvatarNode(`${CLS}-avatar__img`, px, src, name),
+  );
+});
+
+/** collapse_divider：折叠面板内部分割线 */
+registerComponent('collapse_divider', () =>
+  h('div', { className: `${CLS}-collapse-divider` }),
+);
+
+/** fallback_text：兜底文案元素 */
+registerComponent('fallback_text', (el, ctx) => {
+  const p = el.property || {};
+  const textEl = p.text as CardElement | undefined;
+  if (textEl && typeof textEl === 'object' && textEl.tag) {
+    return h('div', { className: `${CLS}-fallback-text` }, renderElement(textEl, ctx));
+  }
+  const content = extractPlainText(p.text);
+  if (!content) return null;
+  return h('div', { className: `${CLS}-fallback-text` }, content);
 });
 
 // person_list：按 showAvatar/showName 分四态（逆向网页版 PersonList）

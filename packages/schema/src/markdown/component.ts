@@ -6,7 +6,7 @@ import {
   HorizontalAlignSchema,
   SpacingValueSchema,
 } from '../common/enums.js';
-import { IconSchema } from '../common/icon.js';
+import { IconSchema, UdIconSchema } from '../common/icon.js';
 import { MultiUrlSchema } from '../common/url.js';
 import { MarkdownTextSizeSchema } from './text-size.js';
 
@@ -49,11 +49,24 @@ export const MarkdownSchema = z
     text_size: MarkdownTextSizeSchema.optional().describe(
       '文本大小，默认 normal；可为官方枚举或自定义 text_size key。标签/辅助说明可用 notation，数值可用 heading',
     ),
+    text_lines: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe('最大显示行数，超出省略'),
+    enable_streaming: z
+      .boolean()
+      .optional()
+      .describe('是否参与流式输出渲染，默认 false'),
     font_color: ColorSchema.optional().describe(
       '整段 Markdown 文字颜色；可为官方颜色枚举或 config.style.color 自定义 key（如 cus-accent）。内联 <font color> 仍走 content 语法',
     ),
     icon: IconSchema.optional().describe(
       '文本前缀图标；与文内 emoji 二选一，不要叠用。图标颜色应与描述的状态文字一致',
+    ),
+    ud_icon: UdIconSchema.optional().describe(
+      '历史前缀图标（ud_icon）；与 icon 同时存在时以 icon 为准',
     ),
     href: MarkdownHrefSchema.optional().describe(
       '旧版差异化跳转映射；JSON 2.0 建议使用 <link> 替代',

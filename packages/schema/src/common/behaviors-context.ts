@@ -21,6 +21,7 @@ export const BEHAVIORS_REQUIRED_OUTSIDE_FORM = new Set([
   'select_person',
   'multi_select_person',
   'date_picker',
+  'picker_date',
   'picker_time',
   'picker_datetime',
   'select_img',

@@ -108,6 +108,9 @@ export const ColumnSetSchema = z
     horizontal_align: HorizontalAlignSchema.optional().describe(
       '分栏内列的水平对齐',
     ),
+    vertical_align: VerticalAlignSchema.optional().describe(
+      '分栏内列的垂直对齐',
+    ),
     flex_mode: z
       .enum(['none', 'stretch', 'flow', 'bisect', 'trisect'])
       .optional()
@@ -213,6 +216,10 @@ export const InteractiveContainerSchema = z
       ),
     disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    required: z.boolean().optional().describe('是否必填（表单场景），默认 false'),
+    action: ColumnActionSchema.optional().describe(
+      '点击跳转（历史/兼容字段；优先用 behaviors.open_url）',
+    ),
   })
   .describe(
     '交互容器（interactive_container）：仅用于整块可点击/营销通栏/并排 KPI 等；默认 has_border=false，勿给每个文案块套带边框容器',

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.11
+
+- 对齐官方 schema：新增 avatar / collapse_divider / fallback_text 预览，日期与人员选择器静态框
+- Bundles schema 0.1.5、adapter 0.3.12、renderer 0.2.17
+
 ## 0.2.10
 
 - 折叠面板标题色对齐真机 caption（`N600`）

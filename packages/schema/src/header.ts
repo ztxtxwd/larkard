@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-import { HeaderTemplateSchema, SpacingValueSchema } from './common/enums.js';
+import {
+  DirectionSchema,
+  HeaderTemplateSchema,
+  HorizontalAlignSchema,
+  SpacingTokenSchema,
+  SpacingValueSchema,
+  VerticalAlignSchema,
+} from './common/enums.js';
 import { IconSchema } from './common/icon.js';
 import { TextObjectSchema, TextTagSchema } from './common/text.js';
 
@@ -30,6 +37,20 @@ export const HeaderSchema = z
     ),
     icon: IconSchema.optional().describe('标题前缀图标'),
     padding: SpacingValueSchema.optional().describe('标题内边距，默认 12px'),
+    margin: SpacingValueSchema.optional().describe('标题外边距'),
+    direction: DirectionSchema.optional().describe('标题区内子元素排列方向'),
+    horizontal_spacing: SpacingTokenSchema.optional().describe(
+      '标题区内水平间距',
+    ),
+    horizontal_align: HorizontalAlignSchema.optional().describe(
+      '标题区内水平对齐',
+    ),
+    vertical_spacing: SpacingTokenSchema.optional().describe(
+      '标题区内垂直间距',
+    ),
+    vertical_align: VerticalAlignSchema.optional().describe(
+      '标题区内垂直对齐',
+    ),
   })
   .describe('卡片标题区（header），位于根级，不进入 body.elements');
 

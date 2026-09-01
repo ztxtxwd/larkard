@@ -42,6 +42,9 @@ const KEY_RENAME: Record<string, string> = {
   tag_style: 'tagStyle',
   scale_type: 'scaleType',
   drop_invalid_user_id: 'dropInvalidUserID',
+  // avatar
+  custom_size: 'customSize',
+  custom_size2: 'customSize2',
   // video / audio
   file_key: 'fileID',
   audio_id: 'audioID',
@@ -52,7 +55,15 @@ const KEY_RENAME: Record<string, string> = {
 };
 
 /** 需要把「文本叶子」归一成 { tag:'plain_text', property:{content} } 的字段名 */
-const TEXT_LEAF_KEYS = new Set(['title', 'subtitle', 'alt', 'hover_tips', 'placeholder']);
+const TEXT_LEAF_KEYS = new Set([
+  'title',
+  'subtitle',
+  'alt',
+  'hover_tips',
+  'placeholder',
+  'notation',
+  'disabled_tips',
+]);
 
 /** DSL 顶层 → JsonCard（渲染器输入）。 */
 export function dslToRaw(dsl: unknown): JsonCard {
@@ -129,6 +140,16 @@ function convertEl(el: Record<string, unknown>, colors: ColorRegistry): CardElem
       delete (property as Record<string, unknown>).style;
     }
     return { tag: 'person_v1', property };
+  }
+
+  // avatar → 独立 RAW tag；仅展示头像（渲染器 registerComponent('avatar')）
+  if (tag === 'avatar') {
+    return { tag: 'avatar', property: buildProperty(el, 'avatar', colors) };
+  }
+
+  // picker_date → date_picker（渲染器/预览按静态字段处理；别名归一）
+  if (tag === 'picker_date') {
+    return { tag: 'date_picker', property: buildProperty(el, 'date_picker', colors) };
   }
 
   // markdown / lark_md：content 字符串 → 子元素树。

@@ -1,5 +1,14 @@
 # @open-feishu-card/adapter
 
+## 0.3.12
+
+### Patch Changes
+
+- `avatar` 双向映射；`picker_date` ↔ `date_picker` 别名
+- `raw-to-dsl` 保留 `person_list` 的 `mode`/`style`/`count` 与 `header.notation`
+- Updated dependencies
+  - @open-feishu-card/schema@0.1.5
+
 ## 0.3.11
 
 ### Patch Changes

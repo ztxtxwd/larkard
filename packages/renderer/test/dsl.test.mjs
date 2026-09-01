@@ -954,3 +954,37 @@ test('e2e: 乘用车报告卡（chart + table + markdown）整卡渲染', () => 
   assert.match(html, /universal-card-table__table/);
   assert.match(html, /比亚迪汽车/);
 });
+
+test('avatar / collapse_divider / fallback_text / picker_date 可渲染', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [
+        { tag: 'avatar', user_id: 'ou_demo', size: 'medium' },
+        {
+          tag: 'picker_date',
+          initial_date: '2026-09-01',
+          placeholder: { tag: 'plain_text', content: '选日期' },
+          behaviors: [{ type: 'callback', value: {} }],
+        },
+        {
+          tag: 'fallback_text',
+          text: { tag: 'plain_text', content: '兜底文案' },
+        },
+        {
+          tag: 'collapsible_panel',
+          header: { title: { tag: 'plain_text', content: '面板' } },
+          elements: [
+            { tag: 'collapse_divider' },
+            { tag: 'markdown', content: '内容' },
+          ],
+        },
+      ],
+    },
+  });
+  assert.match(html, /universal-card-avatar/);
+  assert.match(html, /universal-card-input--static/);
+  assert.match(html, /兜底文案/);
+  assert.match(html, /universal-card-collapse-divider/);
+  assert.match(html, /universal-card-collapsible-panel/);
+});

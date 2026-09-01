@@ -306,6 +306,33 @@
   margin: 8px 0;
 }
 
+.universal-card-collapse-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #dee0e3;
+  border: none;
+  margin: 8px 0;
+}
+
+.universal-card-avatar {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.universal-card-avatar__img {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: #eff0f1;
+}
+
+.universal-card-fallback-text {
+  color: #646a73;
+  font-size: 14px;
+  line-height: 22px;
+}
+
 /* ---- div / note ---- */
 .universal-card-div > * + * { margin-top: 8px; }
 /* div 带前置图标：icon 在左、文本在右排成一行（复刻网页版 .universal-card-div 布局） */

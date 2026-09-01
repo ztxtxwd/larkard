@@ -591,21 +591,17 @@ describe("person_v1 / person_list projection (real card regression)", () => {
         expect(person).not.toHaveProperty("type");
         expect(Object.keys(person)).toEqual(["id"]);
       }
-      // top-level editor-only fields dropped.
-      expect(list).not.toHaveProperty("style");
-      expect(list).not.toHaveProperty("mode");
-      expect(list).not.toHaveProperty("count");
+      // 官方公开字段 mode/style/count 可保留；仅丢弃编辑器私有 fallback
       expect(list).not.toHaveProperty("fallback");
     }
   });
 
   it("emits no person_list field the public schema rejects", () => {
     const dsl = rawCardToDsl(loadFixture("person-list.raw.json")) as AnyDsl;
-    // `type` only ever appears as a person identity field in raw; the public
-    // person_list has no `type` anywhere in its subtree.
+    // persons[i].type 是编辑器私有；mode/count/style 已是官方公开字段，允许保留。
     const lists = findElements(dsl, (el) => el.tag === "person_list");
     for (const list of lists) {
-      expect(collectKeys(list, (k) => k === "type" || k === "mode" || k === "count")).toEqual([]);
+      expect(collectKeys(list, (k) => k === "type")).toEqual([]);
     }
   });
 });

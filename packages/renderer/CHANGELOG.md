@@ -1,5 +1,14 @@
 # @open-feishu-card/renderer
 
+## 0.2.17
+
+### Patch Changes
+
+- 新增 `avatar`、`collapse_divider`、`fallback_text` 渲染
+- 日期/人员选择器（`date_picker`、`picker_time`、`picker_datetime`、`select_person`、`multi_select_person`）静态预览框
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.12
+
 ## 0.2.16
 
 ### Patch Changes

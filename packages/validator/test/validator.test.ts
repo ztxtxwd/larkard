@@ -94,6 +94,103 @@ test('form 内 button/select 可不写 behaviors', () => {
   );
 });
 
+test('接受官方对齐的 avatar / picker_date / fallback_text / collapse_divider', () => {
+  const ds = validate(`{
+    "schema": "2.0",
+    "body": {
+      "elements": [
+        { "tag": "avatar", "user_id": "ou_demo", "size": "medium" },
+        {
+          "tag": "picker_date",
+          "initial_date": "2026-09-01",
+          "behaviors": [{ "type": "callback", "value": { "k": "v" } }]
+        },
+        {
+          "tag": "fallback_text",
+          "text": { "tag": "plain_text", "content": "兜底文案" }
+        },
+        {
+          "tag": "collapsible_panel",
+          "header": {
+            "title": { "tag": "plain_text", "content": "详情" }
+          },
+          "elements": [
+            { "tag": "collapse_divider" },
+            { "tag": "markdown", "content": "内容" }
+          ]
+        }
+      ]
+    }
+  }`);
+  assert.equal(
+    ds.filter((d) => d.severity === 'error').length,
+    0,
+    JSON.stringify(ds),
+  );
+});
+
+test('交互件可声明 disabled_tips / selected_values / overflow 扩展字段', () => {
+  const ds = validate(`{
+    "schema": "2.0",
+    "body": {
+      "elements": [
+        {
+          "tag": "select_static",
+          "behaviors": [{ "type": "callback", "value": {} }],
+          "disabled": true,
+          "disabled_tips": { "tag": "plain_text", "content": "不可用" },
+          "options": [
+            { "text": { "tag": "plain_text", "content": "A" }, "value": "a" }
+          ]
+        },
+        {
+          "tag": "select_img",
+          "behaviors": [{ "type": "callback", "value": {} }],
+          "style": "laser",
+          "width": "fill",
+          "selected_values": ["img1"],
+          "options": [{ "img_key": "img_x", "value": "img1" }]
+        },
+        {
+          "tag": "overflow",
+          "name": "more",
+          "disabled": false,
+          "text": { "tag": "plain_text", "content": "更多" },
+          "options": [
+            {
+              "text": { "tag": "plain_text", "content": "打开" },
+              "value": "open"
+            }
+          ],
+          "behaviors": [{ "type": "callback", "value": {} }]
+        },
+        {
+          "tag": "column_set",
+          "vertical_align": "center",
+          "columns": [
+            {
+              "tag": "column",
+              "width": "auto",
+              "elements": [
+                {
+                  "tag": "person",
+                  "user_id": "ou_demo",
+                  "notation": { "tag": "plain_text", "content": "负责人" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }`);
+  assert.equal(
+    ds.filter((d) => d.severity === 'error').length,
+    0,
+    JSON.stringify(ds),
+  );
+});
+
 test('form 内 column_set 嵌套的 button 也可省略 behaviors', () => {
   const ds = validate(`{
     "schema": "2.0",

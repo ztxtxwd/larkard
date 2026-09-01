@@ -565,6 +565,25 @@ function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
     if (typeof property.style === "string") out.style = property.style;
     if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
     else if (typeof property.margin === "string") out.margin = property.margin;
+    if (property.notation != null && isRecord(property.notation)) {
+      const n = convertHeaderText(property.notation, ctx);
+      if (n) out.notation = n;
+    }
+    return out;
+  }
+
+  // avatar：仅头像
+  if (tag === "avatar") {
+    const out: Record<string, unknown> = { tag: "avatar" };
+    if (typeof property.userID === "string") out.user_id = property.userID;
+    else if (typeof property.user_id === "string") out.user_id = property.user_id;
+    if (typeof property.size === "string") out.size = property.size;
+    if (typeof property.customSize === "number") out.custom_size = property.customSize;
+    else if (typeof property.custom_size === "number") out.custom_size = property.custom_size;
+    if (typeof property.customSize2 === "number") out.custom_size2 = property.customSize2;
+    else if (typeof property.custom_size2 === "number") out.custom_size2 = property.custom_size2;
+    if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
+    else if (typeof property.margin === "string") out.margin = property.margin;
     return out;
   }
 
@@ -572,17 +591,18 @@ function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
   // editor envelope leaks several fields it rejects:
   //   - persons[i] carries { id, type:'user' }; the public shape is { id } only
   //     ("unknown property: type, path: ... persons -> [0]"), so we keep just id.
-  //   - top-level `style`, `mode`, `count` are editor-only — dropped.
   //   - a sibling `fallback` node (outside property) is editor render state — dropped.
-  // Public-allowed fields we project: show_avatar, show_name, size, lines,
-  // drop_invalid_user_id, margin ({top,..} pixels -> "Npx ..." box), and icon
-  // (kept as a flat { tag, token?, color?, img_key? }).
+  // Public-allowed fields: show_avatar, show_name, size, lines, mode, style, count,
+  // drop_invalid_user_id, margin, icon.
   if (tag === "person_list") {
     const out: Record<string, unknown> = { tag: "person_list" };
     if (typeof property.size === "string") out.size = property.size;
     if (typeof property.showAvatar === "boolean") out.show_avatar = property.showAvatar;
     if (typeof property.showName === "boolean") out.show_name = property.showName;
     if (typeof property.lines === "number") out.lines = property.lines;
+    if (typeof property.mode === "string") out.mode = property.mode;
+    if (typeof property.style === "string") out.style = property.style;
+    if (typeof property.count === "number") out.count = property.count;
     if (typeof property.dropInvalidUserID === "boolean") out.drop_invalid_user_id = property.dropInvalidUserID;
     else if (typeof property.drop_invalid_user_id === "boolean") out.drop_invalid_user_id = property.drop_invalid_user_id;
     if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
