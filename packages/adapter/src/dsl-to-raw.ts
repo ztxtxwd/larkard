@@ -273,6 +273,26 @@ function buildProperty(el: Record<string, unknown>, tag: string, colors: ColorRe
       if (px != null) { property.widthValue = { type: 'pixels', value: px }; continue; }
     }
 
+    // interactive_container 定宽/定高 "Npx" → widthValue / heightValue（图标框 48px 等）
+    if (tag === 'interactive_container' && typeof v === 'string') {
+      if (k === 'width') {
+        if (v === 'fill' || v === 'auto' || v === 'default') {
+          property.widthValue = { type: 'builtin_interactive_container_width', value: v };
+          continue;
+        }
+        const px = pxValue(v);
+        if (px != null) { property.widthValue = { type: 'pixels', value: px }; continue; }
+      }
+      if (k === 'height') {
+        if (v === 'auto' || v === 'default') {
+          property.heightValue = { type: 'builtin_interactive_container_height', value: v };
+          continue;
+        }
+        const px = pxValue(v);
+        if (px != null) { property.heightValue = { type: 'pixels', value: px }; continue; }
+      }
+    }
+
     // 文本叶子：title/subtitle/alt/hover_tips/placeholder → {tag:plain_text,property:{content}}
     if (TEXT_LEAF_KEYS.has(k)) { property[renameKey(k)] = wrapTextLeaf(v); continue; }
 

@@ -546,6 +546,75 @@ test('RAW: interactive_container verticalSpacingValue → row-gap', () => {
   assert.match(html, /universal-card-interactive-container[^>]*row-gap:10px/);
 });
 
+test('RAW: interactive_container width/height pixels + margin calc', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: {
+      widthValue: { type: 'pixels', value: 48 },
+      heightValue: { type: 'pixels', value: 48 },
+      margin: {
+        top: { value: 8 }, right: { value: 20 }, bottom: { value: 0 }, left: { value: 20 },
+      },
+      customBackgroundStyle: { lightMode: 'rgba(236,249,254,1)', darkMode: 'rgba(236,249,254,1)' },
+      elements: [],
+    },
+  }, {
+    tag: 'interactive_container',
+    property: {
+      width: 'fill',
+      margin: {
+        top: { value: 8 }, right: { value: 20 }, bottom: { value: 0 }, left: { value: 20 },
+      },
+      elements: [],
+    },
+  }] } } } });
+  // 定宽图标框：保持 48px，不因 margin 改成 calc
+  assert.match(html, /width:48px/);
+  assert.match(html, /height:48px/);
+  assert.match(html, /margin:8px 20px 0px 20px/);
+  // fill + 水平 margin → calc(100% - 40px)
+  assert.match(html, /width:calc\(100% - 40px\)/);
+});
+
+test('RAW: img size 24px 24px → fixed wrapper', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img',
+    property: {
+      imageKey: 'img_test',
+      size: '24px 24px',
+      scaleType: 'crop_center',
+      alt: { tag: 'plain_text', property: { content: 'icon' } },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-image__wrapper[^>]*width:24px/);
+  assert.match(html, /universal-card-image__wrapper[^>]*height:24px/);
+});
+
+test('RAW: collapsible_panel follow_text + no default border + margin', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'collapsible_panel',
+    property: {
+      expanded: false,
+      backgroundColor: 'grey-50',
+      margin: {
+        top: { value: 4 }, right: { value: 20 }, bottom: { value: 0 }, left: { value: 20 },
+      },
+      header: {
+        title: { tag: 'plain_text', property: { content: '展开说明（3 项）' } },
+        icon_position: 'follow_text',
+        icon: { tag: 'standard_icon', property: { token: 'down_outlined', color: 'grey' } },
+      },
+      elements: [],
+    },
+  }] } } } });
+  assert.match(html, /universal-card-collapsible-panel__header--icon-follow/);
+  assert.match(html, /margin:4px 20px 0px 20px/);
+  assert.match(html, /width:calc\(100% - 40px\)/);
+  // 未指定 border 对象时不描边
+  assert.doesNotMatch(html, /universal-card-collapsible-panel"[^>]*border:1px solid/);
+  assert.match(html, /background:#f5f6f7/);
+});
+
 test('RAW: display-only interactive_container has no --action (no pointer cursor)', () => {
   const display = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
     tag: 'interactive_container',

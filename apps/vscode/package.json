@@ -2,7 +2,7 @@
   "name": "lark-card-preview",
   "displayName": "Open Feishu Card",
   "description": "飞书卡片 (Card Schema 2.0) 开发套件：LSP 智能提示 + Webview 实时预览 + 一键净化非标属性",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "private": true,
   "publisher": "TianxiongZhao",
   "license": "MIT",

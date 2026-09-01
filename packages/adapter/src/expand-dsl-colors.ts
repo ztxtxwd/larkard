@@ -1,6 +1,9 @@
 /**
- * DSL config.style.color 中的 cus-* 别名在 dslToRaw 时展开为渲染器已支持的
+ * DSL config.style.color 中的自定义色别名在 dslToRaw 时展开为渲染器已支持的
  * customBackgroundStyle / textStyle.customColor（对齐飞书 RAW 真机字段）。
+ *
+ * 别名不限于编辑器默认的 cus-*：业务卡也常用 mm_* 等任意 token 名登记在
+ * config.style.color，真机按 registry 键查找；仅认 cus- 前缀会导致背景/描边丢失。
  */
 import type { CardElement, TextStyle } from './types.js';
 
@@ -26,31 +29,38 @@ export function readColorRegistry(card: Record<string, unknown>): ColorRegistry 
   return out;
 }
 
+/** @deprecated 保留兼容；展开逻辑改为查 registry，不再依赖 cus- 前缀。 */
 export function isCustomColorAlias(value: unknown): value is string {
   return typeof value === 'string' && value.startsWith('cus-');
 }
 
-/** column / column_set / interactive_container background_style cus-N → customBackgroundStyle */
+/** 是否为 config.style.color 中已登记的别名（任意 token 名）。 */
+export function isRegisteredColorAlias(
+  value: unknown,
+  registry: ColorRegistry,
+): value is string {
+  return typeof value === 'string' && !!value && Object.prototype.hasOwnProperty.call(registry, value);
+}
+
+/** column / column_set / interactive_container background_style → customBackgroundStyle */
 export function expandBackgroundStyleAlias(
   style: unknown,
   registry: ColorRegistry,
 ): { light_mode: string; dark_mode: string } | undefined {
-  if (!isCustomColorAlias(style)) return undefined;
+  if (!isRegisteredColorAlias(style, registry)) return undefined;
   const entry = registry[style];
-  if (!entry) return undefined;
   return { light_mode: entry.light_mode, dark_mode: entry.dark_mode };
 }
 
-/** textStyle.color cus-N → customColor（去掉 color，避免被当成命名色） */
+/** textStyle.color 登记别名 → customColor（去掉 color，避免被当成命名色） */
 export function expandTextStyleColor(
   textStyle: TextStyle | undefined,
   registry: ColorRegistry,
 ): TextStyle | undefined {
   if (!textStyle) return textStyle;
   const color = typeof textStyle.color === 'string' ? textStyle.color.trim() : undefined;
-  if (!isCustomColorAlias(color)) return textStyle;
+  if (!isRegisteredColorAlias(color, registry)) return textStyle;
   const entry = registry[color];
-  if (!entry) return textStyle;
   const { color: _drop, ...rest } = textStyle;
   return {
     ...rest,
@@ -58,7 +68,7 @@ export function expandTextStyleColor(
   };
 }
 
-/** border_color / background_style 等 cus-N → customBackgroundStyle 形态（供 RAW 渲染器读取） */
+/** border_color / background_style 等登记别名 → customBackgroundStyle 形态（供 RAW 渲染器读取） */
 export function expandColorAlias(
   style: unknown,
   registry: ColorRegistry,

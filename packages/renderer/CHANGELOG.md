@@ -1,5 +1,14 @@
 # @open-feishu-card/renderer
 
+## 0.2.15
+
+### Patch Changes
+
+- 对齐真机：`img.size`（`Wpx Hpx`）定宽高；`interactive_container` 应用宽高与外边距；`collapsible_panel` 支持 `icon_position: follow_text`、未指定时不描边、应用 margin
+- 水平外边距与 `body > * { width:100% }` 冲突时改为 `calc(100% - L - R)`，避免块相对卡片边框左右不对称
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.11
+
 ## 0.2.14
 
 ### Patch Changes

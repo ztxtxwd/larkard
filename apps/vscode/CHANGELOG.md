@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.9
+
+- 预览对齐真机：图标定宽高、块外边距、`collapsible_panel` 的 `follow_text` 与默认无边框；`config.style.color` 支持 `mm_*` 等任意登记色
+- Bundles adapter 0.3.11、renderer 0.2.15
+
 ## 0.2.8
 
 - 修复 `interactive_container` / `collapsible_panel` 自定义色（`cus-*`）背景不显示

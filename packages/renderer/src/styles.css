@@ -530,8 +530,9 @@
 .universal-card-collapsible-panel {
   box-sizing: border-box; overflow: hidden;
 }
-/* header（<summary>）：可点击整行；去掉浏览器默认三角标记，标题占满、箭头贴右
-   （icon_position=left 时靠 DOM 顺序在左）。 */
+/* header（<summary>）：可点击整行；去掉浏览器默认三角标记。
+   默认 title flex:1 把箭头推到右侧（icon_position=right）；
+   icon_position=left 时靠 DOM 顺序在左。 */
 .universal-card-collapsible-panel__header {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 12px;
@@ -543,6 +544,14 @@
 .universal-card-collapsible-panel__title {
   flex: 1; min-width: 0; font-size: 14px; line-height: 22px; color: #1f2329;
   word-break: break-word;
+}
+/* follow_text：箭头紧贴文字（真机 __header-content--icon-follow），不拉满整行 */
+.universal-card-collapsible-panel__header--icon-follow {
+  gap: 4px;
+}
+.universal-card-collapsible-panel__header--icon-follow .universal-card-collapsible-panel__title {
+  flex: 0 1 auto;
+  width: auto;
 }
 /* 箭头图标包裹：收起态角度 0；展开态（details[open]）旋转到 --panel-icon-angle（内联给出，默认 -180deg）。
    由用户点击 <summary> 切换 [open]，箭头方向随之自动更新，无需 JS。 */

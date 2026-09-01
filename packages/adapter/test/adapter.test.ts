@@ -76,6 +76,53 @@ test('rawToDsl: header lark_md subtitle round-trips through dslToRaw', () => {
   assert.equal(back.header.subtitle.content, '<at id=ou_abc></at>');
 });
 
+test('dslToRaw: expands config.style.color mm_* (non-cus) aliases', () => {
+  const dsl = {
+    schema: '2.0',
+    config: {
+      style: {
+        color: {
+          mm_key_point_blue_surface: {
+            light_mode: 'rgba(236, 249, 254, 1)',
+            dark_mode: 'rgba(236, 249, 254, 1)',
+          },
+          mm_key_point_icon_border: {
+            light_mode: 'rgba(31, 35, 41, 0.10)',
+            dark_mode: 'rgba(31, 35, 41, 0.10)',
+          },
+          mm_ink: {
+            light_mode: 'rgba(31, 35, 41, 1)',
+            dark_mode: 'rgba(31, 35, 41, 1)',
+          },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        background_style: 'mm_key_point_blue_surface',
+        has_border: true,
+        border_color: 'mm_key_point_icon_border',
+        elements: [
+          { tag: 'markdown', content: "<font color='mm_ink'>标题</font>" },
+        ],
+      }],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  const ic = raw.body.property.elements[0].property;
+  assert.deepEqual(ic.customBackgroundStyle, {
+    light_mode: 'rgba(236, 249, 254, 1)',
+    dark_mode: 'rgba(236, 249, 254, 1)',
+  });
+  assert.deepEqual(ic.customBorderColor, {
+    lightMode: 'rgba(31, 35, 41, 0.10)',
+    darkMode: 'rgba(31, 35, 41, 0.10)',
+  });
+  const ts = ic.elements[0].property.elements[0].property.textStyle;
+  assert.equal(ts.customColor.lightMode, 'rgba(31, 35, 41, 1)');
+});
+
 test('dslToRaw: expands config.style.color cus-* into renderer raw fields', () => {
   const dsl = {
     schema: '2.0',

@@ -1,5 +1,12 @@
 # @open-feishu-card/adapter
 
+## 0.3.11
+
+### Patch Changes
+
+- `config.style.color` 展开不再只认 `cus-*` 前缀：`mm_*` 等任意登记 token 均可展开为 `customBackgroundStyle` / `customBorderColor` / `customColor`
+- `interactive_container` 的 `width`/`height`（`Npx` / `fill` / `auto`）写入 `widthValue` / `heightValue`
+
 ## 0.3.10
 
 ### Patch Changes
