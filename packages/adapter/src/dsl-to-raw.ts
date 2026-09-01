@@ -223,13 +223,32 @@ function buildProperty(el: Record<string, unknown>, tag: string, colors: ColorRe
   for (const [k, v] of Object.entries(el)) {
     if (k === 'tag' || k === 'id') continue; // 渲染器不读 id
 
-    // column / column_set 自定义背景：保留 backgroundStyle 别名，并展开 customBackgroundStyle
+    // column / column_set / interactive_container 自定义背景：
+    // 保留 backgroundStyle 别名，并展开 customBackgroundStyle（渲染器优先读后者）
     if ((k === 'background_style' || k === 'backgroundStyle')
-      && (tag === 'column' || tag === 'column_set')) {
+      && (tag === 'column' || tag === 'column_set' || tag === 'interactive_container')) {
       const renamed = renameKey(k);
       property[renamed] = v as never;
       const expanded = expandBackgroundStyleAlias(v, colors);
       if (expanded) property.customBackgroundStyle = expanded;
+      continue;
+    }
+
+    // collapsible_panel 自定义背景：background_color cus-N → customBackgroundStyle
+    if ((k === 'background_color' || k === 'backgroundColor') && tag === 'collapsible_panel') {
+      const renamed = renameKey(k);
+      property[renamed] = v as never;
+      const expanded = expandBackgroundStyleAlias(v, colors);
+      if (expanded) property.customBackgroundStyle = expanded;
+      continue;
+    }
+
+    // collapsible_panel 边框色 cus-N → 展开为 light rgba（渲染器 resolveColor 直通）
+    if (k === 'border' && tag === 'collapsible_panel' && isRecord(v)) {
+      const border = { ...v };
+      const expanded = expandBackgroundStyleAlias(border.color, colors);
+      if (expanded) border.color = expanded.light_mode;
+      property.border = border as never;
       continue;
     }
 

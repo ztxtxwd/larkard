@@ -30,7 +30,7 @@ export function isCustomColorAlias(value: unknown): value is string {
   return typeof value === 'string' && value.startsWith('cus-');
 }
 
-/** column / column_set background_style cus-N → customBackgroundStyle */
+/** column / column_set / interactive_container background_style cus-N → customBackgroundStyle */
 export function expandBackgroundStyleAlias(
   style: unknown,
   registry: ColorRegistry,

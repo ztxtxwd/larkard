@@ -173,6 +173,74 @@ test('dslToRaw: expands interactive_container border_color cus-* to customBorder
   assert.equal(ic.border_color ?? ic.borderColor, 'cus-bg-0');
 });
 
+test('dslToRaw: expands interactive_container background_style cus-* to customBackgroundStyle', () => {
+  const dsl = {
+    schema: '2.0',
+    config: {
+      style: {
+        color: {
+          'cus-canvas': { light_mode: 'rgba(250,249,245,1)', dark_mode: 'rgba(250,249,245,1)' },
+          'cus-ink': { light_mode: 'rgba(20,20,19,1)', dark_mode: 'rgba(20,20,19,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        background_style: 'cus-canvas',
+        elements: [{
+          tag: 'interactive_container',
+          background_style: 'cus-ink',
+          elements: [{ tag: 'markdown', content: 'tag' }],
+        }],
+      }],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  const outer = raw.body.property.elements[0].property;
+  const inner = outer.elements[0].property;
+  assert.deepEqual(outer.customBackgroundStyle, {
+    light_mode: 'rgba(250,249,245,1)',
+    dark_mode: 'rgba(250,249,245,1)',
+  });
+  assert.equal(outer.backgroundStyle, 'cus-canvas');
+  assert.deepEqual(inner.customBackgroundStyle, {
+    light_mode: 'rgba(20,20,19,1)',
+    dark_mode: 'rgba(20,20,19,1)',
+  });
+});
+
+test('dslToRaw: expands collapsible_panel background_color and border.color cus-*', () => {
+  const dsl = {
+    schema: '2.0',
+    config: {
+      style: {
+        color: {
+          'cus-panel': { light_mode: 'rgba(245,244,237,1)', dark_mode: 'rgba(245,244,237,1)' },
+          'cus-secondary': { light_mode: 'rgba(232,230,220,1)', dark_mode: 'rgba(232,230,220,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'collapsible_panel',
+        background_color: 'cus-panel',
+        border: { color: 'cus-secondary', corner_radius: '10px' },
+        header: { title: { tag: 'plain_text', content: 'h' } },
+        elements: [{ tag: 'markdown', content: 'body' }],
+      }],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  const panel = raw.body.property.elements[0].property;
+  assert.deepEqual(panel.customBackgroundStyle, {
+    light_mode: 'rgba(245,244,237,1)',
+    dark_mode: 'rgba(245,244,237,1)',
+  });
+  assert.equal(panel.backgroundColor, 'cus-panel');
+  assert.equal(panel.border.color, 'rgba(232,230,220,1)');
+});
+
 test('degradeUnknown is available as an optional helper', () => {
   const el = degradeUnknown({ tag: 'secret_private_widget', property: { foo: 1 } });
   assert.equal(el.tag, 'unknown');

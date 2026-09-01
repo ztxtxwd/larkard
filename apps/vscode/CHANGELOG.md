@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.8
+
+- 修复 `interactive_container` / `collapsible_panel` 自定义色（`cus-*`）背景不显示
+- Bundles adapter 0.3.10、renderer 0.2.14
+
 ## 0.2.7
 
 - Bundles renderer 0.2.13：独立预览 root 边框对齐飞书网页版 `--line-border-card`（`var(--N300)`）

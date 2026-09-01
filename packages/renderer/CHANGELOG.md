@@ -1,5 +1,13 @@
 # @open-feishu-card/renderer
 
+## 0.2.14
+
+### Patch Changes
+
+- `collapsible_panel` 优先读取 `customBackgroundStyle`（cus-* 经 dslToRaw 展开），修复折叠面板自定义背景色不显示
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.10
+
 ## 0.2.13
 
 ### Patch Changes

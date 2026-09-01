@@ -887,11 +887,13 @@ registerComponent('collapsible_panel', (el, ctx) => {
   const hdr = (p.header && typeof p.header === 'object' ? p.header : {}) as Record<string, unknown>;
   const expanded = p.expanded !== false; // 缺省视为展开
 
-  // 外层容器样式：background_color（bg-white/命名色/自定义）+ border(color/corner_radius)。
+  // 外层容器样式：background_color（bg-white/命名色/cus-*→customBackgroundStyle）+ border。
   const style: Record<string, string> = { width: '100%' };
   const bgRaw = (p.background_color ?? (p as { backgroundColor?: string }).backgroundColor) as string | undefined;
-  // 'bg-white' 等 design token 语义即白底；命名色/自定义走 resolveColor。
-  if (bgRaw === 'bg-white') style.background = '#fff';
+  // 优先 customBackgroundStyle（dslToRaw 已展开 cus-*）；再 bg-white / 命名色。
+  const bgCustom = propertyBackgroundColor(p);
+  if (bgCustom) style.background = bgCustom;
+  else if (bgRaw === 'bg-white') style.background = '#fff';
   else { const bg = bgStyleToColor(bgRaw); if (bg) style.background = bg; }
   const border = (p.border && typeof p.border === 'object' ? p.border : {}) as { color?: string; corner_radius?: number | string };
   const borderColor = resolveColor(border.color) || '#dee0e3';

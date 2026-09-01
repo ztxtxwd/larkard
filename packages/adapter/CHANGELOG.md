@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.10
+
+### Patch Changes
+
+- dslToRaw 展开 `interactive_container` 的 `background_style` cus-* 为 `customBackgroundStyle`；同步展开 `collapsible_panel` 的 `background_color` / `border.color`，修复预览缺背景色。
+
 ## 0.3.9
 
 ### Patch Changes

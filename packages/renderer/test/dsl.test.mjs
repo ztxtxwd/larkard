@@ -619,6 +619,47 @@ test('renderDslToString: config.style.color cus-* backgrounds and text render as
   assert.match(html, /caption/);
 });
 
+test('renderDslToString: interactive_container + collapsible_panel cus-* backgrounds', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    config: {
+      style: {
+        color: {
+          'cus-canvas': { light_mode: 'rgba(250,249,245,1)', dark_mode: 'rgba(250,249,245,1)' },
+          'cus-ink': { light_mode: 'rgba(20,20,19,1)', dark_mode: 'rgba(20,20,19,1)' },
+          'cus-panel': { light_mode: 'rgba(245,244,237,1)', dark_mode: 'rgba(245,244,237,1)' },
+          'cus-secondary': { light_mode: 'rgba(232,230,220,1)', dark_mode: 'rgba(232,230,220,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [
+        {
+          tag: 'interactive_container',
+          background_style: 'cus-canvas',
+          elements: [{
+            tag: 'interactive_container',
+            background_style: 'cus-ink',
+            corner_radius: '999px',
+            elements: [{ tag: 'markdown', content: 'tag' }],
+          }],
+        },
+        {
+          tag: 'collapsible_panel',
+          background_color: 'cus-panel',
+          border: { color: 'cus-secondary', corner_radius: '10px' },
+          header: { title: { tag: 'plain_text', content: 'section' } },
+          elements: [{ tag: 'markdown', content: 'detail' }],
+        },
+      ],
+    },
+  });
+  assert.match(html, /background:rgba\(250,249,245,1\)/);
+  assert.match(html, /background:rgba\(20,20,19,1\)/);
+  assert.match(html, /background:rgba\(245,244,237,1\)/);
+  assert.match(html, /border:1px solid rgba\(232,230,220,1\)/);
+});
+
 test('table: options 渲染成彩色标签', () => {
   const html = renderDslToString(dslTable);
   assert.match(html, /universal-card-text-tag--green/);
