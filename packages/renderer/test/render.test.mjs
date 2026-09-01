@@ -615,6 +615,13 @@ test('RAW: collapsible_panel follow_text + no default border + margin', () => {
   assert.match(html, /background:#f5f6f7/);
 });
 
+test('styles: collapsible_panel header 用 caption 色（N600），不是正文近黑', async () => {
+  const { ALL_CSS } = await import('../dist/index.js');
+  // 真机 --text-caption → N600；标题不再写死 #1f2329
+  assert.match(ALL_CSS, /\.universal-card-collapsible-panel__header\s*\{[^}]*color:\s*var\(--N600\)/);
+  assert.doesNotMatch(ALL_CSS, /\.universal-card-collapsible-panel__title\s*\{[^}]*color:\s*#1f2329/);
+});
+
 test('RAW: display-only interactive_container has no --action (no pointer cursor)', () => {
   const display = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
     tag: 'interactive_container',

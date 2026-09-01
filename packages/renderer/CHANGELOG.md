@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.16
+
+### Patch Changes
+
+- `collapsible_panel` 折叠标题色对齐真机 `--text-caption`（`var(--N600)`），不再用正文近黑 `#1f2329`
+
 ## 0.2.15
 
 ### Patch Changes

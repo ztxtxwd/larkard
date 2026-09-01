@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.10
+
+- 折叠面板标题色对齐真机 caption（`N600`）
+- Bundles renderer 0.2.16
+
 ## 0.2.9
 
 - 预览对齐真机：图标定宽高、块外边距、`collapsible_panel` 的 `follow_text` 与默认无边框；`config.style.color` 支持 `mm_*` 等任意登记色
