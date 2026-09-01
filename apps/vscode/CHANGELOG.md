@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.7
+
+- Bundles renderer 0.2.13：独立预览 root 边框对齐飞书网页版 `--line-border-card`（`var(--N300)`）
+
 ## 0.2.6
 
 - `normalizeStoredCardColors` 补齐 `interactive_container` 背景色归一化，修复嵌套容器 cus-bg 序号冲突
