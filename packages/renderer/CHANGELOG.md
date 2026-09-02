@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.18
+
+### Patch Changes
+
+- 去掉 `interactive_container` CSS 默认 `border-radius: 6px`；未声明或空 `corner_radius` 时不输出圆角，对齐飞书真机。
+
 ## 0.2.17
 
 ### Patch Changes

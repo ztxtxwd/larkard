@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   renderCardToString, renderCardToStringAsync, fetchCardMessage, mergeMentionsIntoPersons,
-  arrayBufferToBase64, registerComponent, h, renderDslToString,
+  arrayBufferToBase64, registerComponent, h, renderDslToString, ALL_CSS,
   feishuAudioHydrateJs, AUDIO_PAUSE_ICON_SVG,
 } from '../dist/index.js';
 
@@ -544,6 +544,39 @@ test('RAW: interactive_container verticalSpacingValue → row-gap', () => {
     },
   }] } } } });
   assert.match(html, /universal-card-interactive-container[^>]*row-gap:10px/);
+});
+
+test('interactive_container：未声明 corner_radius 时无默认圆角（对齐真机）', () => {
+  assert.doesNotMatch(
+    ALL_CSS,
+    /\.universal-card-interactive-container\s*\{[^}]*border-radius\s*:/,
+  );
+  const bare = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        background_style: 'grey-50',
+        elements: [{ tag: 'markdown', content: '页尾' }],
+      }],
+    },
+  });
+  const open = bare.match(/<div class="universal-card-interactive-container"[^>]*>/)?.[0] || '';
+  assert.ok(open.includes('background'), open);
+  assert.doesNotMatch(open, /border-radius/);
+
+  const withRadius = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        background_style: 'grey-50',
+        corner_radius: '10px',
+        elements: [{ tag: 'markdown', content: '圆角块' }],
+      }],
+    },
+  });
+  assert.match(withRadius, /universal-card-interactive-container[^>]*border-radius:10px/);
 });
 
 test('RAW: interactive_container width/height pixels + margin calc', () => {

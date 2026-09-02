@@ -410,10 +410,16 @@ export function resolveImageSize(property: Record<string, unknown> | undefined |
   return {};
 }
 
-/** RAW cornerRadiusValue / DSL corner_radius → CSS border-radius */
+/** RAW cornerRadiusValue / DSL corner_radius → CSS border-radius。
+ * 未声明或空字符串（主题页尾常用 `""`）→ undefined，不输出默认圆角（对齐真机）。 */
 export function resolveCornerRadius(property: Record<string, unknown> | undefined | null): string | undefined {
   if (!property) return undefined;
   const direct = property.corner_radius ?? property.cornerRadius;
+  if (typeof direct === 'string') {
+    const t = direct.trim();
+    if (!t) return undefined;
+    return sizeToPx(t);
+  }
   if (direct != null) return sizeToPx(direct as number | string);
   const echo = property.cornerRadiusValue as { type?: string; value?: number | string } | undefined;
   if (echo && typeof echo.value === 'number') return echo.value + 'px';

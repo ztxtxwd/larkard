@@ -535,9 +535,10 @@
 
 
 /* ---- interactive_container 可点击交互容器 ---- */
+/* 真机无默认圆角；圆角只由 DSL/RAW corner_radius 内联输出（见 resolveCornerRadius）。 */
 .universal-card-interactive-container {
   display: flex; flex-direction: column; box-sizing: border-box;
-  border-radius: 6px; padding: 0; text-decoration: none; color: inherit;
+  padding: 0; text-decoration: none; color: inherit;
   row-gap: 4px;
   transition: background-color .1s;
 }

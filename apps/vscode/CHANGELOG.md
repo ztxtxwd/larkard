@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.12
+
+- 去掉 `interactive_container` 默认圆角，未声明 `corner_radius` 时对齐真机直角
+- Bundles renderer 0.2.18
+
 ## 0.2.11
 
 - 对齐官方 schema：新增 avatar / collapse_divider / fallback_text 预览，日期与人员选择器静态框
