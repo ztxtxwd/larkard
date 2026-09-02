@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.19
+
+### Patch Changes
+
+- `img` 应用 `margin`（含水平外边距时 `width: calc(100% - L - R)`），修复正文图左右贴边、与真机不一致。
+
 ## 0.2.18
 
 ### Patch Changes

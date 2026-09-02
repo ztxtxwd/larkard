@@ -686,6 +686,8 @@ registerComponent('img', (el, ctx) => {
     imgStyle.width = '100%';
     imgStyle.height = 'auto';
   }
+  // 外边距（如正文图 margin:8px 20px）；水平 margin 时 width 改为 calc 抵消 body>*{width:100%}
+  applyOuterMargin(wrapStyle, p.margin);
   return h('div', { className: `${CLS}-image__wrapper`, style: wrapStyle },
     src
       ? h('img', { className: `${CLS}-image__host`, src, alt: altText, style: imgStyle })

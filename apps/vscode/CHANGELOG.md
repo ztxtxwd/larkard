@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.13
+
+- 修复图片 `margin` 未生效导致正文图左右贴边
+- Bundles renderer 0.2.19
+
 ## 0.2.12
 
 - 去掉 `interactive_container` 默认圆角，未声明 `corner_radius` 时对齐真机直角

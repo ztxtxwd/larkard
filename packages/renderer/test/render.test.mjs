@@ -623,6 +623,26 @@ test('RAW: img size 24px 24px → fixed wrapper', () => {
   assert.match(html, /universal-card-image__wrapper[^>]*height:24px/);
 });
 
+// 真机正文图常带 margin:8px 20px；原先 img 未 applyOuterMargin，左右贴边。
+test('RAW: img fit_horizontal + horizontal margin → calc width', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img',
+    property: {
+      imageKey: 'img_test',
+      scaleType: 'fit_horizontal',
+      margin: {
+        top: { type: 'pixels', value: 8 },
+        right: { type: 'pixels', value: 20 },
+        bottom: { type: 'pixels', value: 0 },
+        left: { type: 'pixels', value: 20 },
+      },
+      alt: { tag: 'plain_text', property: { content: '' } },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-image__wrapper[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
+});
+
 test('RAW: collapsible_panel follow_text + no default border + margin', () => {
   const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
     tag: 'collapsible_panel',

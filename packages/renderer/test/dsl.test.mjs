@@ -205,6 +205,20 @@ test('button: behaviors[open_url] → 可点链接', () => {
   assert.match(html, /打开/);
 });
 
+// 对齐真机：正文图 margin 左右 20px，不能贴卡片边
+test('img: margin 水平边距 → wrapper calc width', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'img',
+    img_key: 'img_v3_test',
+    margin: '8px 20px 0px 20px',
+    scale_type: 'fit_horizontal',
+    preview: true,
+    corner_radius: '8px',
+  }] } });
+  assert.match(html, /universal-card-image__wrapper[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
+});
+
 /* ---- person → person_v1 ---- */
 
 test('person → person_v1，user_id → userID', () => {
