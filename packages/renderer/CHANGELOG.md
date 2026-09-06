@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.20
+
+### Patch Changes
+
+- 正文 `<font color='white'>` / `textStyle.color=white` 映射到 `N00`（对齐引擎 static-white），修复紫底等深色容器上白字被当成默认深色渲染的问题；顺带补齐 `black → N800`。
+
 ## 0.2.19
 
 ### Patch Changes

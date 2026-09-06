@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.14
+
+- 修复正文 `<font color='white'>` 白字渲染失败（紫底等深色容器上显示成黑字）
+- Bundles renderer 0.2.20
+
 ## 0.2.13
 
 - 修复图片 `margin` 未生效导致正文图左右贴边

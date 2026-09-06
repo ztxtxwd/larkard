@@ -110,6 +110,11 @@ export const COLOR_NAME_TO_TOKEN: Record<string, string> = (() => {
   map['grey-650'] = 'N650';
   map['grey-950'] = 'N950';
   map['grey-1000'] = 'N1000';
+  // 引擎 default_color_tokens / markdown.font_color：white → static-white（#fff）。
+  // 本库无 --static-white，等价落到 N00；否则 <font color='white'> 解析失败继承深色正文。
+  map.white = 'N00';
+  // icon_color.black → icon-n1（N800）；正文偶发 color='black' 与之对齐
+  map.black = 'N800';
   return map;
 })();
 
@@ -155,8 +160,8 @@ export const HEADER_TEMPLATE: Record<HeaderTemplate, { bg: string; text: string 
 /**
  * 正文 font_color / textStyle.color 色名 → 色阶 token。
  * 基表同 default_color_tokens（无后缀落 -600）；引擎 fallbackStyle 再覆盖
- * `markdown.font_color.orange = "O400"`（见 be8b738f），故 orange 特例走 O400，
- * 渲染为 `color: var(--O400)`，不是文档枚举表里的 #A44904 / O600。
+ * `markdown.font_color`：orange→O400、white→static-white（见 be8b738f）。
+ * orange 特例走 O400；white 已在 COLOR_NAME_TO_TOKEN 落到 N00（等价 static-white）。
  */
 export const TEXT_FONT_COLOR_TOKEN: Record<string, string> = {
   ...COLOR_NAME_TO_TOKEN,

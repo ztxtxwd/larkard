@@ -91,6 +91,42 @@ test('named color orange = var(--O400)（引擎特例，非 O600）', () => {
   assert.doesNotMatch(html, /font-weight/);
 });
 
+test('named color white = var(--N00)（引擎 static-white，紫底白字）', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'plain_text',
+            property: {
+              content: '直达投票页面',
+              textStyle: { attributes: ['bold'], color: 'white' },
+            },
+          }],
+        },
+      },
+    },
+  });
+  assert.match(html, /universal-card-text--white/);
+  assert.match(html, /color:var\(--N00\)/);
+});
+
+test('DSL <font color=\'white\'> 渲染为白字', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "<font color='white'>**🚀 直达投票页面 · 支持妙卡**</font>",
+        text_align: 'center',
+      }],
+    },
+  });
+  assert.match(html, /universal-card-text--white/);
+  assert.match(html, /color:var\(--N00\)/);
+});
+
 test('hr renders', () => {
   const html = renderCardToString(card);
   assert.match(html, /universal-card-hr/);
