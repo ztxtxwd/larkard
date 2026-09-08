@@ -1,5 +1,15 @@
 # @open-feishu-card/cli
 
+## 0.1.17
+
+### Patch Changes
+
+- 支持搭建工具文档：lint/validate/clean/build 自动解包 `dsl`；clean 写回保留 `{ name, dsl, variables }`
+- Updated dependencies
+  - @open-feishu-card/parser@0.1.3
+  - @open-feishu-card/validator@0.1.6
+  - @open-feishu-card/linter@0.1.3
+
 ## 0.1.16
 
 ### Patch Changes

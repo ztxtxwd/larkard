@@ -219,6 +219,31 @@ test('img: margin 水平边距 → wrapper calc width', () => {
   assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
 });
 
+// 对齐真机：video / fill 按钮 margin 左右 20px，不能贴卡片边
+test('video: margin 水平边距 → calc width', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'video',
+    file_key: 'file_v3_demo',
+    cover: { img_key: 'img_v3_cover' },
+    margin: '8px 20px 0px 20px',
+  }] } });
+  assert.match(html, /universal-card-video[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-video[^>]*width:calc\(100% - 40px\)/);
+});
+
+test('button: margin 水平边距 + width=fill → calc width', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'button',
+    text: '为妙卡投上关键一票',
+    type: 'primary_filled',
+    width: 'fill',
+    margin: '12px 20px 0px 20px',
+    behaviors: [{ type: 'open_url', default_url: { url: 'https://x.cn' } }],
+  }] } });
+  assert.match(html, /universal-card-button--block[^>]*margin:12px 20px 0px 20px/);
+  assert.match(html, /universal-card-button--block[^>]*width:calc\(100% - 40px\)/);
+});
+
 /* ---- person → person_v1 ---- */
 
 test('person → person_v1，user_id → userID', () => {

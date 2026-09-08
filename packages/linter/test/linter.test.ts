@@ -26,3 +26,21 @@ test('long text warning', () => {
   const ds = lint(`{ "schema": "2.0", "body": { "elements": [{ "tag": "markdown", "content": "${long}" }] } }`);
   assert.ok(ds.some((d) => d.rule === 'long-text'));
 });
+
+test('builder document lints the dsl subtree', () => {
+  const ds = lint(`{
+    "name": "demo",
+    "dsl": { "body": { "elements": [{ "tag": "markdown", "content": "x" }] } },
+    "variables": []
+  }`);
+  assert.ok(ds.some((d) => d.rule === 'missing-schema'));
+});
+
+test('builder empty body is reported on dsl body', () => {
+  const ds = lint(`{
+    "name": "demo",
+    "dsl": { "schema": "2.0", "body": { "elements": [] } },
+    "variables": []
+  }`);
+  assert.ok(ds.some((d) => d.rule === 'empty-body'));
+});

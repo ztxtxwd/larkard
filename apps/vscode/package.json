@@ -2,7 +2,7 @@
   "name": "lark-card-preview",
   "displayName": "Open Feishu Card",
   "description": "飞书卡片 (Card Schema 2.0) 开发套件：LSP 智能提示 + Webview 实时预览 + 一键净化非标属性",
-  "version": "0.2.14",
+  "version": "0.2.16",
   "private": true,
   "publisher": "TianxiongZhao",
   "license": "MIT",
@@ -67,7 +67,7 @@
             "filenamePattern": "*.card"
           }
         ],
-        "priority": "default"
+        "priority": "option"
       }
     ],
     "configurationDefaults": {
@@ -120,6 +120,11 @@
           "minimum": 280,
           "maximum": 1000,
           "description": "Maximum preview card width in pixels."
+        },
+        "openFeishuCard.preview.openOnSide": {
+          "type": "boolean",
+          "default": true,
+          "description": "When opening a *.card text editor, automatically open the live preview to the side (keeps LSP on the source)."
         },
         "openFeishuCard.render.warnOnUnknownTag": {
           "type": "boolean",

@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.21
+
+### Patch Changes
+
+- `video`、`button` 应用 `margin`（含水平外边距时 `width: calc(100% - L - R)`），修复与真机左右间距不一致。
+
 ## 0.2.20
 
 ### Patch Changes

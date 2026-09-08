@@ -679,6 +679,45 @@ test('RAW: img fit_horizontal + horizontal margin → calc width', () => {
   assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
 });
 
+// 真机 video / fill 按钮常带左右 20px；原先未 applyOuterMargin，左右贴边。
+test('RAW: video + horizontal margin → calc width', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'video',
+    property: {
+      fileID: 'file_v3_demo',
+      coverImageID: 'img_v3_cover',
+      margin: {
+        top: { type: 'pixels', value: 8 },
+        right: { type: 'pixels', value: 20 },
+        bottom: { type: 'pixels', value: 0 },
+        left: { type: 'pixels', value: 20 },
+      },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-video[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-video[^>]*width:calc\(100% - 40px\)/);
+});
+
+test('RAW: button fill + horizontal margin → calc width', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'button',
+    property: {
+      type: 'primary_filled',
+      widthValue: { type: 'builtin_width', value: 'fill' },
+      margin: {
+        top: { type: 'pixels', value: 12 },
+        right: { type: 'pixels', value: 20 },
+        bottom: { type: 'pixels', value: 0 },
+        left: { type: 'pixels', value: 20 },
+      },
+      actions: [{ type: 'open_url', action: { url: 'https://open.feishu.cn' } }],
+      text: { tag: 'plain_text', property: { content: '为妙卡投上关键一票' } },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-button--block[^>]*margin:12px 20px 0px 20px/);
+  assert.match(html, /universal-card-button--block[^>]*width:calc\(100% - 40px\)/);
+});
+
 test('RAW: collapsible_panel follow_text + no default border + margin', () => {
   const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
     tag: 'collapsible_panel',

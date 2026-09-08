@@ -1,5 +1,13 @@
 # @open-feishu-card/linter
 
+## 0.1.3
+
+### Patch Changes
+
+- 支持搭建工具文档：lint 规则作用在解包后的 `dsl` 子树上
+- Updated dependencies
+  - @open-feishu-card/parser@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes

@@ -703,6 +703,13 @@ registerComponent('video', (el, ctx) => {
   const cover = resolveVideoCoverSrc(p, ctx);
   const showTime = p.showTime !== false && p.show_time !== false;
   const enableDownload = p.enableDownload === true || p.enable_download === true;
+  // 外边距（如 margin:8px 20px）；水平 margin 时 width 改为 calc 抵消 body>*{width:100%}
+  const style: Record<string, string> = {};
+  if (p.margin) {
+    style.width = '100%';
+    applyOuterMargin(style, p.margin);
+  }
+  const styleProp = Object.keys(style).length ? { style } : {};
   // 有可播放地址：对齐真机 <video class="universal-card-video" controls preload="metadata">
   if (src) {
     const props: Record<string, unknown> = {
@@ -710,6 +717,7 @@ registerComponent('video', (el, ctx) => {
       src,
       controls: true,
       preload: 'metadata',
+      ...styleProp,
     };
     // 禁止下载时收紧 controlslist（浏览器支持度不一，尽力对齐）
     if (!enableDownload) props.controlslist = 'nodownload';
@@ -717,7 +725,7 @@ registerComponent('video', (el, ctx) => {
     return h('video', props);
   }
   // 无 src：封面态（播放钮 + 可选时长角标）。时长真机运行期从媒体元数据取，离线未知 → 不写假数字。
-  return h('div', { className: `${CLS}-video` },
+  return h('div', { className: `${CLS}-video`, ...styleProp },
     h('div', { className: `${CLS}-video__cover` },
       cover
         ? h('img', { className: `${CLS}-video__host-image`, src: cover, alt: '' })
@@ -1034,14 +1042,22 @@ registerComponent('button', (el, ctx) => {
   const widthTok = (p.width ?? wv?.value) as string | number | undefined;
   const block = widthTok === 'fill' && !isText;
   const base = `${CLS}-button ${CLS}-button--${type}${block ? ` ${CLS}-button--block` : ''}`;
+  // 外边距（如 margin:12px 20px）；fill 时水平 margin 用 calc 抵消 body>*{width:100%}。
+  // 非 fill 先写 width:auto，避免 applyOuterMargin 在未设 width 时误写成 calc 撑满。
+  const style: Record<string, string> = {};
+  if (p.margin) {
+    style.width = block ? '100%' : 'auto';
+    applyOuterMargin(style, p.margin);
+  }
+  const styleProp = Object.keys(style).length ? { style } : {};
   // 只有"点击跳转外链"（open_url / 直链）才保留为可点链接；
   // 其余动作（form_submit / action_request / 回调）在预览里无意义——
   // 保留按钮外观，但渲染成不可点的 <span>，不触发任何交互。
   if (url && !p.disabled) {
-    return h('a', { className: base, href: url, target: '_blank', rel: 'noopener' }, children);
+    return h('a', { className: base, href: url, target: '_blank', rel: 'noopener', ...styleProp }, children);
   }
   const cls = `${base} ${CLS}-button--static` + (p.disabled ? ` ${CLS}-button--disabled` : '');
-  return h('span', { className: cls }, children);
+  return h('span', { className: cls, ...styleProp }, children);
 });
 
 // form：表单容器。预览定位——不渲染表单语义，只透传内部元素（否则整块被跳过、

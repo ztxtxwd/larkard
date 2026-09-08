@@ -32,8 +32,9 @@
 
 ## 预览
 
-- 打开 `.card` 默认进入卡片预览；点标题栏 **Source**（或 **Reopen Editor With… → Text Editor**）改 JSON。
-- 标题栏 **Open Preview to the Side**：左侧源码、右侧实时预览。
+- 打开 `.card` 默认进入 **文本编辑器**（LSP 诊断 / 补全 / Hover / Quick Fix 可用），并自动在侧边打开实时预览。
+- 关闭自动侧边预览：设置 `openFeishuCard.preview.openOnSide` 为 `false`；仍可用标题栏 **Open Preview to the Side** 手动打开。
+- 若要用整页自定义预览编辑器：命令面板 **Reopen Editor With… → Open Feishu Card**。
 - 解析错误可点进大致源码位置。
 - 跟随 VS Code 亮/暗色，或用设置强制主题。
 - 可选 `openFeishuCard.imageBaseURL` 给图片 ID 加前缀。
@@ -58,6 +59,7 @@
 | 设置 | 默认 | 作用 |
 | --- | --- | --- |
 | `openFeishuCard.languageServer.enabled` | `true` | 为 `*.card` 启用诊断 / 补全 / Hover / Quick Fix |
+| `openFeishuCard.preview.openOnSide` | `true` | 打开 `.card` 文本编辑器时自动侧边预览 |
 | `openFeishuCard.preview.theme` | `auto` | `auto` / `light` / `dark` |
 | `openFeishuCard.preview.maxWidth` | `650` | 预览最大宽度（像素） |
 | `openFeishuCard.render.warnOnUnknownTag` | `true` | 未知组件在 Extension Host 打日志 |
@@ -72,7 +74,7 @@ Marketplace 按同一扩展更新。主要行为变化：
 1. 扩展列表里显示为 **Open Feishu Card**，ID 仍是 `TianxiongZhao.lark-card-preview`。
 2. 诊断和补全只挂在 `*.card` 上，不再扫遍工作区 JSON。
 3. 命令与设置命名空间改为 `openFeishuCard.*`（旧 ID / 旧键兼容）。
-4. 自定义编辑器 viewType 改为 `openFeishuCard.editor`；若某个 `.card` 仍用旧编辑器打开，用 **Reopen Editor With…** 选 **Open Feishu Card**。
+4. 自定义编辑器 viewType 改为 `openFeishuCard.editor`，且不再作为默认打开方式；需要整页预览时用 **Reopen Editor With… → Open Feishu Card**。
 
 ## 本地开发与打包
 

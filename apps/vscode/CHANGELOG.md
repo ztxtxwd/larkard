@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.16
+
+- 支持搭建工具 / miaoka 导出的 `{ name, dsl, variables }` 文档：校验与净化作用于 `dsl`，写回保留外层
+- 修复内嵌 LSP 在卡片含中文时静默失效：stdio Content-Length 改为按 UTF-8 字节分帧
+
+## 0.2.15
+
+- `.card` 默认改为文本编辑器 + 侧边实时预览（`preview.openOnSide`），自定义整页预览改为可选，避免挡住 Schema 诊断 / 补全 / Hover / Quick Fix
+
 ## 0.2.14
 
 - 修复正文 `<font color='white'>` 白字渲染失败（紫底等深色容器上显示成黑字）

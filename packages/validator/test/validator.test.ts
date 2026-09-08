@@ -231,3 +231,54 @@ test('form 内 column_set 嵌套的 button 也可省略 behaviors', () => {
     JSON.stringify(ds),
   );
 });
+
+test('builder envelope unwraps dsl for schema validation', () => {
+  const ds = validate(`{
+    "name": "demo",
+    "dsl": {
+      "schema": "2.0",
+      "body": { "elements": [{ "tag": "markdown", "content": "hi" }] }
+    },
+    "variables": []
+  }`);
+  assert.equal(ds.filter((d) => d.severity === 'error').length, 0, JSON.stringify(ds));
+});
+
+test('builder envelope maps schema errors into /dsl paths', () => {
+  const ds = validate(`{
+    "name": "demo",
+    "dsl": {
+      "schema": "2.0",
+      "body": { "elements": [{ "tag": "not_a_tag", "content": "x" }] }
+    },
+    "variables": []
+  }`);
+  const err = ds.find((d) => d.severity === 'error')!;
+  assert.ok(err, JSON.stringify(ds));
+  assert.ok(err.path.startsWith('/dsl/'), err.path);
+  assert.equal(err.range.start.line, 5);
+});
+
+test('builder envelope rejects non-array variables', () => {
+  const ds = validate(`{
+    "name": "demo",
+    "dsl": { "schema": "2.0", "body": { "elements": [] } },
+    "variables": {}
+  }`);
+  assert.ok(ds.some((d) => d.code === 'builder-envelope' && d.path === '/variables'));
+});
+
+test('builder deprecated prop path is prefixed with /dsl', () => {
+  const ds = validate(`{
+    "name": "demo",
+    "dsl": {
+      "schema": "2.0",
+      "body": { "elements": [{ "tag": "markdown", "content": "hi" }] },
+      "i18n_elements": {}
+    },
+    "variables": []
+  }`);
+  const w = ds.find((d) => d.code === 'deprecated-prop')!;
+  assert.ok(w);
+  assert.equal(w.path, '/dsl/i18n_elements');
+});

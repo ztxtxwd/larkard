@@ -1,5 +1,11 @@
 # @open-feishu-card/parser
 
+## 0.1.3
+
+### Patch Changes
+
+- 支持搭建工具导出文档 `{ name, dsl, variables }`：新增 `isBuilderDocument` / `resolveCardDocument` / `serializeCardDocument` 等解包与写回 API
+
 ## 0.1.2
 
 ### Patch Changes

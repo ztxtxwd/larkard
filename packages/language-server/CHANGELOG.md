@@ -1,5 +1,16 @@
 # @open-feishu-card/language-server
 
+## 0.1.17
+
+### Patch Changes
+
+- 支持搭建工具文档：诊断与一键净化作用于 `dsl`，写回保留外层
+- 修复 stdio Content-Length 按字符串切片导致含中文卡片时 LSP 静默失效（改为按 UTF-8 字节分帧）
+- Updated dependencies
+  - @open-feishu-card/parser@0.1.3
+  - @open-feishu-card/validator@0.1.6
+  - @open-feishu-card/linter@0.1.3
+
 ## 0.1.16
 
 ### Patch Changes
