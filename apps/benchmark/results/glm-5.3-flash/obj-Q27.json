@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 laser。\n\n飞书卡片按钮组件的 type 枚举中，镭射按钮对应的枚举字符串为 laser（其余如 primary、secondary、default、danger、text、dashed 分别对应主、次、默认、警示、文字、虚线按钮）。",
+  "extracted": "laser",
+  "correct": true,
+  "weight": 10
+}

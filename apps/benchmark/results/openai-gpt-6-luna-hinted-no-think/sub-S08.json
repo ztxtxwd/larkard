@@ -1,0 +1,54 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"interactive_container_click\"\n            }\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"**点击这个容器**\\n\\n交互容器中的内容可响应点击事件。\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.138,
+    "total": 0.871,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "interactive_container",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

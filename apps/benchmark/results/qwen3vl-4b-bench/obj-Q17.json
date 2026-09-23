@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。\n因为表单容器内每一个需要随表单提交的交互组件，如输入框、选择器等，其 name 属性用于标识字段，以便在提交时被正确识别和处理。根据飞书卡片规范，name 是必需的。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

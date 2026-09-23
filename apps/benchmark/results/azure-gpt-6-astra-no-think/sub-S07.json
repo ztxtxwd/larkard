@@ -1,0 +1,42 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"请提供官方「富文本语法使用示例」\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"请粘贴飞书卡片 JSON 2.0「富文本（Markdown）」文档中「富文本语法使用示例」的完整 JSON，尤其是 **`<audio>`、`config.style.color` 和 `header`** 部分。\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"当前对话未包含该示例原文，我无法核实其中的音频标签属性和配置值，因此不能保证准确复现官方示例，也不应凭空补写资源 ID 或属性。\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"提供原文后，我会保留示例中的 **`config.style.color` 与 `header`**，并使用多个 `markdown` 组件分别展示：默认播放器、`show_time`、自定义颜色与枚举色、`style=speak`、`fallback`，以及不同 `text_size` 下的播放器。\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.353,
+    "total": 0.903,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

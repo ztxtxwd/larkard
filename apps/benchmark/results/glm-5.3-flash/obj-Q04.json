@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 collapse。\n\n飞书卡片 JSON 2.0 中，折叠面板容器组件使用 `\"tag\": \"collapse\"` 标识（其外层的折叠面板组则为 `collapse_group`）。",
+  "extracted": "collapse",
+  "correct": false,
+  "weight": 15
+}

@@ -1,0 +1,35 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（Overflow）示例\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"用于容纳次要操作或超出行宽的快捷菜单\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**项目状态：** 🚀 进行中\\n**当前处理人：** <at id=\\\"ou_demo123\\\"></at>\\n\\n点击右侧更多操作可展开折叠菜单：\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"grey\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"主操作：通过审批\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"approve\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"驳回申请\"\n                    },\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"reject\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"转交他人\"\n                    },\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"transfer\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"查看审批历史\"\n                    },\n                    \"behaviors\": [\n                      {\n                        \"type\": \"open_url\",\n                        \"default_url\": \"https://www.feishu.cn\"\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"💡 提示：折叠按钮组常用于卡片空间有限时收起更多次级操作。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.91,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "column_set",
+        "button",
+        "overflow",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

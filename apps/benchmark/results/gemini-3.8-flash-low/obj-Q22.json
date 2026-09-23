@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 JSON 2.0 废弃了根节点的 `i18n_elements` 结构，多语言需在文本组件/各元素级别通过 `i18n` 属性或多语言内容对象来配置。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

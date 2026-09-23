@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单容器内的输入和选择操作不会在填写过程中立刻触发服务端回调，通常在提交表单时才回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

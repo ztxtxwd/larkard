@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。在飞书卡片 table 组件中，定义列（columns）时，name 字段是必填的，用于在 rows 行对象中作为键名进行数据对应。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

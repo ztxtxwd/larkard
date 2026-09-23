@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。  \n在 JSON 2.0 中，config.update_multi 的行为是由其内部逻辑决定的，不允许显式写 false 来控制其行为，因为 update_multi 是一个函数调用，其参数和行为由 API 约定，而非可选的布尔值输入。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

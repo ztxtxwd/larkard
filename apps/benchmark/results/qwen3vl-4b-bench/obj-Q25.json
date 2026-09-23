@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。\n在 JSON 2.0 中，富文本 markdown 组件不再支持旧版「[差异化跳转]($urlVal)」配合 href 的语法。新版的 Markdown 支持直接使用 `[[链接]]` 或 `[[链接|标题]]` 等结构，或通过 `href` 属性直接指定 URL，但不再允许 `$urlVal` 这种参数化表达方式。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

@@ -1,0 +1,32 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"middle\",\n        \"header_style\": {\n          \"background_style\": \"grey\",\n          \"text_align\": \"left\"\n        },\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"logo\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"image\",\n            \"width\": \"80px\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"options\",\n            \"width\": \"100px\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR (万元)\",\n            \"data_type\": \"number\",\n            \"width\": \"110px\",\n            \"align\": \"right\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"user\",\n            \"width\": \"100px\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date_time\",\n            \"width\": \"120px\"\n          },\n          {\n            \"name\": \"detail_link\",\n            \"display_name\": \"详情\",\n            \"data_type\": \"link\",\n            \"width\": \"80px\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"未来智能科技有限公司\",\n            \"logo\": \"img_v2_demo-key\",\n            \"scale\": {\n              \"text\": \"1000人以上\",\n              \"color\": \"blue\"\n            },\n            \"arr\": 320,\n            \"owner\": [\n              \"ou_demo123\"\n            ],\n            \"sign_date\": \"2024-03-15\",\n            \"detail_link\": {\n              \"text\": \"查看\",\n              \"url\": \"https://open.feishu.cn\"\n            }\n          },\n          {\n            \"customer_name\": \"极速云端网络科技\",\n            \"logo\": \"img_v2_demo-key\",\n            \"scale\": {\n              \"text\": \"500-1000人\",\n              \"color\": \"green\"\n            },\n            \"arr\": 150,\n            \"owner\": [\n              \"ou_demo123\"\n            ],\n            \"sign_date\": \"2024-04-20\",\n            \"detail_link\": {\n              \"text\": \"查看\",\n              \"url\": \"https://open.feishu.cn\"\n            }\n          },\n          {\n            \"customer_name\": \"星河互联信息技术\",\n            \"logo\": \"img_v2_demo-key\",\n            \"scale\": {\n              \"text\": \"100-500人\",\n              \"color\": \"orange\"\n            },\n            \"arr\": 85,\n            \"owner\": [\n              \"ou_demo123\"\n            ],\n            \"sign_date\": \"2024-05-08\",\n            \"detail_link\": {\n              \"text\": \"查看\",\n              \"url\": \"https://open.feishu.cn\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 1,
+    "total": 0.5,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/1/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/4/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

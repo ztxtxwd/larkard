@@ -1,0 +1,48 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（overflow）示例\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"飞书卡片 JSON 2.0\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**overflow** 组件用于将多个操作按钮折叠收纳，点击后展开更多操作项。适合操作较多、希望保持卡片简洁的场景。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**基础用法**：主按钮 + 折叠按钮组\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"horizontal_spacing\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"查看详情\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://open.feishu.cn/document/\",\n                    \"pc_url\": \"\",\n                    \"ios_url\": \"\",\n                    \"android_url\": \"\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"编辑\"\n                    },\n                    \"value\": \"edit\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"edit\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"复制\"\n                    },\n                    \"value\": \"copy\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"copy\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"分享\"\n                    },\n                    \"value\": \"share\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"share\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"删除\"\n                    },\n                    \"value\": \"delete\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"delete\"\n                        }\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**带图标与跳转链接的折叠项**\"\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"打开帮助文档\"\n            },\n            \"value\": \"help\",\n            \"behaviors\": [\n              {\n                \"type\": \"open_url\",\n                \"default_url\": \"https://open.feishu.cn/document/\",\n                \"pc_url\": \"\",\n                \"ios_url\": \"\",\n                \"android_url\": \"\"\n              }\n            ]\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"查看源码\"\n            },\n            \"value\": \"source\",\n            \"behaviors\": [\n              {\n                \"type\": \"open_url\",\n                \"default_url\": \"https://open.feishu.cn/\",\n                \"pc_url\": \"\",\n                \"ios_url\": \"\",\n                \"android_url\": \"\"\n              }\n            ]\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"反馈问题\"\n            },\n            \"value\": \"feedback\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"feedback\"\n                }\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**表单中的 overflow**：随表单一起提交\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"demo_form\",\n        \"elements\": [\n          {\n            \"tag\": \"input\",\n            \"name\": \"title_input\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"标题\"\n            },\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入标题\"\n            }\n          },\n          {\n            \"tag\": \"overflow\",\n            \"name\": \"priority_overflow\",\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"高优先级\"\n                },\n                \"value\": \"high\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"中优先级\"\n                },\n                \"value\": \"medium\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"低优先级\"\n                },\n                \"value\": \"low\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"horizontal_spacing\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\",\n                    \"action_type\": \"form_submit\",\n                    \"name\": \"submit_btn\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\",\n                    \"action_type\": \"form_reset\",\n                    \"name\": \"reset_btn\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：overflow 的每个选项通过 behaviors 定义点击行为，支持 open_url 与 callback。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.348,
+    "total": 0.902,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "column_set",
+        "button",
+        "overflow",
+        "hr",
+        "markdown",
+        "overflow",
+        "hr",
+        "markdown",
+        "form",
+        "input",
+        "overflow",
+        "column_set",
+        "button",
+        "button",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

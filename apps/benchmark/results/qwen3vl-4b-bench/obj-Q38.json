@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 是。\ntable 组件在飞书卡片中支持嵌套在其他组件内部，如 column、row 等，用于构建更复杂的布局结构。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 12
+}

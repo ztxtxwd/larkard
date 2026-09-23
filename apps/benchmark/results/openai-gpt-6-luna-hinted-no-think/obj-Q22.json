@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 不支持根级 `i18n_elements` 做全局多语言。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

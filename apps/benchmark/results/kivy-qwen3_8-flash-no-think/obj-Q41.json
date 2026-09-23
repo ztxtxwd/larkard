@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 2.0。飞书卡片 JSON 2.0 规范要求在根对象中显式声明 `\"schema\": \"2.0\"` 以标识使用的协议版本。",
+  "extracted": "2.0",
+  "correct": true,
+  "weight": 10
+}

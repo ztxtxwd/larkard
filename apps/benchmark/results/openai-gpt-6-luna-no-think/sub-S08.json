@@ -1,0 +1,54 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"grey\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px 12px 12px 12px\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"click_interactive_container\"\n            }\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"**交互容器**\\n点击此卡片区域触发回调。\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.138,
+    "total": 0.871,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "interactive_container",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

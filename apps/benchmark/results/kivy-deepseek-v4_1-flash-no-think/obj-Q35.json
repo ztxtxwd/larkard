@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 options。<理由：飞书卡片 table 列 data_type 的人员类型枚举值为 options，用于承载人员选择数据。>",
+  "extracted": "options",
+  "correct": false,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。在表单容器中，只有配置了 `name` 属性的交互组件，其填写或选择的值才会作为 key-value 随表单一同提交。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

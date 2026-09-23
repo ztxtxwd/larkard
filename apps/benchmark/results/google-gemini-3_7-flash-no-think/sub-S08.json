@@ -1,0 +1,58 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器 (Interactive Container) 示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下卡片区域为一个整体可点击的**交互容器**，点击容器内任意区域均可触发跳转或回调：\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"background_style\": \"grey\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn\",\n            \"pc_url\": \"https://open.feishu.cn\",\n            \"android_url\": \"https://open.feishu.cn\",\n            \"ios_url\": \"https://open.feishu.cn\"\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"background_style\": \"none\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"img\",\n                    \"img_key\": \"img_v2_demo-key\",\n                    \"alt\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"缩略图\"\n                    },\n                    \"custom_width\": 64,\n                    \"compact_width\": true\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**飞书开放平台文档中心**\\n探索卡片搭建、服务端 API 及客户端开放能力。\"\n                  },\n                  {\n                    \"tag\": \"div\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"点击整块区域查看详情 >\"\n                    },\n                    \"text_size\": \"notation\",\n                    \"text_color\": \"grey\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.364,
+    "total": 0.905,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

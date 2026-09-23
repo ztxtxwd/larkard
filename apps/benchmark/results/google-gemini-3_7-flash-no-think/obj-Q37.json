@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。在飞书卡片 table 组件中，columns 列表内通过 name 字段指定该列的唯一标识，用于映射 rows 中每行数据对象的键名。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

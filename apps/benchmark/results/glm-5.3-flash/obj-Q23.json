@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。\n\nJSON 2.0 卡片的正文内容必须写在 `body` 对象的 `elements` 字段中（即 `body.elements`），不再支持像 1.0 那样把 `elements` 直接写在根对象上。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

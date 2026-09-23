@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 90。  \n旋转角为90度，表示展开时图标旋转90度。",
+  "extracted": "90",
+  "correct": false,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 form_id。  \n字段名 form_id 用于标识提交的表单，其值为唯一标识符，确保每份提交对应一个明确的表单。",
+  "extracted": "form_id",
+  "correct": false,
+  "weight": 12
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排 (img_combination) 示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**双图并排展示 (combination_mode: double)**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"double\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 1\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 2\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**三图混排展示 (combination_mode: triple)**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"triple\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"主图\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"副图 1\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"副图 2\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**四图九宫格展示 (combination_mode: quad)**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"quad\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图片 1\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图片 2\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图片 3\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图片 4\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.222,
+    "total": 0.808,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/7/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

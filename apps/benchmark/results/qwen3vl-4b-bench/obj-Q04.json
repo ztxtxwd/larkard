@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 fold_panel。",
+  "extracted": "fold_panel",
+  "correct": false,
+  "weight": 15
+}

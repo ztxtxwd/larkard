@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 10。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

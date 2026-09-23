@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 100。",
+  "extracted": "100",
+  "correct": false,
+  "weight": 15
+}

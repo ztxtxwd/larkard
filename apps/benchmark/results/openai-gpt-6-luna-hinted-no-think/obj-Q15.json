@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中表单外的独立 button 应通过 behaviors 配置交互，不使用顶层 value 字段回传。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

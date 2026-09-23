@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 10。column.weight 用于控制列宽比例，官方文档规定其合法整数取值范围为 1 到 10。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

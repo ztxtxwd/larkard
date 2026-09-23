@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。  \nJSON 2.0 中，i18n_elements 不再作为根级字段支持，而是被嵌入在卡片的各个元素中，如 text、button 等，以实现更灵活和结构化的多语言配置。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

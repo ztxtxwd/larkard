@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary_filled。飞书卡片 2.0 中 button 的 type 枚举里，蓝底白字填充按钮对应 primary_filled，而 primary 是蓝字带边框的线框按钮。",
+  "extracted": "primary_filled",
+  "correct": true,
+  "weight": 15
+}

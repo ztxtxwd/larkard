@@ -1,0 +1,29 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"type\": \"checker\",\n        \"title\": \"选中一个\",\n        \"options\": [\n          {\n            \"label\": \"选项1\",\n            \"value\": \"option1\"\n          },\n          {\n            \"label\": \"选项2\",\n            \"value\": \"option2\"\n          }\n        ]\n      }\n    ]\n  }\n}",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.775,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

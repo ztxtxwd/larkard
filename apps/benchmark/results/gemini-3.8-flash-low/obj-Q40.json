@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。飞书卡片折叠面板的 `icon_expanded_angle` 仅支持 `-180`、`-90`、`90`、`180` 这四个旋转角度枚举值，不支持 `45`。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。  \n理由：JSON 2.0 的 `config.update_multi` 是布尔字段，官方允许显式设置为 `false` 来关闭多卡片同时更新。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

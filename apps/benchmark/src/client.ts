@@ -27,7 +27,7 @@ export function createClient(config: ModelConfig, apiKeyFallback?: string): Chat
   return {
     name: config.name,
     async chat(messages, options = {}) {
-      const { temperature = 0, timeoutMs = 120_000, retries = 5 } = options;
+      const { temperature = 0, timeoutMs = 180_000, retries = 5 } = options;
       let lastError: unknown;
 
       for (let attempt = 0; attempt <= retries; attempt++) {

@@ -1,0 +1,30 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"图片组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下为飞书卡片 **图片（img）** 组件的官方示例：通过 `img_key` 指定图片资源，并可通过 `alt` 设置替代文本、`preview` 控制是否支持点击预览、`scale_type` 控制缩放方式。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"示例图片\"\n        },\n        \"preview\": true,\n        \"scale_type\": \"fit_horizontal\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"说明：img_key 为示例值，实际使用时请替换为上传图片后返回的 img_key。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.91,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "img",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

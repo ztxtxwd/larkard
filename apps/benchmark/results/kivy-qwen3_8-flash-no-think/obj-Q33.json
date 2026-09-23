@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 24。在飞书卡片 JSON 2.0 规范中，column_set 的 horizontal_spacing 属性使用 token 时，extra_large 对应的像素值为 24px。",
+  "extracted": "24",
+  "correct": false,
+  "weight": 10
+}

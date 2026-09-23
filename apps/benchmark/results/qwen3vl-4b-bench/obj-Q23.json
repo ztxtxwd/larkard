@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。  \nJSON 2.0 卡片结构中，elements 必须放在 body 对象内，不能直接写在根对象上。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

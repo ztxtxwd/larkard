@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。 JSON 2.0 不支持 `note` 组件 tag。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

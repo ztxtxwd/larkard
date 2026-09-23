@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 trisect。\n\nflex_mode 的取值包括 none（不开启自适应）、stretch（拉伸最后一列）、flow（列溢出换行）、bisect（两列等分）、trisect（三列等分），其中「三列等分」对应枚举值 trisect。",
+  "extracted": "trisect",
+  "correct": true,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。飞书卡片表单容器中，交互组件必须通过配置 name 属性作为提交数据的键名，未配置 name 的组件数据不会随表单一起提交。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

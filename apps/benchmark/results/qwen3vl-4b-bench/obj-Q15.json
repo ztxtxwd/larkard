@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。  \n在 JSON 2.0 中，表单容器（form）外的独立 button 不再支持通过组件顶层的 value 字段做回传交互，因为 JSON 2.0 强调结构化和明确的字段绑定，button 的行为与 form 内的输入字段分离，不再依赖 value 字段的模糊传递。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

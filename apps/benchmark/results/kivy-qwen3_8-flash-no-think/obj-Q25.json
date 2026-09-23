@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 JSON 2.0 规范中，富文本组件已统一使用标准 Markdown 链接语法 `[text](url)`，不再支持旧版特有的 `[差异化跳转]($urlVal)` 这种非标准扩展语法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

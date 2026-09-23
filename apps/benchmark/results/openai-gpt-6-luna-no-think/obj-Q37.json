@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。它用于指定该列在 rows 行对象中对应的键名。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

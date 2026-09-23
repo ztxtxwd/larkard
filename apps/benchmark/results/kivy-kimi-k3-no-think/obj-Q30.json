@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weighted。当 column 的 width 设置为 weighted 时，表示该列的宽度将按 weight 权重比例分配。",
+  "extracted": "weighted",
+  "correct": true,
+  "weight": 20
+}

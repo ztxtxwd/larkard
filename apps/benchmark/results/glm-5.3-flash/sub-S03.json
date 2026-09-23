@@ -1,0 +1,31 @@
+{
+  "kind": "subjective",
+  "taskId": "S03",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true,\n    \"width_mode\": \"fill\"\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"普通文本示例\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"卡片 JSON 2.0 · div 组件 Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"direction\": \"vertical\",\n    \"padding\": \"12px 16px\",\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"这是一段普通文本（plain_text），不支持加粗、斜体等富文本语法。\"\n        },\n        \"text_size\": \"normal\",\n        \"text_color\": \"default\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"大号文本：text_size = heading-1\"\n        },\n        \"text_size\": \"heading-1\",\n        \"text_color\": \"default\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"中号文本：text_size = heading-2\"\n        },\n        \"text_size\": \"heading-2\",\n        \"text_color\": \"default\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"小号文本：text_size = notation\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.333,
+    "total": 0.9,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "hr",
+        "div",
+        "div",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "div"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。JSON 2.0 仍然支持备注组件，其标签为 tag=note。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 25
+}

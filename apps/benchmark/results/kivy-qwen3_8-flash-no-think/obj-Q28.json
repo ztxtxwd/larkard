@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 default。在飞书卡片 JSON 2.0 规范中，button 组件的 type 字段用于定义样式，其中 `default` 对应蓝底白字的填充按钮（实心主按钮），而 `primary` 通常指代带边框或特定语义的主操作按钮（具体表现视版本略有差异，但官方文档明确将蓝底白字实心样式映射为 default）。",
+  "extracted": "default",
+  "correct": false,
+  "weight": 15
+}

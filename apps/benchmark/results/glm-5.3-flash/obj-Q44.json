@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。\n\n在飞书卡片 JSON 2.0 中，callback 类型 behavior 的 `value` 字段是自定义回调数据，官方约定其类型必须为对象（Object），用户触发交互后该对象整体返回给开发者。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

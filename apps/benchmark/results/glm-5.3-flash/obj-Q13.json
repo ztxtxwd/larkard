@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。\n\n在飞书卡片 JSON 2.0 中，表单容器内按钮的 form_action_type 字段用于声明按钮行为：值为 submit 表示提交表单（配合 action 收集表单数据），值为 reset 表示重置表单。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

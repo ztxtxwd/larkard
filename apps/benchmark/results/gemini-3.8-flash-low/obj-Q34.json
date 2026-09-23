@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 5。飞书卡片 table 组件中 page_size（每页最大数据行数）的默认值为 5。",
+  "extracted": "5",
+  "correct": true,
+  "weight": 15
+}

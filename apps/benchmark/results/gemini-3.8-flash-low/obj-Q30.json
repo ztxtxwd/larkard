@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weighted。飞书卡片分栏规范中，列宽按权重分配时 width 枚举值固定为 weighted，并配合 weight 字段指定具体权重比。",
+  "extracted": "weighted",
+  "correct": true,
+  "weight": 20
+}

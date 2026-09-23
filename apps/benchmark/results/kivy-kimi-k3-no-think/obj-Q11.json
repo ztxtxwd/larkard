@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 default_url。open_url 行为中 default_url 是必填的兜底跳转地址，当 pc_url、android_url、ios_url 等平台特定链接无法匹配当前客户端时使用。",
+  "extracted": "default_url",
+  "correct": true,
+  "weight": 25
+}

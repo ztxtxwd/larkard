@@ -1,0 +1,54 @@
+{
+  "kind": "subjective",
+  "taskId": "S13",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"新建任务工单\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**项目名称**：业务做大做强\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"task_create_form\",\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"background_style\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**经办人**\"\n                  },\n                  {\n                    \"tag\": \"picker_person\",\n                    \"name\": \"assignee\",\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择经办人\"\n                    }\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**优先级**\"\n                  },\n                  {\n                    \"tag\": \"select_static\",\n                    \"name\": \"priority\",\n                    \"placeholder\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"请选择优先级\"\n                    },\n                    \"options\": [\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"P0 - 紧急\"\n                        },\n                        \"value\": \"p0\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"P1 - 重要\"\n                        },\n                        \"value\": \"p1\"\n                      },\n                      {\n                        \"text\": {\n                          \"tag\": \"plain_text\",\n                          \"content\": \"P2 - 普通\"\n                        },\n                        \"value\": \"p2\"\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"**描述**\"\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"description\",\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入任务详细描述...\"\n            },\n            \"rows\": 3,\n            \"max_length\": 200\n          },\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"background_style\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\",\n                    \"action_type\": \"form_reset\",\n                    \"name\": \"btn_reset\",\n                    \"width\": \"fill\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\",\n                    \"action_type\": \"form_submit\",\n                    \"name\": \"btn_submit\",\n                    \"width\": \"fill\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.815,
+    "total": 0.897,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/elements/0/columns/0/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "form",
+        "column_set",
+        "markdown",
+        "picker_person",
+        "markdown",
+        "select_static",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "form",
+        "column_set",
+        "markdown",
+        "select_person",
+        "column_set",
+        "markdown",
+        "select_static",
+        "column_set",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

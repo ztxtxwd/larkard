@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。飞书卡片中 form_action_type 用于指定表单行为，提交表单的枚举值为 submit（重置为 reset）。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

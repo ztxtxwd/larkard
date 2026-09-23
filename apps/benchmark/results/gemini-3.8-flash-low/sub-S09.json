@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"默认折叠面板\"\n          }\n        },\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"折叠面板内支持嵌套多种卡片组件，例如富文本、图片、分栏、按钮等。默认处于收起状态。\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": true,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"标题带背景色且默认展开\"\n          },\n          \"background_style\": \"grey\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"该面板设置了 `expanded: true` 默认展开；同时头部设置了 `background_style: \\\"grey\\\"` 灰色背景样式。\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": true,\n        \"border\": {\n          \"style\": \"none\"\n        },\n        \"header\": {\n          \"title\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"无边框折叠面板\"\n          }\n        },\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"通过将边框样式配置为 `style: \\\"none\\\"`，面板可与卡片背景自然融合，适合轻量级内容收发展示。\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.8,
+    "total": 0.97,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "collapsible_panel",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

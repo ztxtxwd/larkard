@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weight。  \n理由：飞书卡片 column 的 width 支持 `auto`、`weighted`、`stretch` 等取值，其中按权重分配对应填 `weighted`。",
+  "extracted": "weight",
+  "correct": false,
+  "weight": 20
+}

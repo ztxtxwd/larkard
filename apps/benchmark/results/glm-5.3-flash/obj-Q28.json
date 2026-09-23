@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary_filled。\n\n在卡片 JSON 2.0 中，button 组件的 type 枚举里 `primary` 只是蓝字带边框的描边按钮，真正的「蓝底白字」填充按钮对应枚举值是 `primary_filled`（同理红底白字为 `danger_filled`）。",
+  "extracted": "primary_filled",
+  "correct": true,
+  "weight": 15
+}

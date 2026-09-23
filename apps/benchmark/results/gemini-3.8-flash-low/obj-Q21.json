@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 废弃了原有的 `action` 交互模块，交互组件可直接放置在卡片主体 `elements` 或 `column_set`、`form_container` 等容器组件中。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

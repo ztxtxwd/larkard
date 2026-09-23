@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 img_combination。飞书卡片 2.0 中多图组合组件的官方 tag 为 img_combination。",
+  "extracted": "img_combination",
+  "correct": true,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。  \n不再支持通栏配置，但可将 margin 设为负数实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。\n\n理由：卡片 JSON 2.0 的 markdown 组件已移除 href 字段，不再支持 `[文本]($urlVal)` 这种配合 href 实现差异化跳转的旧版写法，如需按端差异化跳转应改用 a 标签（超链接）组件。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

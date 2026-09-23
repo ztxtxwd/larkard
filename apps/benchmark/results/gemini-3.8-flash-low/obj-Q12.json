@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form_action_type。在飞书卡片表单容器中，按钮组件通过 `form_action_type` 字段指定表单交互类型（取值为 `submit` 或 `reset`）。",
+  "extracted": "form_action_type",
+  "correct": true,
+  "weight": 25
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片表单容器内的输入组件仅在用户点击“提交”按钮触发 submit 动作时才会发送回调，填写过程中的实时变更不会自动触发服务端回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

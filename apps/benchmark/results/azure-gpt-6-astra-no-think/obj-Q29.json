@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 fit_horizontal。img 组件的 scale_type 取 fit_horizontal 时表示水平拉伸贴齐。",
+  "extracted": "fit_horizontal",
+  "correct": true,
+  "weight": 12
+}

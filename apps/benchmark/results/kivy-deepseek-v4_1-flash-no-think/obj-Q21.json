@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。  \n理由：飞书卡片 JSON 2.0 已不再使用 `tag=action` 作为交互模块，交互能力改由按钮、表单等具体组件及相应容器/字段承载。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

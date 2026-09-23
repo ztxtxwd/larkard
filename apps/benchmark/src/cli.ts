@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /** CLI 入口：open-feishu-card-benchmark run | report | list */
+import { pathToFileURL } from 'node:url';
 import {
   applyCliOverrides,
   defaultCatalogPath,
@@ -201,8 +202,8 @@ export async function run(argv: string[]): Promise<number> {
   return 0;
 }
 
-// 作为可执行入口时（node dist/cli.js）自动执行
-if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+// 作为可执行入口时（node dist/cli.js / tsx src/cli.ts）自动执行
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   run(process.argv.slice(2))
     .then((code) => process.exit(code))
     .catch((err) => {

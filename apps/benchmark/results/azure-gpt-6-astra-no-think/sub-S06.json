@@ -1,0 +1,32 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排（img_combination）\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**双图布局（double）**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"double\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**三图布局（triple）**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"combination_mode\": \"triple\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"图片使用示例 img_key，实际发送前请替换为已上传图片的有效 img_key。\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.286,
+    "total": 0.893,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 2.0 的 table 组件仅支持作为卡片根节点（body）下的直接子组件使用，不支持嵌套进 column、column_set 等容器组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

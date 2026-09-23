@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单容器内的交互组件在用户填写时不会单独触发回调，而是由表单容器统一管理，待用户点击提交按钮后一次性向服务端回传数据。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

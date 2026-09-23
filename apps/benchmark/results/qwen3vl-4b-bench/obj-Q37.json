@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 key。  \n在 table 结构中，key 字段用于标识每行的唯一键名，与 rows 中的字段对应，确保数据结构对齐和可选值绑定。",
+  "extracted": "key",
+  "correct": false,
+  "weight": 16
+}

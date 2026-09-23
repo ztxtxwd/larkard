@@ -1,0 +1,35 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器（checker）示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**勾选器（checker）** 用于在卡片中展示可勾选的选项，常用于待办、清单等场景。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"todo_list\",\n        \"checked\": false,\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"已完成需求评审\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"check\",\n              \"item\": \"review\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"todo_list\",\n        \"checked\": true,\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"已完成接口联调\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"check\",\n              \"item\": \"api\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"todo_list\",\n        \"checked\": false,\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"待完成上线发布\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"check\",\n              \"item\": \"release\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"点击勾选器可切换选中状态，并通过回调返回对应 value。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.91,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "checker",
+        "checker",
+        "checker",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。callback 类型的 behaviors 中，value 字段必须为对象（object），用于传递回调数据。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

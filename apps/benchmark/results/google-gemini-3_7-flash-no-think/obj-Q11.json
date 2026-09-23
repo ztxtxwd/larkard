@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 default_url。在 open_url 类型的交互行为配置中，default_url 是用于各端未单独配置 URL 时的必填兜底跳转链接字段。",
+  "extracted": "default_url",
+  "correct": true,
+  "weight": 25
+}

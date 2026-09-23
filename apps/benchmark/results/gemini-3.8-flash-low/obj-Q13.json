@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。飞书卡片中按钮的 form_action_type 属性取值为 submit 时表示触发表单校验并提交数据。",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,34 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"待办任务确认\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**今日任务清单**\\n点击复选框即可更新任务状态：\"\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_checker_1\",\n        \"checked\": true,\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"完成卡片组件交互规范 Review\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"task_id\": \"task_001\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_checker_2\",\n        \"checked\": false,\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"编写勾选器（checker）组件技术文档\"\n        },\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"task_id\": \"task_002\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_checker_3\",\n        \"checked\": false,\n        \"disabled\": true,\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"发布卡片模板至全员可见（已锁定）\"\n        },\n        \"hover_tips\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"需完成前置任务后方可操作\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"注：勾选状态变更将实时触发服务端回调\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.444,
+    "total": 0.917,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "checker",
+        "checker",
+        "checker",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

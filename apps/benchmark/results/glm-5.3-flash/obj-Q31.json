@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 100。\n\n理由：飞书卡片 JSON 2.0 中 column 组件的 weight 字段仅在 width 为 weighted 时生效，官方约定其合法取值范围为 1–100 的整数，上限为 100。",
+  "extracted": "100",
+  "correct": false,
+  "weight": 15
+}

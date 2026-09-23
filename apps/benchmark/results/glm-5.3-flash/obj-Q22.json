@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。\n\n理由：`i18n_elements` 是 JSON 1.0 的旧字段，2.0 结构中已不再支持，多语言改为通过根级 `i18n` 对象按语言（如 zh_cn、en_us、ja_jp）分别定义 header/body 实现。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

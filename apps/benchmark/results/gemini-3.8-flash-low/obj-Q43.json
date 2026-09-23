@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q43",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 3。飞书卡片规范中文本组件的 text_tag_list 最多支持配置 3 个标签。",
+  "extracted": "3",
+  "correct": true,
+  "weight": 10
+}

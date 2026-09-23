@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 trisect。column_set.flex_mode 设置为 trisect 时，窄屏下按三列等分布局。",
+  "extracted": "trisect",
+  "correct": true,
+  "weight": 15
+}

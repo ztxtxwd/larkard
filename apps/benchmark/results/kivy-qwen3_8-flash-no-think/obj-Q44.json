@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 C。在飞书卡片 JSON 2.0 规范中，callback 类型的 behaviors 组件（如按钮）的 value 字段用于携带回调数据，官方约定其类型必须为字符串（String），以便在回调事件中通过 `action.value` 直接获取并解析。",
+  "extracted": "C",
+  "correct": false,
+  "weight": 16
+}

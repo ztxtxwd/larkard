@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 fit_horizontal。飞书卡片中 img 组件的 scale_type 属性使用 fit_horizontal 表示宽度铺满容器且高度等比例缩放（水平拉伸贴齐）。",
+  "extracted": "fit_horizontal",
+  "correct": true,
+  "weight": 12
+}

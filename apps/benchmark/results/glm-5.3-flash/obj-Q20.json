@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。\n\n在卡片 JSON 2.0 中，备注组件仍以 `\"tag\": \"note\"` 声明，放在 `body.elements` 内使用，其内部通过 `elements` 数组承载文本或图片内容。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 25
+}

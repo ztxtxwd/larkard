@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 JSON 2.0 废弃了 1.0 中的 `action` 容器模块，交互组件（如按钮、下拉选择等）可直接作为独立元素放入卡片 `elements` 或各类布局容器中。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

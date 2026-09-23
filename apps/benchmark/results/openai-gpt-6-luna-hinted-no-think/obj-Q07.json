@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 overflow。它用于将多个操作按钮收纳到折叠的更多操作菜单中。",
+  "extracted": "overflow",
+  "correct": true,
+  "weight": 15
+}

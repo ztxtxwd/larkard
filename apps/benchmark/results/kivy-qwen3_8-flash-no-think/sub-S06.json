@@ -1,0 +1,46 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 单图布局**\\n\\n展示一张图片，宽度自适应。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"images\": [\n          {\n            \"img_key\": \"img_v2_demo-key-1\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 1\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 双图并排布局**\\n\\n两张图片水平排列，等宽分布。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"images\": [\n          {\n            \"img_key\": \"img_v2_demo-key-2\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 2\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-3\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"示例图片 3\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 三图布局（左一右二）**\\n\\n左侧一张大图，右侧两张小图垂直堆叠。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"images\": [\n          {\n            \"img_key\": \"img_v2_demo-key-4\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"主图\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-5\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"副图 1\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-6\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"副图 2\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. 四图网格布局**\\n\\n2x2 网格排列。\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"images\": [\n          {\n            \"img_key\": \"img_v2_demo-key-7\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图 A\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-8\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图 B\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-9\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图 C\"\n            }\n          },\n          {\n            \"img_key\": \"img_v2_demo-key-10\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"图 D\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.167,
+    "total": 0.375,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/1/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/4/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/4/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/7/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/7/img_list: Invalid input: expected array, received undefined",
+        "/body/elements/10/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/10/img_list: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

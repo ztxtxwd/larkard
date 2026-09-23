@@ -1,0 +1,36 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"任务详情与操作示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"**工单编号：** TICK-20250520-001\\n**当前状态：** 审批处理中\\n**处理人：** <at id=\\\"ou_demo123\\\"></at>\"\n        },\n        \"extra\": {\n          \"tag\": \"overflow\",\n          \"options\": [\n            {\n              \"text\": {\n                \"tag\": \"plain_text\",\n                \"content\": \"查看流转历史\"\n              },\n              \"behaviors\": [\n                {\n                  \"type\": \"open_url\",\n                  \"default_url\": \"https://open.feishu.cn\"\n                }\n              ]\n            },\n            {\n              \"text\": {\n                \"tag\": \"plain_text\",\n                \"content\": \"工单置顶\"\n              },\n              \"behaviors\": [\n                {\n                  \"type\": \"callback\",\n                  \"value\": {\n                    \"action\": \"pin_ticket\"\n                  }\n                }\n              ]\n            },\n            {\n              \"text\": {\n                \"tag\": \"plain_text\",\n                \"content\": \"转派他人\"\n              },\n              \"behaviors\": [\n                {\n                  \"type\": \"callback\",\n                  \"value\": {\n                    \"action\": \"transfer_ticket\"\n                  }\n                }\n              ]\n            }\n          ]\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**工单描述：**\\n收到客户关于数据看板配置异常的反馈，请相关技术支持与产研团队协同排查并修复。\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"同意处理\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"approve\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"拒绝\"\n                },\n                \"type\": \"default\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"reject\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"导出工单\"\n                    },\n                    \"behaviors\": [\n                      {\n                        \"type\": \"open_url\",\n                        \"default_url\": \"https://open.feishu.cn\"\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"挂起任务\"\n                    },\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"suspend\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"废弃工单\"\n                    },\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"abort\"\n                        }\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.545,
+    "total": 0.932,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "hr",
+        "markdown",
+        "column_set",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

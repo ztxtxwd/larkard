@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 JSON 2.0 中 table 组件属于顶层或特定容器（如 form）下的独立组件，不支持嵌套在 column、row 等布局组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

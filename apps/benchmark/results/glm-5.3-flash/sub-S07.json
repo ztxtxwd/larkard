@@ -1,0 +1,56 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true,\n    \"style\": {\n      \"color\": \"#337EFF\"\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"🎵 富文本语法示例：音频播放器（audio）\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下通过多个 **markdown** 组件演示 `<audio>` 音频播放器的常用写法，包含默认效果与各类参数组合。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 默认效果**\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_default.mp3\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 显示时长 show_time**\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_show_time.mp3\\\" show_time=\\\"true\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 自定义颜色（十六进制色值）**\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_color_hex.mp3\\\" color=\\\"#04DE8C\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. 枚举颜色**\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_color_enum.mp3\\\" color=\\\"violet\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**5. 语音播报样式 style=speak**\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_speak.mp3\\\" style=\\\"speak\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**6. 降级文案 fallback**\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_fallback.mp3\\\" fallback=\\\"当前客户端版本暂不支持音频播放\\\" />\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**7. 不同字号（text_size）下的播放器**\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"normal 字号：\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_size_normal.mp3\\\" />\",\n        \"text_size\": \"normal\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"heading-2 字号：\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_size_heading_2.mp3\\\" />\",\n        \"text_size\": \"heading-2\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"notation 字号：\\n<audio src=\\\"https://www.feishu.cn/file/demo_audio_size_notation.mp3\\\" />\",\n        \"text_size\": \"notation\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"说明：`<audio>` 为自闭合标签，各参数可按需组合使用；枚举颜色可选 default、blue、green、yellow、orange、red、violet、purple、indigo、grey 等。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.759,
+    "total": 0.889,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/config/style/color: Invalid input: expected record, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "hr",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

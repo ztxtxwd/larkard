@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。飞书卡片折叠面板的 `icon_expanded_angle` 属性仅支持 -180、-90、0、90、180 这几个特定的角度值，45 不在合法枚举范围内。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

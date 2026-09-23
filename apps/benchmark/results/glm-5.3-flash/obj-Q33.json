@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 24。\n\n在飞书卡片 JSON 2.0 的间距 token 体系中，`horizontal_spacing` 的 `extra_large` 对应 24 像素（none=0、tiny=4、small=8、normal=12、large=16、extra_large=24）。",
+  "extracted": "24",
+  "correct": false,
+  "weight": 10
+}

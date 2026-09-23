@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 是。飞书卡片 JSON 2.0 保持了向下兼容性，独立 button 组件仍支持通过顶层 `value` 字段配置回传交互数据。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 25
+}

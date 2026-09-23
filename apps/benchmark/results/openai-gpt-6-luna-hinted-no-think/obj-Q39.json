@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 90。折叠面板展开时 header 图标默认顺时针旋转 90 度。",
+  "extracted": "90",
+  "correct": false,
+  "weight": 10
+}

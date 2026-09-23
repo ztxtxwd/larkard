@@ -1,0 +1,30 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"columns\": [\n          {\n            \"name\": \"customer\",\n            \"display_name\": \"客户名称\",\n            \"width\": \"150px\",\n            \"data_type\": \"text\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"width\": \"100px\",\n            \"data_type\": \"text\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"width\": \"100px\",\n            \"data_type\": \"text\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"width\": \"120px\",\n            \"data_type\": \"text\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"width\": \"120px\",\n            \"data_type\": \"text\"\n          },\n          {\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"width\": \"100px\",\n            \"data_type\": \"url\"\n          },\n          {\n            \"name\": \"image\",\n            \"display_name\": \"企业图片\",\n            \"width\": \"100px\",\n            \"data_type\": \"img\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer\": \"飞书科技\",\n            \"scale\": \"大型企业\",\n            \"arr\": \"¥1,200,000\",\n            \"owner\": \"张三\",\n            \"sign_date\": \"2024-01-15\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"image\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer\": \"云帆信息\",\n            \"scale\": \"中型企业\",\n            \"arr\": \"¥680,000\",\n            \"owner\": \"李四\",\n            \"sign_date\": \"2024-02-20\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"image\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer\": \"星海网络\",\n            \"scale\": \"小型企业\",\n            \"arr\": \"¥320,000\",\n            \"owner\": \"王五\",\n            \"sign_date\": \"2024-03-08\",\n            \"link\": {\n              \"text\": \"查看详情\",\n              \"url\": \"https://www.feishu.cn\"\n            },\n            \"image\": \"img_v2_demo-key\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

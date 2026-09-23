@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。在飞书卡片 JSON 2.0 规范中，callback 交互行为的 value 字段必须是 Object（键值对对象）类型，用于在用户交互时回传给开发者的服务端。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

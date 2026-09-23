@@ -1,0 +1,53 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"style\": {\n      \"color\": {\n        \"light\": \"#3370ff\",\n        \"dark\": \"#3370ff\"\n      }\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本 Markdown <audio> 音频语法示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 基础播放器（默认效果）**\\n默认只展示播放/暂停按钮与音频条：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 显示音频时长（show_time=true）**\\n设置 `show_time=true` 可展示音频的总时长与播放进度：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" show_time=true></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 颜色配置（枚举色与 Hex 自定义颜色）**\\n支持通过 `color` 自定义播放器主题色：\\n• 枚举色 `color=\\\"wathet\\\"`：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" color=\\\"wathet\\\" show_time=true></audio>\\n• 枚举色 `color=\\\"green\\\"`：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" color=\\\"green\\\" show_time=true></audio>\\n• 自定义 Hex 颜色 `color=\\\"#FA6400\\\"`：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" color=\\\"#FA6400\\\" show_time=true></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. 语音消息样式（style=\\\"speak\\\"）**\\n模拟 IM 对话中的语音条/气泡形态，支持配置颜色：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" style=\\\"speak\\\" show_time=true color=\\\"blue\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**5. 兜底降级文案（fallback）**\\n在低版本飞书客户端不支持 audio 标签时展示降级文本：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" fallback=\\\"[当前客户端版本过低，暂不支持播放此音频，请升级飞书]\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**6. 不同尺寸（text_size）**\\n播放器高度与图标大小可根据 `text_size` 自动缩放：\\n• 特大号 `heading-0`：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" text_size=\\\"heading-0\\\" show_time=true></audio>\\n• 标题级 `heading-2`：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" text_size=\\\"heading-2\\\" show_time=true></audio>\\n• 正文级 `normal`（默认）：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" text_size=\\\"normal\\\" show_time=true></audio>\\n• 紧凑/备注级 `notation`：\\n<audio file_key=\\\"file_v2_demo-audio-key\\\" text_size=\\\"notation\\\" show_time=true></audio>\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.48,
+    "total": 0.772,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/config/style/color/light: Invalid input: expected object, received string",
+        "/config/style/color/dark: Invalid input: expected object, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

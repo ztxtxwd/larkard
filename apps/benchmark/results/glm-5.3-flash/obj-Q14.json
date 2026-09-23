@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 callback。\n\n在飞书卡片 JSON 2.0 中，组件的 `behaviors` 字段用于定义交互行为，回传交互（点击后向开发者服务端发送回调）的 `type` 取值为 `callback`，并可通过 `value` 携带自定义数据。",
+  "extracted": "callback",
+  "correct": true,
+  "weight": 20
+}

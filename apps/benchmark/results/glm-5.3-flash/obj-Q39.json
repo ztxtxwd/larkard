@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 -180。\n\n折叠面板（collapsible_panel）的 `icon_expanded_angle` 字段控制面板展开时标题图标的旋转角度，官方默认值为 -180（度）。",
+  "extracted": "-180",
+  "correct": false,
+  "weight": 10
+}

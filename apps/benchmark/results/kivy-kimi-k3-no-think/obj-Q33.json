@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 32。飞书卡片中 horizontal_spacing 的 token extra_large 对应 32px。",
+  "extracted": "32",
+  "correct": false,
+  "weight": 10
+}

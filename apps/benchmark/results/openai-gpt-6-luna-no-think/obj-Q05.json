@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 collage。图片组合组件的 tag 是 `collage`。",
+  "extracted": "collage",
+  "correct": false,
+  "weight": 15
+}

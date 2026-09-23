@@ -1,0 +1,37 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"请选择你感兴趣的选项：\"\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"checker_demo\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"全选\"\n        },\n        \"checked\": false,\n        \"disabled\": false,\n        \"type\": \"default\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"check_all\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"checker_form\",\n        \"elements\": [\n          {\n            \"tag\": \"checker\",\n            \"name\": \"option_1\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项一\"\n            },\n            \"checked\": true,\n            \"disabled\": false,\n            \"type\": \"default\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"option_2\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项二\"\n            },\n            \"checked\": false,\n            \"disabled\": false,\n            \"type\": \"default\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"option_3\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项三（禁用态）\"\n            },\n            \"checked\": false,\n            \"disabled\": true,\n            \"type\": \"default\"\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交\"\n            },\n            \"type\": \"primary\",\n            \"action_type\": \"form_submit\",\n            \"name\": \"submit_btn\"\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"重置\"\n            },\n            \"type\": \"default\",\n            \"action_type\": \"form_reset\",\n            \"name\": \"reset_btn\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.333,
+    "total": 0.9,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "checker",
+        "hr",
+        "form",
+        "checker",
+        "checker",
+        "checker",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

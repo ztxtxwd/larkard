@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 interactive_container。它是飞书卡片 JSON 2.0 中可点击的交互容器组件 tag。",
+  "extracted": "interactive_container",
+  "correct": true,
+  "weight": 15
+}

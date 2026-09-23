@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。在飞书卡片 JSON 2.0 规范中，config.update_multi 字段支持布尔值类型，显式设置为 false 表示禁用多端同步更新功能，这是合法且有效的配置方式。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。飞书卡片 JSON 2.0 移除了旧版的通栏开关属性，推荐通过将图片组件的外边距 `margin` 设为负值来抵消卡片内边距以实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

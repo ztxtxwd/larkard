@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 default_url。behaviors 中 type 为 open_url 时，default_url 是必填的兜底跳转地址字段。",
+  "extracted": "default_url",
+  "correct": true,
+  "weight": 25
+}

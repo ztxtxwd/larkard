@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 A。\n- icon_expanded_angle 的取值范围为 [-90, 90]，-180 超出此范围，不符合规范。",
+  "extracted": "A",
+  "correct": false,
+  "weight": 10
+}

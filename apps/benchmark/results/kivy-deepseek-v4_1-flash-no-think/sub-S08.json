@@ -1,0 +1,63 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**交互容器（interactive_container）** 用于承载一组可交互组件，点击按钮后通过回调返回交互数据。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"default\",\n        \"has_border\": true,\n        \"border_color\": \"grey\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px 12px 12px 12px\",\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"请选择你喜欢的编程语言：\"\n          },\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"horizontal_spacing\": \"8px\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"vertical_align\": \"top\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"Python\"\n                    },\n                    \"type\": \"primary\",\n                    \"width\": \"fill\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"select_language\",\n                          \"language\": \"python\"\n                        }\n                      }\n                    ]\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"vertical_align\": \"top\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"JavaScript\"\n                    },\n                    \"type\": \"default\",\n                    \"width\": \"fill\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"select_language\",\n                          \"language\": \"javascript\"\n                        }\n                      }\n                    ]\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"vertical_align\": \"top\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"Go\"\n                    },\n                    \"type\": \"default\",\n                    \"width\": \"fill\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"select_language\",\n                          \"language\": \"go\"\n                        }\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"点击按钮后，卡片会通过 callback 返回对应的 value 数据。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.278,
+    "total": 0.817,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/behaviors: 组件 \"interactive_container\" 在表单外必须配置 behaviors 数组（open_url / callback）；进入 form 后可省略（交互随 submit 提交）"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "button",
+        "button",
+        "button",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

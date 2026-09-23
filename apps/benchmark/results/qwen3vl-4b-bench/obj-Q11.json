@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 url。  \n理由：在 flybook 卡片 JSON 2.0 中，type 为 open_url 的行为，其必填字段为 url，用于指定跳转的 URL 地址。",
+  "extracted": "url",
+  "correct": false,
+  "weight": 25
+}

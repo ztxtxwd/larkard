@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 multi_select_static。在飞书卡片 2.0 规范中，静态选项的多选下拉列表组件的标签名定义为 multi_select_static。",
+  "extracted": "multi_select_static",
+  "correct": true,
+  "weight": 20
+}

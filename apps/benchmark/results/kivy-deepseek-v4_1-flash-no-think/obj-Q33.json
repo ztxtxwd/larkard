@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 20。  \n理由：飞书卡片间距 token 中 `extra_large` 对应 20px。",
+  "extracted": "20",
+  "correct": false,
+  "weight": 10
+}

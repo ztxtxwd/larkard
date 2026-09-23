@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 behaviors。  \n行为类型字段，用于标识交互行为的类型，如 click、hover 等。",
+  "extracted": "behaviors",
+  "correct": false,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 picker_person. 人员选择（单选）交互组件的 tag 为 `picker_person`。",
+  "extracted": "picker_person",
+  "correct": false,
+  "weight": 20
+}

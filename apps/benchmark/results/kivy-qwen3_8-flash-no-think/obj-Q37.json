@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。在飞书卡片 JSON 2.0 的 table 组件中，定义列（columns）时，`name` 字段用于指定该列对应的键名，以便在 `rows` 数据对象中通过该键名获取对应单元格的值。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

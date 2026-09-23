@@ -1,0 +1,35 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"飞书卡片示例：折叠按钮组 (Overflow)\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**说明**：以下展示了一个包含多个操作按钮的卡片。当屏幕空间不足时，部分按钮会自动折叠到“更多”菜单中（即 `overflow` 行为）。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"action\",\n        \"actions\": [\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"主要操作\"\n            },\n            \"type\": \"primary\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"main_action\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"次要操作 A\"\n            },\n            \"type\": \"default\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"secondary_a\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"次要操作 B\"\n            },\n            \"type\": \"default\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"secondary_b\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"次要操作 C\"\n            },\n            \"type\": \"default\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"secondary_c\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"次要操作 D\"\n            },\n            \"type\": \"default\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"secondary_d\"\n                }\n              }\n            ]\n          }\n        ],\n        \"layout_mode\": \"flow\",\n        \"max_actions\": 3\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"<font color='grey'>提示：在窄屏设备上，超过 max_actions 限制的按钮将自动收纳至右侧的「...」图标中。</font>\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.775,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "action",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

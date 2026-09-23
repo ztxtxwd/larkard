@@ -1,0 +1,41 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（overflow）示例\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"按钮过多时，可将低频按钮折叠进「更多」菜单\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**用法说明**\\n当一行按钮数量较多时，可使用 `overflow` 组件将部分按钮折叠为「更多」菜单，保持卡片简洁。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**示例一：基础折叠按钮组**\"\n      },\n      {\n        \"tag\": \"action\",\n        \"actions\": [\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"主要操作\"\n            },\n            \"type\": \"primary\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"primary\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"次要操作\"\n            },\n            \"type\": \"default\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"secondary\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"overflow\",\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"选项一\"\n                },\n                \"value\": \"option_1\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"选项二\"\n                },\n                \"value\": \"option_2\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"选项三\"\n                },\n                \"value\": \"option_3\"\n              }\n            ],\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"overflow\"\n                }\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**示例二：折叠菜单中打开链接**\"\n      },\n      {\n        \"tag\": \"action\",\n        \"actions\": [\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"查看详情\"\n            },\n            \"type\": \"primary\",\n            \"behaviors\": [\n              {\n                \"type\": \"open_url\",\n                \"default_url\": \"https://open.feishu.cn\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"overflow\",\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"开发文档\"\n                },\n                \"url\": \"https://open.feishu.cn/document\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"飞书官网\"\n                },\n                \"url\": \"https://www.feishu.cn\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：overflow 选项支持配置 value（回调）或 url（跳转链接）。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.7,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/3/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/6/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "action",
+        "hr",
+        "markdown",
+        "action",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

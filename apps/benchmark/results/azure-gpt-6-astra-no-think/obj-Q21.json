@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 不再支持 tag=action，交互组件应直接放入卡片主体或容器中。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。飞书卡片中 callback 行为的 value 字段用于向服务端回传业务自定义数据，规范要求其必须为 key-value 形式的 JSON 对象（Object）。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

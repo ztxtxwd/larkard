@@ -1,0 +1,27 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"middle\",\n        \"header_style\": {\n          \"text_align\": \"left\",\n          \"text_size\": \"normal\",\n          \"background_style\": \"grey\",\n          \"text_color\": \"default\",\n          \"bold\": true,\n          \"lines\": 1\n        },\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"data_type\": \"number\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"persons\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"markdown\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"company_image\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"markdown\",\n            \"width\": \"auto\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"示例客户 A\",\n            \"scale\": \"大型企业\",\n            \"arr\": 1000000,\n            \"owner\": [\"ou_demo123\"],\n            \"sign_date\": \"2024-01-15\",\n            \"link\": \"[查看详情](https://example.com/customers/a)\",\n            \"company_image\": \"![企业图片](img_v2_demo-key)\"\n          },\n          {\n            \"customer_name\": \"示例客户 B\",\n            \"scale\": \"中型企业\",\n            \"arr\": 500000,\n            \"owner\": [\"ou_demo123\"],\n            \"sign_date\": \"2024-02-20\",\n            \"link\": \"[查看详情](https://example.com/customers/b)\",\n            \"company_image\": \"![企业图片](img_v2_demo-key)\"\n          },\n          {\n            \"customer_name\": \"示例客户 C\",\n            \"scale\": \"小型企业\",\n            \"arr\": 100000,\n            \"owner\": [\"ou_demo123\"],\n            \"sign_date\": \"2024-03-10\",\n            \"link\": \"[查看详情](https://example.com/customers/c)\",\n            \"company_image\": \"![企业图片](img_v2_demo-key)\"\n          },\n          {\n            \"customer_name\": \"示例客户 D\",\n            \"scale\": \"大型企业\",\n            \"arr\": 1500000,\n            \"owner\": [\"ou_demo123\"],\n            \"sign_date\": \"2024-04-08\",\n            \"link\": \"[查看详情](https://example.com/customers/d)\",\n            \"company_image\": \"![企业图片](img_v2_demo-key)\"\n          },\n          {\n            \"customer_name\": \"示例客户 E\",\n            \"scale\": \"中型企业\",\n            \"arr\": 600000,\n            \"owner\": [\"ou_demo123\"],\n            \"sign_date\": \"2024-05-16\",\n            \"link\": \"[查看详情](https://example.com/customers/e)\",\n            \"company_image\": \"![企业图片](img_v2_demo-key)\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 1,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。\n\n`config.update_multi` 是 Bool 类型字段，JSON 2.0 中既可显式写 `true`（允许多次更新卡片），也可显式写 `false`（卡片仅允许被更新一次），显式写 `false` 是合法配置。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

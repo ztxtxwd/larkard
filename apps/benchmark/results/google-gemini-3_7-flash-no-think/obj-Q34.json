@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 5。飞书卡片表格组件（table）的 page_size 默认值为 5，取值范围为 1~10。",
+  "extracted": "5",
+  "correct": true,
+  "weight": 15
+}

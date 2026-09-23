@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 multi_select_static。该 tag 对应下拉选择-多选（选项静态）组件。",
+  "extracted": "multi_select_static",
+  "correct": true,
+  "weight": 20
+}

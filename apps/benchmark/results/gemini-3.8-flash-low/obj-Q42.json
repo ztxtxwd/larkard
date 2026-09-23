@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 100。飞书卡片组件公共属性中规定 element_id 的最大长度为 100 个字符。",
+  "extracted": "100",
+  "correct": false,
+  "weight": 15
+}

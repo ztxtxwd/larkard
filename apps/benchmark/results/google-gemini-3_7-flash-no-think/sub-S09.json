@@ -1,0 +1,35 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\":\n [\n      {\n        \"tag\":",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "未能从回复中提取到 JSON 对象"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

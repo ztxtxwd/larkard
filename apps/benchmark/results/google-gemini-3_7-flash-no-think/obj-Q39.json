@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 90。飞书卡片折叠面板中 `icon_expanded_angle` 用于定义展开时图标的顺时针旋转角度，默认值为 90。",
+  "extracted": "90",
+  "correct": false,
+  "weight": 10
+}

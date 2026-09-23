@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。  \n理由：飞书卡片 table 列定义中，`name` 是该列在 `rows` 行对象里做键名对应的必填字段。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

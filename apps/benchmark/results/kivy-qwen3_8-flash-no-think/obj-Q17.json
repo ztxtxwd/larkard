@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。在飞书卡片 JSON 2.0 的表单容器（form）中，只有配置了 name 属性的交互组件，其值才会被包含在提交的数据结构中，否则该组件的值无法被后端获取。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

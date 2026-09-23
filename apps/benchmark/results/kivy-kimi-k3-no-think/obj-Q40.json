@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。\n\n飞书卡片折叠面板的 `icon_expanded_angle` 属性用于设置展开时图标的旋转角度，其合法取值通常限定为 **-180、-90、90、180** 这几个特定角度（表示上下左右方向的翻转），**45** 不在官方约定的合法枚举值范围内。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

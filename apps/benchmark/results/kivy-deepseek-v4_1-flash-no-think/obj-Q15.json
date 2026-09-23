@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中独立 button 不再支持顶层 value 回传，需放入 form 内或用回调行为（如 callback）承载交互数据。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary_filled。button 的「蓝底白字」填充按钮类型枚举为 `primary_filled`。",
+  "extracted": "primary_filled",
+  "correct": true,
+  "weight": 15
+}

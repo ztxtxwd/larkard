@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form_action_type。该字段用于声明表单按钮的提交（submit）或重置（reset）事件。",
+  "extracted": "form_action_type",
+  "correct": true,
+  "weight": 25
+}

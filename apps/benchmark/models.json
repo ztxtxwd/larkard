@@ -133,6 +133,15 @@
       }
     },
     {
+      "name": "azure-gpt-6-astra-no-think",
+      "model": "azure-gpt-6-astra",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "reasoning_effort": "low"
+      }
+    },
+    {
       "name": "doubao-seed-2-1-turbo-no-think",
       "model": "doubao-seed-2-1-turbo",
       "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
@@ -184,6 +193,76 @@
       "apiKey": "${LLM_GATEWAY_API_KEY}",
       "extra": {
         "enable_thinking": false
+      }
+    },
+    {
+      "name": "glm-5.3-flash",
+      "model": "glm-5.3-flash",
+      "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
+      "apiKey": "${BIGMODEL_API_KEY}",
+      "extra": {
+        "thinking": { "type": "enabled" }
+      }
+    },
+    {
+      "name": "kivy-kimi-k3-no-think",
+      "model": "kivy-kimi-k3",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "kivy-qwen3_8-flash-no-think",
+      "model": "kivy-qwen3_8-flash",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "kivy-deepseek-v4_1-flash-no-think",
+      "model": "kivy-deepseek-v4_1-flash",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "google-gemini-3_7-flash-no-think",
+      "model": "google-gemini-3_7-flash",
+      "baseUrl": "https://llm-gateway-proxy.inner.chj.cloud/llm-gateway/v1",
+      "apiKey": "${LLM_GATEWAY_API_KEY}",
+      "extra": {
+        "enable_thinking": false
+      }
+    },
+    {
+      "name": "gemini-3.8-flash-low",
+      "model": "gemini-3.8-flash-low",
+      "baseUrl": "https://api.wukong.support/v1",
+      "apiKey": "${WUKONG_API_KEY}"
+    },
+    {
+      "name": "openai-gpt-6-luna-no-think",
+      "model": "openai/gpt-6-luna",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "apiKey": "${OPENROUTER_API_KEY}",
+      "extra": {
+        "reasoning_effort": "none"
+      }
+    },
+    {
+      "name": "openai-gpt-6-luna-hinted-no-think",
+      "model": "openai/gpt-6-luna",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "apiKey": "${OPENROUTER_API_KEY}",
+      "promptHint": "表单外 button/select 必须用 behaviors（open_url/callback），不要用顶层 value；open_url 兜底字段是 default_url；表单内 submit/reset 用 form_action_type，取值为 submit/reset；callback 的 value 必须是对象。不要套用 HTML/通用前端命名；组件 tag 以飞书卡片 JSON 2.0 为准（选择器多为 picker_*）。",
+      "extra": {
+        "reasoning_effort": "none"
       }
     }
   ]

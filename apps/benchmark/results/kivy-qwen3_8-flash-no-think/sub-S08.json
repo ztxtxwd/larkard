@@ -1,0 +1,59 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"点击下方按钮触发交互回调，或跳转至指定链接。\"\n        }\n      },\n      {\n        \"tag\": \"action\",\n        \"actions\": [\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"点击回调\"\n            },\n            \"type\": \"primary\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"demo_callback\",\n                  \"id\": \"123456\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"打开链接\"\n            },\n            \"type\": \"default\",\n            \"behaviors\": [\n              {\n                \"type\": \"open_url\",\n                \"default_url\": \"https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create\",\n                \"pc_url\": \"\",\n                \"ios_url\": \"\",\n                \"android_url\": \"\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"demo_form\",\n        \"children\": [\n          {\n            \"tag\": \"input\",\n            \"name\": \"user_input\",\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入内容...\"\n            },\n            \"width\": \"fill\"\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交表单\"\n            },\n            \"type\": \"primary\",\n            \"form_action_type\": \"submit\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.065,
+    "total": 0.71,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/3/elements: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "action",
+        "hr",
+        "form"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

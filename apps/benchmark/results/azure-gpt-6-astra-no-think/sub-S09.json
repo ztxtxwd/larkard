@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S09",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠面板展示\"\n    },\n    \"template\": \"yellow\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"markdown\",\n            \"content\": \"默认折叠\"\n          }\n        },\n        \"border\": {\n          \"color\": \"grey\",\n          \"corner_radius\": \"5px\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"这是折叠面板的内容\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": true,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"markdown\",\n            \"content\": \"标题带背景色且默认展开\"\n          },\n          \"background_color\": \"grey\"\n        },\n        \"border\": {\n          \"color\": \"grey\",\n          \"corner_radius\": \"5px\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"这是折叠面板的内容\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"collapsible_panel\",\n        \"expanded\": false,\n        \"header\": {\n          \"title\": {\n            \"tag\": \"markdown\",\n            \"content\": \"无边框\"\n          }\n        },\n        \"border\": {\n          \"color\": \"transparent\",\n          \"corner_radius\": \"0px\"\n        },\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"这是折叠面板的内容\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.8,
+    "total": 0.97,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "collapsible_panel",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown",
+        "markdown",
+        "collapsible_panel",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

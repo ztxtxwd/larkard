@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。\n\nJSON 2.0 中组件顶层的 value 字段已被移除，独立按钮的回传交互需改用 behaviors 字段（如 {\"type\": \"callback\", \"value\": {...}}）实现，不再支持 1.0 的顶层 value 写法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

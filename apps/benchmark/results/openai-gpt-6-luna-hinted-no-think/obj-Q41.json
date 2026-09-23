@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 2.0。根对象必须声明 `schema` 字段并将其取值设为字符串 `\"2.0\"`。",
+  "extracted": "2.0",
+  "correct": true,
+  "weight": 10
+}

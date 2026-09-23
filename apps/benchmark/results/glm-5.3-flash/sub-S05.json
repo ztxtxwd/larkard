@@ -1,0 +1,48 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组 示例\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"Overflow 组件与相关按钮用法\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**折叠按钮组**可将多个次要操作收纳进一个“···”更多图标中，点击图标后展开选项列表，节省卡片空间。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**示例一：基础折叠按钮组（回调交互）**\"\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"content\": \"置顶会话\"\n          },\n          {\n            \"content\": \"标记为已读\"\n          },\n          {\n            \"content\": \"静音提醒\"\n          },\n          {\n            \"content\": \"删除消息\"\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"overflow_basic\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**示例二：带图标的选项**\"\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"content\": \"复制链接\",\n            \"icon\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"content\": \"转发给同事\",\n            \"icon\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          },\n          {\n            \"content\": \"举报内容\",\n            \"icon\": {\n              \"img_key\": \"img_v2_demo-key\"\n            }\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"overflow_with_icon\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**示例三：与普通按钮组合排布**\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"stretch\",\n        \"background_style\": \"grey\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"middle\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"高频操作使用按钮平铺，低频操作收进更多菜单 ↓\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"vertical_align\": \"middle\",\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"content\": \"导出数据\"\n                  },\n                  {\n                    \"content\": \"查看历史版本\"\n                  },\n                  {\n                    \"content\": \"权限设置\"\n                  }\n                ],\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"overflow_in_column\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"stretch\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"打开帮助文档\"\n                },\n                \"type\": \"primary\",\n                \"size\": \"medium\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://open.feishu.cn/document/feishu-cards/card-json-v2-components/base-components/overflow\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"提交反馈\"\n                },\n                \"type\": \"default\",\n                \"size\": \"medium\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"submit_feedback\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"提示：点击“···”图标即可展开折叠按钮组；表单外的按钮与折叠按钮组均通过 behaviors 配置交互。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.3,
+    "total": 0.745,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/9/columns/0/vertical_align: Invalid option: expected one of \"top\"|\"center\"|\"bottom\"",
+        "/body/elements/9/columns/1/vertical_align: Invalid option: expected one of \"top\"|\"center\"|\"bottom\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "overflow",
+        "hr",
+        "markdown",
+        "overflow",
+        "hr",
+        "markdown",
+        "column_set",
+        "markdown",
+        "overflow",
+        "column_set",
+        "button",
+        "button",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

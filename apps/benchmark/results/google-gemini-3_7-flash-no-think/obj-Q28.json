@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary_filled。飞书卡片中 primary_filled 表示主色填充（蓝底白字）按钮。",
+  "extracted": "primary_filled",
+  "correct": true,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片规范规定 table（表格）组件仅支持作为卡片顶层元素（body.elements），不支持嵌套在分栏（column）等其他容器组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。该字号枚举值用于比正文更小的辅助说明或备注文本。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

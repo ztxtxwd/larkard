@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 90。`icon_expanded_angle` 默认值为 90 度。",
+  "extracted": "90",
+  "correct": false,
+  "weight": 10
+}

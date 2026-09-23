@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 tri_flow。column_set.flex_mode 中 tri_flow 表示三列等分布局，在窄屏下会自动换行适配。",
+  "extracted": "tri_flow",
+  "correct": false,
+  "weight": 15
+}

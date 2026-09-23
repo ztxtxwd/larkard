@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 trisect。飞书卡片中 column_set 的 flex_mode 属性使用 trisect 枚举值表示三列等分布局。",
+  "extracted": "trisect",
+  "correct": true,
+  "weight": 15
+}

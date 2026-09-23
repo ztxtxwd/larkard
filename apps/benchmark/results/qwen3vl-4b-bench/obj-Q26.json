@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 small。  \n在飞书卡片中，\"small\" 是 div/plain_text 中用于辅助说明的字号枚举值，比正文更小，常用于备注或次要信息。",
+  "extracted": "small",
+  "correct": false,
+  "weight": 20
+}

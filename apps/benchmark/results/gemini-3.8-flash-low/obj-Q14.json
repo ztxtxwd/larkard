@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 callback。飞书卡片 JSON 2.0 中 behaviors 配置回传交互的类型枚举值为 callback。",
+  "extracted": "callback",
+  "correct": true,
+  "weight": 20
+}

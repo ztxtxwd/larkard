@@ -1,0 +1,27 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"type\": \"table\",\n        \"title\": \"表格组件示例\",\n        \"header\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"客户名称\"\n          },\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"规模\"\n          },\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"ARR\"\n          },\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"跟进人\"\n          },\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"签约日期\"\n          },\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"链接\"\n          },\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"企业图片\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"cells\": [\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"公司A\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"中等\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"$100K\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"张三\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"2023-04-05\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"https://example.com/companyA\"\n              },\n              {\n                \"tag\": \"img\",\n                \"src\": \"img_v2_demo-key\"\n              }\n            ]\n          },\n          {\n            \"cells\": [\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"公司B\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"大型\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"$500K\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"李四\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"2023-05-10\"\n              },\n              {\n                \"tag\": \"plain_text\",\n                \"content\": \"https://example.com/companyB\"\n              },\n              {\n                \"tag\": \"img\",\n                \"src\": \"img_v2_demo-key\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.775,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

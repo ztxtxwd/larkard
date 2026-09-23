@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片规范中表格组件（table）仅支持放置在卡片根节点的 elements 数组中，不支持嵌套在分栏（column）、折叠面板或表单等容器组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

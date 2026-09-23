@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 bisect。  \n理由：飞书卡片 `column_set.flex_mode` 在窄屏下按列等分时使用枚举值 `bisect`。",
+  "extracted": "bisect",
+  "correct": false,
+  "weight": 15
+}

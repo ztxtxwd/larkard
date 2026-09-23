@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 废弃了根级 i18n_elements，多语言配置已迁移至 card.header、card.elements 等具体组件内部或通过新的国际化机制处理。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

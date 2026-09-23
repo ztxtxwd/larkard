@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 50。  \n理由：飞书卡片 table 组件官方限制最多支持 50 列，超出部分不展示。",
+  "extracted": "50",
+  "correct": true,
+  "weight": 10
+}

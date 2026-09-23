@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。官方在 JSON 2.0 中移除了图片组件的通栏开关，推荐通过将组件的 margin 设为负值来让图片撑出内边距、实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。在飞书卡片 JSON 2.0 规范中，`note` 组件已被废弃，官方推荐使用 `markdown` 或 `text` 等标准文本组件来替代其功能。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

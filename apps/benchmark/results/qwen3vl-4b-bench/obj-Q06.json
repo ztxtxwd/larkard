@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 action。  \n理由：在飞书卡片 JSON 2.0 中，action 是可点击的交互容器组件的 tag，用于定义用户可触发的操作，如按钮、链接等。",
+  "extracted": "action",
+  "correct": false,
+  "weight": 15
+}

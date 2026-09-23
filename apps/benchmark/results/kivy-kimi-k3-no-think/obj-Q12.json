@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form_action_type。该属性用于在表单容器的提交按钮上声明按钮行为类型，其取值为 submit 或 reset，但字段名本身是 form_action_type。",
+  "extracted": "form_action_type",
+  "correct": true,
+  "weight": 25
+}

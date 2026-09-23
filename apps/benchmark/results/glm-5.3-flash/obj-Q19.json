@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 name。\n\n飞书卡片 2.0 的表单容器（tag 为 form）通过 name 字段作为该表单的唯一标识，提交表单（form_submit）时回调中会携带该 name 以区分提交的是哪个表单。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 12
+}

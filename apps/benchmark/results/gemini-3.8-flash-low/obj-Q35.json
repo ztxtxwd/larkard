@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 user。飞书卡片表格组件（table）的 columns 中，人员列对应的 data_type 枚举值为 user。",
+  "extracted": "user",
+  "correct": false,
+  "weight": 15
+}

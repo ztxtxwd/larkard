@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单内组件的填写值会在提交表单时统一提交，不会在填写过程中立刻触发服务端回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form_submit。在飞书卡片 JSON 2.0 中，form_action_type 表示「提交表单」时的枚举值是 form_submit。",
+  "extracted": "form_submit",
+  "correct": false,
+  "weight": 20
+}

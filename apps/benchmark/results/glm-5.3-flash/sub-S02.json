@@ -1,0 +1,30 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"enable_forward\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"图片组件示例\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"使用 img 组件在卡片中展示图片\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**图片组件（img）**\\n通过 `img_key` 指定图片资源，可配置展示模式、缩放比例与自适应宽度。鼠标悬停或长按图片可查看替代文本。\"\n      },\n      { \"tag\": \"hr\" },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"这是一张示例图片\"\n        },\n        \"mode\": \"crop_center\",\n        \"custom_width\": 400,\n        \"scale_factor\": 1\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"以上图片采用 **crop_center** 裁剪模式，自定义宽度为 **400px**。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.91,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "img",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"medium\",\n        \"header_style\": {\n          \"text_align\": \"left\",\n          \"background_style\": \"grey\"\n        },\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"options\",\n            \"width\": \"110px\",\n            \"options\": [\n              {\n                \"id\": \"scale_1\",\n                \"text\": \"100-499人\",\n                \"color\": \"blue\"\n              },\n              {\n                \"id\": \"scale_2\",\n                \"text\": \"500-999人\",\n                \"color\": \"turquoise\"\n              },\n              {\n                \"id\": \"scale_3\",\n                \"text\": \"1000人以上\",\n                \"color\": \"purple\"\n              }\n            ]\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"data_type\": \"number\",\n            \"width\": \"110px\",\n            \"format\": {\n              \"symbol\": \"¥\",\n              \"decimal\": 0\n            }\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"user\",\n            \"width\": \"100px\"\n          },\n          {\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date\",\n            \"width\": \"110px\"\n          },\n          {\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"markdown\",\n            \"width\": \"100px\"\n          },\n          {\n            \"name\": \"logo\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"markdown\",\n            \"width\": \"90px\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"极客跃动科技有限公司\",\n            \"scale\": \"scale_3\",\n            \"arr\": 1580000,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-03-15\",\n            \"link\": \"[进入主页](https://open.feishu.cn)\",\n            \"logo\": \"![logo](img_v2_demo-key)\"\n          },\n          {\n            \"customer_name\": \"云帆互联网络科技\",\n            \"scale\": \"scale_2\",\n            \"arr\": 860000,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-04-22\",\n            \"link\": \"[进入主页](https://open.feishu.cn)\",\n            \"logo\": \"![logo](img_v2_demo-key)\"\n          },\n          {\n            \"customer_name\": \"星汉智算未来科技\",\n            \"scale\": \"scale_1\",\n            \"arr\": 420000,\n            \"owner\": \"ou_demo123\",\n            \"sign_date\": \"2024-05-18\",\n            \"link\": \"[进入主页](https://open.feishu.cn)\",\n            \"logo\": \"![logo](img_v2_demo-key)\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.925,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/3/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

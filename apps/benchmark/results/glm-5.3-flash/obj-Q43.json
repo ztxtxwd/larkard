@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q43",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 3。\n\n理由：飞书卡片 JSON 2.0 普通文本（plain_text）组件的 text_tag_list 字段为文本后缀标签列表，官方约定最多可配置展示 3 个标签。",
+  "extracted": "3",
+  "correct": true,
+  "weight": 10
+}

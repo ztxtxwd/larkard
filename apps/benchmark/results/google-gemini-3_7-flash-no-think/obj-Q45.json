@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。卡片 2.0 移除了原有的通栏属性，官方推荐通过将图片组件的 `margin` 设为负值来抵消容器内边距实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

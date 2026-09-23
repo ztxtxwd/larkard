@@ -1,0 +1,34 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"飞书卡片勾选器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**任务列表**\\n请勾选已完成的任务：\"\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_1\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"完成需求文档编写\"\n        },\n        \"checked\": true,\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"toggle_task\",\n              \"task_id\": \"1\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_2\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"代码审查与合并\"\n        },\n        \"checked\": false,\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"toggle_task\",\n              \"task_id\": \"2\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"checker\",\n        \"name\": \"task_3\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"部署测试环境\"\n        },\n        \"checked\": false,\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"toggle_task\",\n              \"task_id\": \"3\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"button\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提交状态\"\n        },\n        \"type\": \"primary\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"submit_tasks\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.444,
+    "total": 0.917,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "checker",
+        "checker",
+        "checker",
+        "hr",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

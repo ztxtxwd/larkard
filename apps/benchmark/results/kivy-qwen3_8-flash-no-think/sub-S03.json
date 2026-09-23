@@ -1,0 +1,31 @@
+{
+  "kind": "subjective",
+  "taskId": "S03",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"普通文本（div）示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"**这是加粗文本**，这是*斜体文本*，这是~~删除线文本~~。\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"支持 @提及：<at id=ou_demo123></at>\\n支持超链接：[飞书开放平台](https://open.feishu.cn)\"\n        }\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"这是一段备注样式的灰色小字文本。\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.333,
+    "total": 0.9,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "hr",
+        "div",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "div"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

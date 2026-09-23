@@ -1,0 +1,29 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"checker\",\n        \"name\": \"checker_demo\",\n        \"options\": [\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项一\"\n            },\n            \"value\": \"1\"\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项二\"\n            },\n            \"value\": \"2\"\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"选项三\"\n            },\n            \"value\": \"3\"\n          }\n        ],\n        \"default_selected\": [\"1\"],\n        \"disabled\": false,\n        \"margin\": \"0px 0px 8px 0px\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"key\": \"value\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.5,
+    "total": 0.925,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "checker"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

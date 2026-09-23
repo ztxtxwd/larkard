@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 none。窄屏下三列等分时，`column_set.flex_mode` 的枚举值为 `none`。",
+  "extracted": "none",
+  "correct": false,
+  "weight": 15
+}

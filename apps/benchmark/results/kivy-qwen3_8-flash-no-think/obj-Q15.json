@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。在飞书卡片 JSON 2.0 规范中，交互组件（如 button）的回传数据必须通过 `action` 字段定义，顶层的 `value` 字段是 1.0 版本的旧写法，在 2.0 中已不再支持用于回传交互。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

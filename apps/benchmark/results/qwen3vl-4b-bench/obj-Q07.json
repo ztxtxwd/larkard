@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 more_operations。  \n理由：在飞书卡片 JSON 2.0 中，折叠按钮组（更多操作）的 tag 是 \"more_operations\"，用于表示可展开的额外操作选项。",
+  "extracted": "more_operations",
+  "correct": false,
+  "weight": 15
+}

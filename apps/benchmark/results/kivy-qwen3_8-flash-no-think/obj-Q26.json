@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 small。",
+  "extracted": "small",
+  "correct": false,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。\n\n在卡片 JSON 2.0 结构中，已不再提供 tag=action 的交互容器模块，按钮、选择器、日期选择器等交互组件直接作为 body.elements 中的元素添加（需要统一回调时可使用交互容器 interactive_container 等容器组件）。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,30 @@
+{
+  "kind": "subjective",
+  "taskId": "S03",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"普通文本（div）组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"基础普通文本：这是一段使用 tag 为 div 承载的标准纯文本内容，不支持 Markdown 语法解析。\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"富文本支持：div 组件同样支持 **加粗**、*斜体* 以及 <font color='green'>自定义颜色</font> 的 lark_md 格式。\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"icon\": {\n          \"tag\": \"standard_icon\",\n          \"token\": \"info_outlined\",\n          \"color\": \"blue\"\n        },\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"带图标的普通文本：可通过配置 icon 字段在文本前置展示标准图标或自定义图标。\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"辅助说明文本（小号灰色字）：常用于补充说明、元数据信息或更新时间提示。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.91,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "div",
+        "div",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "div"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

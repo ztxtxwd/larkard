@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。飞书卡片配置项 `config.update_multi` 为布尔类型，用于设置是否为共享卡片，允许显式设置为 `true` 或 `false`（默认即为 `false`）。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

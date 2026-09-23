@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 2.0。\n\n使用卡片 JSON 2.0 能力时，卡片 JSON 根对象必须声明 `\"schema\": \"2.0\"`，以标识该卡片采用 2.0 数据结构。",
+  "extracted": "2.0",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 B。  \n行为（behaviors）中，callback 类型的 value 字段必须是一个对象（object），用于定义回调函数的参数和行为。\n\n",
+  "extracted": "B",
+  "correct": true,
+  "weight": 16
+}

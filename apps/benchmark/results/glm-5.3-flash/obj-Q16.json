@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。\n\n表单容器内的输入框、下拉选择等交互组件在用户填写过程中只在本地暂存数据，不会触发服务端回调；只有点击表单的提交按钮时才会统一将表单数据回传服务端。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

@@ -1,0 +1,51 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"style\": {\n      \"color\": {\n        \"title\": {\n          \"light_mode\": \"default\",\n          \"dark_mode\": \"default\"\n        }\n      }\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本语法使用示例：音频播放器\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**默认效果**\\n<audio src=\\\"https://example.com/audio.mp3\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**显示时长（show_time）**\\n<audio src=\\\"https://example.com/audio.mp3\\\" show_time=\\\"true\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**自定义颜色**\\n<audio src=\\\"https://example.com/audio.mp3\\\" color=\\\"#3370FF\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**枚举色**\\n<audio src=\\\"https://example.com/audio.mp3\\\" color=\\\"blue\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**style=speak**\\n<audio src=\\\"https://example.com/audio.mp3\\\" style=\\\"speak\\\" />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**fallback 兜底文案**\\n<audio src=\\\"https://example.com/audio.mp3\\\" fallback=\\\"当前客户端不支持音频播放\\\" />\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**不同 text_size 下的播放器**\",\n        \"text_size\": \"normal\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"text_size=notation\\n<audio src=\\\"https://example.com/audio.mp3\\\" />\",\n        \"text_size\": \"notation\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"text_size=normal\\n<audio src=\\\"https://example.com/audio.mp3\\\" />\",\n        \"text_size\": \"normal\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"text_size=heading\\n<audio src=\\\"https://example.com/audio.mp3\\\" />\",\n        \"text_size\": \"heading\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"text_size=title\\n<audio src=\\\"https://example.com/audio.mp3\\\" />\",\n        \"text_size\": \"title\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.846,
+    "total": 0.977,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "hr",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

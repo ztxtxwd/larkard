@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q01",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 hr。在飞书卡片 JSON 2.0 规范中，用于渲染水平分隔线的组件 tag 固定为 \"hr\"。",
+  "extracted": "hr",
+  "correct": true,
+  "weight": 25
+}

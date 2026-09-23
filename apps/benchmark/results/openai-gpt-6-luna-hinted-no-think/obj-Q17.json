@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。表单容器内需要随表单提交的交互组件必须配置 `name`，用于标识提交的数据。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

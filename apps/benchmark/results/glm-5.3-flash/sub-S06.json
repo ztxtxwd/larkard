@@ -1,0 +1,44 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"多图混排\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"img_combination 图片组合组件布局示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"使用 **img_combination** 图片组合组件，可将多张图片按数量自适应混排展示。以下为常见的几种布局效果：\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**双图布局**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          }\n        ],\n        \"combination_size\": \"medium\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**三图布局**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          }\n        ],\n        \"combination_size\": \"medium\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**四图布局**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          }\n        ],\n        \"combination_size\": \"medium\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**九宫格布局**\"\n      },\n      {\n        \"tag\": \"img_combination\",\n        \"img_list\": [\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          },\n          {\n            \"img_key\": \"img_v2_demo-key\",\n            \"corner_radius\": \"4px\"\n          }\n        ],\n        \"combination_size\": \"small\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.143,
+    "total": 0.371,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/3/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/6/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/9/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\"",
+        "/body/elements/12/combination_mode: Invalid option: expected one of \"double\"|\"triple\"|\"bisect\"|\"trisect\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination",
+        "hr",
+        "markdown",
+        "img_combination"
+      ],
+      "goldenTagSequence": [
+        "img_combination"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

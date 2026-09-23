@@ -1,0 +1,60 @@
+{
+  "kind": "subjective",
+  "taskId": "S12",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"📊 个人效率总览\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"统计周期：本周 (2025.02.17 - 2025.02.23)\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"flow\",\n        \"background_style\": \"grey\",\n        \"horizontal_spacing\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"<font color='grey'>已审批单量</font>\\n<font size=5 color='blue'>**128**</font> <font color='grey'>单</font>\\n<font color='green'>↑ 12%</font> <font color='grey'>较上周</font>\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"<font color='grey'>平均响应时长</font>\\n<font size=5 color='blue'>**1.5**</font> <font color='grey'>小时</font>\\n<font color='green'>↓ 0.3h</font> <font color='grey'>较上周</font>\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"<font color='grey'>待处理待办</font>\\n<font size=5 color='orange'>**5**</font> <font color='grey'>项</font>\\n<font color='red'>今日到期 2 项</font>\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**📋 事项分类明细**\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"bisect\",\n        \"horizontal_spacing\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"• **请假/调休审批**：62 单\\n• **日常报销审批**：38 单\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"• **采购/预算申请**：18 单\\n• **合同法务会签**：10 单\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"bisect\",\n        \"horizontal_spacing\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"center\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"查看效率分析报表\"\n                },\n                \"type\": \"default\",\n                \"width\": \"fill\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://open.feishu.cn\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag",
+  "score": {
+    "jsonParse": 0,
+    "schema": 0,
+    "lint": 0,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0,
+    "compiled": false,
+    "details": {
+      "parseErrors": [
+        "未能从回复中提取到 JSON 对象"
+      ],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "column_set",
+        "column_set",
+        "div",
+        "column_set",
+        "div",
+        "markdown",
+        "column_set",
+        "column_set",
+        "div",
+        "column_set",
+        "div",
+        "markdown",
+        "column_set",
+        "column_set",
+        "div",
+        "column_set",
+        "div",
+        "markdown",
+        "markdown",
+        "column_set",
+        "markdown",
+        "markdown",
+        "column_set",
+        "markdown",
+        "markdown",
+        "markdown",
+        "column_set",
+        "markdown",
+        "markdown",
+        "column_set",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组与按钮示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**折叠按钮组（overflow）**\\n点击折叠按钮，展开并选择一个操作。\"\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"查看详情\"\n            },\n            \"value\": \"view_detail\"\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"编辑内容\"\n            },\n            \"value\": \"edit_content\"\n          },\n          {\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"归档\"\n            },\n            \"value\": \"archive\"\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"overflow_selection\"\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**相关按钮用法**\\n主要按钮触发回调，普通按钮打开链接。\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"执行操作\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"execute\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"打开飞书开放平台\"\n                },\n                \"type\": \"default\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://open.feishu.cn\",\n                    \"pc_url\": \"https://open.feishu.cn\",\n                    \"ios_url\": \"https://open.feishu.cn\",\n                    \"android_url\": \"https://open.feishu.cn\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.545,
+    "total": 0.932,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "overflow",
+        "hr",
+        "markdown",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

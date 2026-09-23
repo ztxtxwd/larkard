@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。在飞书卡片 2.0 的文本组件中，text_size 字段的枚举值 notation 专门用于表示比正文（normal）更小的辅助说明/备注字号。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

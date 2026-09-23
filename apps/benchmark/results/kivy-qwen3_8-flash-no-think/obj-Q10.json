@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q10",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 checker。",
+  "extracted": "checker",
+  "correct": true,
+  "weight": 8
+}

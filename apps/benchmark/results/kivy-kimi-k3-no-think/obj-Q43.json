@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q43",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 3。飞书卡片官方约定普通文本组件的 text_tag_list 最多展示 3 个文本后缀标签。",
+  "extracted": "3",
+  "correct": true,
+  "weight": 10
+}

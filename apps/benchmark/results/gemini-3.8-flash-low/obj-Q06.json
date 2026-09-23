@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 interactive_container。飞书卡片 2.0 中提供了交互容器组件（Interactive Container），其组件标签为 `interactive_container`，支持在其内部嵌套组件并为整个容器配置点击交互行为。",
+  "extracted": "interactive_container",
+  "correct": true,
+  "weight": 15
+}

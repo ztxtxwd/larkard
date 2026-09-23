@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 callback。在飞书卡片 2.0 的 behaviors 行为列表中，用于向业务服务端异步回传数据的交互行为类型为 callback。",
+  "extracted": "callback",
+  "correct": true,
+  "weight": 20
+}

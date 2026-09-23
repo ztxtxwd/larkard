@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 laser。在飞书卡片 JSON 2.0 中，button 的 type 取镭射样式对应的枚举字符串为 laser。",
+  "extracted": "laser",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,60 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"交互容器（`interactive_container`）允许将其包裹的整个区域作为可交互实体，支持统一配置点击行为。\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn\",\n            \"pc_url\": \"\",\n            \"ios_url\": \"\",\n            \"android_url\": \"\"\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"background_style\": \"grey\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"img\",\n                    \"img_key\": \"img_v2_demo-key\",\n                    \"mode\": \"fit_horizontal\",\n                    \"custom_width\": 48\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**飞书开放平台文档中心**\\n点击此卡片区域任意位置均可直接跳转至飞书开发文档。\"\n                  },\n                  {\n                    \"tag\": \"div\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"点击整块区域触发跳转\",\n                      \"text_size\": \"notation\",\n                      \"text_color\": \"grey\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.364,
+    "total": 0.83,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/elements/0/columns/0/elements/0/alt: Invalid input: expected object, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

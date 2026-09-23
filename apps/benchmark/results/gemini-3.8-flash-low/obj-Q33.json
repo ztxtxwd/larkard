@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 16。飞书卡片规范中列间距 token `extra_large` 对应的间距大小为 16 像素。",
+  "extracted": "16",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 scale_type=\"horizontal\"。",
+  "extracted": "scale_type=\"horizontal",
+  "correct": false,
+  "weight": 12
+}

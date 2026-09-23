@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 laser_button。  \n理由：在飞书卡片 JSON 2.0 中，button 的 type 枚举值为 \"laser_button\" 表示镭射按钮。",
+  "extracted": "laser_button",
+  "correct": false,
+  "weight": 10
+}

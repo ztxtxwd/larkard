@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。表单容器仅支持配置在卡片的根节点下，不支持嵌套在分栏等其他组件内。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

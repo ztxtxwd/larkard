@@ -1,0 +1,56 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"style\": {\n      \"color\": {\n        \"light\": \"#FFFFFF\",\n        \"dark\": \"#1F1F1F\"\n      }\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"Markdown <audio> 音频语法示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 默认音频播放器**\\n<audio src=\\\"file_v2_demo_audio_key_1\\\" />\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 显示音频总时长 (`show_time=true`)**\\n<audio src=\\\"file_v2_demo_audio_key_2\\\" show_time=true />\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 语音气泡风格 (`style=\\\"speak\\\"`)**\\n<audio src=\\\"file_v2_demo_audio_key_3\\\" style=\\\"speak\\\" show_time=true />\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. 自定义主题色 (`theme_color`)**\\n• 枚举色 Carmine：\\n<audio src=\\\"file_v2_demo_audio_key_4\\\" theme_color=\\\"carmine\\\" show_time=true />\\n\\n• 十六进制色值 `#3370FF`：\\n<audio src=\\\"file_v2_demo_audio_key_5\\\" theme_color=\\\"#3370FF\\\" show_time=true />\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**5. 包含降级文案 (`fallback`)**\\n<audio src=\\\"file_v2_demo_audio_key_6\\\" fallback=\\\"[当前客户端版本过低，请升级后播放音频]\\\" show_time=true />\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**6. 不同 `text_size` 下的音频尺寸**\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading-3\",\n        \"content\": \"标题字号 (`heading-3`):\\n<audio src=\\\"file_v2_demo_audio_key_7\\\" show_time=true />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"normal\",\n        \"content\": \"正文字号 (`normal`):\\n<audio src=\\\"file_v2_demo_audio_key_8\\\" show_time=true />\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"notation\",\n        \"content\": \"备注字号 (`notation`):\\n<audio src=\\\"file_v2_demo_audio_key_9\\\" show_time=true />\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.643,
+    "total": 0.796,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/config/style/color/light: Invalid input: expected object, received string",
+        "/config/style/color/dark: Invalid input: expected object, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

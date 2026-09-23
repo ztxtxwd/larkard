@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 form_action_type。在飞书卡片 2.0 中，表单容器内的按钮使用 `form_action_type` 字段声明 `submit` 或 `reset` 事件行为。",
+  "extracted": "form_action_type",
+  "correct": true,
+  "weight": 25
+}

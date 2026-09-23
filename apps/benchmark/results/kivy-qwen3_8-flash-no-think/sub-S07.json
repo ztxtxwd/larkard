@@ -1,0 +1,52 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本（Markdown）音频播放器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"config\": {\n    \"style\": {\n      \"color\": \"blue\"\n    }\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 默认效果**\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 显示时间 (show_time)**\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 自定义颜色 / 枚举色**\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\" color=\\\"#FF0000\\\"></audio>\\n\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\" color=\\\"red\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. style=speak (朗读样式)**\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\" style=\\\"speak\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**5. fallback (降级文本)**\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\">您的客户端不支持音频播放，请升级版本。</audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**6. 不同 text_size 下的播放器**\\n\\n<small>小字号音频：</small>\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\" text_size=\\\"small\\\"></audio>\\n\\n<normal>正常字号音频：</normal>\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\" text_size=\\\"normal\\\"></audio>\\n\\n<large>大字号音频：</large>\\n<audio src=\\\"https://sf3-cn.feishucdn.com/obj/feishu-static/lark/card/audio_demo.mp3\\\" text_size=\\\"large\\\"></audio>\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.48,
+    "total": 0.847,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/config/style/color: Invalid input: expected record, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

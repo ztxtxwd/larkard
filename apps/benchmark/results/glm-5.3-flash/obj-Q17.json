@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 是。\n\n在飞书卡片 2.0 的表单容器中，`name` 是组件值随表单提交时的键名，只有配置了 name 的交互组件，其取值才会被收集进表单回调数据；未配置 name 的组件不会随表单提交。",
+  "extracted": "是",
+  "correct": true,
+  "weight": 25
+}

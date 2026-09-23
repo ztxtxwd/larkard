@@ -1,0 +1,62 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器 Demo\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"interactive_container 结构与点击行为复现\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"下方为**交互容器**（interactive_container）：整个容器区域均可点击，点击后触发回调或跳转链接。\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"grey\",\n        \"has_border\": true,\n        \"border_color\": \"grey\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"action\": \"container_click\",\n              \"scene\": \"interactive_container_demo\"\n            }\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"background_style\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"vertical_align\": \"center\",\n                \"elements\": [\n                  {\n                    \"tag\": \"img\",\n                    \"img_key\": \"img_v2_demo-key\",\n                    \"alt\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"示例图片\"\n                    },\n                    \"preview\": false\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weight\",\n                \"weight\": 1,\n                \"vertical_align\": \"center\",\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**点击整个卡片区域**\\n这是一个 interactive_container 示例，容器内任意位置点击均可触发交互。\"\n                  },\n                  {\n                    \"tag\": \"div\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"点击后将通过 behaviors 回调传递 value 数据\"\n                    },\n                    \"text_size\": \"notation\",\n                    \"text_color\": \"grey\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"也可以配置为**跳转链接**的点击行为：\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"default\",\n        \"has_border\": true,\n        \"border_color\": \"blue\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards/card-json-v2-structure\",\n            \"pc_url\": \"https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards/card-json-v2-structure\",\n            \"ios_url\": \"https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards/card-json-v2-structure\",\n            \"android_url\": \"https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards/card-json-v2-structure\"\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"📖 **查看官方文档**\\n点击此容器跳转到飞书卡片 JSON 2.0 官方文档\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.486,
+    "total": 0.923,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown",
+        "div",
+        "hr",
+        "markdown",
+        "interactive_container",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

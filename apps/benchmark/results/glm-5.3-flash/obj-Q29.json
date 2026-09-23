@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 fill_width。\n\n理由：飞书卡片 2.0 的 img 组件中，scale_type 枚举里「水平拉伸贴齐」对应 fill_width（其余如 crop_center、crop_top、crop_bottom、fill_height 分别为居中/顶部/底部裁剪和垂直拉伸贴齐）。",
+  "extracted": "fill_width",
+  "correct": false,
+  "weight": 12
+}

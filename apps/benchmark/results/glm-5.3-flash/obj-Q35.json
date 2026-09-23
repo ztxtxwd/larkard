@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。\n\n在飞书卡片 JSON 2.0 的表格组件中，`columns` 的 `data_type` 枚举包括 `text`、`number`、`date`、`link`、`options`、`person` 等，其中「人员」类型对应的枚举值为 `person`。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

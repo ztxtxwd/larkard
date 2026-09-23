@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。  \n理由：飞书卡片折叠面板的 `icon_expanded_angle` 只支持 `-180`、`-90`、`90`、`180` 这类约定角度，`45` 不是合法取值。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

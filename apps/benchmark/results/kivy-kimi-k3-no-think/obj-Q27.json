@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 laser。飞书卡片 button 的 type 枚举中，「镭射按钮」对应 laser。",
+  "extracted": "laser",
+  "correct": true,
+  "weight": 10
+}

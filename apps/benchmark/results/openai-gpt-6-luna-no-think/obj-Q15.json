@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 是。表单容器外的独立 button 仍可使用组件顶层的 `value` 字段回传交互。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 25
+}

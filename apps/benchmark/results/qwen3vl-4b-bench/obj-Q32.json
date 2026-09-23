@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 flex_mode\n<理由> 在飞书卡片 JSON 2.0 中，column_set.flex_mode 是一个枚举字段，其值为 \"flex_mode\"，在窄屏下表示三列等分。",
+  "extracted": "flex_mode",
+  "correct": false,
+  "weight": 15
+}

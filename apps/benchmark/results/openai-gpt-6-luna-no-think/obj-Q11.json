@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 fallback_url。open_url 的兜底跳转地址通过 `fallback_url` 字段配置。",
+  "extracted": "fallback_url",
+  "correct": false,
+  "weight": 25
+}

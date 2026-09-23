@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 form_id。",
+  "extracted": "form_id",
+  "correct": false,
+  "weight": 12
+}

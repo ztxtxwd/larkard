@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。  \n理由：在飞书卡片的表单容器中，「提交」按钮上用于声明提交事件的属性名是 `submit`。",
+  "extracted": "submit",
+  "correct": false,
+  "weight": 25
+}

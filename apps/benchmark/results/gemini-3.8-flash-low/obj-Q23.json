@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。飞书卡片 JSON 2.0 规范中正文组件必须放置在 `body.elements` 数组中，直接在根对象定义 `elements` 是 JSON 1.0 的写法，2.0 不再支持。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

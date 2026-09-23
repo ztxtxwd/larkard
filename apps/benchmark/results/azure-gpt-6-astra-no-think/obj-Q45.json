@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。JSON 2.0 图片组件不再支持旧版通栏配置，官方推荐将 margin 设为负数实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

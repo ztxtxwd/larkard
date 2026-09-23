@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 5。飞书卡片表格（table）组件的列对象数组最多支持配置 5 列，超出部分将不予展示。",
+  "extracted": "5",
+  "correct": false,
+  "weight": 10
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weight。\n\n在飞书卡片 JSON 2.0 中，column 组件的 width 枚举取值为 auto / default / weight，当按权重分配列宽时需将 width 填为 weight（并配合 flex_weight 指定具体权重值）。",
+  "extracted": "weight",
+  "correct": false,
+  "weight": 20
+}

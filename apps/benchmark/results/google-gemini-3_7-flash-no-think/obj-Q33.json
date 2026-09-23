@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 16。飞书卡片 2.0 规范中间距 token「extra_large」对应的像素大小为 16px。",
+  "extracted": "16",
+  "correct": true,
+  "weight": 10
+}

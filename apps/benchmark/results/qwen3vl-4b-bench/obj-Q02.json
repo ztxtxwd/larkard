@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 person。  \n理由：在飞书卡片中，人员选择交互组件的 tag 为 \"person\"，用于表示选人或选人的输入字段。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 20
+}

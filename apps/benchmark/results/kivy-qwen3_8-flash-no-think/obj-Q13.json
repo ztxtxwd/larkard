@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit_form。在飞书卡片 JSON 2.0 中，当按钮或交互组件需要触发表单提交行为时，form_action_type 字段的标准枚举值为 submit_form。",
+  "extracted": "submit_form",
+  "correct": false,
+  "weight": 20
+}

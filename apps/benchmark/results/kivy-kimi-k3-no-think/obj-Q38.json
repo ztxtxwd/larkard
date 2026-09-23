@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。table 组件是飞书卡片中的顶层组件，不允许嵌套在 column 等其他容器组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

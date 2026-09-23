@@ -1,0 +1,38 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"任务清单与协议确认\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**请确认以下待办事项并完成协议勾选：**\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"task_checker_form\",\n        \"elements\": [\n          {\n            \"tag\": \"checker\",\n            \"name\": \"task_review\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"完成 Q3 季度需求方案评审\"\n            },\n            \"checked\": true\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"task_deploy\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"完成预发环境回归测试\"\n            },\n            \"checked\": false\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"task_archived\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"系统已自动完成备份（只读）\"\n            },\n            \"checked\": true,\n            \"disabled\": true\n          },\n          {\n            \"tag\": \"hr\"\n          },\n          {\n            \"tag\": \"checker\",\n            \"name\": \"terms_agreement\",\n            \"text\": {\n              \"tag\": \"markdown\",\n              \"content\": \"我已阅读并同意[《服务条款》](https://open.feishu.cn)和[《隐私协议》](https://open.feishu.cn)\"\n            },\n            \"checked\": false\n          },\n          {\n            \"tag\": \"button\",\n            \"name\": \"submit_button\",\n            \"button_type\": \"primary\",\n            \"type\": \"primary\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交确认\"\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.364,
+    "total": 0.83,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/elements/4/text/tag: Invalid option: expected one of \"plain_text\"|\"lark_md\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "form",
+        "checker",
+        "checker",
+        "checker",
+        "hr",
+        "checker",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

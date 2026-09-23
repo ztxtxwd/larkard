@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 url。",
+  "extracted": "url",
+  "correct": false,
+  "weight": 25
+}

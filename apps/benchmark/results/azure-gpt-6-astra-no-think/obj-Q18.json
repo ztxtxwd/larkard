@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。表单容器（form）只能放在卡片根层级，不支持内嵌到 column 等其它组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

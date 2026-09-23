@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 callback。behaviors 的交互 type 取值为 `callback`。",
+  "extracted": "callback",
+  "correct": true,
+  "weight": 20
+}

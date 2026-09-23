@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary。  \n理由：在飞书卡片 JSON 2.0 中，primary 指的是蓝底白字的填充按钮，与“正常”或“无边框”的 primary 不同，其视觉上为填充式，即背景为蓝色，文字为白色，常用于强调操作。",
+  "extracted": "primary",
+  "correct": false,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 default_url。\n\n在飞书卡片 JSON 2.0 的 behaviors 中，type 为 open_url 时必须填写 default_url 作为默认（兜底）跳转链接，各端可另配 ios_url、android_url、pc_url，但缺省时以 default_url 兜底。",
+  "extracted": "default_url",
+  "correct": true,
+  "weight": 25
+}

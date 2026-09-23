@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。JSON 2.0 的 `config.update_multi` 允许显式设置为 `false`。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

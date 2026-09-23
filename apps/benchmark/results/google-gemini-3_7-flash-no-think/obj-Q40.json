@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。飞书卡片折叠面板的展开图标旋转角度 `icon_expanded_angle` 仅支持以 90 度为步长的特定角度（如 -180、-90、0、90、180），45 度不是合法取值。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

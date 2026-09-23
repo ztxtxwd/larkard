@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中，独立 button 的回传交互需使用 `behaviors` 字段配置回调行为，不再支持 1.0 的顶层 `value` 字段写法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

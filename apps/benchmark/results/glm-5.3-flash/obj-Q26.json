@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。\n\n在飞书卡片 2.0 的文本组件中，`font_size` 枚举值包括 `heading-0` ~ `heading-4`、`normal`（正文）和 `notation`，其中 `notation` 即比正文更小的辅助说明字号。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}
