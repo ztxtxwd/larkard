@@ -4,3 +4,5 @@ dist
 .turbo
 .zcode
 .agents
+.pnpm-store
+feishu-web-dump

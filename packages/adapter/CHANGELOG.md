@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.13
+
+### Patch Changes
+
+- raw→DSL / dsl→raw 保留 open_url 的 pc_url / ios_url / android_url（复制按钮 lark://client/core/copy 不再在读卡时丢失）
+
 ## 0.3.12
 
 ### Patch Changes

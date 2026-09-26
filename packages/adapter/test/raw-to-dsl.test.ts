@@ -394,6 +394,181 @@ describe("button projection", () => {
       }
     }
   });
+
+  it("preserves platform URLs on open_url actions (copy-button round-trip)", () => {
+    const copy = "lark://client/core/copy?value=%2Fedit";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "button",
+              property: {
+                actionType: "multi",
+                text: { tag: "plain_text", property: { content: "复制指令" } },
+                type: "default",
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: "https://miao.cards",
+                      pcURL: copy,
+                      iosURL: copy,
+                      androidURL: copy,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    const beh = (btn.behaviors as Record<string, unknown>[])[0]!;
+    expect(beh).toEqual({
+      type: "open_url",
+      default_url: "https://miao.cards",
+      pc_url: copy,
+      ios_url: copy,
+      android_url: copy,
+    });
+  });
+
+  it("preserves platform URLs when action.url is a LinkURL object", () => {
+    const copy = "lark://client/core/copy?value=hello";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "button",
+              property: {
+                actionType: "multi",
+                text: { tag: "plain_text", property: { content: "复制" } },
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: {
+                        url: "https://example.com",
+                        pcURL: copy,
+                        iosURL: copy,
+                        androidURL: copy,
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    const beh = (btn.behaviors as Record<string, unknown>[])[0]!;
+    expect(beh.default_url).toBe("https://example.com");
+    expect(beh.pc_url).toBe(copy);
+    expect(beh.ios_url).toBe(copy);
+    expect(beh.android_url).toBe(copy);
+  });
+
+  it("projects actionType:link open_url with platforms to multi_url", () => {
+    const copy = "lark://client/core/copy?value=x";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "button",
+              property: {
+                actionType: "link",
+                text: { tag: "plain_text", property: { content: "链" } },
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: "https://example.com",
+                      pcURL: copy,
+                      iosURL: "",
+                      androidURL: copy,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(btn.behaviors).toBeUndefined();
+    expect(btn.multi_url).toEqual({
+      url: "https://example.com",
+      pc_url: copy,
+      android_url: copy,
+    });
+  });
+
+  it("preserves platform URLs on interactive_container open_url actions", () => {
+    const copy = "lark://client/core/copy?value=pnpm%20i";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "interactive_container",
+              property: {
+                backgroundStyle: "grey-50",
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: "https://example.com",
+                      pcURL: copy,
+                      iosURL: copy,
+                      androidURL: copy,
+                    },
+                  },
+                ],
+                elements: [
+                  {
+                    tag: "markdown",
+                    property: {
+                      originTag: "markdown",
+                      elements: [
+                        {
+                          tag: "plain_text",
+                          property: { content: "pnpm i" },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const box = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    const beh = (box.behaviors as Record<string, unknown>[])[0]!;
+    expect(beh).toEqual({
+      type: "open_url",
+      default_url: "https://example.com",
+      pc_url: copy,
+      ios_url: copy,
+      android_url: copy,
+    });
+  });
 });
 
 describe("header projection", () => {

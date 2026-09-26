@@ -324,3 +324,43 @@ test('rawToDsl accepts { card } wrapper', () => {
   assert.equal(dsl.body.elements[0].tag, 'markdown');
   assert.equal(dsl.body.elements[0].content, 'x');
 });
+
+test('dslToRaw/rawToDsl round-trips open_url platform URLs (copy button)', () => {
+  const copy = 'lark://client/core/copy?value=%2Fedit';
+  const dsl = {
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'button',
+          text: { tag: 'plain_text', content: '复制指令' },
+          type: 'default',
+          behaviors: [
+            {
+              type: 'open_url',
+              default_url: 'https://miao.cards',
+              pc_url: copy,
+              ios_url: copy,
+              android_url: copy,
+            },
+          ],
+        },
+      ],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  const action = raw.body.property.elements[0].property.actions[0].action;
+  assert.equal(action.url, 'https://miao.cards');
+  assert.equal(action.pcURL, copy);
+  assert.equal(action.iosURL, copy);
+  assert.equal(action.androidURL, copy);
+
+  const back = rawToDsl(raw) as any;
+  assert.deepEqual(back.body.elements[0].behaviors[0], {
+    type: 'open_url',
+    default_url: 'https://miao.cards',
+    pc_url: copy,
+    ios_url: copy,
+    android_url: copy,
+  });
+});

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.17
+
+- 读卡 / 预览链路保留 open_url 的 pc_url / ios_url / android_url（复制按钮 `lark://client/core/copy` 不再丢失）
+- Bundles adapter 0.3.13、renderer 0.2.22
+
 ## 0.2.16
 
 - 支持搭建工具 / miaoka 导出的 `{ name, dsl, variables }` 文档：校验与净化作用于 `dsl`，写回保留外层

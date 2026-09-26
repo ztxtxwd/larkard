@@ -416,13 +416,23 @@ function wrapHeaderText(v: unknown): CardElement {
   return wrapTextLeaf(v);
 }
 
-/** behaviors:[{type,default_url}] → actions:[{type,action:{url}}]（渲染器读 actions[].action.url） */
-function behaviorsToActions(behaviors: unknown[]): Array<{ type: string; action: { url: unknown } }> {
-  const out: Array<{ type: string; action: { url: unknown } }> = [];
+/**
+ * behaviors:[{type,default_url,pc_url?…}] → actions:[{type,action:{url,pcURL?…}}]
+ * 渲染器读 actions[].action.url（https 兜底）；平台 URL 用 camelCase 旁路字段，
+ * 与 raw→DSL 的 projectOpenUrlFields 对称，保证复制按钮 lark://copy 可 round-trip。
+ */
+function behaviorsToActions(
+  behaviors: unknown[],
+): Array<{ type: string; action: Record<string, unknown> }> {
+  const out: Array<{ type: string; action: Record<string, unknown> }> = [];
   for (const b of behaviors) {
     if (!isRecord(b)) continue;
     const type = typeof b.type === 'string' ? b.type : 'open_url';
-    out.push({ type, action: { url: normalizeUrl(b.default_url) } });
+    const action: Record<string, unknown> = { url: normalizeUrl(b.default_url) };
+    if (typeof b.pc_url === 'string' && b.pc_url) action.pcURL = b.pc_url;
+    if (typeof b.ios_url === 'string' && b.ios_url) action.iosURL = b.ios_url;
+    if (typeof b.android_url === 'string' && b.android_url) action.androidURL = b.android_url;
+    out.push({ type, action });
   }
   return out;
 }

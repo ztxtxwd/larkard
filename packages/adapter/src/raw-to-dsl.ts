@@ -708,6 +708,73 @@ interface Siblings {
   buttonActionType?: string;
 }
 
+/** Public open_url fields projected from a RAW action payload. */
+interface OpenUrlFields {
+  default_url: string;
+  pc_url?: string;
+  ios_url?: string;
+  android_url?: string;
+}
+
+/**
+ * Project RAW open_url `action` payloads into public DSL URL fields.
+ *
+ * Feishu stores platform URLs in several shapes we have observed:
+ *   1. siblings on action: `{ url, pcURL, iosURL, androidURL }`
+ *   2. nested LinkURL:     `{ url: { url, pcURL, iosURL, androidURL } }`
+ *   3. multiURL bag:       `{ multiURL: { url, pcURL, … } }`
+ * Snake_case variants (`pc_url`, `multi_url`) are accepted for forward-compat.
+ * Empty platform strings are omitted (public DSL leaves them undefined).
+ */
+function projectOpenUrlFields(
+  actionInner: Record<string, unknown>,
+): OpenUrlFields | undefined {
+  let bag: Record<string, unknown> | undefined;
+  let defaultUrl: string | undefined;
+
+  if (typeof actionInner.url === "string") {
+    defaultUrl = actionInner.url;
+    bag = actionInner;
+  } else if (isRecord(actionInner.url)) {
+    bag = actionInner.url;
+    defaultUrl = typeof bag.url === "string" ? bag.url : undefined;
+  } else if (isRecord(actionInner.multiURL)) {
+    bag = actionInner.multiURL;
+    defaultUrl = typeof bag.url === "string" ? bag.url : undefined;
+  } else if (isRecord(actionInner.multi_url)) {
+    bag = actionInner.multi_url;
+    defaultUrl = typeof bag.url === "string" ? bag.url : undefined;
+  }
+
+  if (!defaultUrl) return undefined;
+
+  const pick = (...keys: string[]): string | undefined => {
+    if (!bag) return undefined;
+    for (const k of keys) {
+      const v = bag[k];
+      if (typeof v === "string" && v.length > 0) return v;
+    }
+    return undefined;
+  };
+
+  const out: OpenUrlFields = { default_url: defaultUrl };
+  const pc = pick("pcURL", "pc_url");
+  const ios = pick("iosURL", "ios_url");
+  const android = pick("androidURL", "android_url");
+  if (pc) out.pc_url = pc;
+  if (ios) out.ios_url = ios;
+  if (android) out.android_url = android;
+  return out;
+}
+
+function openUrlFieldsToMultiUrl(fields: OpenUrlFields): Record<string, string> {
+  const multi: Record<string, string> = { url: fields.default_url };
+  if (fields.pc_url) multi.pc_url = fields.pc_url;
+  if (fields.ios_url) multi.ios_url = fields.ios_url;
+  if (fields.android_url) multi.android_url = fields.android_url;
+  return multi;
+}
+
 function convertProperty(
   property: Record<string, unknown>,
   ownerTag: string | undefined,
@@ -944,39 +1011,42 @@ function convertField(
   }
 
   // button.actions → behaviors / multi_url. Raw distinguishes:
-  //   actionType:"multi" + actions:[{action:{url},type:"open_url"}]
-  //     -> behaviors:[{type:"open_url", default_url:url, pc_url, ios_url, android_url}]
-  //   actionType:"link" + actions:[{action:{url},type:"open_url"}]
-  //     -> multi_url:{url, pc_url, ios_url, android_url}
+  //   actionType:"multi" + actions:[{action:{url,pcURL?...},type:"open_url"}]
+  //     -> behaviors:[{type:"open_url", default_url, pc_url?, ios_url?, android_url?}]
+  //   actionType:"link" + actions:[{action:{url,pcURL?...},type:"open_url"}]
+  //     -> multi_url:{url, pc_url?, ios_url?, android_url?}
   //   action_request callbacks live above the DSL (cardkit entity handles
   //     them via card_id-stamped buttons); we drop them.
   // The `actionType` field is editor-internal, dropped after dispatch.
+  // Platform URLs (pcURL/iosURL/androidURL) must round-trip: copy buttons put
+  // `lark://client/core/copy?value=…` there and https only on default_url.
   if (ownerTag === "button" && key === "action_type") return DROP;
   if (ownerTag === "button" && key === "actions" && Array.isArray(rawValue)) {
-    const openUrls: string[] = [];
+    const openUrls: OpenUrlFields[] = [];
     for (const a of rawValue) {
       if (!isRecord(a)) continue;
       const inner = isRecord(a.action) ? a.action : {};
       const t = typeof a.type === "string" ? a.type : undefined;
-      if (t === "open_url" && typeof inner.url === "string") openUrls.push(inner.url);
-      // action_request callbacks belong to the cardkit entity layer; drop.
+      if (t !== "open_url") continue; // action_request etc. → drop
+      const fields = projectOpenUrlFields(inner);
+      if (fields) openUrls.push(fields);
     }
     if (openUrls.length === 0) return DROP;
     if (siblings.buttonActionType === "link") {
-      return ["multi_url", { url: openUrls[0] }];
+      return ["multi_url", openUrlFieldsToMultiUrl(openUrls[0]!)];
     }
     // Default to behaviors (matches actionType:"multi" and the more common shape).
     return [
       "behaviors",
-      openUrls.map((url) => ({ type: "open_url", default_url: url })),
+      openUrls.map((fields) => ({ type: "open_url", ...fields })),
     ];
   }
 
   // interactive_container click interaction. The raw editor stores it as
-  // `actions: [{ type:'open_url', action:{ url } }]` (or a callback). But the
+  // `actions: [{ type:'open_url', action:{ url, pcURL?… } }]` (or a callback). But the
   // public DSL 2.0 has NO `actions` property on interactive_container — the
   // click config is `behaviors` (required), the same shape buttons use:
-  //   open_url  -> { type:'open_url', default_url: url }
+  //   open_url  -> { type:'open_url', default_url, pc_url?, ios_url?, android_url? }
   //   callback  -> { type:'callback', value }
   // Emitting `actions` makes Feishu reject the card ("unknown property: actions").
   if (ownerTag === "interactive_container" && key === "actions" && Array.isArray(rawValue)) {
@@ -985,8 +1055,9 @@ function convertField(
         if (!isRecord(a)) return undefined;
         const inner = isRecord(a.action) ? a.action : {};
         const t = typeof a.type === "string" ? a.type : undefined;
-        if (t === "open_url" && typeof inner.url === "string") {
-          return { type: "open_url", default_url: inner.url };
+        if (t === "open_url") {
+          const fields = projectOpenUrlFields(inner);
+          return fields ? { type: "open_url", ...fields } : undefined;
         }
         if (t === "callback") {
           return { type: "callback", value: inner.value ?? {} };
