@@ -677,7 +677,17 @@ function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
       const tp = isRecord(text.property) ? text.property : {};
       const content = typeof tp.content === "string" ? tp.content : "";
       const textAlign = typeof tp.textAlign === "string" ? tp.textAlign : "left";
-      out.text = { tag: "plain_text", content, text_align: textAlign };
+      const outText: Record<string, unknown> = { tag: "plain_text", content, text_align: textAlign };
+      // textStyle: size → text_size; color/customColor → text_color (custom pairs are
+      // registered as cus-text-* like inline markdown colors).
+      const ts = isRecord(tp.textStyle) ? tp.textStyle : undefined;
+      if (ts && typeof ts.size === "string") outText.text_size = ts.size;
+      const { color } = resolveInlineStyle(ts, ctx);
+      if (color) outText.text_color = color;
+      out.text = outText;
+
+      if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
+      else if (typeof property.margin === "string") out.margin = property.margin;
 
       // icon: standard_icon — reuse the existing unwrap path.
       if (isRecord(property.icon)) {

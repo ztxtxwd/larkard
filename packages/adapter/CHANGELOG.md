@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.14
+
+### Patch Changes
+
+- raw→DSL 保留 plain_text div 的 textStyle（size → text_size，color/customColor → text_color）与 margin，读卡再发不再丢灰色小字样式
+
 ## 0.3.13
 
 ### Patch Changes

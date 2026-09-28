@@ -821,6 +821,59 @@ describe("live bare-body envelope (offline regression)", () => {
     expect(findElements(dsl, (el) => el.tag === "div")).toEqual([]);
   });
 
+  it("keeps plain_text div textStyle (size / customColor) and margin", () => {
+    // Regression: the plain_text div branch returned early with only content +
+    // text_align, so a grey notation footnote came back as default-size black text.
+    const px = (value: number) => ({ type: "pixels", value });
+    const dsl = rawCardToDsl({
+      json_card: JSON.stringify({
+        schema: "2.0",
+        body: {
+          tag: "body",
+          property: {
+            elements: [
+              {
+                tag: "div",
+                property: {
+                  margin: { top: px(4), right: px(0), bottom: px(0), left: px(0) },
+                  widthValue: { type: "builtin_div_width", value: "fill" },
+                  text: {
+                    tag: "plain_text",
+                    property: {
+                      content: "数据仅用于展示",
+                      lines: 0,
+                      textAlign: "left",
+                      textStyle: {
+                        attributes: [],
+                        customColor: { lightMode: "#626c7bff", darkMode: "#b1b8c4ff" },
+                        platformSize: { mobile: "notation", pc: "notation" },
+                        size: "notation",
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }),
+      json_attachment: { images: {} },
+      card_schema: 2,
+    }) as AnyDsl;
+
+    const div = findElements(dsl, (el) => el.tag === "div")[0]!;
+    expect(div.margin).toBe("4px 0px 0px 0px");
+    const text = div.text as Record<string, unknown>;
+    expect(text.text_size).toBe("notation");
+    expect(text.text_color).toMatch(/^cus-/);
+    expect(text).not.toHaveProperty("lines");
+    const colors = (dsl.config as { style?: { color?: Record<string, unknown> } }).style?.color;
+    expect(colors?.[text.text_color as string]).toEqual({
+      light_mode: "rgba(98,108,123,1)",
+      dark_mode: "rgba(177,184,196,1)",
+    });
+  });
+
   it("emits schema \"2.0\" even when the raw json_card omits it", () => {
     const dsl = rawCardToDsl(loadFixture("live-bare-body.raw.json")) as AnyDsl;
     expect(dsl.schema).toBe("2.0");
