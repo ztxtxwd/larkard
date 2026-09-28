@@ -1,5 +1,35 @@
 # @open-feishu-card/validator
 
+## 0.1.6
+
+### Patch Changes
+
+- 支持搭建工具文档：自动解包 `dsl` 后做 Schema 校验，诊断 path 带 `/dsl` 前缀；外层轻量检查 `name` / `variables`
+- Updated dependencies
+  - @open-feishu-card/parser@0.1.3
+
+## 0.1.5
+
+### Patch Changes
+
+- 新增官方 `card-schema.json` 一致性（conformance）测试与 `$def` 方言校验器
+- Updated dependencies
+  - @open-feishu-card/schema@0.1.5
+
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/schema@0.1.4
+
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [441c53b]
+  - @open-feishu-card/schema@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes

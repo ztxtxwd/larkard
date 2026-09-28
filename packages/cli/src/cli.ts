@@ -10,7 +10,12 @@
  *   open-feishu-card build <file> [--out <file>]  编译为渲染器 RAW JSON
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import { parse } from '@open-feishu-card/parser';
+import {
+  parse,
+  resolveCardDocument,
+  serializeCardDocument,
+  joinCardPointer,
+} from '@open-feishu-card/parser';
 import { validateAst } from '@open-feishu-card/validator';
 import { lintAst } from '@open-feishu-card/linter';
 import { sanitize, compile } from '@open-feishu-card/compiler';
@@ -67,21 +72,28 @@ function cmdLint(files: string[], schemaOnly: boolean): number {
 
 function cmdClean(file: string, out?: string, check?: boolean): number {
   const src = loadSource(file);
-  const { data } = parse(src);
-  const { card, stripped } = sanitize(data, { mode: 'strip' });
+  const parsed = parse(src);
+  const resolved = resolveCardDocument(parsed);
+  if (!resolved) {
+    console.error(`${file}: 不是有效的卡片 JSON 文档`);
+    return 1;
+  }
+  const { card, stripped } = sanitize(resolved.cardData, { mode: 'strip' });
+  const paths = stripped.map((p) => joinCardPointer(resolved.pathPrefix, p));
   if (check) {
-    if (stripped.length > 0) {
-      console.error(`${file}: 发现 ${stripped.length} 个非标属性:`);
-      for (const p of stripped) console.error(`  - ${p}`);
+    if (paths.length > 0) {
+      console.error(`${file}: 发现 ${paths.length} 个非标属性:`);
+      for (const p of paths) console.error(`  - ${p}`);
       return 1;
     }
     console.error(`${file}: 干净，无非标属性`);
     return 0;
   }
   const target = out ?? file;
-  writeFileSync(target, JSON.stringify(card, null, 2) + '\n');
-  console.error(`已净化 ${stripped.length} 个非标属性 → ${target}`);
-  for (const p of stripped) console.error(`  - 剥离 ${p}`);
+  const output = serializeCardDocument(resolved, card);
+  writeFileSync(target, JSON.stringify(output, null, 2) + '\n');
+  console.error(`已净化 ${paths.length} 个非标属性 → ${target}`);
+  for (const p of paths) console.error(`  - 剥离 ${p}`);
   return 0;
 }
 
@@ -98,12 +110,17 @@ function cmdFormat(file: string, out?: string): number {
 }
 
 function cmdBuild(file: string, out?: string): number {
-  const { data, errors } = parse(loadSource(file));
-  if (errors.length) {
-    for (const e of errors) console.error(`${file}:${fmtPos(e.range.start)}  error  ${e.message}`);
+  const parsed = parse(loadSource(file));
+  if (parsed.errors.length) {
+    for (const e of parsed.errors) console.error(`${file}:${fmtPos(e.range.start)}  error  ${e.message}`);
     return 1;
   }
-  const { raw } = compile(data);
+  const resolved = resolveCardDocument(parsed);
+  if (!resolved) {
+    console.error(`${file}: 不是有效的卡片 JSON 文档`);
+    return 1;
+  }
+  const { raw } = compile(resolved.cardData);
   if (out) {
     writeFileSync(out, JSON.stringify(raw, null, 2) + '\n');
     console.error(`已编译 RAW → ${out}`);

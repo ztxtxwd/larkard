@@ -4,6 +4,8 @@
  * 解析 JSON / JSONC（带注释与尾逗号）源码，生成包含位置信息的 AST。
  * 每个 AST 节点都携带 Range（字符偏移 [start, end)）与
  * Line / Column（1-based），供 validator / linter / LSP 精确回溯到源码。
+ *
+ * 另提供文档形态解包：裸 Card JSON，或搭建工具 `{ name, dsl, variables }`。
  */
 
 export interface Pos {
@@ -323,5 +325,112 @@ export function parse(source: string): ParseResult {
     }
     throw e;
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * 卡片文档形态：裸 Card JSON vs 搭建工具 `{ name, dsl, variables }`
+ * ------------------------------------------------------------------ */
+
+export type CardDocumentKind = 'card' | 'builder';
+
+export interface ResolvedCardDocument {
+  kind: CardDocumentKind;
+  /** 整份文件的根 AST */
+  rootAst: JsonObjectNode;
+  /** 卡片 AST；builder 时为 `dsl` 子树 */
+  cardAst: JsonObjectNode;
+  /** 卡片数据对象 */
+  cardData: unknown;
+  /** 相对卡片根的 JSON Pointer 前缀；builder 为 `/dsl`，裸卡为 `''` */
+  pathPrefix: string;
+  /** builder 文档的 name（若有） */
+  name?: string;
+  /** builder 文档的 variables（若有） */
+  variables?: unknown;
+}
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+/**
+ * 是否为搭建工具导出的工程文档（`{ name?, dsl, variables? }`）。
+ * 根上已有 `schema` 时一律按裸卡处理，避免把误加的 `dsl` 字段当外层。
+ */
+export function isBuilderDocument(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  if (!isRecord(value.dsl)) return false;
+  if (typeof value.schema === 'string') return false;
+  return true;
+}
+
+/** 取出卡片载荷：builder 返回 `dsl`，否则原样返回 */
+export function unwrapCardData(value: unknown): unknown {
+  return isBuilderDocument(value) ? (value as { dsl: unknown }).dsl : value;
+}
+
+/** 把相对卡片根的 pointer 拼回源文件 pointer */
+export function joinCardPointer(pathPrefix: string, relativePath: string): string {
+  if (!pathPrefix) return relativePath;
+  if (relativePath === '/' || relativePath === '') return pathPrefix;
+  return pathPrefix + (relativePath.startsWith('/') ? relativePath : `/${relativePath}`);
+}
+
+export function wrapBuilderDocument(
+  card: Record<string, unknown>,
+  meta: { name?: string; variables?: unknown } = {},
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  if (meta.name !== undefined) out.name = meta.name;
+  out.dsl = card;
+  out.variables = meta.variables ?? [];
+  return out;
+}
+
+/** 净化/编译后按原文档形态写回（builder 保留 name/variables） */
+export function serializeCardDocument(
+  resolved: ResolvedCardDocument,
+  cleanedCard: Record<string, unknown>,
+): Record<string, unknown> {
+  if (resolved.kind === 'card') return cleanedCard;
+  return wrapBuilderDocument(cleanedCard, {
+    name: resolved.name,
+    variables: resolved.variables ?? [],
+  });
+}
+
+export function resolveCardDocumentAst(
+  rootAst: JsonObjectNode,
+  data: unknown,
+): ResolvedCardDocument {
+  if (isBuilderDocument(data)) {
+    const dslProp = rootAst.properties.find((p) => p.key.value === 'dsl');
+    const dslNode = dslProp?.value;
+    if (dslNode && dslNode.type === 'object') {
+      const rec = data as Record<string, unknown>;
+      return {
+        kind: 'builder',
+        rootAst,
+        cardAst: dslNode,
+        cardData: rec.dsl,
+        pathPrefix: '/dsl',
+        name: typeof rec.name === 'string' ? rec.name : undefined,
+        variables: 'variables' in rec ? rec.variables : undefined,
+      };
+    }
+  }
+  return {
+    kind: 'card',
+    rootAst,
+    cardAst: rootAst,
+    cardData: data,
+    pathPrefix: '',
+  };
+}
+
+/** 从 parse() 结果解包；语法失败时返回 undefined */
+export function resolveCardDocument(result: ParseResult): ResolvedCardDocument | undefined {
+  if (!result.ast || result.data === undefined) return undefined;
+  return resolveCardDocumentAst(result.ast, result.data);
 }
 

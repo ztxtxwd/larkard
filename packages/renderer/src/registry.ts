@@ -5,6 +5,10 @@ import type {
   CardElement, ComponentFn, ElementProperty, PersonInfo, RenderContext, TextStyle, VNode,
 } from './types';
 import {
+  resolveCustomBackgroundLight,
+  resolveTextStyleColor,
+} from '@open-feishu-card/adapter';
+import {
   BASE_FONT_SIZE, PALETTE, TEXT_FONT_COLOR_TOKEN, paletteColor,
   PERSON_AVATAR_BASE, PERSON_AVATAR_SUFFIX, TEXT_SIZE_MAP,
 } from './constants';
@@ -91,7 +95,7 @@ export function resolveTextFontToken(raw: unknown): string | undefined {
 export function textStyleToModifiers(textStyle: TextStyle | undefined): string[] {
   if (!textStyle) return [];
   const out: string[] = [];
-  const color = textStyle.color?.trim();
+  const color = resolveTextStyleColor(textStyle) ?? textStyle?.color?.trim();
   if (color && color !== 'default' && !/^(#|rgb|hsl)/i.test(color)) out.push(color);
   const attrs = textStyle.attributes || [];
   if (attrs.includes('bold')) out.push('bold');
@@ -108,11 +112,12 @@ export function textStyleToStyle(textStyle: TextStyle | undefined): Record<strin
   if (attrs.includes('bold')) style.fontWeight = '600';
   if (attrs.includes('italic')) style.fontStyle = 'italic';
   if (attrs.includes('strikethrough')) style.textDecoration = 'line-through';
-  if (textStyle.color) {
-    const token = resolveTextFontToken(textStyle.color);
+  const color = resolveTextStyleColor(textStyle) ?? textStyle.color;
+  if (color) {
+    const token = resolveTextFontToken(color);
     if (token) style.color = `var(--${token})`;
     else {
-      const c = resolveColor(textStyle.color);
+      const c = resolveColor(color);
       if (c) style.color = c;
     }
   }
@@ -283,6 +288,144 @@ export function sizeToPx(v: number | string | undefined): string {
   return typeof v === 'number' ? v + 'px' : String(v);
 }
 
+/** RAW padding/margin 对象或 DSL 简写字符串 → CSS 速记 */
+export function marginToStyle(margin: unknown): string | null {
+  if (typeof margin === 'string' && margin.trim()) return margin.trim();
+  return boxToStyle(margin as Spacing4);
+}
+
+/**
+ * 解析外边距的左右像素（用于 width:calc 抵消 body > * {width:100%} 造成的溢出）。
+ * 支持 CSS 简写字符串与 RAW 四向对象。
+ */
+export function horizontalMarginPx(margin: unknown): { left: number; right: number } {
+  if (typeof margin === 'string' && margin.trim()) {
+    const parts = margin.trim().split(/\s+/).map((t) => spacingToPx(t));
+    if (parts.length === 1) return { left: parts[0], right: parts[0] };
+    if (parts.length === 2 || parts.length === 3) return { left: parts[1], right: parts[1] };
+    if (parts.length >= 4) return { left: parts[3], right: parts[1] };
+  }
+  if (margin && typeof margin === 'object') {
+    const m = margin as Spacing4;
+    return { left: Number(m.left?.value ?? 0), right: Number(m.right?.value ?? 0) };
+  }
+  return { left: 0, right: 0 };
+}
+
+/**
+ * 把 margin 写进 style；若有水平外边距且当前/默认是撑满宽，则改成
+ * `calc(100% - L - R)`，避免与 `.universal-card-body > * { width:100% }` 叠加溢出。
+ * 已有明确像素宽（如图标框 48px）时不改 width。
+ */
+export function applyOuterMargin(
+  style: Record<string, string>,
+  margin: unknown,
+): void {
+  const mg = marginToStyle(margin);
+  if (!mg) return;
+  style.margin = mg;
+  const { left, right } = horizontalMarginPx(margin);
+  const inset = left + right;
+  if (inset <= 0) return;
+  const w = style.width;
+  if (w && /px$/i.test(w) && !w.includes('%')) return; // 定宽元素保持原宽
+  if (!w || w === '100%' || w === 'fill') {
+    style.width = `calc(100% - ${inset}px)`;
+  }
+}
+
+/** 解析 "Npx" / 数字 / widthValue|heightValue 像素槽 → CSS 长度；fill→100%；auto/default→undefined */
+export function resolveDimensionPx(
+  direct: unknown,
+  valueObj: { type?: string; value?: string | number } | undefined,
+): string | undefined {
+  const fromObj = (): string | undefined => {
+    if (!valueObj) return undefined;
+    const t = String(valueObj.type || '').toLowerCase();
+    if (t === 'pixels' || t === 'pixel') {
+      const n = Number(valueObj.value);
+      return Number.isFinite(n) ? n + 'px' : undefined;
+    }
+    const v = valueObj.value;
+    if (v === 'fill') return '100%';
+    if (v === 'auto' || v === 'default') return undefined;
+    if (typeof v === 'number' && Number.isFinite(v)) return v + 'px';
+    if (typeof v === 'string') {
+      const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/i.exec(v.trim());
+      if (m) return m[1] + 'px';
+    }
+    return undefined;
+  };
+  if (typeof direct === 'number' && Number.isFinite(direct)) return direct + 'px';
+  if (typeof direct === 'string') {
+    const s = direct.trim();
+    if (s === 'fill') return '100%';
+    if (s === 'auto' || s === 'default' || !s) return undefined;
+    const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/i.exec(s);
+    if (m) return m[1] + 'px';
+  }
+  return fromObj();
+}
+
+/**
+ * img.size / sizeValue → 定宽高或宽高比。
+ * - "24px 24px" / width_height_pixels → 固定像素
+ * - "16:9" / aspect_ratio → CSS aspect-ratio
+ */
+export function resolveImageSize(property: Record<string, unknown> | undefined | null): {
+  width?: string;
+  height?: string;
+  aspectRatio?: string;
+} {
+  if (!property) return {};
+  const size = property.size ?? property.size_value;
+  if (typeof size === 'string') {
+    const s = size.trim();
+    const pxPair = /^(\d+(?:\.\d+)?)px\s+(\d+(?:\.\d+)?)px$/i.exec(s);
+    if (pxPair) return { width: pxPair[1] + 'px', height: pxPair[2] + 'px' };
+    const ratio = /^(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)$/.exec(s);
+    if (ratio) return { aspectRatio: `${ratio[1]} / ${ratio[2]}` };
+  }
+  const echo = (property.sizeValue ?? property.size_value) as
+    | { type?: string; value?: { width?: number; height?: number } | string | number }
+    | undefined;
+  if (echo && typeof echo === 'object') {
+    const t = String(echo.type || '').toLowerCase();
+    const v = echo.value;
+    if (t === 'width_height_pixels' && v && typeof v === 'object') {
+      const w = Number((v as { width?: number }).width);
+      const h = Number((v as { height?: number }).height);
+      if (Number.isFinite(w) && Number.isFinite(h)) {
+        return { width: w + 'px', height: h + 'px' };
+      }
+    }
+    if (t === 'aspect_ratio' && v && typeof v === 'object') {
+      const w = Number((v as { width?: number }).width);
+      const h = Number((v as { height?: number }).height);
+      if (Number.isFinite(w) && Number.isFinite(h) && h !== 0) {
+        return { aspectRatio: `${w} / ${h}` };
+      }
+    }
+  }
+  return {};
+}
+
+/** RAW cornerRadiusValue / DSL corner_radius → CSS border-radius。
+ * 未声明或空字符串（主题页尾常用 `""`）→ undefined，不输出默认圆角（对齐真机）。 */
+export function resolveCornerRadius(property: Record<string, unknown> | undefined | null): string | undefined {
+  if (!property) return undefined;
+  const direct = property.corner_radius ?? property.cornerRadius;
+  if (typeof direct === 'string') {
+    const t = direct.trim();
+    if (!t) return undefined;
+    return sizeToPx(t);
+  }
+  if (direct != null) return sizeToPx(direct as number | string);
+  const echo = property.cornerRadiusValue as { type?: string; value?: number | string } | undefined;
+  if (echo && typeof echo.value === 'number') return echo.value + 'px';
+  if (echo && typeof echo.value === 'string' && echo.value.trim()) return sizeToPx(echo.value);
+  return undefined;
+}
 /** RAW 的 padding/margin 对象 {top,right,bottom,left:{type:'pixels',value}} -> CSS 速记 */
 type Spacing4 = { top?: { value?: number }; right?: { value?: number }; bottom?: { value?: number }; left?: { value?: number } };
 export function boxToStyle(box: Spacing4 | undefined): string | null {
@@ -291,7 +434,7 @@ export function boxToStyle(box: Spacing4 | undefined): string | null {
   const r = box.right?.value ?? 0;
   const b = box.bottom?.value ?? 0;
   const l = box.left?.value ?? 0;
-  if (!t && !r && !b && !l) return null;
+  // 对象存在即视为显式指定（含全 0），须输出以覆盖 CSS 默认值（如 body padding:12px）。
   return `${t}px ${r}px ${b}px ${l}px`;
 }
 
@@ -308,4 +451,16 @@ export function bgStyleToColor(style: unknown): string | null {
   if (!v || v === 'default' || v === 'none' || v === 'transparent') return null;
   if (v === 'grey' || v === 'gray' || v === '1') return 'var(--bg-float-overlay)';
   return resolveColor(v) || null;
+}
+
+/** RAW customBackgroundStyle first, then enum backgroundStyle / background_style. */
+export function propertyBackgroundColor(property: ElementProperty | Record<string, unknown> | undefined | null): string | null {
+  if (!property) return null;
+  const custom = resolveCustomBackgroundLight(property);
+  if (custom) {
+    const c = resolveColor(custom);
+    if (c) return c;
+  }
+  const p = property as Record<string, unknown>;
+  return bgStyleToColor(p.backgroundStyle ?? p.background_style);
 }

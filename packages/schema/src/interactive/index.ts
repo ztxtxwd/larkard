@@ -75,6 +75,15 @@ export const ButtonSchema = z
       .enum(['submit', 'reset'])
       .optional()
       .describe('表单内提交/重置按钮必填：submit / reset'),
+    required: z
+      .boolean()
+      .optional()
+      .describe('是否必填（表单场景），默认 false'),
+    /** @deprecated 历史回传字段；JSON 2.0 请用 behaviors */
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段，已废弃；JSON 2.0 请用 behaviors'),
     /** @deprecated 历史交互类型字段 */
     action_type: z
       .enum(['link', 'request', 'multi', 'form_submit', 'form_reset'])
@@ -184,8 +193,20 @@ export const OverflowSchema = z
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
+    name: z
+      .string()
+      .optional()
+      .describe('表单项标识，卡片内唯一；表单内使用时必填'),
+    required: z.boolean().optional().describe('是否必填，默认 false'),
+    disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
+    text: TipsTextSchema.optional().describe('折叠按钮组触发器文案'),
     behaviors: BehaviorsSchema.optional().describe('交互行为列表'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
   })
   .describe('折叠按钮组（overflow）');
 
@@ -225,6 +246,7 @@ export const SelectStaticSchema = z
       .describe('表单项标识，卡片内唯一；表单内使用时必填'),
     required: z.boolean().optional().describe('是否必填，默认 false'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     initial_option: z
       .string()
       .optional()
@@ -238,6 +260,10 @@ export const SelectStaticSchema = z
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
     options: z.array(SelectOptionSchema).optional().describe('选项列表'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
   })
   .describe('下拉选择 - 单选（select_static）');
 
@@ -263,6 +289,7 @@ export const MultiSelectStaticSchema = z
       .describe('边框样式：default（带边框）/ text（无边框），默认 default'),
     required: z.boolean().optional().describe('是否必填，默认 false'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     placeholder: TipsTextSchema.optional().describe('占位提示文案'),
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
     selected_values: z
@@ -271,6 +298,10 @@ export const MultiSelectStaticSchema = z
       .describe('默认选中的选项 value 列表'),
     options: z.array(SelectOptionSchema).optional().describe('选项列表'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
   })
   .describe('下拉选择 - 多选（multi_select_static）');
 
@@ -297,10 +328,15 @@ export const SelectPersonSchema = z
       .describe('表单项标识，卡片内唯一；表单内使用时必填'),
     required: z.boolean().optional().describe('是否必填，默认 false'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     initial_option: z
       .string()
       .optional()
       .describe('默认选中人员的 ID'),
+    initial_user: z
+      .string()
+      .optional()
+      .describe('默认选中人员（历史字段，等同 initial_option）'),
     placeholder: TipsTextSchema.optional().describe('占位提示文案'),
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
     options: z
@@ -317,6 +353,10 @@ export const SelectPersonSchema = z
       .optional()
       .describe('可选人员候选列表；省略则不限制候选范围'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
   })
   .describe('人员选择 - 单选（select_person）');
 
@@ -342,6 +382,7 @@ export const MultiSelectPersonSchema = z
       .describe('边框样式：default（带边框）/ text（无边框），默认 default'),
     required: z.boolean().optional().describe('是否必填，默认 false'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     placeholder: TipsTextSchema.optional().describe('占位提示文案'),
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
     selected_values: z
@@ -362,6 +403,10 @@ export const MultiSelectPersonSchema = z
       .optional()
       .describe('可选人员候选列表；省略则不限制候选范围'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
   })
   .describe('人员选择 - 多选（multi_select_person）');
 
@@ -384,12 +429,21 @@ export const DatePickerSchema = z
       .describe('表单项标识，卡片内唯一；表单内使用时必填'),
     required: z.boolean().optional().describe('是否必填，默认 false'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
     /** yyyy-MM-dd */
     initial_date: z
       .string()
       .optional()
       .describe('默认选中日期，格式 yyyy-MM-dd'),
+    initial_datetime: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认日期时间'),
+    initial_time: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认时间'),
     placeholder: TipsTextSchema.optional().describe('占位提示文案'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
     /** @deprecated 历史回传字段 */
@@ -401,6 +455,50 @@ export const DatePickerSchema = z
   .describe('日期选择器（date_picker）');
 
 export type DatePicker = z.infer<typeof DatePickerSchema>;
+
+/**
+ * 日期选择器别名（picker_date）。与 date_picker 字段相同，官方 schema 并存。
+ */
+export const PickerDateSchema = z
+  .object({
+    tag: z.literal('picker_date').describe('组件标签，固定为 picker_date'),
+    behaviors: BehaviorsSchema.optional().describe(
+      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
+    ),
+    element_id: ElementIdSchema.optional().describe('组件唯一标识'),
+    margin: SpacingValueSchema.optional().describe('组件外边距'),
+    name: z
+      .string()
+      .optional()
+      .describe('表单项标识，卡片内唯一；表单内使用时必填'),
+    required: z.boolean().optional().describe('是否必填，默认 false'),
+    disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
+    width: InteractiveWidthSchema.optional().describe('组件宽度'),
+    initial_date: z
+      .string()
+      .optional()
+      .describe('默认选中日期，格式 yyyy-MM-dd'),
+    initial_datetime: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认日期时间'),
+    initial_time: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认时间'),
+    placeholder: TipsTextSchema.optional().describe('占位提示文案'),
+    confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
+  })
+  .describe(
+    '日期选择器（picker_date）。与 date_picker 等价的官方别名；新卡片优先写 date_picker',
+  );
+
+export type PickerDate = z.infer<typeof PickerDateSchema>;
 
 /**
  * 时间选择器（picker_time）。
@@ -419,11 +517,20 @@ export const PickerTimeSchema = z
       .describe('表单项标识，卡片内唯一；表单内使用时必填'),
     required: z.boolean().optional().describe('是否必填，默认 false'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     /** HH:mm */
     initial_time: z
       .string()
       .optional()
       .describe('默认选中时间，格式 HH:mm'),
+    initial_date: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认日期'),
+    initial_datetime: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认日期时间'),
     placeholder: TipsTextSchema.optional().describe('占位提示文案'),
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
@@ -455,11 +562,20 @@ export const PickerDatetimeSchema = z
       .describe('表单项标识，卡片内唯一；表单内使用时必填'),
     required: z.boolean().optional().describe('是否必填，默认 false'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     /** yyyy-MM-dd HH:mm */
     initial_datetime: z
       .string()
       .optional()
       .describe('默认选中日期时间，格式 yyyy-MM-dd HH:mm'),
+    initial_date: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认日期'),
+    initial_time: z
+      .string()
+      .optional()
+      .describe('兼容字段：默认时间'),
     placeholder: TipsTextSchema.optional().describe('占位提示文案'),
     width: InteractiveWidthSchema.optional().describe('组件宽度'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
@@ -510,6 +626,11 @@ export const SelectImgSchema = z
       .enum(['stretch', 'bisect', 'trisect'])
       .optional()
       .describe('图片排布：stretch / bisect / trisect，默认 bisect'),
+    style: z
+      .enum(['default', 'laser'])
+      .optional()
+      .describe('选择器样式：default / laser，默认 default'),
+    width: InteractiveWidthSchema.optional().describe('组件宽度'),
     name: z
       .string()
       .optional()
@@ -523,6 +644,10 @@ export const SelectImgSchema = z
       .enum(['1:1', '16:9', '4:3'])
       .optional()
       .describe('图片宽高比，默认 1:1'),
+    selected_values: z
+      .array(z.string())
+      .optional()
+      .describe('默认选中的选项 value 列表'),
     disabled: z.boolean().optional().describe('是否禁用整个组件，默认 false'),
     disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     value: z
@@ -544,6 +669,7 @@ export const CheckerSchema = z
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     name: z.string().optional().describe('勾选器标识'),
+    required: z.boolean().optional().describe('是否必填，默认 false'),
     checked: z.boolean().optional().describe('初始是否勾选，默认 false'),
     text: z
       .object({
@@ -603,6 +729,10 @@ export const CheckerSchema = z
     hover_tips: TipsTextSchema.optional().describe('悬浮提示'),
     disabled: z.boolean().optional().describe('是否禁用，默认 false'),
     disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
   })
   .describe('勾选器（checker）,一个单独的组件，和input没有关系');
 

@@ -9,7 +9,12 @@
  *
  * 传输层（stdio JSON-RPC）在 server.ts，可运行于 Node.js / WebWorker。
  */
-import { parse, type JsonObjectNode, type JsonNode } from '@open-feishu-card/parser';
+import {
+  parse,
+  resolveCardDocument,
+  serializeCardDocument,
+  type JsonObjectNode,
+} from '@open-feishu-card/parser';
 import { sanitize } from '@open-feishu-card/compiler';
 import { validateAst, type Diagnostic } from '@open-feishu-card/validator';
 import { lintAst, type LintDiagnostic } from '@open-feishu-card/linter';
@@ -199,10 +204,12 @@ export function quickFixes(source: string, range: LspRange): CodeAction[] {
 
 /** 全文档级快速修复：一键净化（剥离全部非标属性），返回整文档替换编辑 */
 export function sanitizeAllAction(source: string): CodeAction | undefined {
-  const { ast, data } = { ast: parse(source).ast, data: parse(source).data };
-  if (!ast || data === undefined) return undefined;
-  const { stripped, card } = sanitize(data, { mode: 'strip' });
+  const parsed = parse(source);
+  const resolved = resolveCardDocument(parsed);
+  if (!resolved) return undefined;
+  const { stripped, card } = sanitize(resolved.cardData, { mode: 'strip' });
   if (stripped.length === 0) return undefined;
+  const output = serializeCardDocument(resolved, card);
   const lines = source.split('\n');
   const lastLine = lines.length - 1;
   return {
@@ -215,7 +222,7 @@ export function sanitizeAllAction(source: string): CodeAction | undefined {
           start: { line: 0, character: 0 },
           end: { line: lastLine, character: lines[lastLine].length },
         },
-        newText: JSON.stringify(card, null, 2) + '\n',
+        newText: JSON.stringify(output, null, 2) + '\n',
       },
     ],
   };

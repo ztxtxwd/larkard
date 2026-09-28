@@ -9,7 +9,12 @@ import {
 } from 'vscode-languageclient/node';
 import { renderDslToString } from '@open-feishu-card/renderer';
 import { sanitize } from '@open-feishu-card/compiler';
-import { parse } from '@open-feishu-card/parser';
+import {
+  parse,
+  resolveCardDocument,
+  serializeCardDocument,
+  unwrapCardData,
+} from '@open-feishu-card/parser';
 
 type PreviewSettings = { theme: string; maxWidth: number };
 type PreviewPayload =
@@ -20,11 +25,13 @@ export function activate(context: vscode.ExtensionContext): void {
   const renderer = new CardRenderer();
   const previews = new PreviewPanelManager(context, renderer);
   const customEditor = new FeishuCardEditorProvider(context, renderer);
+  const sidePreview = new SidePreviewController(previews);
 
   const languageClient = createLanguageClient(context);
 
   context.subscriptions.push(
     previews,
+    sidePreview,
     ...(languageClient ? [languageClient] : []),
     vscode.window.registerCustomEditorProvider(
       FeishuCardEditorProvider.viewType,
@@ -63,21 +70,22 @@ export function activate(context: vscode.ExtensionContext): void {
         void vscode.window.showErrorMessage('Sanitize only applies to .card files.');
         return;
       }
-      const { data } = parse(document.getText());
-      if (data === undefined) {
+      const resolved = resolveCardDocument(parse(document.getText()));
+      if (!resolved) {
         void vscode.window.showErrorMessage('Not a valid card JSON document.');
         return;
       }
-      const { stripped, card } = sanitize(data, { mode: 'strip' });
+      const { stripped, card } = sanitize(resolved.cardData, { mode: 'strip' });
       if (stripped.length === 0) {
         void vscode.window.showInformationMessage('Card is clean — no non-standard properties found.');
         return;
       }
+      const output = serializeCardDocument(resolved, card);
       await editor.edit((edit) => {
         const lastLine = document.lineCount - 1;
         edit.replace(
           new vscode.Range(0, 0, lastLine, document.lineAt(lastLine).text.length),
-          JSON.stringify(card, null, 2) + '\n',
+          JSON.stringify(output, null, 2) + '\n',
         );
       });
       void vscode.window.showInformationMessage(
@@ -86,6 +94,9 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
     ...legacyCommandAliases(),
   );
+
+  // 默认走「源码 + 侧边预览」，保证 LSP 诊断/补全可用
+  sidePreview.syncVisibleEditors();
 }
 
 export function deactivate(): Promise<void> | undefined {
@@ -124,6 +135,55 @@ function cardConfigValue<T>(key: string, fallback: T): T {
 
 function cardConfigChanged(event: vscode.ConfigurationChangeEvent): boolean {
   return event.affectsConfiguration('openFeishuCard') || event.affectsConfiguration('larkCardPreview');
+}
+
+/** 打开 *.card 文本编辑器时自动侧边预览（可关）；关掉预览后本会话不再强开 */
+class SidePreviewController implements vscode.Disposable {
+  private readonly opened = new Set<string>();
+  private readonly dismissed = new Set<string>();
+  private readonly changeEditor: vscode.Disposable;
+  private readonly changeConfig: vscode.Disposable;
+  private readonly closedPreview: vscode.Disposable;
+
+  constructor(private readonly previews: PreviewPanelManager) {
+    this.changeEditor = vscode.window.onDidChangeActiveTextEditor((editor) => {
+      if (editor) void this.maybeOpen(editor.document);
+    });
+    this.changeConfig = vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('openFeishuCard.preview.openOnSide')
+        || event.affectsConfiguration('larkCardPreview.preview.openOnSide')) {
+        this.syncVisibleEditors();
+      }
+    });
+    this.closedPreview = this.previews.onDidClosePreview((uri) => {
+      this.dismissed.add(uri.toString());
+    });
+  }
+
+  syncVisibleEditors(): void {
+    for (const editor of vscode.window.visibleTextEditors) {
+      void this.maybeOpen(editor.document);
+    }
+  }
+
+  private async maybeOpen(document: vscode.TextDocument): Promise<void> {
+    if (!isCardDocument(document)) return;
+    if (!cardConfigValue<boolean>('preview.openOnSide', true)) return;
+    const key = document.uri.toString();
+    if (this.opened.has(key) || this.dismissed.has(key)) return;
+    if (this.previews.has(document.uri)) {
+      this.opened.add(key);
+      return;
+    }
+    this.opened.add(key);
+    await this.previews.open(document.uri);
+  }
+
+  dispose(): void {
+    this.changeEditor.dispose();
+    this.changeConfig.dispose();
+    this.closedPreview.dispose();
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -192,10 +252,7 @@ function isCardDocument(document: vscode.TextDocument): boolean {
 }
 
 function getDsl(input: unknown): unknown {
-  if (typeof input === 'object' && input !== null && 'dsl' in input) {
-    return (input as { dsl: unknown }).dsl;
-  }
-  return input;
+  return unwrapCardData(input);
 }
 
 class FeishuCardEditorProvider implements vscode.CustomTextEditorProvider {
@@ -245,6 +302,8 @@ class PreviewPanelManager implements vscode.Disposable {
   private readonly panels = new Map<string, { panel: vscode.WebviewPanel; document: vscode.TextDocument }>();
   private readonly changes: vscode.Disposable;
   private readonly configuration: vscode.Disposable;
+  private readonly closeEmitter = new vscode.EventEmitter<vscode.Uri>();
+  readonly onDidClosePreview = this.closeEmitter.event;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -257,6 +316,10 @@ class PreviewPanelManager implements vscode.Disposable {
     this.configuration = vscode.workspace.onDidChangeConfiguration((event) => {
       if (cardConfigChanged(event)) this.refreshVisible();
     });
+  }
+
+  has(uri: vscode.Uri): boolean {
+    return this.panels.has(uri.toString());
   }
 
   async open(uri: vscode.Uri): Promise<void> {
@@ -279,7 +342,10 @@ class PreviewPanelManager implements vscode.Disposable {
     panel.webview.html = createWebviewHtml(panel.webview, this.context, document.fileName, false);
     this.panels.set(key, { panel, document });
     panel.iconPath = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'icon.png');
-    panel.onDidDispose(() => this.panels.delete(key));
+    panel.onDidDispose(() => {
+      this.panels.delete(key);
+      this.closeEmitter.fire(uri);
+    });
     panel.webview.onDidReceiveMessage((message: { type?: string; line?: number; column?: number }) => {
       if (message.type === 'ready' || message.type === 'refresh') {
         this.update(panel, document);
@@ -298,6 +364,7 @@ class PreviewPanelManager implements vscode.Disposable {
   dispose(): void {
     this.changes.dispose();
     this.configuration.dispose();
+    this.closeEmitter.dispose();
     for (const { panel } of this.panels.values()) panel.dispose();
   }
 

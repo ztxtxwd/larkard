@@ -3,8 +3,17 @@
  *
  * 与 validator（Schema 正确性）互补的静态最佳实践检查：
  * 嵌套深度、元素数量、超长文本、空 body、硬编码用户 ID 等。
+ *
+ * 输入可为裸 Card JSON，或搭建工具文档；规则作用在解包后的卡片子树上。
  */
-import { parse, type JsonNode, type JsonObjectNode, type Range } from '@open-feishu-card/parser';
+import {
+  parse,
+  resolveCardDocumentAst,
+  astToValue,
+  type JsonNode,
+  type JsonObjectNode,
+  type Range,
+} from '@open-feishu-card/parser';
 
 export type LintSeverity = 'warning' | 'information' | 'hint';
 
@@ -147,20 +156,22 @@ function lintMissingSchema(root: JsonObjectNode, ctx: Ctx): void {
   }
 }
 
-/** 对已解析 AST 执行全部 lint 规则 */
+/** 对已解析 AST 执行全部 lint 规则（自动解包搭建工具文档） */
 export function lintAst(ast: JsonObjectNode | undefined, options: LintOptions = {}): LintDiagnostic[] {
   if (!ast) return [];
+  const resolved = resolveCardDocumentAst(ast, astToValue(ast));
+  const cardAst = resolved.cardAst;
   const ctx: Ctx = {
     diagnostics: [],
     maxDepth: options.maxDepth ?? 8,
     maxElements: options.maxElements ?? 200,
     maxTextLength: options.maxTextLength ?? 3000,
   };
-  lintDepth(ast, ctx);
-  lintElementCount(ast, ctx);
-  lintEmptyBody(ast, ctx);
-  lintMissingSchema(ast, ctx);
-  lintLongText(ast, ctx);
+  lintDepth(cardAst, ctx);
+  lintElementCount(cardAst, ctx);
+  lintEmptyBody(cardAst, ctx);
+  lintMissingSchema(cardAst, ctx);
+  lintLongText(cardAst, ctx);
   return ctx.diagnostics;
 }
 

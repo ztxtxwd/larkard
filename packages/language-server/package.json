@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/language-server",
-  "version": "0.1.4",
+  "version": "0.1.18",
   "description": "飞书卡片 LSP 语言服务器：诊断、智能补全、Hover、Code Action 快速修复",
   "type": "module",
   "main": "./dist/index.cjs",

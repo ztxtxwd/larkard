@@ -95,6 +95,34 @@ test('dslToRaw: header 文本叶子 = {tag:plain_text,property:{content}}', () =
   assert.deepEqual(raw.header.property.title, { tag: 'plain_text', property: { content: '关于配合发布会的通知' } });
 });
 
+test('dslToRaw: header subtitle lark_md → markdown elements', () => {
+  const raw = dslToRaw({
+    header: {
+      title: { tag: 'plain_text', content: '事件复盘' },
+      subtitle: { tag: 'lark_md', content: '<at id=ou_113></at>' },
+    },
+    body: { elements: [] },
+  });
+  const subtitle = raw.header.property.subtitle;
+  assert.equal(subtitle.tag, 'markdown');
+  assert.equal(subtitle.property.originTag, 'lark_md');
+  assert.equal(subtitle.property.elements[0].tag, 'at');
+  assert.equal(subtitle.property.elements[0].property.userID, 'ou_113');
+});
+
+test('header subtitle lark_md：渲染 @ 提及', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    header: {
+      title: { tag: 'plain_text', content: '事件复盘' },
+      subtitle: { tag: 'lark_md', content: '<at id=ou_113></at>' },
+    },
+    body: { elements: [] },
+  }, { persons: { ou_113: { content: '赵天雄' } } });
+  assert.match(html, /@赵天雄/);
+  assert.doesNotMatch(html, /&lt;at/);
+});
+
 /* ---- box 简写字符串 → 对象 ---- */
 
 test('padding/margin: CSS 简写 → 四向对象', () => {
@@ -175,6 +203,45 @@ test('button: behaviors[open_url] → 可点链接', () => {
   ] } });
   assert.match(html, /href="https:\/\/x\.cn"/);
   assert.match(html, /打开/);
+});
+
+// 对齐真机：正文图 margin 左右 20px，不能贴卡片边
+test('img: margin 水平边距 → wrapper calc width', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'img',
+    img_key: 'img_v3_test',
+    margin: '8px 20px 0px 20px',
+    scale_type: 'fit_horizontal',
+    preview: true,
+    corner_radius: '8px',
+  }] } });
+  assert.match(html, /universal-card-image__wrapper[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
+});
+
+// 对齐真机：video / fill 按钮 margin 左右 20px，不能贴卡片边
+test('video: margin 水平边距 → calc width', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'video',
+    file_key: 'file_v3_demo',
+    cover: { img_key: 'img_v3_cover' },
+    margin: '8px 20px 0px 20px',
+  }] } });
+  assert.match(html, /universal-card-video[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-video[^>]*width:calc\(100% - 40px\)/);
+});
+
+test('button: margin 水平边距 + width=fill → calc width', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'button',
+    text: '为妙卡投上关键一票',
+    type: 'primary_filled',
+    width: 'fill',
+    margin: '12px 20px 0px 20px',
+    behaviors: [{ type: 'open_url', default_url: { url: 'https://x.cn' } }],
+  }] } });
+  assert.match(html, /universal-card-button--block[^>]*margin:12px 20px 0px 20px/);
+  assert.match(html, /universal-card-button--block[^>]*width:calc\(100% - 40px\)/);
 });
 
 /* ---- person → person_v1 ---- */
@@ -557,6 +624,81 @@ test('table: number 精度 + 行数据', () => {
   assert.match(html, /比亚迪汽车/);
 });
 
+test('renderDslToString: config.style.color cus-* backgrounds and text render as rgba', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    config: {
+      update_multi: true,
+      style: {
+        color: {
+          'cus-bg-0': { light_mode: 'rgba(217,107,39,0.08)', dark_mode: 'rgba(217,107,39,0.15)' },
+          'cus-accent': { light_mode: 'rgba(217,107,39,1)', dark_mode: 'rgba(217,107,39,1)' },
+          'cus-text-1': { light_mode: 'rgba(110,115,125,1)', dark_mode: 'rgba(166,166,166,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'column_set',
+        columns: [{
+          tag: 'column',
+          background_style: 'cus-bg-0',
+          elements: [
+            { tag: 'markdown', content: "<font color='cus-accent'>**85%**</font>", text_align: 'center', text_size: 'heading' },
+            { tag: 'markdown', content: "<font color='cus-text-1'>caption</font>", text_align: 'center', text_size: 'small' },
+          ],
+        }],
+      }],
+    },
+  });
+  assert.match(html, /background:rgba\(217,107,39,0\.08\)/);
+  assert.match(html, /color:rgba\(217,107,39,1\)/);
+  assert.match(html, /color:rgba\(110,115,125,1\)/);
+  assert.match(html, /85%/);
+  assert.match(html, /caption/);
+});
+
+test('renderDslToString: interactive_container + collapsible_panel cus-* backgrounds', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    config: {
+      style: {
+        color: {
+          'cus-canvas': { light_mode: 'rgba(250,249,245,1)', dark_mode: 'rgba(250,249,245,1)' },
+          'cus-ink': { light_mode: 'rgba(20,20,19,1)', dark_mode: 'rgba(20,20,19,1)' },
+          'cus-panel': { light_mode: 'rgba(245,244,237,1)', dark_mode: 'rgba(245,244,237,1)' },
+          'cus-secondary': { light_mode: 'rgba(232,230,220,1)', dark_mode: 'rgba(232,230,220,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [
+        {
+          tag: 'interactive_container',
+          background_style: 'cus-canvas',
+          elements: [{
+            tag: 'interactive_container',
+            background_style: 'cus-ink',
+            corner_radius: '999px',
+            elements: [{ tag: 'markdown', content: 'tag' }],
+          }],
+        },
+        {
+          tag: 'collapsible_panel',
+          background_color: 'cus-panel',
+          border: { color: 'cus-secondary', corner_radius: '10px' },
+          header: { title: { tag: 'plain_text', content: 'section' } },
+          elements: [{ tag: 'markdown', content: 'detail' }],
+        },
+      ],
+    },
+  });
+  assert.match(html, /background:rgba\(250,249,245,1\)/);
+  assert.match(html, /background:rgba\(20,20,19,1\)/);
+  assert.match(html, /background:rgba\(245,244,237,1\)/);
+  assert.match(html, /border:1px solid rgba\(232,230,220,1\)/);
+});
+
 test('table: options 渲染成彩色标签', () => {
   const html = renderDslToString(dslTable);
   assert.match(html, /universal-card-text-tag--green/);
@@ -850,4 +992,38 @@ test('e2e: 乘用车报告卡（chart + table + markdown）整卡渲染', () => 
   assert.match(html, /universal-card-chart/);
   assert.match(html, /universal-card-table__table/);
   assert.match(html, /比亚迪汽车/);
+});
+
+test('avatar / collapse_divider / fallback_text / picker_date 可渲染', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [
+        { tag: 'avatar', user_id: 'ou_demo', size: 'medium' },
+        {
+          tag: 'picker_date',
+          initial_date: '2026-09-01',
+          placeholder: { tag: 'plain_text', content: '选日期' },
+          behaviors: [{ type: 'callback', value: {} }],
+        },
+        {
+          tag: 'fallback_text',
+          text: { tag: 'plain_text', content: '兜底文案' },
+        },
+        {
+          tag: 'collapsible_panel',
+          header: { title: { tag: 'plain_text', content: '面板' } },
+          elements: [
+            { tag: 'collapse_divider' },
+            { tag: 'markdown', content: '内容' },
+          ],
+        },
+      ],
+    },
+  });
+  assert.match(html, /universal-card-avatar/);
+  assert.match(html, /universal-card-input--static/);
+  assert.match(html, /兜底文案/);
+  assert.match(html, /universal-card-collapse-divider/);
+  assert.match(html, /universal-card-collapsible-panel/);
 });

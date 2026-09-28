@@ -1,5 +1,126 @@
 # @open-feishu-card/renderer
 
+## 0.2.22
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.13
+
+## 0.2.21
+
+### Patch Changes
+
+- `video`、`button` 应用 `margin`（含水平外边距时 `width: calc(100% - L - R)`），修复与真机左右间距不一致。
+
+## 0.2.20
+
+### Patch Changes
+
+- 正文 `<font color='white'>` / `textStyle.color=white` 映射到 `N00`（对齐引擎 static-white），修复紫底等深色容器上白字被当成默认深色渲染的问题；顺带补齐 `black → N800`。
+
+## 0.2.19
+
+### Patch Changes
+
+- `img` 应用 `margin`（含水平外边距时 `width: calc(100% - L - R)`），修复正文图左右贴边、与真机不一致。
+
+## 0.2.18
+
+### Patch Changes
+
+- 去掉 `interactive_container` CSS 默认 `border-radius: 6px`；未声明或空 `corner_radius` 时不输出圆角，对齐飞书真机。
+
+## 0.2.17
+
+### Patch Changes
+
+- 新增 `avatar`、`collapse_divider`、`fallback_text` 渲染
+- 日期/人员选择器（`date_picker`、`picker_time`、`picker_datetime`、`select_person`、`multi_select_person`）静态预览框
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.12
+
+## 0.2.16
+
+### Patch Changes
+
+- `collapsible_panel` 折叠标题色对齐真机 `--text-caption`（`var(--N600)`），不再用正文近黑 `#1f2329`
+
+## 0.2.15
+
+### Patch Changes
+
+- 对齐真机：`img.size`（`Wpx Hpx`）定宽高；`interactive_container` 应用宽高与外边距；`collapsible_panel` 支持 `icon_position: follow_text`、未指定时不描边、应用 margin
+- 水平外边距与 `body > * { width:100% }` 冲突时改为 `calc(100% - L - R)`，避免块相对卡片边框左右不对称
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.11
+
+## 0.2.14
+
+### Patch Changes
+
+- `collapsible_panel` 优先读取 `customBackgroundStyle`（cus-* 经 dslToRaw 展开），修复折叠面板自定义背景色不显示
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.10
+
+## 0.2.13
+
+### Patch Changes
+
+- root 默认 `border: 1px solid var(--N300)` 对齐飞书网页版 `--line-border-card`；独立渲染器无消息气泡外包层时在 root 绘制边框
+
+## 0.2.12
+
+### Patch Changes
+
+- body padding 显式 0 覆盖 CSS 默认白边；interactive_container verticalSpacing 与仅可点击时 pointer/hover；去掉 root 默认边框；customBorderColor / cornerRadiusValue / markdown margin 对齐真机
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.8
+
+## 0.2.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.6
+
+## 0.2.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.5
+
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.4
+
+## 0.2.8
+
+### Patch Changes
+
+- RAW 自定义颜色：`customBackgroundStyle` / `textStyle.customColor` 投影与渲染；`rawToDsl` 输出自动 `normalizeStoredCardColors`。
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.3
+
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.2
+
+## 0.2.6
+
+### Patch Changes
+
+- header title/subtitle 支持 lark_md：RAW 的 originTag:lark_md 投影为公开 `{ tag:'lark_md', content }`，回写时解析成 markdown 元素树，渲染器画出 @ 提及而不是字面 `<at>`。
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.1
+
 ## 0.2.5
 
 ### Patch Changes

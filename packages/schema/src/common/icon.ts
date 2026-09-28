@@ -54,6 +54,10 @@ export type Icon = z.infer<typeof IconSchema>;
  */
 export const UdIconSchema = z
   .object({
+    tag: z
+      .literal('ud_icon')
+      .optional()
+      .describe('图标类型，固定为 ud_icon（可省略）'),
     token: IconTokenSchema.optional().describe('图标库 token 枚举'),
     style: z
       .object({
@@ -61,6 +65,8 @@ export const UdIconSchema = z
       })
       .optional()
       .describe('图标样式'),
+    element_id: z.string().optional().describe('元素唯一标识'),
+    margin: z.string().optional().describe('外边距'),
   })
   .describe('历史人员列表前缀图标（ud_icon）；与 icon 同时存在时以 icon 为准');
 

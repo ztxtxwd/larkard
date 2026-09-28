@@ -24,12 +24,15 @@ import { EMOJI_KEY_TO_NAME, EMOJI_SPRITE_CSS } from './emoji-data';
 import { parseMarkdown } from './md-parse';
 import { h } from './vnode';
 import {
-  alignToStyle, bgStyleToColor, boxToStyle, extractPlainText, extractText, getChildElements,
+  alignToStyle, applyOuterMargin, bgStyleToColor, boxToStyle, extractPlainText, extractText,
+  getChildElements, propertyBackgroundColor, resolveCornerRadius,
   lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
-  resolveColor, resolveImageSrc, resolveMediaSrc, resolveTextSizeKey, resolveURL,
-  resolveVideoCoverSrc, sizeToPx, spacingToPx, textStyleToModifiers, textStyleToStyle,
+  resolveColor, resolveDimensionPx, resolveImageSize, resolveImageSrc, resolveMediaSrc,
+  resolveTextSizeKey, resolveURL, resolveVideoCoverSrc, sizeToPx, spacingToPx,
+  textStyleToModifiers, textStyleToStyle,
 } from './registry';
+import { resolveCustomBorderLight } from '@open-feishu-card/adapter';
 import {
   AUDIO_PAUSE_FLAT_ICON_SVG, AUDIO_PAUSE_ICON_SVG,
   AUDIO_PLAY_FLAT_ICON_SVG, AUDIO_PLAY_ICON_SVG,
@@ -389,6 +392,33 @@ function resolveChartBoxStyle(
   return style;
 }
 
+/**
+ * header.title / header.subtitle：plain_text 用 content 字符串；
+ * lark_md / markdown 走子元素树（真机 RAW 只有 elements，没有 content）。
+ * 仅有 content 字符串时现场 parseMarkdown，避免 <at> 当字面量漏出。
+ */
+function renderHeaderTextLeaf(
+  node: CardElement | undefined,
+  ctx: RenderContext,
+  className: string,
+): VNode | null {
+  if (!node) return null;
+  const tag = node.tag;
+  const p = node.property || {};
+  const isMd = tag === 'markdown' || tag === 'lark_md';
+  if (isMd) {
+    let elements = Array.isArray(p.elements) ? p.elements : [];
+    if (elements.length === 0 && typeof p.content === 'string' && p.content) {
+      elements = parseMarkdown(p.content);
+    }
+    if (elements.length === 0) return null;
+    return h('div', { className }, renderElements(elements, ctx));
+  }
+  const content = typeof p.content === 'string' ? p.content : '';
+  if (!content) return null;
+  return h('div', { className }, content);
+}
+
 /** 注册全部内置组件（幂等）。index.ts 在加载时调用一次。 */
 export function registerBuiltins(): void {
   if (registered) return;
@@ -416,12 +446,11 @@ export function registerBuiltins(): void {
   //   __bg → __content(row) → [__icon?] + __text(column: title-wrapper + subtitle)
   // text_tag_list（DSL snake_case，兼容 camelCase textTagList）：标题右侧彩色标签。
   // icon / udIcon：标题左侧图标；未指定 color 时继承 header 模板标题色。
+  // title / subtitle 支持 plain_text 与 lark_md（真机 RAW 为 tag:markdown + originTag:lark_md）。
   registerComponent('card_header', (el, ctx) => {
   const p = el.property || {};
   const tplKey = (p.template || 'default') as keyof typeof HEADER_TEMPLATE;
   const tpl = HEADER_TEMPLATE[tplKey] || HEADER_TEMPLATE.default;
-  const title = p.title?.property?.content ?? '';
-  const subtitle = p.subtitle?.property?.content ?? '';
   const tags = (p.text_tag_list || p.textTagList) as CardElement[] | undefined;
   const tagVNodes = Array.isArray(tags) && tags.length ? renderElements(tags, ctx) : [];
 
@@ -440,12 +469,16 @@ export function registerBuiltins(): void {
     if (inner) iconVNode = h('div', { className: `${CLS}-header__icon` }, inner);
   }
 
+  const titleVNode = renderHeaderTextLeaf(p.title, ctx, `${CLS}-header__text-title`)
+    ?? h('div', { className: `${CLS}-header__text-title` });
+  const subtitleVNode = renderHeaderTextLeaf(p.subtitle, ctx, `${CLS}-header__text-subtitle`);
+
   const textChildren: Array<VNode | null> = [
     h('div', { className: `${CLS}-header__text-title-wrapper` },
-      h('div', { className: `${CLS}-header__text-title` }, String(title)),
+      titleVNode,
       tagVNodes.length ? h('div', { className: `${CLS}-header__tags` }, tagVNodes) : null
     ),
-    subtitle ? h('div', { className: `${CLS}-header__text-subtitle` }, String(subtitle)) : null,
+    subtitleVNode,
   ];
 
   return h('div', {
@@ -477,6 +510,7 @@ export function registerBuiltins(): void {
 registerComponent('markdown', (el, ctx) => {
   const p = el.property || {};
   const style = { ...alignToStyle(p.textAlign), ...textStyleToStyle(p.textStyle) };
+  applyOuterMargin(style, p.margin);
   const sizeKey = resolveTextSizeKey(p);
   // 有显式字号才写死字号/行高；缺省走 CSS（14px / line-height:1.6）
   // 行高取引擎 ce 表：字号≤16 时 = 字号+8（12→20 / 14→22 / 16→24）
@@ -565,12 +599,12 @@ registerComponent('column_set', (el, ctx) => {
     style.justifyContent =
       ({ left: 'flex-start', center: 'center', right: 'flex-end' } as Record<string, string>)[hAlign] || 'flex-start';
   }
-  // margin：分栏容器自身的外边距（可为负，如 -8px 上移，紧贴上一块）——如实透传。
-  const mg = boxToStyle(p.margin);
-  if (mg) style.margin = mg;
+  // margin：分栏容器自身的外边距（可为负，如 -8px 上移，紧贴上一块）；
+  // 有水平外边距时用 calc 抵消 body 子项 width:100%，避免两侧被裁切。
+  applyOuterMargin(style, p.margin);
   // 背景：DSL background_style / RAW backgroundStyle。grey → var(--bg-float-overlay)。
   // 有底色挂 --bg：真机 CSS 给 padding:4px + border-radius:6px。DSL padding 仍可覆盖。
-  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
@@ -609,7 +643,7 @@ registerComponent('column', (el, ctx) => {
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
   style.rowGap = (vGap != null ? spacingToPx(vGap as number | string) : 8) + 'px';
   // 背景：有底色挂 --bg（CSS 给 6px 圆角；默认 padding 仍是 0，内边距须 DSL 显式写）。
-  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
@@ -631,16 +665,33 @@ registerComponent('img', (el, ctx) => {
   const wrapStyle: Record<string, string> = {};
   const imgStyle: Record<string, string> = {};
   if (p.corner_radius != null) imgStyle.borderRadius = sizeToPx(p.corner_radius);
-  // fit_horizontal / stretch：图片填满所在列宽（飞书网页版同样 width:100%）
-  if (scale === 'fit_horizontal' || scale === 'stretch') {
+  // size:"24px 24px" / sizeValue width_height_pixels：图标格等定宽高（缺省会按原图撑爆）
+  const sized = resolveImageSize(p as Record<string, unknown>);
+  if (sized.width && sized.height) {
+    wrapStyle.width = sized.width;
+    wrapStyle.height = sized.height;
+    wrapStyle.flexShrink = '0';
+    imgStyle.width = '100%';
+    imgStyle.height = '100%';
+    imgStyle.objectFit = scale === 'fit_horizontal' || scale === 'stretch' ? 'fill' : 'cover';
+  } else if (sized.aspectRatio) {
+    wrapStyle.width = '100%';
+    imgStyle.width = '100%';
+    imgStyle.aspectRatio = sized.aspectRatio;
+    imgStyle.height = 'auto';
+    imgStyle.objectFit = 'cover';
+  } else if (scale === 'fit_horizontal' || scale === 'stretch') {
+    // fit_horizontal / stretch：图片填满所在列宽（飞书网页版同样 width:100%）
     wrapStyle.width = '100%';
     imgStyle.width = '100%';
     imgStyle.height = 'auto';
   }
+  // 外边距（如正文图 margin:8px 20px）；水平 margin 时 width 改为 calc 抵消 body>*{width:100%}
+  applyOuterMargin(wrapStyle, p.margin);
   return h('div', { className: `${CLS}-image__wrapper`, style: wrapStyle },
     src
       ? h('img', { className: `${CLS}-image__host`, src, alt: altText, style: imgStyle })
-      : h('div', { className: `${CLS}-image__placeholder` }, altText || '[图片]')
+      : h('div', { className: `${CLS}-image__placeholder`, style: imgStyle }, altText || '[图片]')
   );
 });
 
@@ -652,6 +703,13 @@ registerComponent('video', (el, ctx) => {
   const cover = resolveVideoCoverSrc(p, ctx);
   const showTime = p.showTime !== false && p.show_time !== false;
   const enableDownload = p.enableDownload === true || p.enable_download === true;
+  // 外边距（如 margin:8px 20px）；水平 margin 时 width 改为 calc 抵消 body>*{width:100%}
+  const style: Record<string, string> = {};
+  if (p.margin) {
+    style.width = '100%';
+    applyOuterMargin(style, p.margin);
+  }
+  const styleProp = Object.keys(style).length ? { style } : {};
   // 有可播放地址：对齐真机 <video class="universal-card-video" controls preload="metadata">
   if (src) {
     const props: Record<string, unknown> = {
@@ -659,6 +717,7 @@ registerComponent('video', (el, ctx) => {
       src,
       controls: true,
       preload: 'metadata',
+      ...styleProp,
     };
     // 禁止下载时收紧 controlslist（浏览器支持度不一，尽力对齐）
     if (!enableDownload) props.controlslist = 'nodownload';
@@ -666,7 +725,7 @@ registerComponent('video', (el, ctx) => {
     return h('video', props);
   }
   // 无 src：封面态（播放钮 + 可选时长角标）。时长真机运行期从媒体元数据取，离线未知 → 不写假数字。
-  return h('div', { className: `${CLS}-video` },
+  return h('div', { className: `${CLS}-video`, ...styleProp },
     h('div', { className: `${CLS}-video__cover` },
       cover
         ? h('img', { className: `${CLS}-video__host-image`, src: cover, alt: '' })
@@ -807,27 +866,43 @@ registerComponent('interactive_container', (el, ctx) => {
   // 取首个 open_url 行为的地址；action.url 可能是字符串或多端对象
   const act = Array.isArray(p.actions) ? (p.actions[0] as { action?: { url?: unknown } } | undefined) : undefined;
   const url = resolveURL(act?.action?.url);
+  const hasActions = Array.isArray(p.actions) && p.actions.length > 0;
+  const clickable = !disabled && (Boolean(url) || hasActions);
   const tip = extractText(p.hoverTips as never);
-  // border_color（DSL snake_case，兼容 camelCase borderColor）：命名色/色阶/自定义色 → hex。
-  // 给了颜色即视为有边框（对齐真机：容器 border-color/-style/-width 显式输出）；
-  // 否则退回 has_border 的默认灰边（--bordered 类）。
-  const borderColor = resolveColor((p.border_color ?? (p as { borderColor?: string }).borderColor) as string | undefined);
-  const hasBorder = borderColor != null || p.hasBorder === true;
+  // border_color / customBorderColor：命名色/色阶/自定义色 → hex。
+  const borderNamed = (p.border_color ?? (p as { borderColor?: string }).borderColor) as string | undefined;
+  const borderCustom = resolveCustomBorderLight(p);
+  // 优先 customBorderColor（dslToRaw 已展开登记色）；命名色走色板。cus-/mm_* 别名本身解析不出。
+  const borderColor = (borderCustom ? resolveColor(borderCustom) : undefined)
+    ?? resolveColor(borderNamed);
+  const hasBorder = borderColor != null || p.hasBorder === true || p.has_border === true;
   const cls = `${CLS}-interactive-container`
+    + (clickable ? ` ${CLS}-interactive-container--action` : '')
     + (hasBorder && !borderColor ? ` ${CLS}-interactive-container--bordered` : '')
     + (disabled ? ` ${CLS}-interactive-container--disabled` : '');
   const style: Record<string, string> = {};
-  const bg = bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
-  // 有具体边框色时内联输出整条 border（覆盖 --bordered 的灰边）
   if (borderColor) style.border = `1px solid ${borderColor}`;
-  // corner_radius："8px" / 数字 → border-radius（缺省走 CSS 的 6px）
-  if (p.corner_radius != null) style.borderRadius = sizeToPx(p.corner_radius);
-  // width:"fill" → 撑满所在列（对齐真机 width:100%）。RAW 用 widthValue.builtin_*_width。
+  const radius = resolveCornerRadius(p as Record<string, unknown>);
+  if (radius != null) style.borderRadius = radius;
+  const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
+  if (vGap != null) style.rowGap = spacingToPx(vGap as number | string) + 'px';
+  // width/height：fill→100%；"48px"/widthValue.pixels→定宽高（图标容器）。
   const icWv = p.widthValue as { type?: string; value?: string | number } | undefined;
-  if ((p.width ?? icWv?.value) === 'fill') style.width = '100%';
+  const icHv = p.heightValue as { type?: string; value?: string | number } | undefined;
+  const w = resolveDimensionPx(p.width, icWv);
+  const hPx = resolveDimensionPx(p.height, icHv);
+  if (w) style.width = w;
+  if (hPx) {
+    style.height = hPx;
+    style.flexShrink = '0';
+    style.boxSizing = 'border-box';
+  }
+  // 外边距（卡片左右 20px 等）；定宽图标框不改 width。
+  applyOuterMargin(style, p.margin);
   const props: Record<string, unknown> = { className: cls };
   if (Object.keys(style).length) props.style = style;
   // disabled 时不挂跳转与 hover 提示，避免仍可点/仍出 tip
@@ -843,24 +918,34 @@ registerComponent('interactive_container', (el, ctx) => {
 // 结构：<details>（外层容器 border/background/radius）→ <summary>（标题 + 可旋转箭头图标）
 // → content（子元素；折叠态由浏览器隐藏）。expanded 决定初始展开态（映射到 <details open>）。
 // header 里的字段（DSL 扁平对象，未经 convertEl）：title（文本叶子或 plain_text）、
-// icon（standard_icon）、icon_position（left/right）、icon_expanded_angle（展开时旋转角度）、padding。
+// icon（standard_icon）、icon_position（left/right/follow_text）、icon_expanded_angle、padding。
 registerComponent('collapsible_panel', (el, ctx) => {
   const p = el.property || {};
   const hdr = (p.header && typeof p.header === 'object' ? p.header : {}) as Record<string, unknown>;
   const expanded = p.expanded !== false; // 缺省视为展开
 
-  // 外层容器样式：background_color（bg-white/命名色/自定义）+ border(color/corner_radius)。
+  // 外层容器样式：background_color（bg-white/命名色/登记色→customBackgroundStyle）+ 可选 border。
   const style: Record<string, string> = { width: '100%' };
   const bgRaw = (p.background_color ?? (p as { backgroundColor?: string }).backgroundColor) as string | undefined;
-  // 'bg-white' 等 design token 语义即白底；命名色/自定义走 resolveColor。
-  if (bgRaw === 'bg-white') style.background = '#fff';
+  // 优先 customBackgroundStyle（dslToRaw 已展开登记色）；再 bg-white / 命名色。
+  const bgCustom = propertyBackgroundColor(p);
+  if (bgCustom) style.background = bgCustom;
+  else if (bgRaw === 'bg-white') style.background = '#fff';
   else { const bg = bgStyleToColor(bgRaw); if (bg) style.background = bg; }
-  const border = (p.border && typeof p.border === 'object' ? p.border : {}) as { color?: string; corner_radius?: number | string };
-  const borderColor = resolveColor(border.color) || '#dee0e3';
-  style.border = `1px solid ${borderColor}`;
-  style.borderRadius = border.corner_radius != null ? sizeToPx(border.corner_radius) : '8px';
+  // 仅当 DSL/RAW 显式给了 border 对象才描边——真机未指定时无边框，只有底色圆角条。
+  const borderRaw = p.border;
+  if (borderRaw && typeof borderRaw === 'object') {
+    const border = borderRaw as { color?: string; corner_radius?: number | string };
+    const borderColor = resolveColor(border.color) || '#dee0e3';
+    style.border = `1px solid ${borderColor}`;
+    style.borderRadius = border.corner_radius != null ? sizeToPx(border.corner_radius) : '8px';
+  } else {
+    style.borderRadius = '8px';
+  }
+  applyOuterMargin(style, p.margin);
 
-  // header（<summary>）：标题 + 箭头图标，两者一行（icon_position 决定箭头在左/右）。
+  // header（<summary>）：标题 + 箭头图标。icon_position：
+  // left → 箭头在左；right（默认）→ 箭头贴右；follow_text → 箭头紧贴文字（不推到最右）。
   const headerStyle: Record<string, string> = {};
   const hpad = typeof hdr.padding === 'string'
     ? hdr.padding
@@ -876,7 +961,7 @@ registerComponent('collapsible_panel', (el, ctx) => {
   // 未包进 property——renderIcon 读 property，这里归一：无 property 时把元素自身当 property。
   let iconVNode: VNode | null = null;
   const iconRaw = hdr.icon as CardElement | undefined;
-  const openAngle = Number(hdr.icon_expanded_angle ?? -180);
+  const openAngle = Number(hdr.icon_expanded_angle ?? hdr.iconExpandedAngle ?? -180);
   if (iconRaw && iconRaw.tag) {
     const iconEl: CardElement = iconRaw.property
       ? iconRaw
@@ -886,11 +971,15 @@ registerComponent('collapsible_panel', (el, ctx) => {
       iconVNode = h('div', { className: `${CLS}-collapsible-panel__icon` }, inner);
     }
   }
-  const iconLeft = hdr.icon_position === 'left';
+  const iconPos = String(hdr.icon_position ?? hdr.iconPosition ?? 'right');
+  const iconLeft = iconPos === 'left';
+  const iconFollow = iconPos === 'follow_text' || iconPos === 'followText';
   const headerChildren = iconLeft ? [iconVNode, titleVNode] : [titleVNode, iconVNode];
   // 展开角写在 <summary> 上（作用域含箭头子节点）；--panel-icon-angle 供 CSS details[open] 取用。
   const summaryStyle = { ...headerStyle, '--panel-icon-angle': `${openAngle}deg` };
-  const summary = h('summary', { className: `${CLS}-collapsible-panel__header`, style: summaryStyle }, headerChildren);
+  const headerCls = `${CLS}-collapsible-panel__header`
+    + (iconFollow ? ` ${CLS}-collapsible-panel__header--icon-follow` : '');
+  const summary = h('summary', { className: headerCls, style: summaryStyle }, headerChildren);
 
   // 内容始终渲染：折叠态由 <details>（无 open 属性）交给浏览器隐藏，展开由用户点击控制。
   // 面板 padding 落到内容区（header 用 hdr.padding）；缺省走 CSS 的 0 12px 12px。
@@ -953,14 +1042,22 @@ registerComponent('button', (el, ctx) => {
   const widthTok = (p.width ?? wv?.value) as string | number | undefined;
   const block = widthTok === 'fill' && !isText;
   const base = `${CLS}-button ${CLS}-button--${type}${block ? ` ${CLS}-button--block` : ''}`;
+  // 外边距（如 margin:12px 20px）；fill 时水平 margin 用 calc 抵消 body>*{width:100%}。
+  // 非 fill 先写 width:auto，避免 applyOuterMargin 在未设 width 时误写成 calc 撑满。
+  const style: Record<string, string> = {};
+  if (p.margin) {
+    style.width = block ? '100%' : 'auto';
+    applyOuterMargin(style, p.margin);
+  }
+  const styleProp = Object.keys(style).length ? { style } : {};
   // 只有"点击跳转外链"（open_url / 直链）才保留为可点链接；
   // 其余动作（form_submit / action_request / 回调）在预览里无意义——
   // 保留按钮外观，但渲染成不可点的 <span>，不触发任何交互。
   if (url && !p.disabled) {
-    return h('a', { className: base, href: url, target: '_blank', rel: 'noopener' }, children);
+    return h('a', { className: base, href: url, target: '_blank', rel: 'noopener', ...styleProp }, children);
   }
   const cls = `${base} ${CLS}-button--static` + (p.disabled ? ` ${CLS}-button--disabled` : '');
-  return h('span', { className: cls }, children);
+  return h('span', { className: cls, ...styleProp }, children);
 });
 
 // form：表单容器。预览定位——不渲染表单语义，只透传内部元素（否则整块被跳过、
@@ -979,6 +1076,11 @@ function renderStaticField(el: CardElement) {
 registerComponent('input', (el) => renderStaticField(el));
 registerComponent('multi_select_static', (el) => renderStaticField(el));
 registerComponent('select_static', (el) => renderStaticField(el));
+registerComponent('date_picker', (el) => renderStaticField(el));
+registerComponent('picker_time', (el) => renderStaticField(el));
+registerComponent('picker_datetime', (el) => renderStaticField(el));
+registerComponent('select_person', (el) => renderStaticField(el));
+registerComponent('multi_select_person', (el) => renderStaticField(el));
 
 // checker：勾选器（交互组件）。结构对齐网页版飞书引擎：
 // checkbox-container + content（可选删除线/透明度）+ buttons（可选，on_hover 自动隐藏）。
@@ -1194,6 +1296,52 @@ registerComponent('ud_icon', renderIcon);
 registerComponent('person_v1', (el, ctx) => {
   const p = el.property || {};
   return renderPersonChip(p.userID, p, ctx);
+});
+
+/** avatar：仅头像。尺寸枚举 tiny/small/medium/large/huge；custom 时用 customSize(px)。 */
+const AVATAR_SIZE_PX: Record<string, number> = {
+  tiny: 16,
+  small: 24,
+  medium: 32,
+  large: 40,
+  huge: 48,
+};
+
+registerComponent('avatar', (el, ctx) => {
+  const p = el.property || {};
+  const userID = (p.userID || (p as { user_id?: string }).user_id) as string | undefined;
+  const sizeKey = String(p.size ?? 'medium');
+  const custom =
+    typeof p.customSize === 'number'
+      ? p.customSize
+      : typeof (p as { custom_size?: number }).custom_size === 'number'
+        ? (p as { custom_size: number }).custom_size
+        : undefined;
+  const px =
+    sizeKey === 'custom' && typeof custom === 'number' && custom > 0
+      ? custom
+      : AVATAR_SIZE_PX[sizeKey] || AVATAR_SIZE_PX.medium;
+  const { name, src } = resolvePersonDisplay(userID, ctx);
+  return h('div', { className: `${CLS}-avatar`, title: name },
+    renderAvatarNode(`${CLS}-avatar__img`, px, src, name),
+  );
+});
+
+/** collapse_divider：折叠面板内部分割线 */
+registerComponent('collapse_divider', () =>
+  h('div', { className: `${CLS}-collapse-divider` }),
+);
+
+/** fallback_text：兜底文案元素 */
+registerComponent('fallback_text', (el, ctx) => {
+  const p = el.property || {};
+  const textEl = p.text as CardElement | undefined;
+  if (textEl && typeof textEl === 'object' && textEl.tag) {
+    return h('div', { className: `${CLS}-fallback-text` }, renderElement(textEl, ctx));
+  }
+  const content = extractPlainText(p.text);
+  if (!content) return null;
+  return h('div', { className: `${CLS}-fallback-text` }, content);
 });
 
 // person_list：按 showAvatar/showName 分四态（逆向网页版 PersonList）

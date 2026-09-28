@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { isRawCardEnvelope, rawCardToDsl } from "../src/raw-to-dsl.js";
+import { isRawCardEnvelope, rawCardToDsl, rawToDsl } from "../src/raw-to-dsl.js";
 
 const FIXTURES = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures");
 
@@ -394,6 +394,181 @@ describe("button projection", () => {
       }
     }
   });
+
+  it("preserves platform URLs on open_url actions (copy-button round-trip)", () => {
+    const copy = "lark://client/core/copy?value=%2Fedit";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "button",
+              property: {
+                actionType: "multi",
+                text: { tag: "plain_text", property: { content: "复制指令" } },
+                type: "default",
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: "https://miao.cards",
+                      pcURL: copy,
+                      iosURL: copy,
+                      androidURL: copy,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    const beh = (btn.behaviors as Record<string, unknown>[])[0]!;
+    expect(beh).toEqual({
+      type: "open_url",
+      default_url: "https://miao.cards",
+      pc_url: copy,
+      ios_url: copy,
+      android_url: copy,
+    });
+  });
+
+  it("preserves platform URLs when action.url is a LinkURL object", () => {
+    const copy = "lark://client/core/copy?value=hello";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "button",
+              property: {
+                actionType: "multi",
+                text: { tag: "plain_text", property: { content: "复制" } },
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: {
+                        url: "https://example.com",
+                        pcURL: copy,
+                        iosURL: copy,
+                        androidURL: copy,
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    const beh = (btn.behaviors as Record<string, unknown>[])[0]!;
+    expect(beh.default_url).toBe("https://example.com");
+    expect(beh.pc_url).toBe(copy);
+    expect(beh.ios_url).toBe(copy);
+    expect(beh.android_url).toBe(copy);
+  });
+
+  it("projects actionType:link open_url with platforms to multi_url", () => {
+    const copy = "lark://client/core/copy?value=x";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "button",
+              property: {
+                actionType: "link",
+                text: { tag: "plain_text", property: { content: "链" } },
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: "https://example.com",
+                      pcURL: copy,
+                      iosURL: "",
+                      androidURL: copy,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(btn.behaviors).toBeUndefined();
+    expect(btn.multi_url).toEqual({
+      url: "https://example.com",
+      pc_url: copy,
+      android_url: copy,
+    });
+  });
+
+  it("preserves platform URLs on interactive_container open_url actions", () => {
+    const copy = "lark://client/core/copy?value=pnpm%20i";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "interactive_container",
+              property: {
+                backgroundStyle: "grey-50",
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: "https://example.com",
+                      pcURL: copy,
+                      iosURL: copy,
+                      androidURL: copy,
+                    },
+                  },
+                ],
+                elements: [
+                  {
+                    tag: "markdown",
+                    property: {
+                      originTag: "markdown",
+                      elements: [
+                        {
+                          tag: "plain_text",
+                          property: { content: "pnpm i" },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const box = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    const beh = (box.behaviors as Record<string, unknown>[])[0]!;
+    expect(beh).toEqual({
+      type: "open_url",
+      default_url: "https://example.com",
+      pc_url: copy,
+      ios_url: copy,
+      android_url: copy,
+    });
+  });
 });
 
 describe("header projection", () => {
@@ -410,6 +585,39 @@ describe("header projection", () => {
     expect(icon).toBeDefined();
     expect(icon?.tag).toBe("standard_icon");
     expect(typeof icon?.token).toBe("string");
+  });
+
+  it("projects header subtitle originTag:lark_md to public { tag:'lark_md', content }", () => {
+    const dsl = rawCardToDsl(loadFixture("header-lark-md.raw.json")) as AnyDsl;
+    const title = dsl.header?.title as Record<string, unknown> | undefined;
+    const subtitle = dsl.header?.subtitle as Record<string, unknown> | undefined;
+    expect(title).toEqual({
+      tag: "plain_text",
+      content: "🛡️ OpenAI 越界入侵 Hugging Face：事件复盘与 5 大安全反思",
+    });
+    expect(subtitle?.tag).toBe("lark_md");
+    expect(subtitle?.content).toBe("<at id=ou_113bce58203b98552a06a738827e95b7></at>");
+    expect(subtitle).not.toHaveProperty("text_align");
+    expect(subtitle).not.toHaveProperty("elements");
+  });
+
+  it("re-projects already-flat header subtitle tag:markdown to lark_md", () => {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      header: {
+        template: "carmine",
+        title: { tag: "plain_text", content: "事件复盘" },
+        subtitle: { tag: "markdown", content: "<at id=ou_abc></at>", text_align: "left" },
+      },
+      body: { elements: [] },
+    }) as AnyDsl;
+    expect(dsl.header).not.toHaveProperty("tag");
+    expect(dsl.header?.title).toEqual({ tag: "plain_text", content: "事件复盘" });
+    expect(dsl.header?.subtitle).toEqual({
+      tag: "lark_md",
+      content: "<at id=ou_abc></at>",
+    });
+    expect(dsl.header?.template).toBe("carmine");
   });
 });
 
@@ -558,21 +766,17 @@ describe("person_v1 / person_list projection (real card regression)", () => {
         expect(person).not.toHaveProperty("type");
         expect(Object.keys(person)).toEqual(["id"]);
       }
-      // top-level editor-only fields dropped.
-      expect(list).not.toHaveProperty("style");
-      expect(list).not.toHaveProperty("mode");
-      expect(list).not.toHaveProperty("count");
+      // 官方公开字段 mode/style/count 可保留；仅丢弃编辑器私有 fallback
       expect(list).not.toHaveProperty("fallback");
     }
   });
 
   it("emits no person_list field the public schema rejects", () => {
     const dsl = rawCardToDsl(loadFixture("person-list.raw.json")) as AnyDsl;
-    // `type` only ever appears as a person identity field in raw; the public
-    // person_list has no `type` anywhere in its subtree.
+    // persons[i].type 是编辑器私有；mode/count/style 已是官方公开字段，允许保留。
     const lists = findElements(dsl, (el) => el.tag === "person_list");
     for (const list of lists) {
-      expect(collectKeys(list, (k) => k === "type" || k === "mode" || k === "count")).toEqual([]);
+      expect(collectKeys(list, (k) => k === "type")).toEqual([]);
     }
   });
 });
@@ -740,5 +944,100 @@ describe("video cover_image_id → cover.img_key", () => {
     expect(videos[0]).not.toHaveProperty("cover_image_id");
     expect(videos[0]).not.toHaveProperty("video_id");
     expect(collectKeys(dsl, (k) => k === "cover_image_id" || k === "video_id")).toEqual([]);
+  });
+});
+
+describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", () => {
+  it("registers custom colors in config.style.color and uses <font color> instead of inline #hex", () => {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "column_set",
+              property: {
+                columns: [
+                  {
+                    tag: "column",
+                    property: {
+                      customBackgroundStyle: {
+                        lightMode: "#d96b2714",
+                        darkMode: "#d96b2726",
+                      },
+                      elements: [
+                        {
+                          tag: "markdown",
+                          property: {
+                            textStyle: { size: "heading" },
+                            elements: [
+                              {
+                                tag: "plain_text",
+                                property: {
+                                  content: "85%",
+                                  textStyle: {
+                                    attributes: ["bold"],
+                                    customColor: {
+                                      lightMode: "#d96b27ff",
+                                      darkMode: "#f08c4bff",
+                                    },
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                        },
+                        {
+                          tag: "markdown",
+                          property: {
+                            textStyle: { size: "small" },
+                            elements: [
+                              {
+                                tag: "plain_text",
+                                property: {
+                                  content: "欺骗差距闭合率",
+                                  textStyle: {
+                                    customColor: {
+                                      lightMode: "#6e737dff",
+                                      darkMode: "#a6a6a6ff",
+                                    },
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+
+    const serialized = JSON.stringify(dsl);
+    expect(serialized).not.toMatch(/#d96b27ff/);
+    expect(serialized).not.toMatch(/#6e737dff/);
+    expect(serialized).toMatch(/cus-bg-0/);
+    const style = (dsl.config as { style?: { color?: Record<string, unknown> } })?.style;
+    expect(style?.color?.["cus-bg-0"]).toBeDefined();
+    expect(style?.color?.["cus-accent"]).toBeDefined();
+
+    const col = ((dsl.body as { elements: unknown[] }).elements[0] as { columns: unknown[] }).columns[0] as {
+      elements: Record<string, unknown>[];
+    };
+    const heading = col.elements[0];
+    const caption = col.elements[1];
+    expect(heading).toMatchObject({
+      content: "<font color='cus-accent'>**85%**</font>",
+      text_size: "heading",
+    });
+    expect(heading).not.toHaveProperty("font_color");
+    expect(caption?.content).toBe("<font color='cus-text-1'>欺骗差距闭合率</font>");
+    expect(caption).not.toHaveProperty("font_color");
   });
 });

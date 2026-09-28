@@ -8,7 +8,13 @@ import {
   VerticalAlignSchema,
 } from '../common/enums.js';
 import { IconSchema, UdIconSchema } from '../common/icon.js';
-import { StyledTextObjectSchema } from '../common/text.js';
+import {
+  StyledTextObjectSchema,
+  TextObjectSchema,
+  TipsTextSchema,
+} from '../common/text.js';
+import { BehaviorsSchema } from '../common/behavior.js';
+import { ConfirmSchema } from '../common/confirm.js';
 
 /**
  * 普通文本组件（div）。
@@ -25,7 +31,11 @@ export const DivSchema = z
       .optional()
       .describe('组件宽度：fill / auto / [16,999]px，默认 fill'),
     text: StyledTextObjectSchema.optional().describe('文本内容配置'),
+    text_size: z.string().optional().describe('字号；优先写在 text.text_size'),
     icon: IconSchema.optional().describe('文本前缀图标'),
+    ud_icon: UdIconSchema.optional().describe(
+      '历史前缀图标（ud_icon）；与 icon 同时存在时以 icon 为准',
+    ),
   })
   .describe('普通文本组件（div）');
 
@@ -93,6 +103,10 @@ export const ImageSchema = z
       .boolean()
       .optional()
       .describe('历史字段：是否紧凑宽度'),
+    fallback_img_key: z
+      .string()
+      .optional()
+      .describe('主图加载失败时的兜底图片 key'),
   })
   .describe(
     '图片组件（img）。内容图/截图用 scale_type=fit_horizontal 且不写 size；缩略图才用 crop_* + size',
@@ -129,10 +143,88 @@ export const ImgCombinationSchema = z
       .optional()
       .describe('混排区域是否透明底色，默认 false'),
     corner_radius: z.string().optional().describe('图片圆角半径'),
+    img_list_length: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe('混排图片数量提示（平台字段；一般可不写）'),
   })
   .describe('多图混排组件（img_combination）');
 
 export type ImgCombination = z.infer<typeof ImgCombinationSchema>;
+
+/**
+ * 头像组件（avatar）。仅展示用户头像，不展示姓名、不发通知。
+ */
+export const AvatarSchema = z
+  .object({
+    tag: z.literal('avatar').describe('组件标签，固定为 avatar'),
+    user_id: z
+      .string()
+      .describe(
+        '人员 ID：优先 open_id(ou_) 或 user_id；不要用 union_id(on_)。禁止臆造 ID',
+      ),
+    size: z
+      .enum(['tiny', 'small', 'medium', 'large', 'huge', 'custom'])
+      .optional()
+      .describe('头像尺寸，默认 medium；custom 时配合 custom_size'),
+    custom_size: z
+      .number()
+      .optional()
+      .describe('自定义头像尺寸（px）；size=custom 时使用'),
+    custom_size2: z
+      .number()
+      .optional()
+      .describe('自定义头像尺寸备选值（px）'),
+    element_id: ElementIdSchema.optional().describe('组件唯一标识'),
+    margin: SpacingValueSchema.optional().describe('组件外边距'),
+  })
+  .describe('头像组件（avatar）：仅展示头像；要姓名用 person，要通知用 markdown <at>');
+
+export type Avatar = z.infer<typeof AvatarSchema>;
+
+/**
+ * 折叠面板内部分割线（collapse_divider）。仅用于 collapsible_panel.elements。
+ */
+export const CollapseDividerSchema = z
+  .object({
+    tag: z
+      .literal('collapse_divider')
+      .describe('组件标签，固定为 collapse_divider'),
+    element_id: ElementIdSchema.optional().describe('组件唯一标识'),
+  })
+  .describe(
+    '折叠面板分割线（collapse_divider）；应放在 collapsible_panel.elements 内',
+  );
+
+export type CollapseDivider = z.infer<typeof CollapseDividerSchema>;
+
+/**
+ * 降级文本元素（fallback_text）。
+ * 作为独立正文元素时展示兜底文案；也可带交互字段（较少见）。
+ */
+export const FallbackTextElementSchema = z
+  .object({
+    tag: z.literal('fallback_text').describe('组件标签，固定为 fallback_text'),
+    text: TextObjectSchema.describe('兜底文案（plain_text / lark_md）'),
+    element_id: ElementIdSchema.optional().describe('组件唯一标识'),
+    name: z.string().optional().describe('表单项标识'),
+    required: z.boolean().optional().describe('是否必填，默认 false'),
+    disabled: z.boolean().optional().describe('是否禁用，默认 false'),
+    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
+    behaviors: BehaviorsSchema.optional().describe('交互行为列表'),
+    confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    value: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe('历史回传字段'),
+  })
+  .describe(
+    '降级文本元素（fallback_text）。音视频组件的 fallback 配置见各组件内嵌字段，勿与本元素混淆',
+  );
+
+export type FallbackTextElement = z.infer<typeof FallbackTextElementSchema>;
 
 /**
  * 人员组件（person）。
@@ -162,6 +254,9 @@ export const PersonSchema = z
       .enum(['normal', 'capsule'])
       .optional()
       .describe('展示样式：normal / capsule，默认 normal'),
+    notation: TipsTextSchema.optional().describe(
+      '人员旁注说明文案（如职位/备注）',
+    ),
   })
   .describe(
     '人员组件（person）：仅展示，不发通知。提示词说作者/负责人/名单时用；要 @/通知改用 markdown <at>',
@@ -206,9 +301,23 @@ export const PersonListSchema = z
       .optional()
       .describe('是否展示头像，默认 true'),
     size: z
-      .enum(['extra_small', 'small', 'medium', 'large'])
+      .enum(['extra_small', 'small', 'medium', 'large', 'extra_large'])
       .optional()
       .describe('人员尺寸，默认 medium'),
+    mode: z
+      .enum(['name', 'avatar', 'nameAvatar'])
+      .optional()
+      .describe(
+        '展示模式：name（仅姓名）/ avatar（仅头像）/ nameAvatar（姓名+头像）',
+      ),
+    style: z
+      .enum(['normal', 'notation'])
+      .optional()
+      .describe('列表样式：normal / notation'),
+    count: z
+      .number()
+      .optional()
+      .describe('额外计数展示（如 +N）；平台字段，按需使用'),
     icon: IconSchema.optional().describe('列表前缀图标'),
     ud_icon: UdIconSchema.optional().describe(
       '历史前缀图标（ud_icon）；与 icon 同时存在时以 icon 为准',

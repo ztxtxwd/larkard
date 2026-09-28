@@ -45,6 +45,19 @@
  * downstream sees an unknown field rather than silently losing data.
  */
 
+import {
+  isCustomHexColor,
+  resolveTextStyleColor,
+  resolveTextStyleCustomColorPair,
+  themePairToColorEntry,
+} from './custom-colors.js';
+import {
+  createColorRegistry,
+  normalizeStoredCardColors,
+  registerColorEntry,
+  type ColorRegistry,
+} from './normalize-stored-colors.js';
+
 type AttachmentImageMap = Record<string, { origin_key?: string }>;
 type AttachmentAtUserMap = Record<string, { user_id?: string; mention_key?: string }>;
 
@@ -69,16 +82,25 @@ export function rawCardToDsl(envelope: unknown): unknown {
   } catch {
     return envelope;
   }
-  const ctx: Ctx = {
+  const ctx = makeCtx({
     images: env.json_attachment?.images ?? {},
     atUsers: env.json_attachment?.at_users ?? {},
-  };
+  });
   return convertRoot(inner, ctx);
 }
 
 interface Ctx {
   images: AttachmentImageMap;
   atUsers: AttachmentAtUserMap;
+  colors: ColorRegistry;
+}
+
+function makeCtx(partial?: Partial<Pick<Ctx, 'images' | 'atUsers'>>): Ctx {
+  return {
+    images: partial?.images ?? {},
+    atUsers: partial?.atUsers ?? {},
+    colors: createColorRegistry(),
+  };
 }
 
 /* ------------------------------------------------------------------ *
@@ -250,6 +272,7 @@ function convertRoot(root: unknown, ctx: Ctx): unknown {
   out.config = convertConfig(isRecord(root.config) ? root.config : {});
   if (isRecord(root.body)) out.body = convertBody(root.body, ctx);
   if (isRecord(root.header)) out.header = convertHeader(root.header, ctx);
+  normalizeStoredCardColors(out, ctx.colors);
   return out;
 }
 
@@ -264,17 +287,90 @@ function convertRoot(root: unknown, ctx: Ctx): unknown {
  * update_multi — that's a quirk of how those cards were saved, not what the
  * public DSL means. The projection above matches what we'd send today.
  */
-function convertConfig(_node: Record<string, unknown>): unknown {
-  return { update_multi: true };
+function convertConfig(node: Record<string, unknown>): unknown {
+  const out: Record<string, unknown> = { update_multi: true };
+
+  if (node.streamingMode === true || node.streaming_mode === true) {
+    out.streaming_mode = true;
+  }
+  if (node.enableForwardInteraction === true || node.enable_forward_interaction === true) {
+    out.enable_forward_interaction = true;
+  }
+  if (node.enableForward === false || node.enable_forward === false) {
+    out.enable_forward = false;
+  }
+  if (typeof node.widthMode === 'string') out.width_mode = node.widthMode;
+  else if (typeof node.width_mode === 'string') out.width_mode = node.width_mode;
+
+  const summaryRaw = isRecord(node.summary) ? node.summary : undefined;
+  if (summaryRaw) {
+    const summary: Record<string, unknown> = {};
+    if (typeof summaryRaw.content === 'string') summary.content = summaryRaw.content;
+    if (isRecord(summaryRaw.i18nContent)) summary.i18n_content = summaryRaw.i18nContent;
+    else if (isRecord(summaryRaw.i18n_content)) summary.i18n_content = summaryRaw.i18n_content;
+    if (Object.keys(summary).length) out.summary = summary;
+  }
+
+  const streamingRaw = isRecord(node.streamingConfig) ? node.streamingConfig
+    : isRecord(node.streaming_config) ? node.streaming_config
+    : undefined;
+  if (streamingRaw) {
+    const sc: Record<string, unknown> = {};
+    if (streamingRaw.printStrategy != null) sc.print_strategy = streamingRaw.printStrategy;
+    else if (streamingRaw.print_strategy != null) sc.print_strategy = streamingRaw.print_strategy;
+    if (streamingRaw.printFrequencyMs != null) sc.print_frequency_ms = streamingRaw.printFrequencyMs;
+    else if (streamingRaw.print_frequency_ms != null) sc.print_frequency_ms = streamingRaw.print_frequency_ms;
+    if (streamingRaw.printStep != null) sc.print_step = streamingRaw.printStep;
+    else if (streamingRaw.print_step != null) sc.print_step = streamingRaw.print_step;
+    if (Object.keys(sc).length) out.streaming_config = sc;
+  }
+
+  return out;
 }
 
 function convertHeader(node: Record<string, unknown>, ctx: Ctx): unknown {
-  const property = isRecord(node.property) ? node.property : {};
+  // Raw: { id, tag:'card_header', property:{ title, subtitle, ... } }
+  // Bare / already-DSL: { title, subtitle, template } with no property envelope
+  // (same fallback convertBody uses). Drop tag if the bare form leaked card_header.
+  const property = isRecord(node.property) ? node.property : node;
   const out = convertProperty(property, "header", ctx) as Record<string, unknown>;
-  // Raw stashes the header icon as `udIcon` (an editor-only wrapper around
-  // a standard_icon). Projection happens via convertField; here we just
-  // verify the rename landed correctly.
+  delete out.tag;
   return out;
+}
+
+/**
+ * Project a raw (or already-flat) header title/subtitle to the public
+ * `{ tag:'plain_text'|'lark_md', content }` TextObject.
+ * Returns undefined when the value isn't a text node we recognize, so the
+ * caller can fall through to convertGeneric.
+ */
+function convertHeaderText(rawValue: Record<string, unknown>, ctx: Ctx): Record<string, unknown> | undefined {
+  const tag = typeof rawValue.tag === "string" ? rawValue.tag : "";
+  const wrapped = isRecord(rawValue.property);
+  const property = wrapped ? (rawValue.property as Record<string, unknown>) : rawValue;
+
+  if (tag === "plain_text") {
+    const content = typeof property.content === "string" ? property.content : "";
+    return { tag: "plain_text", content };
+  }
+
+  if (tag === "markdown" || tag === "lark_md") {
+    // RAW: { tag, property:{ elements, originTag } } — re-stitch.
+    // Flat DSL: { tag:'lark_md', content } — keep content, force public tag.
+    if (wrapped && Array.isArray(property.elements)) {
+      const rebuilt = rebuildMarkdown(property, ctx) as Record<string, unknown>;
+      return { tag: "lark_md", content: typeof rebuilt.content === "string" ? rebuilt.content : "" };
+    }
+    const content = typeof property.content === "string" ? property.content : "";
+    return { tag: "lark_md", content };
+  }
+
+  // String-shaped / tag-less { content } (some authors omit tag).
+  if (!wrapped && typeof rawValue.content === "string" && !tag) {
+    return { tag: "plain_text", content: rawValue.content };
+  }
+
+  return undefined;
 }
 
 function convertBody(node: Record<string, unknown>, ctx: Ctx): unknown {
@@ -403,7 +499,7 @@ function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
         // A markdown cell holds a {tag:'markdown'} element — re-stitch to content.
         if (isRecord(value) && value.tag === "markdown" && isRecord(value.property)) {
           const elements = Array.isArray(value.property.elements) ? value.property.elements : [];
-          value = renderChildren(elements, ctx);
+          value = renderChildren(elements, ctx).content;
         }
         r[k] = value;
       }
@@ -469,6 +565,25 @@ function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
     if (typeof property.style === "string") out.style = property.style;
     if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
     else if (typeof property.margin === "string") out.margin = property.margin;
+    if (property.notation != null && isRecord(property.notation)) {
+      const n = convertHeaderText(property.notation, ctx);
+      if (n) out.notation = n;
+    }
+    return out;
+  }
+
+  // avatar：仅头像
+  if (tag === "avatar") {
+    const out: Record<string, unknown> = { tag: "avatar" };
+    if (typeof property.userID === "string") out.user_id = property.userID;
+    else if (typeof property.user_id === "string") out.user_id = property.user_id;
+    if (typeof property.size === "string") out.size = property.size;
+    if (typeof property.customSize === "number") out.custom_size = property.customSize;
+    else if (typeof property.custom_size === "number") out.custom_size = property.custom_size;
+    if (typeof property.customSize2 === "number") out.custom_size2 = property.customSize2;
+    else if (typeof property.custom_size2 === "number") out.custom_size2 = property.custom_size2;
+    if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
+    else if (typeof property.margin === "string") out.margin = property.margin;
     return out;
   }
 
@@ -476,17 +591,18 @@ function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
   // editor envelope leaks several fields it rejects:
   //   - persons[i] carries { id, type:'user' }; the public shape is { id } only
   //     ("unknown property: type, path: ... persons -> [0]"), so we keep just id.
-  //   - top-level `style`, `mode`, `count` are editor-only — dropped.
   //   - a sibling `fallback` node (outside property) is editor render state — dropped.
-  // Public-allowed fields we project: show_avatar, show_name, size, lines,
-  // drop_invalid_user_id, margin ({top,..} pixels -> "Npx ..." box), and icon
-  // (kept as a flat { tag, token?, color?, img_key? }).
+  // Public-allowed fields: show_avatar, show_name, size, lines, mode, style, count,
+  // drop_invalid_user_id, margin, icon.
   if (tag === "person_list") {
     const out: Record<string, unknown> = { tag: "person_list" };
     if (typeof property.size === "string") out.size = property.size;
     if (typeof property.showAvatar === "boolean") out.show_avatar = property.showAvatar;
     if (typeof property.showName === "boolean") out.show_name = property.showName;
     if (typeof property.lines === "number") out.lines = property.lines;
+    if (typeof property.mode === "string") out.mode = property.mode;
+    if (typeof property.style === "string") out.style = property.style;
+    if (typeof property.count === "number") out.count = property.count;
     if (typeof property.dropInvalidUserID === "boolean") out.drop_invalid_user_id = property.dropInvalidUserID;
     else if (typeof property.drop_invalid_user_id === "boolean") out.drop_invalid_user_id = property.drop_invalid_user_id;
     if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
@@ -590,6 +706,73 @@ type FieldResult = readonly [string, unknown] | typeof DROP;
  */
 interface Siblings {
   buttonActionType?: string;
+}
+
+/** Public open_url fields projected from a RAW action payload. */
+interface OpenUrlFields {
+  default_url: string;
+  pc_url?: string;
+  ios_url?: string;
+  android_url?: string;
+}
+
+/**
+ * Project RAW open_url `action` payloads into public DSL URL fields.
+ *
+ * Feishu stores platform URLs in several shapes we have observed:
+ *   1. siblings on action: `{ url, pcURL, iosURL, androidURL }`
+ *   2. nested LinkURL:     `{ url: { url, pcURL, iosURL, androidURL } }`
+ *   3. multiURL bag:       `{ multiURL: { url, pcURL, … } }`
+ * Snake_case variants (`pc_url`, `multi_url`) are accepted for forward-compat.
+ * Empty platform strings are omitted (public DSL leaves them undefined).
+ */
+function projectOpenUrlFields(
+  actionInner: Record<string, unknown>,
+): OpenUrlFields | undefined {
+  let bag: Record<string, unknown> | undefined;
+  let defaultUrl: string | undefined;
+
+  if (typeof actionInner.url === "string") {
+    defaultUrl = actionInner.url;
+    bag = actionInner;
+  } else if (isRecord(actionInner.url)) {
+    bag = actionInner.url;
+    defaultUrl = typeof bag.url === "string" ? bag.url : undefined;
+  } else if (isRecord(actionInner.multiURL)) {
+    bag = actionInner.multiURL;
+    defaultUrl = typeof bag.url === "string" ? bag.url : undefined;
+  } else if (isRecord(actionInner.multi_url)) {
+    bag = actionInner.multi_url;
+    defaultUrl = typeof bag.url === "string" ? bag.url : undefined;
+  }
+
+  if (!defaultUrl) return undefined;
+
+  const pick = (...keys: string[]): string | undefined => {
+    if (!bag) return undefined;
+    for (const k of keys) {
+      const v = bag[k];
+      if (typeof v === "string" && v.length > 0) return v;
+    }
+    return undefined;
+  };
+
+  const out: OpenUrlFields = { default_url: defaultUrl };
+  const pc = pick("pcURL", "pc_url");
+  const ios = pick("iosURL", "ios_url");
+  const android = pick("androidURL", "android_url");
+  if (pc) out.pc_url = pc;
+  if (ios) out.ios_url = ios;
+  if (android) out.android_url = android;
+  return out;
+}
+
+function openUrlFieldsToMultiUrl(fields: OpenUrlFields): Record<string, string> {
+  const multi: Record<string, string> = { url: fields.default_url };
+  if (fields.pc_url) multi.pc_url = fields.pc_url;
+  if (fields.ios_url) multi.ios_url = fields.ios_url;
+  if (fields.android_url) multi.android_url = fields.android_url;
+  return multi;
 }
 
 function convertProperty(
@@ -789,6 +972,17 @@ function convertField(
     return [key, { tag: "plain_text", content: typeof p.content === "string" ? p.content : "" }];
   }
 
+  // header.title / header.subtitle: public DSL TextObject is plain_text | lark_md
+  // only (schema rejects tag:'markdown'). Raw stores a lark_md subtitle as
+  // { tag:'markdown', property:{ originTag:'lark_md', elements:[at, …] } };
+  // unwrap() would emit tag:'markdown' and keep text_align. Re-stitch content
+  // and emit the public lark_md text object. Already-flat DSL ({ tag, content })
+  // is passed through so rawToDsl stays idempotent on its own output.
+  if (ownerTag === "header" && (key === "title" || key === "subtitle") && isRecord(rawValue)) {
+    const headerText = convertHeaderText(rawValue, ctx);
+    if (headerText) return [key, headerText];
+  }
+
   // header.udIcon → header.icon (rebuilt as standard_icon). The udIcon
   // wrapper in raw is { id, tag:'ud_icon', property:{ imageID, token, style } };
   // in public DSL this lives at header.icon as { tag:'standard_icon', token }.
@@ -817,39 +1011,42 @@ function convertField(
   }
 
   // button.actions → behaviors / multi_url. Raw distinguishes:
-  //   actionType:"multi" + actions:[{action:{url},type:"open_url"}]
-  //     -> behaviors:[{type:"open_url", default_url:url, pc_url, ios_url, android_url}]
-  //   actionType:"link" + actions:[{action:{url},type:"open_url"}]
-  //     -> multi_url:{url, pc_url, ios_url, android_url}
+  //   actionType:"multi" + actions:[{action:{url,pcURL?...},type:"open_url"}]
+  //     -> behaviors:[{type:"open_url", default_url, pc_url?, ios_url?, android_url?}]
+  //   actionType:"link" + actions:[{action:{url,pcURL?...},type:"open_url"}]
+  //     -> multi_url:{url, pc_url?, ios_url?, android_url?}
   //   action_request callbacks live above the DSL (cardkit entity handles
   //     them via card_id-stamped buttons); we drop them.
   // The `actionType` field is editor-internal, dropped after dispatch.
+  // Platform URLs (pcURL/iosURL/androidURL) must round-trip: copy buttons put
+  // `lark://client/core/copy?value=…` there and https only on default_url.
   if (ownerTag === "button" && key === "action_type") return DROP;
   if (ownerTag === "button" && key === "actions" && Array.isArray(rawValue)) {
-    const openUrls: string[] = [];
+    const openUrls: OpenUrlFields[] = [];
     for (const a of rawValue) {
       if (!isRecord(a)) continue;
       const inner = isRecord(a.action) ? a.action : {};
       const t = typeof a.type === "string" ? a.type : undefined;
-      if (t === "open_url" && typeof inner.url === "string") openUrls.push(inner.url);
-      // action_request callbacks belong to the cardkit entity layer; drop.
+      if (t !== "open_url") continue; // action_request etc. → drop
+      const fields = projectOpenUrlFields(inner);
+      if (fields) openUrls.push(fields);
     }
     if (openUrls.length === 0) return DROP;
     if (siblings.buttonActionType === "link") {
-      return ["multi_url", { url: openUrls[0] }];
+      return ["multi_url", openUrlFieldsToMultiUrl(openUrls[0]!)];
     }
     // Default to behaviors (matches actionType:"multi" and the more common shape).
     return [
       "behaviors",
-      openUrls.map((url) => ({ type: "open_url", default_url: url })),
+      openUrls.map((fields) => ({ type: "open_url", ...fields })),
     ];
   }
 
   // interactive_container click interaction. The raw editor stores it as
-  // `actions: [{ type:'open_url', action:{ url } }]` (or a callback). But the
+  // `actions: [{ type:'open_url', action:{ url, pcURL?… } }]` (or a callback). But the
   // public DSL 2.0 has NO `actions` property on interactive_container — the
   // click config is `behaviors` (required), the same shape buttons use:
-  //   open_url  -> { type:'open_url', default_url: url }
+  //   open_url  -> { type:'open_url', default_url, pc_url?, ios_url?, android_url? }
   //   callback  -> { type:'callback', value }
   // Emitting `actions` makes Feishu reject the card ("unknown property: actions").
   if (ownerTag === "interactive_container" && key === "actions" && Array.isArray(rawValue)) {
@@ -858,8 +1055,9 @@ function convertField(
         if (!isRecord(a)) return undefined;
         const inner = isRecord(a.action) ? a.action : {};
         const t = typeof a.type === "string" ? a.type : undefined;
-        if (t === "open_url" && typeof inner.url === "string") {
-          return { type: "open_url", default_url: inner.url };
+        if (t === "open_url") {
+          const fields = projectOpenUrlFields(inner);
+          return fields ? { type: "open_url", ...fields } : undefined;
         }
         if (t === "callback") {
           return { type: "callback", value: inner.value ?? {} };
@@ -1057,7 +1255,7 @@ function resolveAtUserId(prop: Record<string, unknown>, ctx: Ctx): string | unde
 function rebuildMarkdown(property: Record<string, unknown>, ctx: Ctx): unknown {
   const out: Record<string, unknown> = { tag: "markdown" };
   const elements = Array.isArray(property.elements) ? property.elements : [];
-  const content = renderChildren(elements, ctx);
+  const { content } = renderChildren(elements, ctx);
   if (content) out.content = content;
 
   for (const [rawKey, rawValue] of Object.entries(property)) {
@@ -1112,7 +1310,11 @@ function rebuildMarkdown(property: Record<string, unknown>, ctx: Ctx): unknown {
  * whitespace restriction, but moving spaces out is harmless and keeps the two
  * markers nestable.
  */
-function wrapEmphasis(text: string, bold: boolean, color?: string): string {
+function wrapEmphasis(
+  text: string,
+  bold: boolean,
+  color?: string,
+): string {
   if (!bold && !color) return text;
   const lead = text.match(/^\s*/)![0];
   const trail = text.match(/\s*$/)![0];
@@ -1124,14 +1326,49 @@ function wrapEmphasis(text: string, bold: boolean, color?: string): string {
   return lead + wrapped + trail;
 }
 
-function renderChildren(children: unknown[], ctx: Ctx): string {
-  interface Segment { content: string; bold: boolean; color?: string }
+type InlineSegment = {
+  content: string;
+  bold: boolean;
+  color?: string;
+  colorKind?: 'enum' | 'custom';
+};
+
+function resolveInlineStyle(
+  ts: Record<string, unknown> | undefined,
+  ctx: Ctx,
+): Pick<InlineSegment, 'bold' | 'color' | 'colorKind'> {
+  const bold = !!(ts && Array.isArray(ts.attributes) && (ts.attributes as unknown[]).includes("bold"));
+  const customPair = resolveTextStyleCustomColorPair(ts);
+  if (customPair) {
+    const entry = themePairToColorEntry(customPair);
+    if (entry) {
+      const alias = registerColorEntry(ctx.colors, entry, 'cus-text');
+      return { bold, color: alias, colorKind: 'custom' };
+    }
+  }
+  const rawColor = resolveTextStyleColor(ts);
+  const color = rawColor === "default" ? undefined : rawColor;
+  if (!color) return { bold };
+  if (isCustomHexColor(color)) {
+    const rgba = color.startsWith('#')
+      ? themePairToColorEntry({ lightMode: color, darkMode: color })
+      : { light_mode: color, dark_mode: color };
+    if (rgba) {
+      const alias = registerColorEntry(ctx.colors, rgba, 'cus-text');
+      return { bold, color: alias, colorKind: 'custom' };
+    }
+  }
+  return { bold, color, colorKind: 'enum' };
+}
+
+function renderChildren(children: unknown[], ctx: Ctx): { content: string } {
+  interface Segment extends InlineSegment {}
   let out = "";
   let buffer: Segment[] = [];
 
   function flushBuffer() {
     if (buffer.length === 0) return;
-    // Group adjacent segments with identical styling, then wrap each group.
+
     let group: Segment[] = [];
     function emitGroup() {
       if (group.length === 0) return;
@@ -1143,8 +1380,12 @@ function renderChildren(children: unknown[], ctx: Ctx): string {
     for (const seg of buffer) {
       if (group.length === 0) { group.push(seg); continue; }
       const head = group[0]!;
-      if (head.bold === seg.bold && head.color === seg.color) group.push(seg);
-      else { emitGroup(); group.push(seg); }
+      if (head.bold === seg.bold && head.color === seg.color && head.colorKind === seg.colorKind) {
+        group.push(seg);
+      } else {
+        emitGroup();
+        group.push(seg);
+      }
     }
     emitGroup();
     buffer = [];
@@ -1158,7 +1399,7 @@ function renderChildren(children: unknown[], ctx: Ctx): string {
     out += childToMarkdown(child, ctx);
   }
   flushBuffer();
-  return out;
+  return { content: out };
 }
 
 /**
@@ -1169,16 +1410,11 @@ function renderChildren(children: unknown[], ctx: Ctx): string {
 function childToInlineSegment(
   child: Record<string, unknown>,
   ctx: Ctx,
-): { content: string; bold: boolean; color?: string } | undefined {
+): InlineSegment | undefined {
   const tag = child.tag;
   const prop = isRecord(child.property) ? child.property : {};
   const ts = isRecord(prop.textStyle) ? prop.textStyle : undefined;
-  const bold = !!(ts && Array.isArray(ts.attributes) && (ts.attributes as unknown[]).includes("bold"));
-  // "default" is the no-op color — emitting <font color='default'> is just
-  // noise (and the raw editor stamps it on otherwise-unstyled text), so treat
-  // it as absent.
-  const rawColor = ts && typeof ts.color === "string" ? ts.color : undefined;
-  const color = rawColor === "default" ? undefined : rawColor;
+  const { bold, color, colorKind } = resolveInlineStyle(ts, ctx);
 
   switch (tag) {
     case "plain_text":
@@ -1186,18 +1422,20 @@ function childToInlineSegment(
         content: typeof prop.content === "string" ? prop.content : "",
         bold,
         color,
+        colorKind,
       };
     case "code_span":
       return {
         content: `\`${typeof prop.content === "string" ? prop.content : ""}\``,
         bold,
         color,
+        colorKind,
       };
     case "link": {
       const text = typeof prop.content === "string" ? prop.content : "";
       const urlObj = isRecord(prop.url) ? prop.url : undefined;
       const url = urlObj && typeof urlObj.url === "string" ? urlObj.url : "";
-      return { content: `[${text}](${url})`, bold, color };
+      return { content: `[${text}](${url})`, bold, color, colorKind };
     }
     case "at_all":
       return { content: "<at id=all></at>", bold, color };
@@ -1252,9 +1490,8 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
     case "plain_text": {
       const content = typeof prop.content === "string" ? prop.content : "";
       const ts = isRecord(prop.textStyle) ? prop.textStyle : undefined;
-      const color = ts && typeof ts.color === "string" ? ts.color : undefined;
-      const attrs = ts && Array.isArray(ts.attributes) ? (ts.attributes as unknown[]) : [];
-      return wrapEmphasis(content, attrs.includes("bold"), color);
+      const { bold, color } = resolveInlineStyle(ts, ctx);
+      return wrapEmphasis(content, bold, color);
     }
     case "br":
       return "\n";
@@ -1432,7 +1669,7 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
           const inner = Array.isArray(cellProp.elements) ? cellProp.elements : [];
           // Use renderChildren so adjacent same-styled segments merge
           // (e.g. bold runs spanning a code_span don't get split).
-          const text = renderChildren(inner, ctx);
+          const { content: text } = renderChildren(inner, ctx);
           return text.replace(/\|/g, "\\|").replace(/\n/g, " ");
         });
         return `| ${cells.join(" | ")} |`;
@@ -1596,10 +1833,10 @@ export function rawToDsl(raw: unknown): unknown {
       }
     }
     const attachment = isRecord(raw.json_attachment) ? raw.json_attachment : {};
-    const ctx: Ctx = {
+    const ctx = makeCtx({
       images: (isRecord(attachment.images) ? attachment.images : {}) as AttachmentImageMap,
       atUsers: (isRecord(attachment.at_users) ? attachment.at_users : {}) as AttachmentAtUserMap,
-    };
+    });
     return convertRoot(inner, ctx);
   }
 
@@ -1609,12 +1846,12 @@ export function rawToDsl(raw: unknown): unknown {
     if (typeof card.json_card === "string" || isRecord(card.json_card)) {
       return rawToDsl(card);
     }
-    return convertRoot(card, { images: {}, atUsers: {} });
+    return convertRoot(card, makeCtx());
   }
 
   // Bare card (renderer RAW from dslToRaw, or already-unwrapped json_card)
   if ("body" in raw || "header" in raw || "schema" in raw) {
-    return convertRoot(raw, { images: {}, atUsers: {} });
+    return convertRoot(raw, makeCtx());
   }
 
   return raw;
@@ -1623,7 +1860,8 @@ export function rawToDsl(raw: unknown): unknown {
 /**
  * Optional helper: wrap a private/unknown element as
  * `{ tag: 'unknown', raw_tag, fallback }`.
- * Not applied automatically by `rawToDsl` / `rawCardToDsl` (parity with upstream).
+ * Not applied automatically by `degradeUnknown` (parity with upstream feishu-raw-card-to-dsl).
+ * `convertRoot` / `rawCardToDsl` always run `normalizeStoredCardColors` on output.
  */
 export function degradeUnknown(el: Record<string, unknown>): Record<string, unknown> {
   const rawTag = typeof el.tag === "string" ? el.tag : "undefined";

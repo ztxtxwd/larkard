@@ -85,6 +85,9 @@ importers:
 
   packages/adapter:
     devDependencies:
+      '@open-feishu-card/schema':
+        specifier: workspace:*
+        version: link:../schema
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1

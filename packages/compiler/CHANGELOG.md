@@ -1,5 +1,98 @@
 # @open-feishu-card/compiler
 
+## 0.1.17
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.13
+
+## 0.1.16
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.12
+  - @open-feishu-card/schema@0.1.5
+
+## 0.1.15
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.11
+
+## 0.1.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.10
+
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.9
+
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.8
+
+## 0.1.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.6
+
+## 0.1.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.5
+
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.4
+
+## 0.1.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.3
+
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.2
+  - @open-feishu-card/schema@0.1.4
+
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.1
+
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [441c53b]
+  - @open-feishu-card/schema@0.1.3
+
 ## 0.1.4
 
 ### Patch Changes

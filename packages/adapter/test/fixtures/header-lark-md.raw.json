@@ -1,0 +1,13 @@
+{
+  "json_card": "{\"schema\":\"2.0\",\"header\":{\"id\":\"44\",\"tag\":\"card_header\",\"property\":{\"template\":\"carmine\",\"title\":{\"id\":\"45\",\"tag\":\"plain_text\",\"property\":{\"content\":\"🛡️ OpenAI 越界入侵 Hugging Face：事件复盘与 5 大安全反思\",\"textAlign\":\"left\"}},\"subtitle\":{\"id\":\"47\",\"tag\":\"markdown\",\"property\":{\"elements\":[{\"id\":\"_46\",\"tag\":\"at\",\"property\":{\"userID\":\"ou_113bce58203b98552a06a738827e95b7\"}}],\"markdownElements\":[],\"originTag\":\"lark_md\",\"textAlign\":\"left\"}}}},\"body\":{\"id\":\"_1\",\"tag\":\"body\",\"property\":{\"elements\":[]}}}",
+  "json_attachment": {
+    "at_users": {
+      "ou_113bce58203b98552a06a738827e95b7": {
+        "content": "赵天雄",
+        "mention_key": "@_user_1",
+        "user_id": "7441015090323947523"
+      }
+    }
+  },
+  "card_schema": 2
+}

@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   renderCardToString, renderCardToStringAsync, fetchCardMessage, mergeMentionsIntoPersons,
-  arrayBufferToBase64, registerComponent, h, renderDslToString,
+  arrayBufferToBase64, registerComponent, h, renderDslToString, ALL_CSS,
   feishuAudioHydrateJs, AUDIO_PAUSE_ICON_SVG,
 } from '../dist/index.js';
 
@@ -29,6 +29,34 @@ test('renders header with template color', () => {
   assert.match(html, /universal-card-header--green/);
   assert.match(html, /#d0f5ce/); // green header bg
   assert.match(html, /标题/);
+});
+
+test('header subtitle lark_md / markdown：渲染 @ 提及，不漏字面 <at>', () => {
+  const html = renderCardToString({
+    json_card: {
+      schema: '2.0',
+      header: {
+        tag: 'card_header',
+        property: {
+          template: 'carmine',
+          title: { tag: 'plain_text', property: { content: '事件复盘' } },
+          subtitle: {
+            tag: 'markdown',
+            property: {
+              originTag: 'lark_md',
+              elements: [{ tag: 'at', property: { userID: 'ou_113' } }],
+            },
+          },
+        },
+      },
+      body: { tag: 'body', property: { elements: [] } },
+    },
+  }, { persons: { ou_113: { content: '赵天雄' } } });
+  assert.match(html, /事件复盘/);
+  assert.match(html, /universal-card-header__text-subtitle/);
+  assert.match(html, /@赵天雄/);
+  assert.doesNotMatch(html, /&lt;at/);
+  assert.doesNotMatch(html, /<at id=/);
 });
 
 test('named color green = var(--G600), bold class, center align', () => {
@@ -61,6 +89,42 @@ test('named color orange = var(--O400)（引擎特例，非 O600）', () => {
   assert.match(html, /color:var\(--O400\)/);
   assert.doesNotMatch(html, /#a44904/i);
   assert.doesNotMatch(html, /font-weight/);
+});
+
+test('named color white = var(--N00)（引擎 static-white，紫底白字）', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'plain_text',
+            property: {
+              content: '直达投票页面',
+              textStyle: { attributes: ['bold'], color: 'white' },
+            },
+          }],
+        },
+      },
+    },
+  });
+  assert.match(html, /universal-card-text--white/);
+  assert.match(html, /color:var\(--N00\)/);
+});
+
+test('DSL <font color=\'white\'> 渲染为白字', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "<font color='white'>**🚀 直达投票页面 · 支持妙卡**</font>",
+        text_align: 'center',
+      }],
+    },
+  });
+  assert.match(html, /universal-card-text--white/);
+  assert.match(html, /color:var\(--N00\)/);
 });
 
 test('hr renders', () => {
@@ -484,6 +548,226 @@ test('RAW: body without tag still renders (tag defaulted to "body")', () => {
   } });
   assert.match(html, /universal-card-body/);
   assert.match(html, /正文还在/);
+});
+
+test('RAW: body padding 0 overrides CSS default 12px (no white ring)', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: {
+    padding: { top: { value: 0 }, right: { value: 0 }, bottom: { value: 0 }, left: { value: 0 } },
+    elements: [{
+      tag: 'interactive_container',
+      property: {
+        customBackgroundStyle: { lightMode: '#f5f4ef', darkMode: '#f5f4ef' },
+        padding: { top: { value: 20 }, right: { value: 20 }, bottom: { value: 20 }, left: { value: 20 } },
+        elements: [{ tag: 'markdown', property: { elements: [
+          { tag: 'plain_text', property: { content: '内文' } },
+        ] } }],
+      },
+    }],
+  } } } });
+  assert.match(html, /universal-card-body[^>]*style="padding:0px 0px 0px 0px"/);
+  assert.doesNotMatch(html, /universal-card-root[^>]*border:\s*1px/);
+});
+
+test('RAW: interactive_container verticalSpacingValue → row-gap', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: {
+      verticalSpacingValue: { type: 'pixels', value: 10 },
+      elements: [
+        { tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: 'a' } }] } },
+        { tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: 'b' } }] } },
+      ],
+    },
+  }] } } } });
+  assert.match(html, /universal-card-interactive-container[^>]*row-gap:10px/);
+});
+
+test('interactive_container：未声明 corner_radius 时无默认圆角（对齐真机）', () => {
+  assert.doesNotMatch(
+    ALL_CSS,
+    /\.universal-card-interactive-container\s*\{[^}]*border-radius\s*:/,
+  );
+  const bare = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        background_style: 'grey-50',
+        elements: [{ tag: 'markdown', content: '页尾' }],
+      }],
+    },
+  });
+  const open = bare.match(/<div class="universal-card-interactive-container"[^>]*>/)?.[0] || '';
+  assert.ok(open.includes('background'), open);
+  assert.doesNotMatch(open, /border-radius/);
+
+  const withRadius = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        background_style: 'grey-50',
+        corner_radius: '10px',
+        elements: [{ tag: 'markdown', content: '圆角块' }],
+      }],
+    },
+  });
+  assert.match(withRadius, /universal-card-interactive-container[^>]*border-radius:10px/);
+});
+
+test('RAW: interactive_container width/height pixels + margin calc', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: {
+      widthValue: { type: 'pixels', value: 48 },
+      heightValue: { type: 'pixels', value: 48 },
+      margin: {
+        top: { value: 8 }, right: { value: 20 }, bottom: { value: 0 }, left: { value: 20 },
+      },
+      customBackgroundStyle: { lightMode: 'rgba(236,249,254,1)', darkMode: 'rgba(236,249,254,1)' },
+      elements: [],
+    },
+  }, {
+    tag: 'interactive_container',
+    property: {
+      width: 'fill',
+      margin: {
+        top: { value: 8 }, right: { value: 20 }, bottom: { value: 0 }, left: { value: 20 },
+      },
+      elements: [],
+    },
+  }] } } } });
+  // 定宽图标框：保持 48px，不因 margin 改成 calc
+  assert.match(html, /width:48px/);
+  assert.match(html, /height:48px/);
+  assert.match(html, /margin:8px 20px 0px 20px/);
+  // fill + 水平 margin → calc(100% - 40px)
+  assert.match(html, /width:calc\(100% - 40px\)/);
+});
+
+test('RAW: img size 24px 24px → fixed wrapper', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img',
+    property: {
+      imageKey: 'img_test',
+      size: '24px 24px',
+      scaleType: 'crop_center',
+      alt: { tag: 'plain_text', property: { content: 'icon' } },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-image__wrapper[^>]*width:24px/);
+  assert.match(html, /universal-card-image__wrapper[^>]*height:24px/);
+});
+
+// 真机正文图常带 margin:8px 20px；原先 img 未 applyOuterMargin，左右贴边。
+test('RAW: img fit_horizontal + horizontal margin → calc width', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img',
+    property: {
+      imageKey: 'img_test',
+      scaleType: 'fit_horizontal',
+      margin: {
+        top: { type: 'pixels', value: 8 },
+        right: { type: 'pixels', value: 20 },
+        bottom: { type: 'pixels', value: 0 },
+        left: { type: 'pixels', value: 20 },
+      },
+      alt: { tag: 'plain_text', property: { content: '' } },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-image__wrapper[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
+});
+
+// 真机 video / fill 按钮常带左右 20px；原先未 applyOuterMargin，左右贴边。
+test('RAW: video + horizontal margin → calc width', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'video',
+    property: {
+      fileID: 'file_v3_demo',
+      coverImageID: 'img_v3_cover',
+      margin: {
+        top: { type: 'pixels', value: 8 },
+        right: { type: 'pixels', value: 20 },
+        bottom: { type: 'pixels', value: 0 },
+        left: { type: 'pixels', value: 20 },
+      },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-video[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /universal-card-video[^>]*width:calc\(100% - 40px\)/);
+});
+
+test('RAW: button fill + horizontal margin → calc width', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'button',
+    property: {
+      type: 'primary_filled',
+      widthValue: { type: 'builtin_width', value: 'fill' },
+      margin: {
+        top: { type: 'pixels', value: 12 },
+        right: { type: 'pixels', value: 20 },
+        bottom: { type: 'pixels', value: 0 },
+        left: { type: 'pixels', value: 20 },
+      },
+      actions: [{ type: 'open_url', action: { url: 'https://open.feishu.cn' } }],
+      text: { tag: 'plain_text', property: { content: '为妙卡投上关键一票' } },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-button--block[^>]*margin:12px 20px 0px 20px/);
+  assert.match(html, /universal-card-button--block[^>]*width:calc\(100% - 40px\)/);
+});
+
+test('RAW: collapsible_panel follow_text + no default border + margin', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'collapsible_panel',
+    property: {
+      expanded: false,
+      backgroundColor: 'grey-50',
+      margin: {
+        top: { value: 4 }, right: { value: 20 }, bottom: { value: 0 }, left: { value: 20 },
+      },
+      header: {
+        title: { tag: 'plain_text', property: { content: '展开说明（3 项）' } },
+        icon_position: 'follow_text',
+        icon: { tag: 'standard_icon', property: { token: 'down_outlined', color: 'grey' } },
+      },
+      elements: [],
+    },
+  }] } } } });
+  assert.match(html, /universal-card-collapsible-panel__header--icon-follow/);
+  assert.match(html, /margin:4px 20px 0px 20px/);
+  assert.match(html, /width:calc\(100% - 40px\)/);
+  // 未指定 border 对象时不描边
+  assert.doesNotMatch(html, /universal-card-collapsible-panel"[^>]*border:1px solid/);
+  assert.match(html, /background:#f5f6f7/);
+});
+
+test('styles: collapsible_panel header 用 caption 色（N600），不是正文近黑', async () => {
+  const { ALL_CSS } = await import('../dist/index.js');
+  // 真机 --text-caption → N600；标题不再写死 #1f2329
+  assert.match(ALL_CSS, /\.universal-card-collapsible-panel__header\s*\{[^}]*color:\s*var\(--N600\)/);
+  assert.doesNotMatch(ALL_CSS, /\.universal-card-collapsible-panel__title\s*\{[^}]*color:\s*#1f2329/);
+});
+
+test('RAW: display-only interactive_container has no --action (no pointer cursor)', () => {
+  const display = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: { actions: [], disabled: false, elements: [
+      { tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: '纯展示' } }] } },
+    ] },
+  }] } } } });
+  assert.doesNotMatch(display, /universal-card-interactive-container--action/);
+
+  const linked = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: {
+      actions: [{ action: { url: 'https://example.com' } }],
+      elements: [{ tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: '可点' } }] } }],
+    },
+  }] } } } });
+  assert.match(linked, /universal-card-interactive-container--action/);
+  assert.match(linked, /data-url="https:\/\/example.com"/);
 });
 
 test('RAW: div renders single content from property.text (markdown)', () => {

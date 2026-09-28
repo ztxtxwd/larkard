@@ -1,6 +1,10 @@
 /**
  * 极简 JSON-RPC 2.0 / LSP stdio 传输层（Content-Length 分帧）。
  * 零依赖，Node 流输入输出；WebWorker 环境可换用 MessagePort 适配。
+ *
+ * Content-Length 按 UTF-8 **字节**计数（LSP 规范）。接收侧必须用 Buffer，
+ * 不能用 setEncoding('utf8') 后按字符串 length 切片，否则正文含中文等
+ * 多字节字符时 didOpen 永远解不完，诊断/补全会全部静默失效。
  */
 import type { Readable, Writable } from 'node:stream';
 
@@ -8,10 +12,12 @@ interface PendingHandler {
   resolve: (v: unknown) => void;
 }
 
+const HEADER_SEP = Buffer.from('\r\n\r\n', 'utf8');
+
 export class Connection {
-  private buffer = '';
+  private buffer = Buffer.alloc(0);
   private nextId = 1;
-  private pending = new Map<number, PendingHandler>();
+  private pending = new Map<number | string, PendingHandler>();
   private requestHandlers = new Map<string, (params: unknown) => unknown>();
   private notificationHandlers = new Map<string, (params: unknown) => void>();
 
@@ -38,14 +44,15 @@ export class Connection {
   }
 
   private write(msg: unknown): void {
-    const body = JSON.stringify(msg);
-    this.output.write(`Content-Length: ${Buffer.byteLength(body, 'utf8')}\r\n\r\n${body}`);
+    const body = Buffer.from(JSON.stringify(msg), 'utf8');
+    const header = Buffer.from(`Content-Length: ${body.length}\r\n\r\n`, 'utf8');
+    this.output.write(Buffer.concat([header, body]));
   }
 
   listen(): void {
-    this.input.setEncoding('utf8');
-    this.input.on('data', (chunk: string) => {
-      this.buffer += chunk;
+    this.input.on('data', (chunk: Buffer | string) => {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, 'utf8');
+      this.buffer = Buffer.concat([this.buffer, buf]);
       this.tryParse();
     });
     this.input.on('close', () => process.exit(0));
@@ -53,21 +60,21 @@ export class Connection {
 
   private tryParse(): void {
     for (;;) {
-      const headerEnd = this.buffer.indexOf('\r\n\r\n');
+      const headerEnd = this.buffer.indexOf(HEADER_SEP);
       if (headerEnd < 0) return;
-      const header = this.buffer.slice(0, headerEnd);
+      const header = this.buffer.subarray(0, headerEnd).toString('utf8');
       const m = /Content-Length:\s*(\d+)/i.exec(header);
       if (!m) {
-        this.buffer = this.buffer.slice(headerEnd + 4);
+        this.buffer = this.buffer.subarray(headerEnd + HEADER_SEP.length);
         continue;
       }
       const length = Number(m[1]);
-      const bodyStart = headerEnd + 4;
+      const bodyStart = headerEnd + HEADER_SEP.length;
       if (this.buffer.length < bodyStart + length) return;
-      const body = this.buffer.slice(bodyStart, bodyStart + length);
-      this.buffer = this.buffer.slice(bodyStart + length);
+      const body = this.buffer.subarray(bodyStart, bodyStart + length).toString('utf8');
+      this.buffer = this.buffer.subarray(bodyStart + length);
       try {
-        this.handleMessage(JSON.parse(body));
+        this.handleMessage(JSON.parse(body) as Record<string, unknown>);
       } catch {
         // 忽略畸形消息
       }
@@ -86,7 +93,7 @@ export class Connection {
       } else {
         this.notificationHandlers.get(msg.method)?.(msg.params);
       }
-    } else if (typeof msg.id === 'number') {
+    } else if (typeof msg.id === 'number' || typeof msg.id === 'string') {
       this.pending.get(msg.id)?.resolve(msg.result);
       this.pending.delete(msg.id);
     }

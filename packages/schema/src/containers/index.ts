@@ -16,6 +16,14 @@ import { MarkdownTextObjectSchema, TipsTextSchema } from '../common/text.js';
 import { MultiUrlSchema } from '../common/url.js';
 import { getElementSchema } from '../element-ref.js';
 
+/** 飞书回读 custom_background_style：#RRGGBBAA 或 rgba 字符串 */
+const CustomBackgroundStyleSchema = z
+  .object({
+    light_mode: z.string().describe('浅色主题颜色（#RRGGBBAA 或 rgba）'),
+    dark_mode: z.string().describe('深色主题颜色（#RRGGBBAA 或 rgba）'),
+  })
+  .describe('列背景自定义色（飞书存储/回读形态）');
+
 /** 列/分栏点击跳转 */
 const ColumnActionSchema = z
   .object({
@@ -36,6 +44,10 @@ export const ColumnSchema = z
       .describe(
         '列背景样式/颜色。并排指标/KPI 列默认 grey-50；勿逐列换彩虹色。彩色 -50 仅作少量点缀',
       ),
+    /** 飞书存储/回读时展开自定义 RGBA 的 hex 形态；编写时优先 background_style + config.style.color */
+    custom_background_style: CustomBackgroundStyleSchema.optional().describe(
+      '列背景自定义色（飞书回读形态，#RRGGBBAA 或 rgba）。编写卡片时用 background_style 引用 config.style.color 的 cus-N',
+    ),
     /** auto / weighted / [16,600]px */
     width: z
       .string()
@@ -95,6 +107,9 @@ export const ColumnSetSchema = z
     horizontal_spacing: SpacingTokenSchema.optional().describe('列间距'),
     horizontal_align: HorizontalAlignSchema.optional().describe(
       '分栏内列的水平对齐',
+    ),
+    vertical_align: VerticalAlignSchema.optional().describe(
+      '分栏内列的垂直对齐',
     ),
     flex_mode: z
       .enum(['none', 'stretch', 'flow', 'bisect', 'trisect'])
@@ -201,6 +216,10 @@ export const InteractiveContainerSchema = z
       ),
     disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
     confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
+    required: z.boolean().optional().describe('是否必填（表单场景），默认 false'),
+    action: ColumnActionSchema.optional().describe(
+      '点击跳转（历史/兼容字段；优先用 behaviors.open_url）',
+    ),
   })
   .describe(
     '交互容器（interactive_container）：仅用于整块可点击/营销通栏/并排 KPI 等；默认 has_border=false，勿给每个文案块套带边框容器',
