@@ -1085,11 +1085,16 @@ describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", ()
     };
     const heading = col.elements[0];
     const caption = col.elements[1];
+    // 显式 customColor 保留为 cus-text-*，即使 RGB 与去 alpha 后的首背景相同
     expect(heading).toMatchObject({
-      content: "<font color='cus-accent'>**85%**</font>",
+      content: "<font color='cus-text-0'>**85%**</font>",
       text_size: "heading",
     });
     expect(heading).not.toHaveProperty("font_color");
+    expect(style?.color?.["cus-text-0"]).toEqual({
+      light_mode: "rgba(217,107,39,1)",
+      dark_mode: "rgba(240,140,75,1)",
+    });
     expect(caption?.content).toBe("<font color='cus-text-1'>欺骗差距闭合率</font>");
     expect(caption).not.toHaveProperty("font_color");
   });

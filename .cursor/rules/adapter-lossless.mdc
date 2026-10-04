@@ -1,0 +1,16 @@
+---
+description: adapter RAW↔DSL 必须双向无损，禁止合并/改写显式颜色
+globs: packages/adapter/**/*
+alwaysApply: false
+---
+
+# Adapter：RAW ↔ DSL 无损
+
+`@open-feishu-card/adapter` 的目标是公开 DSL 与飞书 RAW 的**完全无损**双向转换。详见 `packages/adapter/AGENTS.md`。
+
+硬约束：
+
+- 显式 `customColor` / `customBackgroundStyle` 等不得因同 hex 被并进 `cus-accent` / `cus-muted`
+- 禁止在 adapter 里用亮度/对比度等启发式改色
+- 飞书丢色后的补全逻辑必须 gated，不得污染完整 RAW→DSL
+- 改映射必加 round-trip（或等价字段）测试

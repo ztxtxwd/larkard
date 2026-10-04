@@ -73,7 +73,9 @@ describe('normalizeStoredCardColors', () => {
     expect(col.background_style).toMatch(/^cus-bg-/);
     expect(col.background_style).not.toMatch(/^cus-text-/);
     const md = (col.elements as Record<string, unknown>[])[0] as { content: string };
-    expect(md.content).toMatch(/<font color='cus-/);
+    // 与背景同 hex 的显式字色必须仍是 cus-text-*，不能并进 cus-accent
+    expect(md.content).toMatch(/<font color='cus-text-\d+'>/);
+    expect(md.content).not.toContain('cus-accent');
     expect(md.content).not.toContain('#0a0a0a');
   });
 
@@ -150,6 +152,61 @@ describe('normalizeStoredCardColors', () => {
     expect(pInner.background_style).toBe('cus-bg-1');
     expect(pOuter.custom_background_style).toBeUndefined();
     expect(pInner.custom_background_style).toBeUndefined();
+  });
+  it('keeps explicit text color as cus-text even when it matches the first background hex', () => {
+    const dsl: Record<string, unknown> = {
+      schema: '2.0',
+      config: { update_multi: true },
+      body: {
+        elements: [
+          {
+            tag: 'interactive_container',
+            custom_background_style: {
+              light_mode: '#ede7ddff',
+              dark_mode: '#ede7ddff',
+            },
+            elements: [
+              {
+                tag: 'column_set',
+                columns: [
+                  {
+                    tag: 'column',
+                    custom_background_style: {
+                      light_mode: '#25211bff',
+                      dark_mode: '#25211bff',
+                    },
+                    elements: [
+                      {
+                        tag: 'markdown',
+                        content: "<font color='#ede7ddff'>**暖金 × 黑顶**</font>",
+                      },
+                      {
+                        tag: 'markdown',
+                        content: "<font color='#6e6558ff'>次要说明</font>",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    };
+    normalizeStoredCardColors(dsl);
+    const style = (dsl.config as { style: { color: Record<string, { light_mode: string }> } }).style;
+
+    const outer = (dsl.body as { elements: Record<string, unknown>[] }).elements[0];
+    const col = ((outer.elements as Record<string, unknown>[])[0] as {
+      columns: Record<string, unknown>[];
+    }).columns[0];
+    const [title, muted] = col.elements as { content: string }[];
+    expect(title.content).toMatch(/<font color='cus-text-\d+'>/);
+    expect(title.content).not.toContain('cus-accent');
+    const titleAlias = title.content.match(/cus-text-\d+/)?.[0]!;
+    expect(style.color[titleAlias].light_mode).toBe('rgba(237,231,221,1)');
+    expect(muted.content).toMatch(/<font color='cus-text-\d+'>/);
+    expect(muted.content).not.toContain('cus-muted');
   });
 });
 

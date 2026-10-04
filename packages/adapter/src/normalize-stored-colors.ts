@@ -4,6 +4,8 @@ import { wrapMarkdownContentWithFontColor } from './expand-dsl-colors.js';
  * 飞书存储卡片时会将 config.style.color 的 cus-N 展开为 custom_background_style（#RRGGBBAA），
  * 并丢弃 config.style 与 markdown 内联字色。回读底稿后须 normalize，否则 modify 再发会丢色。
  * 公开 DSL 用 content 内 <font color='cus-N'> 表达字色（飞书发送接口不接受 markdown.font_color）。
+ *
+ * 原则：RAW↔DSL 双向无损（见 AGENTS.md）。显式字色/背景色只做 alias 登记，不得合并进语义 token。
  */
 
 export type CustomColorEntry = { light_mode: string; dark_mode: string };
@@ -207,13 +209,8 @@ export function normalizeStoredCardColors(
     dark_mode: 'rgba(166,166,166,1)',
   };
 
-  const aliasRenames = new Map<string, string>();
-  for (const to of ['cus-accent', 'cus-muted'] as const) {
-    for (const [from, target] of unifyMatchingAlias(colorEntries, 'cus-text', to)) {
-      aliasRenames.set(from, target);
-    }
-  }
-  remapColorReferences(dsl.body, aliasRenames);
+  // 无损原则：显式 cus-text-* 不得并进 cus-accent / cus-muted 等语义别名。
+  // RAW textStyle.customColor 与背景同 hex（深底浅字）是合法设计，必须原样保留。
 
   const config =
     dsl.config && typeof dsl.config === 'object' ? (dsl.config as Record<string, unknown>) : {};
@@ -255,54 +252,6 @@ export function normalizeStoredCardColors(
     };
     applyDefaultFontColors(dsl.body);
   }
-}
-
-function unifyMatchingAlias(
-  entries: Record<string, CustomColorEntry>,
-  fromPrefix: string,
-  to: string,
-): Map<string, string> {
-  const renames = new Map<string, string>();
-  const target = entries[to];
-  if (!target) return renames;
-  for (const alias of Object.keys(entries)) {
-    if (alias === to) continue;
-    if (!alias.startsWith(`${fromPrefix}-`) && alias !== fromPrefix) continue;
-    const entry = entries[alias]!;
-    const matches = to === 'cus-accent' || to === 'cus-muted'
-      ? entry.light_mode === target.light_mode
-      : colorEntryKey(entry) === colorEntryKey(target);
-    if (matches) {
-      renames.set(alias, to);
-      delete entries[alias];
-    }
-  }
-  return renames;
-}
-
-function remapColorReferences(node: unknown, aliasRenames: Map<string, string>): void {
-  const remap = (alias: string | undefined): string | undefined => {
-    if (!alias) return alias;
-    return aliasRenames.get(alias) ?? alias;
-  };
-
-  const walk = (n: unknown): void => {
-    if (Array.isArray(n)) { for (const c of n) walk(c); return; }
-    if (!n || typeof n !== 'object') return;
-    const obj = n as Record<string, unknown>;
-    if (typeof obj.font_color === 'string') obj.font_color = remap(obj.font_color);
-    if (typeof obj.content === 'string' && obj.content.includes('<font')) {
-      obj.content = obj.content.replace(
-        /<font color=['"]([^'"]+)['"]>/g,
-        (_m, color: string) => {
-          const next = remap(color);
-          return next ? `<font color='${next}'>` : _m;
-        },
-      );
-    }
-    for (const value of Object.values(obj)) walk(value);
-  };
-  walk(node);
 }
 
 /** Safety net: hoist or replace inline #hex / rgba in markdown content. */

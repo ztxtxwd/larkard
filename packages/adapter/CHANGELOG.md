@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.15
+
+### Patch Changes
+
+- `normalizeStoredCardColors`：显式 `cus-text-*` 不再并进 `cus-accent` / `cus-muted`（RAW↔DSL 无损；同 hex 的深底浅字保留独立 text token）
+
 ## 0.3.14
 
 ### Patch Changes

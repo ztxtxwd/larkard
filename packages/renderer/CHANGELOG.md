@@ -1,5 +1,12 @@
 # @open-feishu-card/renderer
 
+## 0.2.24
+
+### Patch Changes
+
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.15
+
 ## 0.2.23
 
 ### Patch Changes
