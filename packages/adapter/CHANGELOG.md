@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.16
+
+### Patch Changes
+
+- raw→DSL 保留自定义 `element_id`（丢弃 `_1` 等自动编号）；`column_set`/`column` 的 RAW `actions` 投影为 `action.multi_url`，DSL→RAW 对称回写
+
 ## 0.3.15
 
 ### Patch Changes

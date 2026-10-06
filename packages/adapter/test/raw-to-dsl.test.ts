@@ -1099,3 +1099,143 @@ describe("custom colors (RAW customBackgroundStyle / textStyle.customColor)", ()
     expect(caption).not.toHaveProperty("font_color");
   });
 });
+
+describe("element_id (RAW id → DSL element_id)", () => {
+  it("preserves custom ids on markdown / button / column_set", () => {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              id: "md_intro",
+              tag: "markdown",
+              property: {
+                originTag: "markdown",
+                elements: [{ tag: "plain_text", property: { content: "hi" } }],
+              },
+            },
+            {
+              id: "btn_ok",
+              tag: "button",
+              property: {
+                text: { tag: "plain_text", property: { content: "OK" } },
+                actions: [{ type: "callback", action: { value: { a: 1 }, isValueObjectType: true } }],
+              },
+            },
+            {
+              id: "card_state",
+              tag: "column_set",
+              property: {
+                columns: [
+                  {
+                    id: "col_main",
+                    tag: "column",
+                    property: { width: "auto", elements: [] },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+
+    const els = (dsl.body as { elements: Record<string, unknown>[] }).elements;
+    expect(els[0]).toMatchObject({ tag: "markdown", element_id: "md_intro", content: "hi" });
+    expect(els[1]).toMatchObject({ tag: "button", element_id: "btn_ok" });
+    expect(els[2]).toMatchObject({ tag: "column_set", element_id: "card_state" });
+    const col = (els[2]!.columns as Record<string, unknown>[])[0]!;
+    expect(col).toMatchObject({ tag: "column", element_id: "col_main" });
+  });
+
+  it("drops Feishu auto-generated ids like _1 / _2_0", () => {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              id: "_1",
+              tag: "markdown",
+              property: {
+                originTag: "markdown",
+                elements: [{ tag: "plain_text", property: { content: "x" } }],
+              },
+            },
+            {
+              id: "_2_0",
+              tag: "button",
+              property: {
+                text: { tag: "plain_text", property: { content: "y" } },
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+
+    const els = (dsl.body as { elements: Record<string, unknown>[] }).elements;
+    expect(els[0]).not.toHaveProperty("element_id");
+    expect(els[1]).not.toHaveProperty("element_id");
+    // 也不应把非法 id 泄漏为顶层 id
+    expect(els[0]).not.toHaveProperty("id");
+    expect(els[1]).not.toHaveProperty("id");
+  });
+
+  it("projects column_set open_url actions to action.multi_url (state host)", () => {
+    const stateUrl = "lark://msgcard/unsupported_action#s1.abc";
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              id: "card_state",
+              tag: "column_set",
+              property: {
+                actions: [
+                  {
+                    type: "open_url",
+                    action: {
+                      url: stateUrl,
+                      pcURL: stateUrl,
+                      iosURL: stateUrl,
+                      androidURL: stateUrl,
+                    },
+                  },
+                ],
+                columns: [
+                  {
+                    id: "_3",
+                    tag: "column",
+                    property: { width: "auto", elements: [] },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+
+    const host = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(host.element_id).toBe("card_state");
+    expect(host.actions).toBeUndefined();
+    expect(host.action).toEqual({
+      multi_url: {
+        url: stateUrl,
+        pc_url: stateUrl,
+        ios_url: stateUrl,
+        android_url: stateUrl,
+      },
+    });
+    // 自动列 id 丢弃
+    const col = (host.columns as Record<string, unknown>[])[0]!;
+    expect(col).not.toHaveProperty("element_id");
+  });
+});
+

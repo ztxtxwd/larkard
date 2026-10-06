@@ -364,3 +364,71 @@ test('dslToRaw/rawToDsl round-trips open_url platform URLs (copy button)', () =>
     android_url: copy,
   });
 });
+
+test('dslToRaw writes element_id as outer RAW id (not property)', () => {
+  const dsl = {
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'markdown',
+          element_id: 'md_intro',
+          content: 'hello',
+        },
+        {
+          tag: 'button',
+          element_id: 'btn_submit',
+          text: { tag: 'plain_text', content: '提交' },
+          behaviors: [{ type: 'callback', value: { action: 'go' } }],
+        },
+      ],
+    },
+  };
+  const raw = dslToRaw(dsl) as any;
+  const md = raw.body.property.elements[0];
+  const btn = raw.body.property.elements[1];
+  assert.equal(md.id, 'md_intro');
+  assert.equal(btn.id, 'btn_submit');
+  assert.equal(md.property.element_id, undefined);
+  assert.equal(btn.property.element_id, undefined);
+
+  const back = rawToDsl(raw) as any;
+  assert.equal(back.body.elements[0].element_id, 'md_intro');
+  assert.equal(back.body.elements[1].element_id, 'btn_submit');
+});
+
+test('dslToRaw/rawToDsl round-trips column_set state host (element_id + action.multi_url)', () => {
+  const stateUrl = 'lark://msgcard/unsupported_action#s1.ZGVtbw';
+  const dsl = {
+    schema: '2.0',
+    body: {
+      elements: [
+        { tag: 'markdown', content: 'visible' },
+        {
+          tag: 'column_set',
+          element_id: 'card_state',
+          action: {
+            multi_url: { url: stateUrl },
+          },
+          columns: [{ tag: 'column', width: 'auto', elements: [] }],
+        },
+      ],
+    },
+  };
+
+  const raw = dslToRaw(dsl) as any;
+  const host = raw.body.property.elements[1];
+  assert.equal(host.tag, 'column_set');
+  assert.equal(host.id, 'card_state');
+  assert.equal(host.property.action, undefined);
+  assert.equal(host.property.element_id, undefined);
+  assert.deepEqual(host.property.actions, [
+    { type: 'open_url', action: { url: stateUrl } },
+  ]);
+
+  const back = rawToDsl(raw) as any;
+  const backHost = back.body.elements[1];
+  assert.equal(backHost.element_id, 'card_state');
+  assert.equal(backHost.actions, undefined);
+  assert.deepEqual(backHost.action, { multi_url: { url: stateUrl } });
+});

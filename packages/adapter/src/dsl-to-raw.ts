@@ -124,8 +124,20 @@ function convertNode(node: unknown, colors: ColorRegistry): CardElement | unknow
   return node;
 }
 
+/** 与公开 schema ElementIdSchema / raw→DSL 一致：自定义 id 才落到 RAW 外层 `id`。 */
+const PUBLIC_ELEMENT_ID_RE = /^[A-Za-z][A-Za-z0-9_]{0,19}$/;
+
+function withRawElementId(el: Record<string, unknown>, raw: CardElement): CardElement {
+  const eid = typeof el.element_id === 'string' ? el.element_id : undefined;
+  if (eid && PUBLIC_ELEMENT_ID_RE.test(eid)) {
+    raw.id = eid;
+  }
+  return raw;
+}
+
 /**
- * 单个 DSL 元素（扁平、snake_case）→ RAW 元素（{ tag, property }）。
+ * 单个 DSL 元素（扁平、snake_case）→ RAW 元素（{ tag, id?, property }）。
+ * `element_id` 写到外层 `id`（对齐飞书存储），不进 property。
  */
 function convertEl(el: Record<string, unknown>, colors: ColorRegistry): CardElement {
   const tag = String(el.tag);
@@ -139,17 +151,20 @@ function convertEl(el: Record<string, unknown>, colors: ColorRegistry): CardElem
       property.pillShaped = true;
       delete (property as Record<string, unknown>).style;
     }
-    return { tag: 'person_v1', property };
+    return withRawElementId(el, { tag: 'person_v1', property });
   }
 
   // avatar → 独立 RAW tag；仅展示头像（渲染器 registerComponent('avatar')）
   if (tag === 'avatar') {
-    return { tag: 'avatar', property: buildProperty(el, 'avatar', colors) };
+    return withRawElementId(el, { tag: 'avatar', property: buildProperty(el, 'avatar', colors) });
   }
 
   // picker_date → date_picker（渲染器/预览按静态字段处理；别名归一）
   if (tag === 'picker_date') {
-    return { tag: 'date_picker', property: buildProperty(el, 'date_picker', colors) };
+    return withRawElementId(el, {
+      tag: 'date_picker',
+      property: buildProperty(el, 'date_picker', colors),
+    });
   }
 
   // markdown / lark_md：content 字符串 → 子元素树。
@@ -164,13 +179,13 @@ function convertEl(el: Record<string, unknown>, colors: ColorRegistry): CardElem
     }
     delete (property as Record<string, unknown>).content;
     delete (property as Record<string, unknown>).font_color;
-    return { tag: 'markdown', property };
+    return withRawElementId(el, { tag: 'markdown', property });
   }
 
   // table：lark_md / markdown 列的单元格字符串 → 与真机 RAW 一致的 markdown 元素树。
   // 否则渲染期只能当纯文本，"<font color='green'>**▲**</font>" 会原样漏到 HTML。
   if (tag === 'table') {
-    return { tag, property: convertTableProperty(el, colors) };
+    return withRawElementId(el, { tag, property: convertTableProperty(el, colors) });
   }
 
   // audio / video：width 枚举 → widthValue；视频封面 image_key → coverImageID。
@@ -191,10 +206,10 @@ function convertEl(el: Record<string, unknown>, colors: ColorRegistry): CardElem
       delete (property as Record<string, unknown>).image_key;
       delete (property as Record<string, unknown>).cover_image_key;
     }
-    return { tag, property };
+    return withRawElementId(el, { tag, property });
   }
 
-  return { tag, property: buildProperty(el, tag, colors) };
+  return withRawElementId(el, { tag, property: buildProperty(el, tag, colors) });
 }
 
 /**
@@ -238,11 +253,22 @@ function convertTableProperty(el: Record<string, unknown>, colors: ColorRegistry
   return property;
 }
 
-/** 把 DSL 元素的扁平字段（除 tag/id）搬进 property，逐字段做必要转换。 */
+/** 把 DSL 元素的扁平字段（除 tag/id/element_id）搬进 property，逐字段做必要转换。 */
 function buildProperty(el: Record<string, unknown>, tag: string, colors: ColorRegistry): ElementProperty {
   const property: ElementProperty = {};
   for (const [k, v] of Object.entries(el)) {
-    if (k === 'tag' || k === 'id') continue; // 渲染器不读 id
+    // element_id → 外层 CardElement.id（见 convertEl）；勿塞进 property
+    if (k === 'tag' || k === 'id' || k === 'element_id') continue;
+
+    // column_set / column：action.multi_url → property.actions[{type:open_url,…}]
+    // 对齐飞书 im.message.get(raw) 存储形态；公开 DSL 没有顶层 actions。
+    if ((tag === 'column_set' || tag === 'column') && k === 'action' && isRecord(v)) {
+      const multi = isRecord(v.multi_url) ? v.multi_url : undefined;
+      if (multi && (typeof multi.url === 'string' || typeof multi.default_url === 'string')) {
+        property.actions = [multiUrlToOpenUrlAction(multi)] as never;
+      }
+      continue;
+    }
 
     // column / column_set / interactive_container 自定义背景：
     // 保留 backgroundStyle 别名，并展开 customBackgroundStyle（渲染器优先读后者）
@@ -435,6 +461,25 @@ function behaviorsToActions(
     out.push({ type, action });
   }
   return out;
+}
+
+/** column_set/column 的 multi_url → RAW open_url action（平台字段 camelCase）。 */
+function multiUrlToOpenUrlAction(
+  multi: Record<string, unknown>,
+): { type: 'open_url'; action: Record<string, unknown> } {
+  const url =
+    typeof multi.url === 'string'
+      ? multi.url
+      : typeof multi.default_url === 'string'
+        ? multi.default_url
+        : '';
+  const action: Record<string, unknown> = { url };
+  if (typeof multi.pc_url === 'string' && multi.pc_url) action.pcURL = multi.pc_url;
+  if (typeof multi.ios_url === 'string' && multi.ios_url) action.iosURL = multi.ios_url;
+  if (typeof multi.android_url === 'string' && multi.android_url) {
+    action.androidURL = multi.android_url;
+  }
+  return { type: 'open_url', action };
 }
 
 /** url 归一：字符串直返；对象取 .url（多端字段交给渲染器 resolveURL 处理） */

@@ -383,7 +383,43 @@ function convertBody(node: Record<string, unknown>, ctx: Ctx): unknown {
   return convertProperty(property, "body", ctx);
 }
 
+/**
+ * 公开 DSL `element_id` 规则（与 schema ElementIdSchema 一致）。
+ * 飞书自动编号（`_1` / `_2_0`）不符合「以字母开头」，投影时丢弃。
+ */
+const PUBLIC_ELEMENT_ID_RE = /^[A-Za-z][A-Za-z0-9_]{0,19}$/;
+
+function isPublicElementId(id: string): boolean {
+  return PUBLIC_ELEMENT_ID_RE.test(id);
+}
+
+/**
+ * RAW 外层 `id`（或已是 DSL 的 `element_id`）→ 公开 `element_id`。
+ * 仅保留合法自定义 id；自动编号与非法值一律不输出。
+ */
+function attachPublicElementId(
+  node: Record<string, unknown>,
+  result: unknown,
+): unknown {
+  if (!isRecord(result)) return result;
+  if (typeof result.element_id === "string" && isPublicElementId(result.element_id)) {
+    return result;
+  }
+  const rawId =
+    typeof node.id === "string"
+      ? node.id
+      : typeof node.element_id === "string"
+        ? node.element_id
+        : undefined;
+  if (!rawId || !isPublicElementId(rawId)) return result;
+  return { ...result, element_id: rawId };
+}
+
 function unwrap(node: Record<string, unknown>, ctx: Ctx): unknown {
+  return attachPublicElementId(node, unwrapInner(node, ctx));
+}
+
+function unwrapInner(node: Record<string, unknown>, ctx: Ctx): unknown {
   const tag = typeof node.tag === "string" ? node.tag : undefined;
   const property = isRecord(node.property) ? node.property : {};
 
@@ -1077,6 +1113,25 @@ function convertField(
       .filter((b): b is Record<string, unknown> => b !== undefined);
     if (behaviors.length === 0) return DROP;
     return ["behaviors", behaviors];
+  }
+
+  // column_set / column：RAW `actions:[{type:'open_url', action:{url,…}}]`
+  // → 公开 DSL `action: { multi_url: { url, pc_url?, … } }`。
+  // 公开 schema 没有顶层 `actions`；漏投影会导致 element 宿主（如 card_state）丢 URL。
+  if (
+    (ownerTag === "column_set" || ownerTag === "column") &&
+    key === "actions" &&
+    Array.isArray(rawValue)
+  ) {
+    for (const a of rawValue) {
+      if (!isRecord(a)) continue;
+      if (a.type !== "open_url") continue;
+      const inner = isRecord(a.action) ? a.action : {};
+      const fields = projectOpenUrlFields(inner);
+      if (!fields) continue;
+      return ["action", { multi_url: openUrlFieldsToMultiUrl(fields) }];
+    }
+    return DROP;
   }
 
   // border: { borderColor, cornerRadius:{type,value} } -> { color, corner_radius:"Npx" }
