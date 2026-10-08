@@ -154,6 +154,21 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
+  packages/components:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.1
+        version: 22.20.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.26)(tsx@4.23.12)(typescript@7.0.2)(yaml@2.9.0)
+      tsx:
+        specifier: ^4.19.3
+        version: 4.23.12
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
   packages/language-server:
     dependencies:
       '@open-feishu-card/compiler':
