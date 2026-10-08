@@ -159,6 +159,12 @@ export interface FeishuForm {
   direction?: 'vertical' | 'horizontal';
 }
 
+/** JSON 2.0 其余正文元素。字段与官方组件文档对齐，按 tag 区分。 */
+export interface FeishuAnyElement {
+  tag: string;
+  [key: string]: unknown;
+}
+
 export type FeishuElement =
   | FeishuDiv
   | FeishuMarkdown
@@ -169,7 +175,8 @@ export type FeishuElement =
   | FeishuColumnSet
   | FeishuForm
   | FeishuInput
-  | FeishuSelect;
+  | FeishuSelect
+  | FeishuAnyElement;
 
 export type HeaderTemplate =
   | 'blue'

@@ -96,5 +96,28 @@ export namespace JSX {
     form: import('./types/props.js').FormProps;
     input: import('./types/props.js').InputProps;
     select_static: import('./types/props.js').SelectProps;
+    img: import('./types/props.js').ImageProps;
+    img_combination: import('./types/props.js').ImgCombinationProps;
+    person: import('./types/props.js').PersonProps;
+    person_list: import('./types/props.js').PersonListProps;
+    chart: import('./types/props.js').ChartProps;
+    table: import('./types/props.js').TableProps;
+    audio: import('./types/props.js').AudioProps;
+    video: import('./types/props.js').VideoProps;
+    interactive_container: import('./types/props.js').InteractiveContainerProps;
+    collapsible_panel: import('./types/props.js').CollapsiblePanelProps;
+    collapse_divider: import('./types/props.js').CollapseDividerProps;
+    avatar: import('./types/props.js').AvatarProps;
+    fallback_text: import('./types/props.js').FallbackTextProps;
+    overflow: import('./types/props.js').OverflowProps;
+    multi_select_static: import('./types/props.js').MultiSelectProps;
+    select_person: import('./types/props.js').SelectPersonProps;
+    multi_select_person: import('./types/props.js').MultiSelectPersonProps;
+    date_picker: import('./types/props.js').DatePickerProps;
+    picker_date: import('./types/props.js').DatePickerProps;
+    picker_time: import('./types/props.js').TimePickerProps;
+    picker_datetime: import('./types/props.js').DateTimePickerProps;
+    select_img: import('./types/props.js').SelectImgProps;
+    checker: import('./types/props.js').CheckerProps;
   }
 }

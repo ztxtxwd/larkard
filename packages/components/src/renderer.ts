@@ -1,4 +1,5 @@
 import { serializeActionValue, type ActionInput } from './action.js';
+import { tryRenderExtra } from './render-extra.js';
 import { FRAGMENT, VNODE, isVNode, type VNode, type VNodeChild } from './types/vnode.js';
 import type {
   CallbackBehavior,
@@ -198,6 +199,9 @@ function renderDiv(props: DivProps): FeishuElement {
       }),
     ),
     extra,
+    width: props.width,
+    text_size: props.textSize,
+    icon: typeof props.icon === 'string' ? { tag: 'standard_icon', token: props.icon } : props.icon,
     ...withElementId(props),
   }) as FeishuElement;
 }
@@ -349,8 +353,15 @@ function renderHost(node: VNode, inherited?: InheritedAction): FeishuElement {
       throw new Error('Header 只能放在 Card 下，不能作为正文元素');
     case 'card':
       throw new Error('Card 不能嵌套');
-    default:
+    default: {
+      if (typeof node.type === 'string') {
+        const extra = tryRenderExtra(node.type, node.props as Record<string, unknown>, (children) =>
+          renderElements(children, inherited),
+        );
+        if (extra) return extra;
+      }
       throw new Error(`未知的卡片节点 <${String(node.type)}>`);
+    }
   }
 }
 

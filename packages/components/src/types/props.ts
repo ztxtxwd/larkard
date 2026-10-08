@@ -35,6 +35,9 @@ export interface DivProps extends CommonProps {
   markdown?: boolean;
   fields?: FieldProp[];
   extra?: VNodeChild;
+  icon?: string | { tag?: 'standard_icon'; token: string; color?: string };
+  width?: string;
+  textSize?: string;
   children?: VNodeChild;
 }
 
@@ -142,4 +145,287 @@ export interface SelectProps extends CommonProps {
   required?: boolean;
   disabled?: boolean;
   width?: string;
+}
+
+export interface ImageProps extends CommonProps {
+  imgKey: string;
+  alt: string;
+  title?: string;
+  scaleType?: 'crop_center' | 'crop_top' | 'fit_horizontal';
+  size?: string;
+  cornerRadius?: string;
+  preview?: boolean;
+  transparent?: boolean;
+}
+
+export interface ImgCombinationProps extends CommonProps {
+  mode: 'double' | 'triple' | 'bisect' | 'trisect';
+  images: Array<string | { imgKey: string }>;
+  transparent?: boolean;
+  cornerRadius?: string;
+}
+
+export interface PersonProps extends CommonProps {
+  userId: string;
+  size?: 'extra_small' | 'small' | 'medium' | 'large';
+  showAvatar?: boolean;
+  showName?: boolean;
+  style?: 'normal' | 'capsule';
+  notation?: string;
+}
+
+export interface PersonListProps extends CommonProps {
+  persons: Array<string | { id: string }>;
+  showName?: boolean;
+  showAvatar?: boolean;
+  size?: 'extra_small' | 'small' | 'medium' | 'large' | 'extra_large';
+  mode?: 'name' | 'avatar' | 'nameAvatar';
+  style?: 'normal' | 'notation';
+  lines?: number;
+  dropInvalidUserId?: boolean;
+  icon?: string;
+}
+
+export interface ChartProps extends CommonProps {
+  spec: Record<string, unknown>;
+  aspectRatio?: '1:1' | '2:1' | '4:3' | '16:9';
+  colorTheme?: 'brand' | 'rainbow' | 'complementary' | 'converse' | 'primary';
+  preview?: boolean;
+  height?: string;
+}
+
+export interface TableColumnProp {
+  name: string;
+  displayName?: string;
+  dataType?: 'text' | 'lark_md' | 'options' | 'number' | 'persons' | 'date' | 'markdown';
+  width?: string;
+  verticalAlign?: 'top' | 'center' | 'bottom';
+  horizontalAlign?: 'left' | 'center' | 'right';
+  format?: Record<string, unknown>;
+  dateFormat?: string;
+}
+
+export interface TableProps extends CommonProps {
+  columns: TableColumnProp[];
+  rows: Array<Record<string, unknown>>;
+  pageSize?: number;
+  rowHeight?: string;
+  rowMaxHeight?: string;
+  freezeFirstColumn?: boolean;
+  headerStyle?: {
+    textAlign?: 'left' | 'center' | 'right';
+    textSize?: 'normal' | 'heading';
+    backgroundStyle?: 'none' | 'grey';
+    textColor?: 'default' | 'grey';
+    bold?: boolean;
+    lines?: number;
+  };
+}
+
+export interface MediaFallbackProp {
+  drop?: boolean;
+  text?: string;
+}
+
+export interface AudioProps extends CommonProps {
+  fileKey: string;
+  audioId?: string;
+  disabled?: boolean;
+  disabledTips?: string;
+  showProgressBar?: boolean;
+  showTime?: boolean;
+  timeDisplay?: 'default' | 'both';
+  timePosition?: 'end' | 'start' | 'both_sides';
+  style?: 'normal' | 'flat' | 'speak';
+  width?: string;
+  padding?: string;
+  fallback?: 'drop' | string;
+}
+
+export interface VideoProps extends CommonProps {
+  fileKey: string;
+  cover?: string | { imgKey?: string };
+  enableDownload?: boolean;
+  showTime?: boolean;
+  hoverTips?: string;
+  fallback?: 'drop' | string;
+}
+
+export interface InteractiveContainerProps extends CommonProps {
+  children?: VNodeChild;
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  url?: string;
+  width?: string;
+  height?: string;
+  direction?: 'vertical' | 'horizontal';
+  padding?: string;
+  backgroundStyle?: string;
+  hasBorder?: boolean;
+  borderColor?: string;
+  cornerRadius?: string;
+  disabled?: boolean;
+  disabledTips?: string;
+  hoverTips?: string;
+}
+
+export interface CollapsiblePanelProps extends CommonProps {
+  title: string;
+  titleMarkdown?: boolean;
+  expanded?: boolean;
+  icon?: string;
+  iconPosition?: 'left' | 'right' | 'follow_text';
+  iconExpandedAngle?: -180 | -90 | 90 | 180;
+  backgroundColor?: string;
+  headerBackgroundColor?: string;
+  borderColor?: string;
+  cornerRadius?: string;
+  padding?: string;
+  direction?: 'vertical' | 'horizontal';
+  children?: VNodeChild;
+}
+
+export interface CollapseDividerProps extends CommonProps {}
+
+export interface AvatarProps extends CommonProps {
+  userId: string;
+  size?: 'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'custom';
+  customSize?: number;
+}
+
+export interface FallbackTextProps extends CommonProps {
+  text: string;
+  markdown?: boolean;
+  name?: string;
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+}
+
+export interface OverflowOptionProp {
+  text: string;
+  value?: string;
+  url?: string;
+  pcUrl?: string;
+  iosUrl?: string;
+  androidUrl?: string;
+}
+
+export interface OverflowProps extends CommonProps {
+  text?: string;
+  options: OverflowOptionProp[];
+  name?: string;
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  disabled?: boolean;
+  width?: string;
+}
+
+export interface MultiSelectProps extends CommonProps {
+  name: string;
+  options: Array<{ label?: string; text?: string; value: string }>;
+  placeholder?: string;
+  selectedValues?: string[];
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  required?: boolean;
+  disabled?: boolean;
+  width?: string;
+}
+
+export interface SelectPersonProps extends CommonProps {
+  name?: string;
+  /** 省略则不限制候选范围。 */
+  options?: Array<string | { value?: string }>;
+  placeholder?: string;
+  initialOption?: string;
+  action?: ActionInput;
+  value?: string | Record<string, unknown>;
+  required?: boolean;
+  disabled?: boolean;
+  width?: string;
+}
+
+export interface MultiSelectPersonProps extends CommonProps {
+  name: string;
+  options?: Array<string | { value?: string }>;
+  placeholder?: string;
+  selectedValues?: string[];
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  required?: boolean;
+  disabled?: boolean;
+  width?: string;
+}
+
+export interface DatePickerProps extends CommonProps {
+  name?: string;
+  initialDate?: string;
+  placeholder?: string;
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  required?: boolean;
+  disabled?: boolean;
+  width?: string;
+}
+
+export interface TimePickerProps extends CommonProps {
+  name?: string;
+  /** HH:mm */
+  initialTime?: string;
+  placeholder?: string;
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  required?: boolean;
+  disabled?: boolean;
+  width?: string;
+}
+
+export interface DateTimePickerProps extends CommonProps {
+  name?: string;
+  /** yyyy-MM-dd HH:mm */
+  initialDatetime?: string;
+  placeholder?: string;
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  required?: boolean;
+  disabled?: boolean;
+  width?: string;
+}
+
+export interface SelectImgOptionProp {
+  imgKey: string;
+  value?: string;
+  disabled?: boolean;
+}
+
+export interface SelectImgProps extends CommonProps {
+  options: SelectImgOptionProp[];
+  name?: string;
+  multiSelect?: boolean;
+  layout?: 'stretch' | 'bisect' | 'trisect';
+  style?: 'default' | 'laser';
+  aspectRatio?: '1:1' | '16:9' | '4:3';
+  selectedValues?: string[];
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  required?: boolean;
+  disabled?: boolean;
+  width?: string;
+  canPreview?: boolean;
+}
+
+export interface CheckerProps extends CommonProps {
+  name?: string;
+  checked?: boolean;
+  text?: string;
+  markdown?: boolean;
+  overallCheckable?: boolean;
+  showStrikethrough?: boolean;
+  opacity?: number;
+  action?: ActionInput;
+  value?: Record<string, unknown>;
+  disabled?: boolean;
+  hoverTips?: string;
+  /** 右侧按钮，最多 3 个。 */
+  buttons?: VNodeChild;
 }

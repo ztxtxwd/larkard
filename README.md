@@ -12,6 +12,7 @@
 | `@open-feishu-card/linter` | 嵌套深度、可读性、废弃属性等静态最佳实践检查 | Universal |
 | `@open-feishu-card/adapter` | 公开 DSL ↔ 飞书内部 RAW JSON 双向适配（raw→DSL 对齐 feishu-raw-card-to-dsl） | Universal |
 | `@open-feishu-card/compiler` | DSL → 标准 RAW 编译器 + 非标属性净化器 (Sanitizer) | Universal |
+| `@open-feishu-card/components` | 轻量 JSX 运行时：用 TSX 声明卡片，序列化为 JSON 2.0 | Universal |
 | `@open-feishu-card/renderer` | 零框架依赖渲染引擎：HTML 字符串 / 真实 DOM / SSR | Browser / Node |
 | `@open-feishu-card/language-server` | LSP 语言服务器：诊断、补全、Hover、Quick Fix | Node / WebWorker |
 | `@open-feishu-card/cli` | 终端工具：`lint` / `validate` / `clean` / `format` / `build` | Node CLI |
@@ -45,6 +46,27 @@ npx @open-feishu-card/cli clean my-card.json --out clean-card.json
 npx @open-feishu-card/cli build my-card.json --out raw.json   # 编译为渲染器 RAW
 ```
 
+**用 TSX 写卡片（components）**
+
+`tsconfig.json` 中设置 `"jsx": "react-jsx"`、`"jsxImportSource": "@open-feishu-card/components"`。
+
+```tsx
+import { Button, Card, Header, bindAction, registerAction, renderToCard } from '@open-feishu-card/components';
+
+function approve(requestId: string) {
+  return { requestId };
+}
+registerAction('approval.approve', approve);
+
+const card = renderToCard(
+  <Card headerTheme="blue" config={{ update_multi: true }}>
+    <Header title="费用审批" />
+    <Button type="primary" action={bindAction(approve, 'REQ-42')}>同意</Button>
+  </Card>,
+);
+// card.body.elements[0].value.__action_id === 'approval.approve'
+```
+
 **渲染（renderer）**
 
 ```typescript
@@ -66,6 +88,7 @@ const back = rawToDsl(rawEnvelope); // 飞书下发 RAW envelope → 公开 DSL�
 ## 架构数据流
 
 ```
+TSX ─ components.renderToCard ─ DSL 对象
 源码 JSONC ─ parser(AST+位置) ─ validator(schema 诊断) ┐
                          └───── linter(规则诊断)        ├─ language-server ─ vscode 插件
 DSL 对象 ─ compiler.sanitize(净化) ─ adapter.dslToRaw ─ renderer(DOM/HTML/SSR)
