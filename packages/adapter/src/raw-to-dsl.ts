@@ -1068,24 +1068,30 @@ function convertField(
   // `lark://client/core/copy?value=…` there and https only on default_url.
   if (ownerTag === "button" && key === "action_type") return DROP;
   if (ownerTag === "button" && key === "actions" && Array.isArray(rawValue)) {
-    const openUrls: OpenUrlFields[] = [];
+    const behaviors: Array<Record<string, unknown>> = [];
     for (const a of rawValue) {
       if (!isRecord(a)) continue;
       const inner = isRecord(a.action) ? a.action : {};
       const t = typeof a.type === "string" ? a.type : undefined;
-      if (t !== "open_url") continue; // action_request etc. → drop
+      if (t === "callback") {
+        behaviors.push({ type: "callback", value: isRecord(inner.value) ? inner.value : {} });
+        continue;
+      }
+      if (t !== "open_url") continue;
       const fields = projectOpenUrlFields(inner);
-      if (fields) openUrls.push(fields);
+      if (fields) behaviors.push({ type: "open_url", ...fields });
     }
-    if (openUrls.length === 0) return DROP;
-    if (siblings.buttonActionType === "link") {
-      return ["multi_url", openUrlFieldsToMultiUrl(openUrls[0]!)];
+    if (behaviors.length === 0) return DROP;
+    if (
+      siblings.buttonActionType === "link" &&
+      behaviors.length === 1 &&
+      behaviors[0]?.type === "open_url"
+    ) {
+      const only = behaviors[0];
+      const { type: _type, ...fields } = only;
+      return ["multi_url", openUrlFieldsToMultiUrl(fields as unknown as OpenUrlFields)];
     }
-    // Default to behaviors (matches actionType:"multi" and the more common shape).
-    return [
-      "behaviors",
-      openUrls.map((fields) => ({ type: "open_url", ...fields })),
-    ];
+    return ["behaviors", behaviors];
   }
 
   // interactive_container click interaction. The raw editor stores it as

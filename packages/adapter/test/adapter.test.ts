@@ -391,10 +391,16 @@ test('dslToRaw writes element_id as outer RAW id (not property)', () => {
   assert.equal(btn.id, 'btn_submit');
   assert.equal(md.property.element_id, undefined);
   assert.equal(btn.property.element_id, undefined);
+  assert.deepEqual(btn.property.actions, [
+    { type: 'callback', action: { value: { action: 'go' } } },
+  ]);
 
   const back = rawToDsl(raw) as any;
   assert.equal(back.body.elements[0].element_id, 'md_intro');
   assert.equal(back.body.elements[1].element_id, 'btn_submit');
+  assert.deepEqual(back.body.elements[1].behaviors, [
+    { type: 'callback', value: { action: 'go' } },
+  ]);
 });
 
 test('dslToRaw/rawToDsl round-trips column_set state host (element_id + action.multi_url)', () => {

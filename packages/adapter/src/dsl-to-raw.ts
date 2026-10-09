@@ -454,6 +454,10 @@ function behaviorsToActions(
   for (const b of behaviors) {
     if (!isRecord(b)) continue;
     const type = typeof b.type === 'string' ? b.type : 'open_url';
+    if (type === 'callback') {
+      out.push({ type: 'callback', action: { value: isRecord(b.value) ? b.value : {} } });
+      continue;
+    }
     const action: Record<string, unknown> = { url: normalizeUrl(b.default_url) };
     if (typeof b.pc_url === 'string' && b.pc_url) action.pcURL = b.pc_url;
     if (typeof b.ios_url === 'string' && b.ios_url) action.iosURL = b.ios_url;

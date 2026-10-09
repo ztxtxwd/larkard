@@ -1,5 +1,15 @@
 # @open-feishu-card/language-server
 
+## 0.1.22
+
+### Patch Changes
+
+- 从 Schema 2.0 工具链移除 JSON 1.0 的 `action` / `note`
+- Updated dependencies
+  - @open-feishu-card/schema@0.1.6
+  - @open-feishu-card/validator@0.1.7
+  - @open-feishu-card/compiler@0.1.21
+
 ## 0.1.21
 
 ### Patch Changes

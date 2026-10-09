@@ -1,5 +1,11 @@
 # @open-feishu-card/schema
 
+## 0.1.6
+
+### Patch Changes
+
+- 从 Schema 2.0 工具链移除 JSON 1.0 的 `action` / `note`
+
 ## 0.1.5
 
 ### Patch Changes

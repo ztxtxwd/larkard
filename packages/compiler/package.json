@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/compiler",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "编译器与净化器：DSL → 标准 RAW JSON，并自动剥离不符合 Schema 2.0 的非标属性",
   "type": "module",
   "main": "./dist/index.cjs",

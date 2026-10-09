@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.3.17
+
+### Patch Changes
+
+- button `callback` actions 在 RAW↔DSL 双向保留（不再被当成非 open_url 丢掉）
+
 ## 0.3.16
 
 ### Patch Changes

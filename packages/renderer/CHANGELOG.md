@@ -1,5 +1,13 @@
 # @open-feishu-card/renderer
 
+## 0.2.26
+
+### Patch Changes
+
+- 从 Schema 2.0 工具链移除 JSON 1.0 的 `action` / `note`；渲染器支持交互表单预览（`interactive`）
+- Updated dependencies
+  - @open-feishu-card/adapter@0.3.17
+
 ## 0.2.25
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @open-feishu-card/validator
 
+## 0.1.7
+
+### Patch Changes
+
+- 从 Schema 2.0 工具链移除 JSON 1.0 的 `action` / `note`
+- Updated dependencies
+  - @open-feishu-card/schema@0.1.6
+
 ## 0.1.6
 
 ### Patch Changes
