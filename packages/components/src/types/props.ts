@@ -23,18 +23,9 @@ export interface HeaderProps {
   padding?: string;
 }
 
-export interface FieldProp {
-  text: string;
-  /** 为 true 时 text 用 lark_md，否则 plain_text。 */
-  markdown?: boolean;
-  isShort?: boolean;
-}
-
 export interface DivProps extends CommonProps {
   text?: string;
   markdown?: boolean;
-  fields?: FieldProp[];
-  extra?: VNodeChild;
   icon?: string | { tag?: 'standard_icon'; token: string; color?: string };
   width?: string;
   textSize?: string;
@@ -80,11 +71,6 @@ export interface ButtonProps extends CommonProps {
   /** 表单内提交/重置。 */
   formActionType?: 'submit' | 'reset';
   submit?: boolean;
-  children?: VNodeChild;
-}
-
-export interface ActionGroupProps extends CommonProps {
-  layout?: 'bisected' | 'trisection' | 'flow';
   children?: VNodeChild;
 }
 

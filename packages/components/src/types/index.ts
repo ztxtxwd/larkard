@@ -2,14 +2,12 @@ export type {
   CallbackBehavior,
   CardConfig,
   CustomIconObject,
-  FeishuAction,
   FeishuBehavior,
   FeishuButton,
   FeishuCardJson,
   FeishuColumn,
   FeishuColumnSet,
   FeishuDiv,
-  FeishuDivField,
   FeishuElement,
   FeishuForm,
   FeishuHeader,
@@ -28,7 +26,6 @@ export type {
 } from './card.js';
 
 export type {
-  ActionGroupProps,
   AudioProps,
   AvatarProps,
   ButtonProps,
@@ -45,7 +42,6 @@ export type {
   DateTimePickerProps,
   DivProps,
   FallbackTextProps,
-  FieldProp,
   FormProps,
   HeaderProps,
   HrProps,

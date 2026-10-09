@@ -56,16 +56,9 @@ export interface FeishuButton {
   behaviors?: FeishuBehavior[];
 }
 
-export interface FeishuDivField {
-  is_short?: boolean;
-  text: TextObject;
-}
-
 export interface FeishuDiv {
   tag: 'div';
   text?: TextObject;
-  fields?: FeishuDivField[];
-  extra?: FeishuElement;
   element_id?: string;
   margin?: string;
 }
@@ -81,14 +74,6 @@ export interface FeishuMarkdown {
 
 export interface FeishuHr {
   tag: 'hr';
-  element_id?: string;
-  margin?: string;
-}
-
-export interface FeishuAction {
-  tag: 'action';
-  actions: FeishuElement[];
-  layout?: 'bisected' | 'trisection' | 'flow';
   element_id?: string;
   margin?: string;
 }
@@ -170,7 +155,6 @@ export type FeishuElement =
   | FeishuMarkdown
   | FeishuHr
   | FeishuButton
-  | FeishuAction
   | FeishuColumn
   | FeishuColumnSet
   | FeishuForm
@@ -203,8 +187,6 @@ export interface FeishuHeader {
 
 export interface CardConfig {
   update_multi?: boolean;
-  /** 历史字段。为 true 且未写 width_mode 时，序列化会补上 width_mode: "fill"。 */
-  wide_screen_mode?: boolean;
   width_mode?: 'default' | 'compact' | 'fill';
   enable_forward?: boolean;
   enable_forward_interaction?: boolean;

@@ -4,7 +4,7 @@
  * 用显式函数调用而非 import 副作用，避免被打包器 tree-shake 掉。
  * 元素 property 结构与样式规则均逆向自网页版飞书引擎，详见 README。
  */
-import type { CardElement, RenderContext, TableColumn, TableHeaderStyle, VNode } from './types';
+import type { CardElement, ElementProperty, RenderContext, TableColumn, TableHeaderStyle, VNode } from './types';
 import {
   BASE_FONT_SIZE, BASE_LINE_HEIGHT,
   CHART_DEFAULT_ASPECT_RATIO, CHART_FIXED_MIN_SIZE, CHART_MIN_HEIGHT, CHART_MIN_WIDTH,
@@ -573,11 +573,6 @@ registerComponent('div', (el, ctx) => {
   return h('div', { className: `${CLS}-div` }, content);
 });
 
-// note：备注（小字灰色）
-registerComponent('note', (el, ctx) =>
-  h('div', { className: `${CLS}-note` }, renderElements(el.property?.elements, ctx))
-);
-
 // ---- 布局 ----
 
 // column_set：横向分栏容器
@@ -609,8 +604,27 @@ registerComponent('column_set', (el, ctx) => {
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
   const cls = `${CLS}-column-set` + (bg ? ` ${CLS}-column-set--bg` : '');
+  if (isStateHost(el)) {
+    style.position = 'absolute';
+    style.width = '0';
+    style.height = '0';
+    style.overflow = 'hidden';
+    style.margin = '0';
+    style.padding = '0';
+  }
   return h('div', { className: cls, style }, renderElements(p.columns, ctx));
 });
+
+function isStateHost(el: CardElement): boolean {
+  if (el.id === 'card_state') return true;
+  const actions = el.property?.actions as unknown;
+  if (!Array.isArray(actions)) return false;
+  return actions.some((item) => {
+    if (!item || typeof item !== 'object') return false;
+    const action = (item as { action?: { url?: unknown } }).action;
+    return typeof action?.url === 'string' && action.url.includes('msgcard/unsupported_action#s1.');
+  });
+}
 
 // column：单栏
 registerComponent('column', (el, ctx) => {
@@ -1050,9 +1064,21 @@ registerComponent('button', (el, ctx) => {
     applyOuterMargin(style, p.margin);
   }
   const styleProp = Object.keys(style).length ? { style } : {};
+  const extra = p as ElementProperty & Record<string, unknown>;
+  const callback = readCallbackValue(extra);
+  const formAction = String(extra.form_action_type ?? extra.formActionType ?? '');
+  // interactive：回调按钮变成真 <button>，值放在 data-feishu-action，由宿主页面提交。
+  if (ctx.options.interactive && callback && !p.disabled && !url) {
+    return h('button', {
+      type: formAction === 'reset' ? 'reset' : formAction === 'submit' ? 'submit' : 'button',
+      className: base,
+      'data-feishu-action': JSON.stringify(callback),
+      'data-feishu-tag': 'button',
+      ...styleProp,
+    }, children);
+  }
   // 只有"点击跳转外链"（open_url / 直链）才保留为可点链接；
-  // 其余动作（form_submit / action_request / 回调）在预览里无意义——
-  // 保留按钮外观，但渲染成不可点的 <span>，不触发任何交互。
+  // 其余动作在静态预览里无意义——保留按钮外观，但渲染成不可点的 <span>。
   if (url && !p.disabled) {
     return h('a', { className: base, href: url, target: '_blank', rel: 'noopener', ...styleProp }, children);
   }
@@ -1060,27 +1086,99 @@ registerComponent('button', (el, ctx) => {
   return h('span', { className: cls, ...styleProp }, children);
 });
 
-// form：表单容器。预览定位——不渲染表单语义，只透传内部元素（否则整块被跳过、
-// 里面的按钮/文本都会丢失）。表单内的提交按钮会按 button 规则渲成不可点的静态样式。
-registerComponent('form', (el, ctx) =>
-  h('div', { className: `${CLS}-form` }, renderElements(el.property?.elements, ctx))
-);
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
-// input / multi_select_static：表单输入控件。预览里不可交互，
-// 渲染成一个静态只读框，展示 placeholder（有什么提示就显示什么）。
+/** 按钮 / 下拉的回传对象。DSL 写在 value 上，RAW 写在 actions[].action.value。 */
+function readCallbackValue(p: { value?: unknown; actions?: unknown; behaviors?: unknown }): Record<string, unknown> | null {
+  const fromList = (list: unknown): Record<string, unknown> | null => {
+    if (!Array.isArray(list)) return null;
+    for (const item of list) {
+      if (!isRecord(item) || item.type !== 'callback') continue;
+      const inner = isRecord(item.action) ? item.action : item;
+      if (isRecord(inner.value)) return inner.value;
+    }
+    return null;
+  };
+  return fromList(p.actions) ?? fromList(p.behaviors) ?? (isRecord(p.value) ? p.value : null);
+}
+
+// form：静态预览只透传子元素。interactive 时变成真 <form>，提交由宿主 preventDefault。
+registerComponent('form', (el, ctx) => {
+  const children = renderElements(el.property?.elements, ctx);
+  const className = `${CLS}-form`;
+  if (!ctx.options.interactive) return h('div', { className }, children);
+  const name = typeof el.property?.name === 'string' ? el.property.name : '';
+  return h('form', { className, 'data-feishu-form': name }, children);
+});
+
+// input / select：静态预览是只读框。interactive 时变成可输入控件，name 进入 FormData。
 function renderStaticField(el: CardElement) {
   const p = el.property || {};
   const ph = extractPlainText(p.placeholder) || '';
   return h('div', { className: `${CLS}-input ${CLS}-input--static` }, ph);
 }
-registerComponent('input', (el) => renderStaticField(el));
-registerComponent('multi_select_static', (el) => renderStaticField(el));
-registerComponent('select_static', (el) => renderStaticField(el));
-registerComponent('date_picker', (el) => renderStaticField(el));
-registerComponent('picker_time', (el) => renderStaticField(el));
-registerComponent('picker_datetime', (el) => renderStaticField(el));
-registerComponent('select_person', (el) => renderStaticField(el));
-registerComponent('multi_select_person', (el) => renderStaticField(el));
+
+function fieldText(value: unknown): string {
+  if (typeof value === 'string') return value;
+  return extractPlainText(value);
+}
+
+function renderInteractiveField(el: CardElement) {
+  const p = (el.property || {}) as ElementProperty & Record<string, unknown>;
+  const ph = extractPlainText(p.placeholder) || '';
+  const name = typeof p.name === 'string' ? p.name : undefined;
+  const nameProp = name ? { name } : {};
+  const callback = readCallbackValue(p);
+  const actionProp = callback
+    ? { 'data-feishu-action': JSON.stringify(callback), 'data-feishu-tag': el.tag }
+    : {};
+  if (el.tag === 'select_static' || el.tag === 'multi_select_static') {
+    const initial = p.initial_option ?? p.initialOption;
+    const options = Array.isArray(p.options) ? p.options : [];
+    return h('select', {
+      className: `${CLS}-input`,
+      ...nameProp,
+      ...(el.tag === 'multi_select_static' ? { multiple: true } : {}),
+      ...actionProp,
+    }, [
+      h('option', { value: '' }, ph),
+      ...options.map((option) => {
+        const item = isRecord(option) ? option : {};
+        const value = typeof item.value === 'string' ? item.value : fieldText(item.text ?? item);
+        const label = fieldText(item.text ?? item.label) || value;
+        return h('option', {
+          value,
+          ...(value !== '' && value === initial ? { selected: true } : {}),
+        }, label);
+      }),
+    ]);
+  }
+  const def = p.default_value ?? p.defaultValue;
+  const inputType = el.tag === 'date_picker' ? 'date' : el.tag === 'picker_time' ? 'time' : 'text';
+  return h('input', {
+    className: `${CLS}-input`,
+    type: inputType,
+    placeholder: ph,
+    value: typeof def === 'string' ? def : '',
+    ...nameProp,
+    ...actionProp,
+  });
+}
+
+function renderField(el: CardElement, ctx: RenderContext) {
+  return ctx.options.interactive ? renderInteractiveField(el) : renderStaticField(el);
+}
+
+registerComponent('input', (el, ctx) => renderField(el, ctx));
+registerComponent('multi_select_static', (el, ctx) => renderField(el, ctx));
+registerComponent('select_static', (el, ctx) => renderField(el, ctx));
+registerComponent('date_picker', (el, ctx) => renderField(el, ctx));
+registerComponent('picker_time', (el, ctx) => renderField(el, ctx));
+registerComponent('picker_datetime', (el, ctx) => renderField(el, ctx));
+registerComponent('select_person', (el, ctx) => renderField(el, ctx));
+registerComponent('multi_select_person', (el, ctx) => renderField(el, ctx));
 
 // checker：勾选器（交互组件）。结构对齐网页版飞书引擎：
 // checkbox-container + content（可选删除线/透明度）+ buttons（可选，on_hover 自动隐藏）。
@@ -1189,14 +1287,6 @@ registerComponent('checker', (el, ctx) => {
   // overall_checkable：整行包进 <label>，点文字也能切换；否则外层 div，仅 checkbox 可点
   const Tag = overall && !disabled ? 'label' : 'div';
   return h(Tag, props, checkbox, content, buttonsVNode);
-});
-
-// action：横排交互容器
-registerComponent('action', (el, ctx) => {
-  const p = el.property || {};
-  const layout = p.layout || 'flow';
-  const style = { display: 'flex', flexWrap: 'wrap', gap: '12px' };
-  return h('div', { className: `${CLS}-action ${CLS}-action--${layout}`, style }, renderElements(p.actions, ctx));
 });
 
 // at / at_all：@人。优先 property.content → 人员表姓名 → 固定降级名「张三」（不露出 open_id）。

@@ -96,16 +96,17 @@ export function analyze(source: string): FullAnalysis {
 export const CARD_TOP_LEVEL_KEYS: CompletionItem[] = [
   { label: 'schema', kind: 14, detail: '必填，固定 "2.0"' },
   { label: 'config', kind: 14, detail: '卡片配置（update_multi / enable_forward / style 等）' },
-  { label: 'header', kind: 14, detail: '卡片头（title / subtitle / template / ud_icon）' },
+  { label: 'header', kind: 14, detail: '卡片头（title / subtitle / template / icon）' },
   { label: 'body', kind: 14, detail: '卡片正文 { elements: [...] }' },
-  { label: 'footnote', kind: 14, detail: '卡片脚注' },
 ];
 
 const ELEMENT_TAGS = [
-  'markdown', 'div', 'column_set', 'column', 'hr', 'image', 'button', 'overflow',
-  'select_static', 'select_multi', 'input', 'date_picker', 'picker_datetime',
-  'checker', 'chart', 'table', 'iframe', 'person', 'person_list',
-  'interactive_container', 'tag', 'carousel', 'grid',
+  'column_set', 'column', 'form', 'interactive_container', 'collapsible_panel',
+  'div', 'markdown', 'img', 'img_combination', 'person', 'person_list',
+  'chart', 'table', 'hr', 'audio', 'video',
+  'input', 'button', 'overflow',
+  'select_static', 'multi_select_static', 'select_person', 'multi_select_person',
+  'date_picker', 'picker_time', 'picker_datetime', 'select_img', 'checker',
 ];
 
 export const ELEMENT_TAG_COMPLETIONS: CompletionItem[] = ELEMENT_TAGS.map((t) => ({
@@ -147,7 +148,7 @@ export function complete(source: string, offset: number): CompletionItem[] {
 const HOVER_DOCS: Record<string, string> = {
   schema: '卡片 JSON 结构版本，2.0 固定为 "2.0"。',
   config: '卡片级配置：update_multi（多次更新）、enable_forward、style、locale 等。',
-  header: '卡片头部：title、subtitle、template（颜色模板）、ud_icon、text_tag_list。',
+  header: '卡片头部：title、subtitle、template（颜色模板）、icon、text_tag_list。',
   body: '卡片正文容器，elements 为组件数组。',
   elements: '组件数组，每项是 { tag, ...属性 }。',
   tag: '组件类型标识，如 markdown / column_set / button / chart。',

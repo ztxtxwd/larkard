@@ -198,8 +198,6 @@
 .universal-card-header {
   width: 100%;
   overflow: hidden;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
 }
 .universal-card-header__bg {
   box-sizing: border-box;
@@ -333,7 +331,7 @@
   line-height: 22px;
 }
 
-/* ---- div / note ---- */
+/* ---- div ---- */
 .universal-card-div > * + * { margin-top: 8px; }
 /* div 带前置图标：icon 在左、文本在右排成一行（复刻网页版 .universal-card-div 布局） */
 .universal-card-div--with-icon {
@@ -345,10 +343,6 @@
   display: flex; align-items: center; overflow: hidden;
 }
 .universal-card-div__content { flex: 1; min-width: 0; }
-.universal-card-note {
-  font-size: 12px;
-  color: #8f959e;
-}
 
 /* ---- 布局：column_set / column ---- */
 .universal-card-column-set { display: flex; }
@@ -377,6 +371,7 @@
   display: inline-flex; align-items: center; justify-content: center;
   gap: 4px;
   min-height: 28px; padding: 4px 12px;
+  font-family: inherit;
   font-size: 14px; line-height: 22px; border-radius: 6px;
   border: 1px solid transparent; background: transparent; color: #1f2329;
   cursor: pointer; text-decoration: none; box-sizing: border-box;
@@ -455,16 +450,18 @@
 /* ---- 表单（预览：仅透传，无表单语义） ---- */
 .universal-card-form { display: flex; flex-direction: column; row-gap: 8px; }
 .universal-card-form > * { width: 100%; }
-/* input / select 等输入控件：预览里渲染成只读静态框，展示 placeholder */
+/* input / select：静态预览是只读框；interactive 去掉 --static，成为可输入控件 */
+.universal-card-input,
 .universal-card-input--static {
   min-height: 32px; padding: 6px 12px; box-sizing: border-box;
-  font-size: 14px; line-height: 20px; color: #8f959e;
-  background: #f5f6f7; border: 1px solid #dee0e3; border-radius: 6px;
+  font-family: inherit; font-size: 14px; line-height: 20px;
+  background: #fff; border: 1px solid #dee0e3; border-radius: 6px;
+  color: #1f2329; width: 100%;
+}
+.universal-card-input--static {
+  color: #8f959e; background: #f5f6f7;
   cursor: default; pointer-events: none;
 }
-
-/* ---- action 容器 ---- */
-.universal-card-action { display: flex; flex-wrap: wrap; gap: 12px; }
 
 /* ---- checker 勾选器（对齐网页版 universal-card-checker） ---- */
 .universal-card-checker {
@@ -1056,4 +1053,3 @@
 }
 .universal-card-root.theme-dark .universal-card-markdown { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-hr { background-color: #2e2e30; }
-.universal-card-root.theme-dark .universal-card-note { color: #8a8a8a; }

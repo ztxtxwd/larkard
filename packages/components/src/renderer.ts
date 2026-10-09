@@ -3,7 +3,6 @@ import { tryRenderExtra } from './render-extra.js';
 import { FRAGMENT, VNODE, isVNode, type VNode, type VNodeChild } from './types/vnode.js';
 import type {
   CallbackBehavior,
-  CardConfig,
   FeishuBehavior,
   FeishuButton,
   FeishuCardJson,
@@ -15,7 +14,6 @@ import type {
   TextObject,
 } from './types/card.js';
 import type {
-  ActionGroupProps,
   ButtonProps,
   CardProps,
   ColumnProps,
@@ -125,14 +123,6 @@ function normalizeIcon(icon: HeaderProps['icon']): IconObject | undefined {
   return standard;
 }
 
-function normalizeConfig(config: CardConfig | undefined): CardConfig | undefined {
-  if (!config) return undefined;
-  const next: CardConfig = { ...config };
-  if (next.wide_screen_mode === true && next.width_mode === undefined) next.width_mode = 'fill';
-  if (next.wide_screen_mode === false && next.width_mode === undefined) next.width_mode = 'compact';
-  return next;
-}
-
 function withElementId(props: { elementId?: string; margin?: string }): {
   element_id?: string;
   margin?: string;
@@ -181,24 +171,9 @@ function renderButton(props: ButtonProps, inherited?: InheritedAction): FeishuBu
 function renderDiv(props: DivProps): FeishuElement {
   const fromChildren = textOf(props.children);
   const content = props.text ?? (fromChildren || undefined);
-  let extra: FeishuElement | undefined;
-  if (props.extra !== undefined && props.extra !== null && props.extra !== false && props.extra !== true) {
-    const expanded = expand(props.extra);
-    if (expanded.length !== 1 || typeof expanded[0] === 'string' || typeof expanded[0] === 'number') {
-      throw new Error('Div 的 extra 只能是单个元素');
-    }
-    extra = renderHost(expanded[0]);
-  }
   return compact({
     tag: 'div',
     text: content !== undefined ? textObject(content, props.markdown) : undefined,
-    fields: props.fields?.map((field) =>
-      compact({
-        is_short: field.isShort,
-        text: textObject(field.text, field.markdown),
-      }),
-    ),
-    extra,
     width: props.width,
     text_size: props.textSize,
     icon: typeof props.icon === 'string' ? { tag: 'standard_icon', token: props.icon } : props.icon,
@@ -302,15 +277,6 @@ function renderHost(node: VNode, inherited?: InheritedAction): FeishuElement {
       return renderPlainText(readProps<PlainTextProps>(node));
     case 'button':
       return renderButton(readProps<ButtonProps>(node), inherited);
-    case 'action': {
-      const props = readProps<ActionGroupProps>(node);
-      return compact({
-        tag: 'action',
-        layout: props.layout,
-        ...withElementId(props),
-        actions: renderElements(props.children, inherited),
-      }) as FeishuElement;
-    }
     case 'hr': {
       const props = readProps<HrProps>(node);
       return compact({ tag: 'hr', ...withElementId(props) }) as FeishuElement;
@@ -398,7 +364,7 @@ export function renderToCard(element: VNode): FeishuCardJson {
   }
   return compact({
     schema: '2.0',
-    config: normalizeConfig(props.config),
+    config: props.config,
     header,
     body: elements.length > 0 ? { elements } : undefined,
   }) as FeishuCardJson;

@@ -58,9 +58,8 @@ function pointerToString(path: PropertyKey[]): string {
 }
 
 const DEPRECATED_PROPS: Record<string, string> = {
-  // 常见 1.0 → 2.0 迁移期废弃写法
-  i18n_elements: '2.0 请使用 body.elements + config.locale',
-  card_link: '2.0 请使用 elements 中的 button/open_url 行为',
+  i18n_elements: '2.0 不再支持全局 i18n_elements，请使用组件级 i18n 字段',
+  i18n_header: '2.0 不再支持 i18n_header，请使用 header 内的局部多语言字段',
 };
 
 const BUILDER_ROOT_KEYS = new Set(['name', 'dsl', 'variables']);

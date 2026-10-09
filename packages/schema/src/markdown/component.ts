@@ -7,20 +7,7 @@ import {
   SpacingValueSchema,
 } from '../common/enums.js';
 import { IconSchema, UdIconSchema } from '../common/icon.js';
-import { MultiUrlSchema } from '../common/url.js';
 import { MarkdownTextSizeSchema } from './text-size.js';
-
-/**
- * 历史差异化跳转映射（JSON 1.0 / 旧语法）。
- * JSON 2.0 已不推荐；请优先使用 `<link>` 标签。
- */
-export const MarkdownHrefSchema = z
-  .record(z.string(), MultiUrlSchema)
-  .describe(
-    '差异化跳转映射（旧语法）。content 中使用 [文案]($key) 引用；JSON 2.0 建议改用 <link>',
-  );
-
-export type MarkdownHref = z.infer<typeof MarkdownHrefSchema>;
 
 /**
  * 富文本（Markdown）组件。
@@ -67,9 +54,6 @@ export const MarkdownSchema = z
     ),
     ud_icon: UdIconSchema.optional().describe(
       '历史前缀图标（ud_icon）；与 icon 同时存在时以 icon 为准',
-    ),
-    href: MarkdownHrefSchema.optional().describe(
-      '旧版差异化跳转映射；JSON 2.0 建议使用 <link> 替代',
     ),
   })
   .describe(

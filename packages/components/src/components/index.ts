@@ -1,7 +1,6 @@
 import { jsx } from '../jsx-runtime.js';
 import type { VNode } from '../types/vnode.js';
 import type {
-  ActionGroupProps,
   AudioProps,
   AvatarProps,
   ButtonProps,
@@ -65,10 +64,6 @@ export function PlainText(props: PlainTextProps): VNode<PlainTextProps> {
 
 export function Button(props: ButtonProps): VNode<ButtonProps> {
   return jsx('button', props);
-}
-
-export function ActionGroup(props: ActionGroupProps): VNode<ActionGroupProps> {
-  return jsx('action', props);
 }
 
 export function Hr(props: HrProps = {}): VNode<HrProps> {

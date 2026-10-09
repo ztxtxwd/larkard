@@ -89,7 +89,6 @@ export namespace JSX {
     markdown: import('./types/props.js').MarkdownProps;
     plain_text: import('./types/props.js').PlainTextProps;
     button: import('./types/props.js').ButtonProps;
-    action: import('./types/props.js').ActionGroupProps;
     hr: import('./types/props.js').HrProps;
     column_set: import('./types/props.js').ColumnSetProps;
     column: import('./types/props.js').ColumnProps;

@@ -1,8 +1,6 @@
 import {
-  ActionGroup,
   Button,
   Card,
-  CardElement,
   Column,
   ColumnSet,
   Form,
@@ -31,7 +29,7 @@ registerAction('approval.reject', reject);
 
 export function ApprovalCard() {
   return (
-    <Card headerTheme="blue" config={{ update_multi: true, wide_screen_mode: true }}>
+    <Card headerTheme="blue" config={{ update_multi: true, width_mode: 'fill' }}>
       <Header
         title="费用审批"
         subtitle="REQ-42 · 待处理"
@@ -40,14 +38,16 @@ export function ApprovalCard() {
       />
       <Markdown>**申请人** 张三{'\n'}金额 **¥1,280**</Markdown>
       <PlainText>请在下方填写审批意见后提交。</PlainText>
-      <CardElement
-        fields={[
-          { text: '部门', isShort: true },
-          { text: '研发', isShort: true },
-          { text: '类型', isShort: true },
-          { text: '差旅', isShort: true },
-        ]}
-      />
+      <ColumnSet flexMode="bisect">
+        <Column width="weighted" weight={1}>
+          <PlainText>部门</PlainText>
+          <PlainText>研发</PlainText>
+        </Column>
+        <Column width="weighted" weight={1}>
+          <PlainText>类型</PlainText>
+          <PlainText>差旅</PlainText>
+        </Column>
+      </ColumnSet>
       <Hr />
       <ColumnSet flexMode="bisect">
         <Column width="weighted" weight={1}>
@@ -68,17 +68,15 @@ export function ApprovalCard() {
           ]}
           action={{ path: 'approval.channel', params: ['REQ-42'] }}
         />
-        <ActionGroup>
-          <Button type="primary" submit action={bindAction(approve, 'REQ-42', 'approve')}>
-            同意
-          </Button>
-          <Button type="danger" action={reject} value={{ request_id: 'REQ-42' }}>
-            驳回
-          </Button>
-          <Button type="default" url="https://open.feishu.cn" value={{ key: 'val' }}>
-            查看详情
-          </Button>
-        </ActionGroup>
+        <Button type="primary" submit action={bindAction(approve, 'REQ-42', 'approve')}>
+          同意
+        </Button>
+        <Button type="danger" action={reject} value={{ request_id: 'REQ-42' }}>
+          驳回
+        </Button>
+        <Button type="default" url="https://open.feishu.cn" value={{ key: 'val' }}>
+          查看详情
+        </Button>
       </Form>
     </Card>
   );

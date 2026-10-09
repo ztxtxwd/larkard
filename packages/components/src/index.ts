@@ -13,7 +13,6 @@ export {
 } from './action.js';
 
 export {
-  ActionGroup,
   Audio,
   Avatar,
   Button,

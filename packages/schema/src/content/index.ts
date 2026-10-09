@@ -93,16 +93,6 @@ export const ImageSchema = z
       .boolean()
       .optional()
       .describe('点击后是否支持大图预览，默认 true'),
-    /** @deprecated 历史字段 */
-    mode: z.string().optional().describe('历史字段，已废弃'),
-    custom_width: z
-      .number()
-      .optional()
-      .describe('历史字段：自定义宽度（px）'),
-    compact_width: z
-      .boolean()
-      .optional()
-      .describe('历史字段：是否紧凑宽度'),
     fallback_img_key: z
       .string()
       .optional()

@@ -332,6 +332,12 @@ export interface RenderOptions {
   avatarURLSuffix?: string;
   /** 自定义头像地址解析：入参为命中的 PersonInfo，返回最终 src（优先级最高） */
   resolvePersonAvatar?: (person: PersonInfo) => string | null | undefined;
+  /**
+   * 交互预览。默认关闭：回调按钮是不可点的 span，输入框是静态占位。
+   * 打开后，回调按钮变成带 data-feishu-action 的 button，输入框/下拉框变成真实表单控件。
+   * 宿主监听这些控件，自己把点击发回卡片服务。
+   */
+  interactive?: boolean;
 }
 
 /**

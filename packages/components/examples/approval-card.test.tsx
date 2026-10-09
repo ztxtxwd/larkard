@@ -37,7 +37,6 @@ test('ApprovalCard 序列化为带 action 协议字段的卡片 JSON', () => {
   assert.equal(roundTrip.schema, '2.0');
   assert.deepEqual(roundTrip.config, {
     update_multi: true,
-    wide_screen_mode: true,
     width_mode: 'fill',
   });
   assert.equal(roundTrip.header?.title.content, '费用审批');
@@ -80,7 +79,6 @@ test('ApprovalCard 序列化为带 action 协议字段的卡片 JSON', () => {
   });
   assert.equal(select.options?.[0]?.value, 'feishu');
 
-  assert.equal(byTag(roundTrip, 'action').length, 1);
   assert.equal(byTag<FeishuForm>(roundTrip, 'form')[0]?.name, 'approval_form');
   assert.equal(byTag(roundTrip, 'hr').length, 1);
   assert.equal(byTag<FeishuColumnSet>(roundTrip, 'column_set')[0]?.columns.length, 2);
