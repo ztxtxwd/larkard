@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.18
+
+- 预览里的默认按钮按真机撑满整行，纯文字按钮文字靠左
+- Bundles renderer 0.2.27
+
 ## 0.2.17
 
 - 读卡 / 预览链路保留 open_url 的 pc_url / ios_url / android_url（复制按钮 `lark://client/core/copy` 不再丢失）

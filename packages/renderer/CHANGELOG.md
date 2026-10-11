@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.2.27
+
+### Patch Changes
+
+- 默认按钮按真机撑满整行，不再强制按内容收缩；纯文字按钮文字靠左。
+
 ## 0.2.26
 
 ### Patch Changes
