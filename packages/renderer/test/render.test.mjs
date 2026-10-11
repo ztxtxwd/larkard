@@ -452,7 +452,7 @@ test('button: RAW widthValue.fill → block（撑满列）', () => {
   assert.match(html, /继续观察/);
 });
 
-test('button: DSL width=fill 与 text 系不吃 fill', () => {
+test('button: DSL width=fill（含 text 系）→ block', () => {
   const filled = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
     { tag: 'button', property: {
       type: 'primary', width: 'fill',
@@ -468,7 +468,7 @@ test('button: DSL width=fill 与 text 系不吃 fill', () => {
       text: { tag: 'plain_text', property: { content: 'B' } },
     } },
   ] } } } });
-  assert.doesNotMatch(textBtn, /universal-card-button--block/);
+  assert.match(textBtn, /universal-card-button--primary_text universal-card-button--block/);
 });
 
 test('button: markdown text flattened to plain text (no rich formatting / no <br>)', () => {

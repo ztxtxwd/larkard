@@ -1050,17 +1050,15 @@ registerComponent('button', (el, ctx) => {
   const url = actionUrl || resolveURL(p.url) || p.behaviors?.[0]?.default_url?.url;
   // width:"fill" → 撑满所在列（block）。真机 RAW 用 widthValue:{type:'builtin_width',value:'fill'}，
   // DSL / 部分路径仍可能直接带 width:"fill"——两处都认（对齐 audio）。
-  // text 系（text/primary_text/danger_text）是纯文字按钮，始终按内容宽（auto），不吃 fill。
-  const isText = type === 'text' || type === 'primary_text' || type === 'danger_text';
+  // 缺省宽度也由布局撑满（body > * / 列 stretch），与真机一致；--block 仍标记显式 fill。
   const wv = p.widthValue as { type?: string; value?: string | number } | undefined;
   const widthTok = (p.width ?? wv?.value) as string | number | undefined;
-  const block = widthTok === 'fill' && !isText;
+  const block = widthTok === 'fill';
   const base = `${CLS}-button ${CLS}-button--${type}${block ? ` ${CLS}-button--block` : ''}`;
-  // 外边距（如 margin:12px 20px）；fill 时水平 margin 用 calc 抵消 body>*{width:100%}。
-  // 非 fill 先写 width:auto，避免 applyOuterMargin 在未设 width 时误写成 calc 撑满。
+  // 外边距（如 margin:12px 20px）；水平 margin 用 calc 抵消 body>*{width:100%}。
   const style: Record<string, string> = {};
   if (p.margin) {
-    style.width = block ? '100%' : 'auto';
+    style.width = '100%';
     applyOuterMargin(style, p.margin);
   }
   const styleProp = Object.keys(style).length ? { style } : {};

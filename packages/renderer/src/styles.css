@@ -384,14 +384,9 @@
   flex-shrink: 0; height: 1.2em; color: inherit;
 }
 .universal-card-button__icon .universal-card-icon { color: inherit; }
-/* default 宽度：按内容收缩。列是 flex column（默认 align-items:stretch），
-   body 又有 > * { width:100% }，不加这两条会被撑满所在列。 */
-.universal-card-button:not(.universal-card-button--block) {
-  width: auto;
-  max-width: 100%;
-  align-self: flex-start;
-}
-/* fill（width:"fill"）：撑满所在列 */
+/* 宽度：对齐真机——body > * { width:100% }、列 flex stretch 会把按钮撑满所在行/列。
+   不再强制 width:auto（那是网页版观感；真机独立成行的按钮默认占满整行）。
+   width:"fill" 显式挂 --block，与缺省撑满同宽，并供 margin calc 识别。 */
 .universal-card-button--block { width: 100%; }
 
 /* —— outlined 描边族 —— */
@@ -413,11 +408,12 @@
 }
 .universal-card-button--danger:not(.universal-card-button--static):hover { background: #fef0f0; }
 
-/* —— text 纯文字族（无边框/无底色，按内容宽） —— */
+/* —— text 纯文字族（无边框/无底色；撑满时文字靠左，对齐真机） —— */
 .universal-card-button--text,
 .universal-card-button--primary_text,
 .universal-card-button--danger_text {
   border-color: transparent; background: transparent; padding: 4px 8px;
+  justify-content: flex-start;
 }
 .universal-card-button--text { color: #1f2329; }
 .universal-card-button--primary_text { color: #1456f0; }
