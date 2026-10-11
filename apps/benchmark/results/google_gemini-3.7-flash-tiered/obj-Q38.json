@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。飞书卡片不支持直接使用外链或 Base64 内联图片，必须使用上传至飞书平台后生成的 `img_key`（或在占位时使用合规的示例 key）。",
+  "extracted": "C",
+  "correct": true
+}

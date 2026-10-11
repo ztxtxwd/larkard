@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "交互",
+  "response": "答案是 B. overflow。  \n飞书卡片中 `overflow` 组件用于把次要操作收进「更多」菜单。",
+  "extracted": "B",
+  "correct": true
+}

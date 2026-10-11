@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "交互",
+  "response": "答案是 B。理由：飞书卡片表单中提交按钮的 form_action_type 固定为 `submit`。",
+  "extracted": "B",
+  "correct": true
+}

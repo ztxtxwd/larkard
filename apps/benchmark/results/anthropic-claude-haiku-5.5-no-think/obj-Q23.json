@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 卡片的正文必须放在 body 下（即 body.elements），根对象直接写 elements 属于 JSON 1.0 的结构，在 2.0 中不成立。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

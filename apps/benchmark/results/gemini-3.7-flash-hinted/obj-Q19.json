@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "组件",
+  "response": "答案是 B。飞书卡片 2.0 中使用 tag 为 `person` 的人员组件来展示单个人员的头像和姓名等信息。",
+  "extracted": "B",
+  "correct": true
+}

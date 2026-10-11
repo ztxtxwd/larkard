@@ -1,0 +1,32 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true,\n    \"style\": {\n      \"text_size\": {\n        \"normal_v2\": {\n          \"default\": \"normal\",\n          \"pc\": \"normal\",\n          \"mobile\": \"heading\"\n        }\n      }\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"low\",\n        \"header_style\": {\n          \"background_style\": \"grey\",\n          \"text_size\": \"normal\",\n          \"bold\": true,\n          \"lines\": 1\n        },\n        \"columns\": [\n          {\n            \"data_type\": \"text\",\n            \"name\": \"customer\",\n            \"display_name\": \"客户名称\",\n            \"width\": \"auto\",\n            \"horizontal_align\": \"left\"\n          },\n          {\n            \"data_type\": \"text\",\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"width\": \"auto\",\n            \"horizontal_align\": \"left\"\n          },\n          {\n            \"data_type\": \"number\",\n            \"name\": \"arr\",\n            \"display_name\": \"ARR（万元）\",\n            \"width\": \"auto\",\n            \"horizontal_align\": \"right\",\n            \"format\": {\n              \"precision\": 2,\n              \"separator\": true\n            }\n          },\n          {\n            \"data_type\": \"person\",\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"width\": \"auto\",\n            \"horizontal_align\": \"left\"\n          },\n          {\n            \"data_type\": \"date\",\n            \"name\": \"sign_date\",\n            \"display_name\": \"签约日期\",\n            \"width\": \"auto\",\n            \"horizontal_align\": \"left\",\n            \"format\": \"yyyy-MM-dd\"\n          },\n          {\n            \"data_type\": \"url\",\n            \"name\": \"link\",\n            \"display_name\": \"链接\",\n            \"width\": \"auto\",\n            \"horizontal_align\": \"left\"\n          },\n          {\n            \"data_type\": \"img\",\n            \"name\": \"logo\",\n            \"display_name\": \"企业图片\",\n            \"width\": \"auto\",\n            \"horizontal_align\": \"center\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer\": \"星河科技有限公司\",\n            \"scale\": \"500人以上\",\n            \"arr\": 128.5,\n            \"owner\": {\n              \"id\": \"ou_demo123\",\n              \"name\": \"张三\"\n            },\n            \"sign_date\": \"2024-03-15\",\n            \"link\": {\n              \"link\": \"https://www.example.com/xinghe\",\n              \"text\": \"官网\"\n            },\n            \"logo\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer\": \"云帆信息技术\",\n            \"scale\": \"100-500人\",\n            \"arr\": 66.8,\n            \"owner\": {\n              \"id\": \"ou_demo123\",\n              \"name\": \"李四\"\n            },\n            \"sign_date\": \"2024-05-20\",\n            \"link\": {\n              \"link\": \"https://www.example.com/yunfan\",\n              \"text\": \"官网\"\n            },\n            \"logo\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer\": \"恒通物流集团\",\n            \"scale\": \"1000人以上\",\n            \"arr\": 320.0,\n            \"owner\": {\n              \"id\": \"ou_demo123\",\n              \"name\": \"王五\"\n            },\n            \"sign_date\": \"2023-11-08\",\n            \"link\": {\n              \"link\": \"https://www.example.com/hengtong\",\n              \"text\": \"官网\"\n            },\n            \"logo\": \"img_v2_demo-key\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 1,
+    "total": 0.5,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/3/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/4/format: Invalid input: expected record, received string",
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q01",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 JSON 2.0 规定在根对象中通过声明 `\"schema\": \"2.0\"` 来标识使用 2.0 版本的规范与功能。",
+  "extracted": "B",
+  "correct": true
+}

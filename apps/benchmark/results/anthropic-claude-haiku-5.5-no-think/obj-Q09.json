@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 date_picker。飞书卡片 JSON 2.0 中，日期选择器组件（仅选择日期）的 tag 为 date_picker；若需要同时选择时间，则使用 picker_datetime。",
+  "extracted": "date_picker",
+  "correct": false,
+  "weight": 20
+}

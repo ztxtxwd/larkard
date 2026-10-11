@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "组件",
+  "response": "答案是 C。在飞书卡片 JSON 2.0 中，图片组件统一通过 `img_key` 字段引用上传至飞书平台后生成的图片 Key。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "基础结构",
+  "response": "答案是 C。飞书卡片通过根节点下的 `card_link` 字段来配置整张卡片的全局点击跳转链接。",
+  "extracted": "C",
+  "correct": true
+}

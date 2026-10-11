@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "交互",
+  "response": "答案是 A。more_menu 组件正是为将多个次要操作收进「更多」菜单而设计（Lark Card 官方文档描述完全匹配）。 \n\nThe answer is A. more_menu. This component is specifically designed to fold multiple secondary actions into a \"更多\" menu, as described in the official Lark Card 2.0 documentation.",
+  "extracted": "A",
+  "correct": false
+}

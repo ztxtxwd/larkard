@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 16。\n\n飞书卡片 JSON 2.0 中 horizontal_spacing 的 token 与像素对应：small≈4px、medium≈8px、large≈12px、extra_large≈16px。",
+  "extracted": "16",
+  "correct": true,
+  "weight": 10
+}

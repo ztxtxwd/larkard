@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "组件",
+  "response": "答案是 B。markdown 组件用于展示富文本，支持 Markdown 语法、@人和超链接。",
+  "extracted": "B",
+  "correct": true
+}

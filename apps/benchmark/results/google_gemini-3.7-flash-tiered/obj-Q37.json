@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。飞书卡片校验规则（linter）通常将组件的最大嵌套深度限制为 8 层，以避免过度嵌套影响卡片渲染性能与排版体验。",
+  "extracted": "B",
+  "correct": true
+}

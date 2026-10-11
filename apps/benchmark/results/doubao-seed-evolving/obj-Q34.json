@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "交互",
+  "response": "答案是 B。overflow 组件用于将多个次要操作收纳到「更多」溢出菜单中。",
+  "extracted": "B",
+  "correct": true
+}

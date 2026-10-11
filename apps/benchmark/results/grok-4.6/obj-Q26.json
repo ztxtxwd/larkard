@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "组件",
+  "response": "答案是 A。Lark Card JSON 2.0 官方规范中，音频组件的 tag 正是 audio。",
+  "extracted": "A",
+  "correct": true
+}

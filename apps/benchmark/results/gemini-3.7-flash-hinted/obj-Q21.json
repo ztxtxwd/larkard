@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "组件",
+  "response": "答案是 B。在飞书卡片配置中，fallback 的 drop 行为表示当客户端版本不支持该组件时，将直接丢弃并不渲染该组件。",
+  "extracted": "B",
+  "correct": true
+}

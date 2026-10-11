@@ -1,0 +1,33 @@
+{
+  "kind": "subjective",
+  "taskId": "S12",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"card_link\": {\n    \"url\": \"https://open.feishu.cn\",\n    \"android_url\": \"\",\n    \"ios_url\": \"\",\n    \"pc_url\": \"\"\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"本周精选文章\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 飞书开放平台卡片 2.0 最佳实践指南**\\n深度解析卡片搭建与交互设计规范，助你打造高效工作流卡片。\\n📅 2024-03-25 · 🏷️ 技术前沿\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 打造智能协同工作空间：从0到1构建自定义机器人**\\n手把手教你如何利用飞书开放能力，搭建自动化业务通知与交互 Bot。\\n📅 2024-03-24 · 🏷️ 解决方案\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 组织提效利器：飞书多维表格高级玩法解析**\\n从数据看板到流程自动化，探索多维表格在复杂项目管理中的落地场景。\\n📅 2024-03-22 · 🏷️ 最佳实践\"\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"💡 点击卡片任意区域即可查看更多精彩内容\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.25,
+    "total": 0.888,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "markdown",
+        "note",
+        "plain_text"
+      ],
+      "goldenTagSequence": [
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

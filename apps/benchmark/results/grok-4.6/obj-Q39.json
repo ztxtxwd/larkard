@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。主题色集中在 header.template，正文保持简洁符合飞书卡片最佳实践。",
+  "extracted": "B",
+  "correct": true
+}

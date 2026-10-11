@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "易错与最佳实践",
+  "response": "答案是 A。飞书卡片规范与 Linter 最佳实践建议容器组件的嵌套层级不超过 5 层，以保证渲染性能和跨端展示效果。",
+  "extracted": "A",
+  "correct": false
+}

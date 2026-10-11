@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "交互",
+  "response": "答案是 B。按钮组件的文案字段 `text` 是一个对象，需使用 `plain_text` 标签并在 `content` 中填写文案内容。",
+  "extracted": "B",
+  "correct": true
+}

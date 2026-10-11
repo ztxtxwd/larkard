@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "组件",
+  "response": "答案是 C。表格组件（table）只能放在 column 内。",
+  "extracted": "C",
+  "correct": false
+}

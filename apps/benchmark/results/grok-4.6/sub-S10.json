@@ -1,0 +1,30 @@
+{
+  "kind": "subjective",
+  "taskId": "S10",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"type\": \"header\",\n        \"title\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"审批操作\"\n        },\n        \"template\": \"blue\"\n      },\n      {\n        \"type\": \"column_set\",\n        \"contents\": [\n          {\n            \"type\": \"column\",\n            \"width\": \"fixed\",\n            \"contents\": [\n              {\n                \"type\": \"button\",\n                \"tag\": \"primary\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"批准\"\n                },\n                \"action\": {\n                  \"type\": \"button\",\n                  \"action_name\": \"approve\"\n                }\n              }\n            ]\n          },\n          {\n            \"type\": \"column\",\n            \"width\": \"fixed\",\n            \"contents\": [\n              {\n                \"type\": \"button\",\n                \"tag\": \"danger\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"驳回\"\n                },\n                \"action\": {\n                  \"type\": \"button\",\n                  \"action_name\": \"reject\"\n                }\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.7,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'note' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'note' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

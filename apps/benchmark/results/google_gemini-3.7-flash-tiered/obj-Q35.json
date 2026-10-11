@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片 2.0 中使用 `interactive_container` 组件将任意子组件包裹为可整体响应点击事件的交互容器。",
+  "extracted": "B",
+  "correct": true
+}

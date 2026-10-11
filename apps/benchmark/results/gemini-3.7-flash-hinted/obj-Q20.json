@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "组件",
+  "response": "答案是 A。飞书卡片 2.0 中提供了走马灯（轮播图）容器组件，其对应的 tag 为 `carousel`。",
+  "extracted": "A",
+  "correct": false
+}

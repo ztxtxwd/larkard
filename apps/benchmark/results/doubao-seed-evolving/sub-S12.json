@@ -1,0 +1,34 @@
+{
+  "kind": "subjective",
+  "taskId": "S12",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"本周精选文章\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"为你精选本周最值得阅读的技术与产品文章，点击卡片查看全部内容。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 飞书卡片 2.0 全新升级指南**\\n深入了解卡片 JSON 2.0 的结构变化与最佳实践。\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 如何构建高互动性的消息卡片**\\n从布局、组件到交互，一站式掌握卡片设计技巧。\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 开放平台最新能力速递**\\n本周开放平台上线的新能力与接口更新汇总。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"点击整卡跳转至飞书开放平台查看更多 · 每周更新\"\n          }\n        ]\n      }\n    ]\n  },\n  \"card_link\": {\n    \"url\": \"https://open.feishu.cn\",\n    \"android_url\": \"https://open.feishu.cn\",\n    \"ios_url\": \"https://open.feishu.cn\",\n    \"pc_url\": \"https://open.feishu.cn\"\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.222,
+    "total": 0.883,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "markdown",
+        "markdown",
+        "hr",
+        "note",
+        "plain_text"
+      ],
+      "goldenTagSequence": [
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

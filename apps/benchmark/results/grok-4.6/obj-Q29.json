@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "交互",
+  "response": "答案是 A, B, C。<理由>表单容器 form 的必需属性为 name（唯一标识）、action（提交地址）和 method（提交方式），而 id 不是必需属性。",
+  "extracted": "A",
+  "correct": true
+}

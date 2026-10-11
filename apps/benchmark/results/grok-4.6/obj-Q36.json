@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。table 可以放进 column，而 form 不能。",
+  "extracted": "B",
+  "correct": false
+}

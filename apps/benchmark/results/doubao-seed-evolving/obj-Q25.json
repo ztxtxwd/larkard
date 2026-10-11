@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "组件",
+  "response": "答案是 A。飞书卡片 JSON 2.0 中用于多图聚合展示（如九宫格）的图片组合组件标签为 `img_group`。",
+  "extracted": "A",
+  "correct": false
+}

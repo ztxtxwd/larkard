@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "易错与最佳实践",
+  "response": "答案是 A。飞书卡片 JSON 2.0 的 linter 默认规则建议嵌套深度不超过 5 层，以保证结构清晰、渲染稳定和可维护性。",
+  "extracted": "A",
+  "correct": false
+}

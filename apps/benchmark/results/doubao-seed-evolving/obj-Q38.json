@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。飞书卡片中的图片需使用上传后获得的 img_key（如 img_v2_xxx），不能直接用外链 URL、base64 或内联图片；无法确定时应使用明确的示例占位值。",
+  "extracted": "C",
+  "correct": true
+}

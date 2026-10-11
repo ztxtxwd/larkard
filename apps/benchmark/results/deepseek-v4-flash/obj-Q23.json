@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "组件",
+  "response": "答案是 B。理由：飞书卡片中的可折叠面板组件 tag 为 `collapsible_panel`，支持默认收起、点击展开。",
+  "extracted": "B",
+  "correct": true
+}

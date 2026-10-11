@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "组件",
+  "response": "答案是 A。在飞书卡片 JSON 2.0 中，音频组件的标签定义为 `audio`。",
+  "extracted": "A",
+  "correct": true
+}

@@ -1,0 +1,33 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"请假申请\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"form\",\n        \"components\": [\n          {\n            \"tag\": \"input\",\n            \"name\": \"reason\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请假事由\"\n            },\n            \"required\": true,\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入请假事由\"\n            }\n          },\n          {\n            \"tag\": \"select_static\",\n            \"name\": \"leave_type\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请假类型\"\n            },\n            \"required\": true,\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"年假\"\n                },\n                \"value\": \"annual_leave\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"病假\"\n                },\n                \"value\": \"sick_leave\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交申请\"\n            },\n            \"type\": \"primary\",\n            \"submit\": true\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.4,
+    "total": 0.76,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/elements: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "form"
+      ],
+      "goldenTagSequence": [
+        "form",
+        "input",
+        "select_static",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "subjective",
+  "taskId": "S15",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true,\n    \"wide_screen_mode\": true\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"🚨 严重告警：订单服务响应超时\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"告警级别：P1 · 触发时间：2024-06-12 14:32:08\"\n    },\n    \"template\": \"red\"\n  },\n  \"body\": {\n    \"direction\": \"vertical\",\n    \"padding\": \"12px 12px 12px 12px\",\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**告警摘要**\\n集群 `prod-cn-shanghai-01` 中订单服务（order-service）在过去 5 分钟内 P99 延迟达到 **3.8s**，超过阈值 800ms，错误率上升至 **12.4%**，疑似下游支付通道异常导致线程池耗尽。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**📊 服务状态一览**\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"stretch\",\n        \"background_style\": \"grey\",\n        \"horizontal_spacing\": \"8px\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"text_align\": \"center\",\n                \"content\": \"**order-service**\\n🔴 异常\\n延迟 3.8s\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"text_align\": \"center\",\n                \"content\": \"**payment-gateway**\\n🔴 异常\\n错误率 18%\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"text_align\": \"center\",\n                \"content\": \"**user-service**\\n🟢 正常\\n延迟 42ms\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"vertical_align\": \"top\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"text_align\": \"center\",\n                \"content\": \"**inventory-svc**\\n🟡 告警\\nCPU 78%\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**🕓 最近事件**\\n- `14:32:08` order-service P99 延迟突破阈值，触发 P1 告警\\n- `14:30:51` payment-gateway 连接池等待数 > 200\\n- `14:28:17` 实例 `order-7d9f8-6x2vp` 重启失败（健康检查未通过）\\n- `14:25:43` 上游网关返回 5xx 比例升至 9.2%\\n- `14:20:02` 发布流水线 #4821 部署 order-service v2.14.3 至生产环境\"\n      },\n      {\n        \"tag\": \"action\",\n        \"actions\": [\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"查看详情\"\n            },\n            \"type\": \"primary\",\n            \"value\": {\n              \"action\": \"view_detail\",\n              \"alert_id\": \"A-20240612-1432\"\n            }\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"静默 1 小时\"\n            },\n            \"type\": \"default\",\n            \"value\": {\n              \"action\": \"silence\",\n              \"duration_minutes\": 60\n            }\n          }\n        ]\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"值班人：@SRE 团队 · 告警来源：Prometheus / Alertmanager\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.925,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/6/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'note' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

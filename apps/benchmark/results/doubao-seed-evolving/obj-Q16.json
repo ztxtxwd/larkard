@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "组件",
+  "response": "答案是 A。div 组件支持嵌套文本、图片等元素形成图文混排块，常用于头像加文本的组合展示。",
+  "extracted": "A",
+  "correct": true
+}

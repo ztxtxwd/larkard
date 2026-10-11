@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。<在飞书卡片 markdown 组件中，@ 某人需使用 <at id=用户open_id></at> 语法，并使用真实的 open_id。> \n\\confidence{75}",
+  "extracted": "B",
+  "correct": true
+}

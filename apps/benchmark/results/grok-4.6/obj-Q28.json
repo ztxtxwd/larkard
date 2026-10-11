@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "交互",
+  "response": "答案是 A。<理由> 在飞书卡片（Lark Card JSON 2.0）中，按钮组件通过“action”字段配置交互行为（如跳转URL、触发事件等），而非“behaviors”“on_click”或“events”。",
+  "extracted": "A",
+  "correct": false
+}

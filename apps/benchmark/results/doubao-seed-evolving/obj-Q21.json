@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "组件",
+  "response": "答案是 B。fallback 的 drop 行为表示在客户端不支持视频组件时直接丢弃该组件，不进行降级展示。",
+  "extracted": "B",
+  "correct": true
+}

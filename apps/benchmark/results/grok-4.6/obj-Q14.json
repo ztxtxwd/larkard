@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "组件",
+  "response": "答案是 B。columns 组件专门用于实现多列并排布局。",
+  "extracted": "B",
+  "correct": false
+}

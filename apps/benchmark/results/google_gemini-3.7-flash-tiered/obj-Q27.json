@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片中的按钮文案需通过 `text` 字段定义为一个文本对象，指定其 `tag` 为文本类型（如 `plain_text`）并由 `content` 承载具体文案内容。",
+  "extracted": "B",
+  "correct": true
+}

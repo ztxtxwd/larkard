@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片标题区由 `header` 字段定义，其内部的 `title` 为标准文本对象（需指定 `tag` 和 `content`），并可通过 `template` 属性配置标题背景主题色。",
+  "extracted": "B",
+  "correct": true
+}

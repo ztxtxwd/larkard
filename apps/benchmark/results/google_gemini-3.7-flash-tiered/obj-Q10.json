@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q10",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 JSON 2.0 规范中，`custom_font_size` 支持自定义字体大小的有效取值范围为 10px 至 40px。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "组件",
+  "response": "答案是 A。`fit_horizontal` 表示等比缩放并让指定边贴齐容器；`crop_center` 会裁剪，`stretch` 会拉伸，`contain` 是完整包含而非某一边贴齐。",
+  "extracted": "A",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "交互",
+  "response": "答案是 A。`person_picker` 是飞书卡片中通讯录选人组件的 tag。",
+  "extracted": "A",
+  "correct": false
+}

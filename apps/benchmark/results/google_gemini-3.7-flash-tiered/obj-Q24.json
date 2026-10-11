@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片折叠面板的展开图标旋转角度仅支持特定角度（如 -180°、-90°、0°、90°、180°），不支持 45°。",
+  "extracted": "C",
+  "correct": true
+}

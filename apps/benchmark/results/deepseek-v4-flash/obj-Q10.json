@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q10",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 config 中自定义字号（custom_font_size）的取值范围为 10px–40px。",
+  "extracted": "B",
+  "correct": true
+}

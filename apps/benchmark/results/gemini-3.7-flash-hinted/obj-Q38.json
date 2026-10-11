@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。飞书卡片规范要求使用上传至飞书资源库后生成的 `img_key`（如 `img_v2_xxx` 格式）来引用图片，未确定时可使用标准占位符。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "组件",
+  "response": "答案是 A。飞书卡片 JSON 2.0 官方组件列表中存在 carousel（用于卡片轮播），而 tab_bar、chart、modal 均不在标准组件 tag 列表中。",
+  "extracted": "A",
+  "correct": false
+}

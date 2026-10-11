@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "组件",
+  "response": "答案是 B。在飞书卡片中，配置 `fallback` 为 `drop` 意味着当低版本客户端不支持该组件时，会直接丢弃并隐藏该组件，不展示任何兜底内容。",
+  "extracted": "B",
+  "correct": true
+}

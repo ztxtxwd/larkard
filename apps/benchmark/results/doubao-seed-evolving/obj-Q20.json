@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片支持 chart 图表组件，而 carousel、tab_bar、modal 均不是飞书卡片 2.0 中真实存在的组件 tag。",
+  "extracted": "C",
+  "correct": true
+}

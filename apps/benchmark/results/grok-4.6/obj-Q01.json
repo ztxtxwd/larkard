@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q01",
+  "category": "基础结构",
+  "response": "答案是 A。根对象需显式声明“version”: “2.0”以启用2.0新组件与卡片搭建工具。",
+  "extracted": "A",
+  "correct": false
+}

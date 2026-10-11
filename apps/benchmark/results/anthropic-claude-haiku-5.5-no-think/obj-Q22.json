@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。JSON 2.0 卡片的根级字段 i18n_elements 仍然支持，用于按语言组织卡片元素实现全局多语言。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

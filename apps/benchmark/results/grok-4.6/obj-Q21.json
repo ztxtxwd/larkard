@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "组件",
+  "response": "答案是 A。<理由>视频组件（含 cover 封面图）在不支持视频播放的客户端中会降级为图片显示。",
+  "extracted": "A",
+  "correct": false
+}

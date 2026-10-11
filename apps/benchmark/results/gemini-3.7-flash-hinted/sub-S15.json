@@ -1,0 +1,23 @@
+{
+  "kind": "subjective",
+  "taskId": "S15",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"【P0 紧急告警】核心支付链路异常熔断\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"监控策略：Payment_Gateway_SLO_Alert\"\n    },\n    \"template\": \"red\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**告警摘要**\\n**触发时间：** 2024-03-24 14:32:05\\n**影响范围：** 华东生产集群（Region-East-1）\\n**当前状态：** 支付接口 5xx 错误率达 **18.5%**（阈值 > 2%），TPS 下降 42%\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**关联服务状态**\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"grey\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**支付网关**\\n🔴 **异常 (502)**\\n延迟: 2380ms\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**订单中心**\\n🟡 **降级运行**\\n延迟: 450ms\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**账务系统**\\n🟢 **正常**\\n延迟: 42ms\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**最近事件列表**\\n• `14:32:05` 核心网关出现连接池耗尽告警\\n• `14:30:12` 华东机房 Pod 发生滚动更新重启\\n• `14:28:00` 流量突增 150%，触发自动扩容策略\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"bisect\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"查看详情\"\n                },\n                \"type\": \"primary\",\n                \"width\": \"fill\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://example.com/alerts/detail/alt-90412\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"静默 1 小时\"\n                },\n                \"type\": \"default\",\n                \"width\": \"fill\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"silence_alert\",\n                      \"alert_id\": \"alt-90412\",\n                      \"duration\": \"1h\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"值班人员：ou_demo123 | 告警 ID: ALT-20240324-0091\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 1,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

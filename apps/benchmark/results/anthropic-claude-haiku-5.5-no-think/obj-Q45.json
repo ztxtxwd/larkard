@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。飞书卡片 JSON 2.0 已不再支持旧版的通栏开关，官方推荐的替代做法是通过 margin 负值让图片超出容器内边距，从而实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "组件",
+  "response": "答案是 D。rich_text 组件用于展示富文本，支持 Markdown 语法、@人、超链接等内容；text 主要用于普通文本，markdown 仅支持 Markdown 语法，div 是容器组件。",
+  "extracted": "D",
+  "correct": false
+}

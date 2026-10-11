@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 body 的 `direction` 属性默认值为 `vertical`，即内部组件默认自上而下纵向排列。",
+  "extracted": "B",
+  "correct": true
+}

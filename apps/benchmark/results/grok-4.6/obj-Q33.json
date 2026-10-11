@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "交互",
+  "response": "答案是 A。person_picker 是 Lark Card JSON 2.0 中官方定义的通讯录选人组件 tag。 \n\nThe answer is A. person_picker is the official tag for the person selection component in Lark Card JSON 2.0.",
+  "extracted": "A",
+  "correct": false
+}

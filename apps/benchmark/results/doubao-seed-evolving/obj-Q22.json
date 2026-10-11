@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "组件",
+  "response": "答案是 B。表格组件属于块级元素，仅支持放置在卡片 `body.elements` 的根级，不能嵌套在 column、form 等容器内。",
+  "extracted": "B",
+  "correct": true
+}

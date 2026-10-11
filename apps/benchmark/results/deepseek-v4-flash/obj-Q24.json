@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "组件",
+  "response": "答案是 C。  \n理由：展开态图标的旋转角度只支持 90° 的整数倍，如 -180、-90、180，45° 不在合法范围内。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "组件",
+  "response": "答案是 A。飞书卡片支持 `carousel` 轮播组件，而 `tab_bar`、`chart`、`modal` 不是标准组件。",
+  "extracted": "A",
+  "correct": false
+}

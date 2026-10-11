@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "组件",
+  "response": "答案是 C。图片组件（image）中，图片资源通过 image_key（即 img_key）字段引用。 \n\nThe field name in the official Lark Card JSON 2.0 schema is \"image_key\" (used to reference uploaded images via their key after upload), which matches option C (likely an abbreviation in the quiz). Options A/B are web/HTML-style attributes not used in Lark Cards, and D is incorrect as no such \"image_id\" field exists for this component.",
+  "extracted": "C",
+  "correct": true
+}

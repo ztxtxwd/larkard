@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。update_multi 为卡片的 config 字段中的布尔开关，用于声明卡片是否支持多人更新（共享卡片更新），显式写 false 是合法的 JSON 布尔值，表示关闭该能力，并非必须省略。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

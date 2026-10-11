@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "交互",
+  "response": "答案是 C。静态选项单选下拉框在飞书卡片 JSON 2.0 中使用 tag \"select_static\"，选项直接写在组件的 options 字段中（而非动态拉取）。",
+  "extracted": "C",
+  "correct": true
+}

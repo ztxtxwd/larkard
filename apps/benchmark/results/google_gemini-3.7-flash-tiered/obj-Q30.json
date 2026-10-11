@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "交互",
+  "response": "答案是 B。在飞书卡片表单容器中，触发提交表单行为的按钮其 `form_action_type` 属性值需配置为 `submit`。",
+  "extracted": "B",
+  "correct": true
+}

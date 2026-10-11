@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "组件",
+  "response": "答案是 A。`div`（内容块组件）是飞书卡片中最基础的图文混排组件，支持配置正文文本并通过 `extra` 属性添加图片或头像等元素。",
+  "extracted": "A",
+  "correct": true
+}

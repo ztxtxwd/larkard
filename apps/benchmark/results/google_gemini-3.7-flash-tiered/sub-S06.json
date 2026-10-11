@@ -1,0 +1,26 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"💡 产品介绍｜什么是飞书卡片？\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**飞书卡片（Message Card）** 是飞书消息生态中一种结构化、富媒体、高互动性的信息载体。它超越了传统的纯文本消息，为机器人通知、业务协作与流程审批提供了更清晰、沉浸的界面化体验。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"### 🌟 核心特性与优势\\n\\n**1. 结构化呈现与丰富排版**\\n* 支持标题、段落、列表、代码块、分栏等多种布局形态。\\n* 结合图文排版与状态标签，帮助用户在海量消息中迅速抓住关键业务信息。\\n\\n**2. 深度交互与即时响应**\\n* 内置按钮、输入框、下拉菜单、日期选择器等丰富表单组件。\\n* 用户可在聊天流内直接完成审批、修改状态、提交工单，实现**消息即操作**。\\n\\n**3. 开放生态与无缝业务集成**\\n* 紧密连接飞书开放平台能力（如自动化工作流、机器人、审批系统）。\\n* 轻松与企业内部 CRM、ERP、DevOps 等系统打通，加速业务流转闭环。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"grey\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"👉 想要快速开始搭建？推荐使用飞书官方 **卡片搭建工具** 拖拽生成卡片。\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"flow\",\n        \"horizontal_spacing\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"卡片搭建工具\"\n                },\n                \"type\": \"primary\",\n                \"multi_url\": {\n                  \"url\": \"https://open.feishu.cn/tool/cardbuilder\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"开发者文档\"\n                },\n                \"type\": \"default\",\n                \"multi_url\": {\n                  \"url\": \"https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards\"\n                }\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/5/columns/0/elements/0/behaviors: Invalid input: expected array, received undefined",
+        "/body/elements/5/columns/1/elements/0/behaviors: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

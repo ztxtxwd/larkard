@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。linter 会对超过默认 3000 字符的单段文本给出超长警告并建议拆分。",
+  "extracted": "B",
+  "correct": true
+}

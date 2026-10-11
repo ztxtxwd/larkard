@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 body 内组件默认按垂直方向排列。",
+  "extracted": "B",
+  "correct": true
+}

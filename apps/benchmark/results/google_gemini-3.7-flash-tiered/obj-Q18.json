@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "组件",
+  "response": "答案是 B。在飞书卡片规范中，分隔线组件的标签（tag）定义为 `hr`。",
+  "extracted": "B",
+  "correct": true
+}

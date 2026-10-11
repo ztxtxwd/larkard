@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "组件",
+  "response": "答案是 A。理由：fit_horizontal 的标准描述为等比缩放且图片宽度贴齐容器，与题目中「等比缩放、某一边贴齐容器」的含义完全一致。",
+  "extracted": "A",
+  "correct": true
+}

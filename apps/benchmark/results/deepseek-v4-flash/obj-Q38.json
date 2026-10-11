@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。使用上传到飞书后获得的 img_key（如 img_v2_xxx），无法确定时使用明确的示例占位值。",
+  "extracted": "C",
+  "correct": true
+}

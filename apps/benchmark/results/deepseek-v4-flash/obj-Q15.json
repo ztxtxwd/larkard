@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "组件",
+  "response": "答案是 D。理由：column_set 的 flex_mode 合法值只有 stretch、flow、bisect，collapse 不是其中一项。",
+  "extracted": "D",
+  "correct": true
+}

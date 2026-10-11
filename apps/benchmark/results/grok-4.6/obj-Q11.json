@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "组件",
+  "response": "答案是 B。markdown 组件专门用于展示支持 Markdown 语法、@人、超链接的富文本内容（JSON 中 type 为 \"markdown\"）。 \n\nThe question is about Lark Card JSON 2.0 components. In the official documentation, the \"markdown\" component (type: \"markdown\") is explicitly described as being used to display rich text that supports Markdown syntax, @mentions, and hyperlinks. This matches the question's description exactly. \"rich_text\" is not a component in Card JSON 2.0 (it may appear in other Lark modules like docs or mini-programs, but not here). \"text\" is for plain text only, and \"div\" is for layout containers. Thus, B is the correct choice.",
+  "extracted": "B",
+  "correct": true
+}

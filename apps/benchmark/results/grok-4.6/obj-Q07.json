@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "基础结构",
+  "response": "答案是 B。config.summary 是卡片在飞书聊天栏消息预览中显示的摘要文案配置字段。",
+  "extracted": "B",
+  "correct": true
+}

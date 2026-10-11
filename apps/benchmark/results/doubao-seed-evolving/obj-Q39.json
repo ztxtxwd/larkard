@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。主题色集中在 header.template 用于建立品牌感，正文保持简洁克制，符合飞书卡片的视觉最佳实践；其余选项会造成视觉噪音或布局复杂、影响可读性与性能。",
+  "extracted": "B",
+  "correct": true
+}

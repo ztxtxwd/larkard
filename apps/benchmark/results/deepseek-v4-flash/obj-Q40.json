@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。理由：飞书卡片最佳实践默认限制正文组件总数不超过 50 个，以保证渲染性能。",
+  "extracted": "B",
+  "correct": true
+}

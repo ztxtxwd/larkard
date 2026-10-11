@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "易错与最佳实践",
+  "response": "答案是 A。按最佳实践（linter 默认规则），卡片正文组件总数不应超过20个，以保证渲染性能和避免超限。",
+  "extracted": "A",
+  "correct": false
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "组件",
+  "response": "答案是 B。在飞书卡片 2.0 规范中，折叠面板组件使用 `collapsible_panel` 作为其标签名称（tag）。",
+  "extracted": "B",
+  "correct": true
+}

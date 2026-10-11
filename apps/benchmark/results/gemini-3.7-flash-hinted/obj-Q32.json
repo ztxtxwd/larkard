@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "交互",
+  "response": "答案是 C。在飞书卡片规范中，静态选项单选下拉列表组件的标签（tag）为 `select_static`。",
+  "extracted": "C",
+  "correct": true
+}

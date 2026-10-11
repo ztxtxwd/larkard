@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "交互",
+  "response": "答案是 B。在飞书卡片 JSON 2.0 规范中，人员选择组件（通讯录选人）的标签声明为 `select_person`。",
+  "extracted": "B",
+  "correct": true
+}

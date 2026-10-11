@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "组件",
+  "response": "答案是 B。飞书卡片 JSON 2.0 中使用 `person` 组件展示单个人员的头像和姓名。",
+  "extracted": "B",
+  "correct": true
+}

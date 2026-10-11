@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "组件",
+  "response": "答案是 B。飞书卡片 2.0 中使用 `collapsible_panel` 标签来定义可折叠面板组件。",
+  "extracted": "B",
+  "correct": true
+}

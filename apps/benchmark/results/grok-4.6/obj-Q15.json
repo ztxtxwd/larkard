@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "组件",
+  "response": "答案是 C. bisect。<理由>因为 flex_mode 的有效值为 stretch、flow、collapse，bisect 不是有效值。",
+  "extracted": "C",
+  "correct": false
+}

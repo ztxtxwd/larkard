@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q08",
+  "category": "基础结构",
+  "response": "答案是 B。空卡片 `{}` 在开放平台语义上是合法的，会渲染为一张空白卡片，不强制要求 header 或 schema 字段。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "组件",
+  "response": "答案是 D。在飞书卡片中，`contain` 模式表示保持宽高比等比缩放图片，使图片完整展示且某一边贴齐容器。",
+  "extracted": "D",
+  "correct": false
+}

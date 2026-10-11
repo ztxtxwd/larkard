@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片中使用 `overflow` 组件来承载折叠在「更多」操作菜单中的次要选项列表。",
+  "extracted": "B",
+  "correct": true
+}

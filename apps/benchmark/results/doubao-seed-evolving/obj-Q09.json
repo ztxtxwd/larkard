@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q09",
+  "category": "基础结构",
+  "response": "答案是 B。body 内组件默认沿垂直方向（vertical）从上到下排列。",
+  "extracted": "B",
+  "correct": true
+}

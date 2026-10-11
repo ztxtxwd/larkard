@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "交互",
+  "response": "答案是 A。在飞书卡片 JSON 2.0 中，`form` 容器必须配置 `name` 属性作为表单的唯一标识，用于在提交时收集并回传表单内各组件的数据。",
+  "extracted": "A",
+  "correct": true
+}

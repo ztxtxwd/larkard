@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "组件",
+  "response": "答案是 A。飞书卡片中音频组件的标签名称定义为 `audio`。",
+  "extracted": "A",
+  "correct": true
+}

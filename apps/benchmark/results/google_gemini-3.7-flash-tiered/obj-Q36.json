@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。在飞书卡片 JSON 2.0 规范中，表单容器（form_container）与表格（table）均属于顶层限制组件，仅能放置在卡片 `body` 的根节点下，不支持嵌套在 `column` 等布局容器内。",
+  "extracted": "C",
+  "correct": true
+}

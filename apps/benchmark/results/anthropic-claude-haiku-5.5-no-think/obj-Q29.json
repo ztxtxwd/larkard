@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 fill。飞书卡片 JSON 2.0 中 img 组件的 scale_type 枚举里，「水平拉伸贴齐」对应的值为 fill（图片拉伸至容器宽高，可能变形）。",
+  "extracted": "fill",
+  "correct": false,
+  "weight": 12
+}

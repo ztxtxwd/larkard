@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片 collapsible_panel 的图标旋转角度 rotate 仅支持以 90 度为步长的值（如 -180、-90、0、90、180 等），不支持 45 度。",
+  "extracted": "C",
+  "correct": true
+}

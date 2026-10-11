@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。\n\n在飞书卡片 JSON 2.0 的 table 组件中，列的 data_type 用于指定单元格内容的渲染类型，「人员」对应的枚举值为 person，单元格值通常需以对象形式（含 id 等字段）传入。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

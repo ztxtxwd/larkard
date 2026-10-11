@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "交互",
+  "response": "答案是 C。静态选项单选下拉框在飞书卡片组件中的 tag 为 `select_static`。",
+  "extracted": "C",
+  "correct": true
+}

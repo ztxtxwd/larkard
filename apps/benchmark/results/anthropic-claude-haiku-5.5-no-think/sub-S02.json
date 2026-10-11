@@ -1,0 +1,29 @@
+{
+  "kind": "subjective",
+  "taskId": "S02",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true,\n    \"style\": {\n      \"text_size\": {\n        \"normal_v2\": {\n          \"default\": \"normal\",\n          \"pc\": \"normal\",\n          \"mobile\": \"heading\"\n        }\n      }\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"图片组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"direction\": \"vertical\",\n    \"padding\": \"12px 12px 12px 12px\",\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下为飞书卡片 JSON 2.0 **图片组件**的使用示例，图片通过 `img_key` 引用已上传的图片资源。\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"示例图片\"\n        },\n        \"title\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"图片标题\"\n        },\n        \"scale_type\": \"crop_center\",\n        \"preview\": true,\n        \"transparent\": false,\n        \"corner_radius\": \"8px\",\n        \"margin\": \"8px 0px 8px 0px\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"图片下方的说明文字：支持设置缩放方式、是否可预览、圆角与外边距等属性。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.5,
+    "total": 0.925,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

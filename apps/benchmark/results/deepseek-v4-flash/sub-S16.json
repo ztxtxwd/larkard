@@ -1,0 +1,39 @@
+{
+  "kind": "subjective",
+  "taskId": "S16",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"Bug 反馈\"\n    },\n    \"template\": \"red\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"form\",\n        \"elements\": [\n          {\n            \"tag\": \"input\",\n            \"name\": \"title\",\n            \"label\": {\n              \"tag\": \"text\",\n              \"content\": \"问题标题\"\n            },\n            \"required\": true,\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入问题标题\"\n            }\n          },\n          {\n            \"tag\": \"select_static\",\n            \"name\": \"severity\",\n            \"label\": {\n              \"tag\": \"text\",\n              \"content\": \"严重程度\"\n            },\n            \"multi_select\": true,\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"轻微\"\n                },\n                \"value\": \"minor\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"严重\"\n                },\n                \"value\": \"critical\"\n              }\n            ],\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请选择严重程度\"\n            }\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"steps\",\n            \"label\": {\n              \"tag\": \"text\",\n              \"content\": \"复现步骤\"\n            },\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请描述复现步骤\"\n            },\n            \"multiline\": true\n          }\n        ],\n        \"submit\": {\n          \"text\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"提交反馈\"\n          },\n          \"value\": {\n            \"action\": \"submit_bug\"\n          }\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0.667,
+    "total": 0.45,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/elements/0/label/tag: Invalid input: expected \"plain_text\"",
+        "/body/elements/0/elements/1/behaviors: Invalid input: expected array, received undefined",
+        "/body/elements/0/elements/2/label/tag: Invalid input: expected \"plain_text\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "form",
+        "input",
+        "select_static",
+        "input"
+      ],
+      "goldenTagSequence": [
+        "form",
+        "input",
+        "multi_select_static",
+        "input",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

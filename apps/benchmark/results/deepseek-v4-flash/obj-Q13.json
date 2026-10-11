@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "组件",
+  "response": "答案是 A。  \n理由：`scale_type` 的 `fit_horizontal` 表示图片等比缩放并让水平方向贴齐容器，符合“某一边贴齐容器”的描述。",
+  "extracted": "A",
+  "correct": true
+}

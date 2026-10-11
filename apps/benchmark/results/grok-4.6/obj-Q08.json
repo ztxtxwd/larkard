@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q08",
+  "category": "基础结构",
+  "response": "答案是 B。空卡片 {} 在 Lark Card 2.0 中语义合法，会直接渲染为空白卡片。",
+  "extracted": "B",
+  "correct": true
+}

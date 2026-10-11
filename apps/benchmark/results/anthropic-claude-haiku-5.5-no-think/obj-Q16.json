@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单容器内的输入类组件（如 input、select 等）只在本地收集数据，服务端回调要等用户点击表单内的提交按钮（即 form 内的 submit 类按钮）时才统一触发，填写过程中不会逐项回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

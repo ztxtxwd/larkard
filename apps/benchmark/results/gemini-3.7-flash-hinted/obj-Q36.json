@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。在飞书卡片 2.0 规范中，`form` 表单容器和 `table` 表格组件均存在嵌套限制，只能置于 `body` 根层级的元素列表中，不支持放入 `column` 等子容器内。",
+  "extracted": "C",
+  "correct": true
+}

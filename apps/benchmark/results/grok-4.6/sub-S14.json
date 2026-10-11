@@ -1,0 +1,33 @@
+{
+  "kind": "subjective",
+  "taskId": "S14",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"本周业务概览\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"type\": \"column_set\",\n        \"columns\": [\n          {\n            \"width\": \"1/3\",\n            \"elements\": [\n              {\n                \"type\": \"div\",\n                \"style\": {\n                  \"background\": \"#f5f5f5\"\n                },\n                \"padding\": 8,\n                \"elements\": [\n                  {\n                    \"type\": \"markdown\",\n                    \"content\": \"**DAU**\\n12.8 万，↑5.2%\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"width\": \"1/3\",\n            \"elements\": [\n              {\n                \"type\": \"div\",\n                \"style\": {\n                  \"background\": \"#f5f5f5\"\n                },\n                \"padding\": 8,\n                \"elements\": [\n                  {\n                    \"type\": \"markdown\",\n                    \"content\": \"**收入**\\n¥340 万，↑2.8%\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"width\": \"1/3\",\n            \"elements\": [\n              {\n                \"type\": \"div\",\n                \"style\": {\n                  \"background\": \"#f5f5f5\"\n                },\n                \"padding\": 8,\n                \"elements\": [\n                  {\n                    \"type\": \"markdown\",\n                    \"content\": \"**留存**\\n68%，↓1.1%\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"type\": \"note\",\n        \"text\": \"数据统计周期：本周一至周日\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0,
+    "total": 0.7,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'note' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'note' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [
+        "column_set",
+        "markdown",
+        "markdown",
+        "markdown",
+        "note",
+        "plain_text"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

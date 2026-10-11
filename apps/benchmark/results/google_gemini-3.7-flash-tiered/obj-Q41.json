@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。飞书卡片校验器（Linter）在单段文本超过字符上限时会触发超长警告并提示拆分，以避免渲染异常或性能问题。",
+  "extracted": "B",
+  "correct": true
+}

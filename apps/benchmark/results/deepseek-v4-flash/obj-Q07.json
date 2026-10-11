@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "基础结构",
+  "response": "答案是 B。config.summary 用于设置卡片在聊天列表中的摘要文案。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "基础结构",
+  "response": "答案是 B。卡片正文的组件列表位于 \"body\": { \"elements\": [...] }，这是 Lark Card JSON 2.0 的标准结构（根卡片对象下有 header/body 等字段，body 专门存放 elements 数组）。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "交互",
+  "response": "答案是 B。按钮的文案需通过 `\"text\": {\"tag\": \"plain_text\", \"content\": \"提交\"}` 这种结构化文本对象来定义。",
+  "extracted": "B",
+  "correct": true
+}

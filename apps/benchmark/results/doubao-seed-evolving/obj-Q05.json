@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "基础结构",
+  "response": "答案是 B。`config.update_multi` 用于开启卡片多端同步更新，合法取值为 `true`；不需要时直接不写该字段即可，不能显式设为 `false`。",
+  "extracted": "B",
+  "correct": true
+}

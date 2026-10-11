@@ -1,0 +1,28 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"团队数据周报\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**本周概览**\\n- 完成迭代版本 v2.3.0 发布\\n- 新增需求 12 个，完成需求 15 个\\n- 线上问题反馈 6 个，已修复 5 个\\n- 代码提交 138 次，Code Review 通过率 96%\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"columns\": [\n          {\n            \"width\": \"grow\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**活跃用户**\\n12,384 人\"\n              }\n            ]\n          },\n          {\n            \"width\": \"grow\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**新增需求**\\n15 个\"\n              }\n            ]\n          },\n          {\n            \"width\": \"grow\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**Bug 修复率**\\n95%\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"备注：统计口径为本周一至周日 24:00，数据来源于内部质量平台与需求管理系统，人工已复核。\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 0,
+    "total": 0.35,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/columns/0/tag: Invalid input: expected \"column\"",
+        "/body/elements/1/columns/1/tag: Invalid input: expected \"column\"",
+        "/body/elements/1/columns/2/tag: Invalid input: expected \"column\"",
+        "/body/elements/2/elements/0/tag: Invalid input: expected \"plain_text\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

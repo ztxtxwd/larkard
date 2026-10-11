@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中备注组件 `note` 已不再支持，需要用 `markdown` 组件（或其它替代方式）来实现类似的备注效果。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

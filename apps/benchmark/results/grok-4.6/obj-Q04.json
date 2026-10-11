@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "基础结构",
+  "response": "答案是 B。header 区域的标准结构是 title 为 plain_text 对象，并通过 template 指定颜色模板。",
+  "extracted": "B",
+  "correct": true
+}

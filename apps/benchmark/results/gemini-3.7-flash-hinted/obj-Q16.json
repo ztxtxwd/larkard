@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "组件",
+  "response": "答案是 D。在飞书卡片 2.0 中，`box` 容器组件支持嵌套图文等多种子组件并自定义排版方向，常用于实现头像与文本等自由组合的图文混排。",
+  "extracted": "D",
+  "correct": false
+}

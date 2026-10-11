@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片 2.0 中使用 `tag: \"interactive_container\"` 作为交互容器，可将内部嵌套的任意内容块封装为一个整体响应点击行为。",
+  "extracted": "B",
+  "correct": true
+}

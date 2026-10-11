@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。\n\n在飞书卡片 JSON 2.0 的 plain_text 中，text_size 可选值包括 normal、heading、notation 等，其中 notation 表示辅助说明用的较小字号，比正文 normal 更小。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "组件",
+  "response": "答案是 A。stretch 不是 column_set 的 flex_mode 合法值；其支持的自适应模式包括 none、stretch 以外的 flow、bisect、collapse 等布局模式。",
+  "extracted": "A",
+  "correct": false
+}

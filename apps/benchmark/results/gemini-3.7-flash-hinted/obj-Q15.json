@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "组件",
+  "response": "答案是 D。飞书卡片中 column_set 的 flex_mode（自适应模式）支持 none、stretch、flow、bisect 和 trisection 等枚举值，不包含 collapse。",
+  "extracted": "D",
+  "correct": true
+}

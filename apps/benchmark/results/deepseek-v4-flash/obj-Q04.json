@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 JSON 2.0 的 header 中 title 必须是包含 tag 和 content 的文本对象，并可用 template 设置颜色。",
+  "extracted": "B",
+  "correct": true
+}

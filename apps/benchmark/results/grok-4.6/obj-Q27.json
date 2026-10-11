@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "交互",
+  "response": "答案是 B。按钮组件的文案通过 \"text\" 字段以 { \"tag\": \"plain_text\", \"content\": \"...\" } 结构定义，支持富文本格式。",
+  "extracted": "B",
+  "correct": true
+}

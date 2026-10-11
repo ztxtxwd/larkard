@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 `stretch`。\n\n在飞书卡片 JSON 2.0 中，`column_set` 的 `flex_mode` 控制窄屏（移动端）下多列的排布方式，常见取值包括 `none`、`stretch`、`flow`、`bisect`，其中 `stretch` 表示各列等分宽度铺满，适合三列等分的场景。",
+  "extracted": "stretch",
+  "correct": false,
+  "weight": 15
+}

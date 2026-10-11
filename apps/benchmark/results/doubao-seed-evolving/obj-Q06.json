@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "基础结构",
+  "response": "答案是 C。飞书卡片通过顶层 `card_link` 字段配置整张卡片点击后的跳转链接。",
+  "extracted": "C",
+  "correct": true
+}

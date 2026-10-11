@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q10",
+  "category": "基础结构",
+  "response": "答案是 A。config.custom_font_size取值范围为8px-48px（官方文档明确规定）。",
+  "extracted": "A",
+  "correct": false
+}

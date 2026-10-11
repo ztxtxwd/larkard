@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "交互",
+  "response": "答案是 C。飞书卡片 JSON 2.0 中静态选项单选下拉框的 tag 为 `select_static`。",
+  "extracted": "C",
+  "correct": true
+}

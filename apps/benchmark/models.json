@@ -256,6 +256,15 @@
       }
     },
     {
+      "name": "anthropic-claude-haiku-5.5-no-think",
+      "model": "anthropic/claude-haiku-5.5",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "apiKey": "${OPENROUTER_API_KEY}",
+      "extra": {
+        "reasoning_effort": "none"
+      }
+    },
+    {
       "name": "openai-gpt-6-luna-hinted-no-think",
       "model": "openai/gpt-6-luna",
       "baseUrl": "https://openrouter.ai/api/v1",

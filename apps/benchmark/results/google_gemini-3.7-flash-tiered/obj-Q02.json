@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "基础结构",
+  "response": "答案是 A。飞书卡片 JSON 2.0 根对象支持定义 `schema`（协议版本）、`config`（配置）、`card_link`（全局链接）、`header`（标题）和 `body`（正文内容）五个顶层字段。",
+  "extracted": "A",
+  "correct": true
+}

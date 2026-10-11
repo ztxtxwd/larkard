@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "基础结构",
+  "response": "答案是 B。卡片的摘要文案通过 `config.summary` 字段进行配置，用于在会话列表或消息预览中展示简要内容。",
+  "extracted": "B",
+  "correct": true
+}

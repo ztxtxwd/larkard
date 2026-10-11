@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q21",
+  "category": "组件",
+  "response": "答案是 B。drop 行为表示直接丢弃该视频组件，不进行任何降级展示。",
+  "extracted": "B",
+  "correct": true
+}

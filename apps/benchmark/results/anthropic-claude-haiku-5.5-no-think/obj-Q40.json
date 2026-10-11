@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 C。飞书卡片 JSON 2.0 折叠面板 `icon_expanded_angle` 的合法取值为 -180、-90、90、180（表示展开时图标的旋转角度），45 不在官方约定的取值范围内。",
+  "extracted": "C",
+  "correct": true,
+  "weight": 10
+}

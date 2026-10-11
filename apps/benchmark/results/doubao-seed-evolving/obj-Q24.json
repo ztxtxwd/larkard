@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "组件",
+  "response": "答案是 C。collapsible_panel 展开态图标旋转角度仅支持 -180、-90、0、90、180，45 不在合法取值范围内。",
+  "extracted": "C",
+  "correct": true
+}

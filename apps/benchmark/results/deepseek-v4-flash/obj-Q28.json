@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "交互",
+  "response": "答案是 B。理由：飞书卡片 2.0 中按钮组件通过 `behaviors` 字段配置交互行为。",
+  "extracted": "B",
+  "correct": true
+}

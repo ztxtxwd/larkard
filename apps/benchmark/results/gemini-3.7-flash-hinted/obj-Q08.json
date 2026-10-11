@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q08",
+  "category": "基础结构",
+  "response": "答案是 B。在飞书开放平台规范中，空 JSON 对象 `{}` 是合法的最小卡片数据结构，客户端会将其渲染为一个不含任何内容和标题的空白卡片。",
+  "extracted": "B",
+  "correct": true
+}

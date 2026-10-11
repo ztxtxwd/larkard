@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。linter 作为校验工具会给出超长警告并建议拆分，而非直接拒绝或截断。 \n\\confidence{65}",
+  "extracted": "B",
+  "correct": true
+}

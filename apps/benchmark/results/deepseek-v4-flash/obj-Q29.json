@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "交互",
+  "response": "答案是 A。form 容器必需属性是 name，用于在卡片内唯一标识表单。",
+  "extracted": "A",
+  "correct": true
+}

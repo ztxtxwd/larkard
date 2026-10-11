@@ -1,0 +1,47 @@
+{
+  "kind": "subjective",
+  "taskId": "S13",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"报销审批\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"column_set\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"1\",\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**申请人：** 张三\\n**金额：** ¥1,280.00\\n**事由：** 客户拜访差旅\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"1\",\n            \"elements\": [\n              {\n                \"tag\": \"img\",\n                \"img_key\": \"img_v2_demo-key\",\n                \"alt\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"报销凭证\"\n                }\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"approval_form\",\n        \"elements\": [\n          {\n            \"tag\": \"input\",\n            \"name\": \"approval_comment\",\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"审批意见\"\n            },\n            \"placeholder\": \"请输入审批意见\"\n          },\n          {\n            \"tag\": \"column_set\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"1\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"同意\"\n                    },\n                    \"type\": \"primary\",\n                    \"value\": {\n                      \"action\": \"approve\"\n                    },\n                    \"behavior\": {\n                      \"type\": \"form_submit\"\n                    }\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"1\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"驳回\"\n                    },\n                    \"type\": \"danger\",\n                    \"value\": {\n                      \"action\": \"reject\"\n                    },\n                    \"behavior\": {\n                      \"type\": \"form_submit\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.775,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/elements/0/placeholder: Invalid input: expected object, received string",
+        "/body/elements/2/elements/1/columns/0/elements/0/behaviors: Invalid input: expected array, received undefined",
+        "/body/elements/2/elements/1/columns/1/elements/0/behaviors: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "column_set",
+        "markdown",
+        "img",
+        "hr",
+        "form",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "markdown",
+        "img",
+        "hr",
+        "form",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

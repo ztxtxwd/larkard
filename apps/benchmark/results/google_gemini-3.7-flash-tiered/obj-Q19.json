@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "组件",
+  "response": "答案是 B。飞书卡片中使用 `person` 组件来展示单个用户的头像和姓名，展示多个人员时则使用 `person_list`。",
+  "extracted": "B",
+  "correct": true
+}

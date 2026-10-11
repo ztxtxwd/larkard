@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。在飞书卡片 Markdown 组件中，需使用 `<at id=用户open_id></at>` 标签语法并传入真实的有效 ID 才能成功提及并通知到指定用户。",
+  "extracted": "B",
+  "correct": true
+}

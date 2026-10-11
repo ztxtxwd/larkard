@@ -1,0 +1,36 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下为 **overflow（折叠按钮组）** 的用法示例：点击右侧「更多」可展开隐藏的操作按钮。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"stretch\",\n        \"background_style\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**项目进度**\\n当前完成度 75%\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"overflow\",\n                \"options\": [\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"查看详情\"\n                    },\n                    \"value\": \"detail\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"view_detail\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"编辑\"\n                    },\n                    \"value\": \"edit\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"edit\"\n                        }\n                      }\n                    ]\n                  },\n                  {\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"删除\"\n                    },\n                    \"value\": \"delete\",\n                    \"behaviors\": [\n                      {\n                        \"type\": \"callback\",\n                        \"value\": {\n                          \"action\": \"delete\"\n                        }\n                      }\n                    ]\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**说明**：overflow 的每个选项通过 `options` 配置，选项文本使用 `text`（plain_text），点击后的行为通过 `behaviors` 中的 `callback` 回传自定义数据。\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.182,
+    "total": 0.877,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "column_set",
+        "markdown",
+        "overflow",
+        "hr",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "组件",
+  "response": "答案是 C。note 组件用于展示小字备注说明，常放在卡片底部。",
+  "extracted": "C",
+  "correct": true
+}

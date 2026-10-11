@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 name。\n\n在飞书卡片 JSON 2.0 的 table 组件中，columns 里每一列的 name 字段用于在 rows 行对象里做键名对应，即 rows 中每个对象的键需要与 columns 的 name 一致才能正确渲染该列数据。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 16
+}

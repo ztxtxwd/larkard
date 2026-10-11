@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。飞书卡片 linter 默认规则建议正文组件总数不超过 50 个，以保证卡片结构清晰和渲染性能。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片 JSON 2.0 中使用 `\"tag\": \"note\"` 来定义备注组件，用于展示次要信息或小字说明。",
+  "extracted": "C",
+  "correct": true
+}

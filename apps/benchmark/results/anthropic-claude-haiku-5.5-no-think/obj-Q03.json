@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 multi_select_static。\n\n飞书卡片 JSON 2.0 中，选项静态的多选下拉组件 tag 为 multi_select_static，选项数据通过 options 静态配置；与之对应的动态数据源版本为 multi_select_person 等。",
+  "extracted": "multi_select_static",
+  "correct": true,
+  "weight": 20
+}

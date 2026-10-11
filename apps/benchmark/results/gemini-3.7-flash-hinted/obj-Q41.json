@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q41",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。飞书卡片 linter 在单段文本超出长度上限（如 3000 字符）时会抛出超长 Warning 警告并建议开发者拆分段落，以防止影响渲染性能与阅读体验。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。理由：飞书卡片最佳实践建议将主题色集中在 header.template 中，正文保持简洁，避免过度花哨。",
+  "extracted": "B",
+  "correct": true
+}

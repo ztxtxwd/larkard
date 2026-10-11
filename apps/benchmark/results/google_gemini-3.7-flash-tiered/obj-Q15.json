@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "组件",
+  "response": "答案是 D。飞书卡片 column_set 的 flex_mode 支持 none、stretch、flow、bisect、stack 等模式，不包含 collapse。",
+  "extracted": "D",
+  "correct": true
+}

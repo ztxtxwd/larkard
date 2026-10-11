@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "交互",
+  "response": "答案是 A。飞书卡片中为任意内容块整体附加点击行为的交互容器组件 tag 为 `clickable`。",
+  "extracted": "A",
+  "correct": false
+}

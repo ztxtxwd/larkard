@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "组件",
+  "response": "答案是 B。在飞书卡片 JSON 2.0 规范中，表格组件（table）不支持嵌套在其他容器内，只能作为顶级组件直接放置在卡片主体的 `body.elements` 数组中。",
+  "extracted": "B",
+  "correct": true
+}

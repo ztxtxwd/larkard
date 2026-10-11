@@ -1,0 +1,42 @@
+{
+  "kind": "subjective",
+  "taskId": "S14",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"本周业务概览\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"column_set\",\n        \"horizontal_spacing\": \"8px\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"div\",\n                \"background_style\": {\n                  \"color\": \"grey\"\n                },\n                \"padding\": {\n                  \"top\": \"12px\",\n                  \"bottom\": \"12px\",\n                  \"left\": \"12px\",\n                  \"right\": \"12px\"\n                },\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**DAU**\\n\\n12.8万 ↑5.2%\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"div\",\n                \"background_style\": {\n                  \"color\": \"grey\"\n                },\n                \"padding\": {\n                  \"top\": \"12px\",\n                  \"bottom\": \"12px\",\n                  \"left\": \"12px\",\n                  \"right\": \"12px\"\n                },\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**收入**\\n\\n¥340万 ↑2.8%\"\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"div\",\n                \"background_style\": {\n                  \"color\": \"grey\"\n                },\n                \"padding\": {\n                  \"top\": \"12px\",\n                  \"bottom\": \"12px\",\n                  \"left\": \"12px\",\n                  \"right\": \"12px\"\n                },\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**留存**\\n\\n68% ↓1.1%\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"数据统计周期：本周一至周日\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.667,
+    "total": 0.875,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/elements/0/tag: Invalid input: expected \"plain_text\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "column_set",
+        "div",
+        "markdown",
+        "div",
+        "markdown",
+        "div",
+        "markdown",
+        "note",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "markdown",
+        "markdown",
+        "markdown",
+        "note",
+        "plain_text"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

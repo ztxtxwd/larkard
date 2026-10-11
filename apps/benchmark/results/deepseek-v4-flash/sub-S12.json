@@ -1,0 +1,27 @@
+{
+  "kind": "subjective",
+  "taskId": "S12",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true,\n    \"wide_screen_mode\": true\n  },\n  \"card_link\": {\n    \"url\": \"https://open.feishu.cn\",\n    \"pc_url\": \"https://open.feishu.cn\",\n    \"ios_url\": \"https://open.feishu.cn\",\n    \"android_url\": \"https://open.feishu.cn\"\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"本周精选文章\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**📚 文章一：** [飞书卡片 2.0 全新特性解析](https://open.feishu.cn)\\n\\n**🚀 文章二：** [快速上手自定义机器人推送](https://open.feishu.cn)\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 1,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

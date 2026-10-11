@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "组件",
+  "response": "答案是 D。在飞书卡片 JSON 2.0 中，`contain` 模式表示保持宽高比缩放图片，使其某一长边或短边贴齐容器边界并完整展示图片。",
+  "extracted": "D",
+  "correct": false
+}

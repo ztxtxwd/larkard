@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "基础结构",
+  "response": "答案是 A。飞书卡片 JSON 2.0 中，正文组件列表直接放在根级的 `elements` 数组中。",
+  "extracted": "A",
+  "correct": false
+}

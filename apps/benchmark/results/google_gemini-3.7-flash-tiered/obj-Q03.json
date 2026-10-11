@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q03",
+  "category": "基础结构",
+  "response": "答案是 B。在飞书卡片 2.0 规范中，卡片正文采用 `body` 对象包裹，内部通过 `elements` 数组来承载具体的内容组件列表。",
+  "extracted": "B",
+  "correct": true
+}

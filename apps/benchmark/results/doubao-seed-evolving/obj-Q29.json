@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "交互",
+  "response": "答案是 A。飞书卡片 2.0 的 form 容器需要通过 name 在卡片内唯一标识该表单；action、method、id 都不是其必需属性。",
+  "extracted": "A",
+  "correct": true
+}

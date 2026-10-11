@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "组件",
+  "response": "答案是 A。飞书卡片多图聚合组件 tag 为 `img_group`。",
+  "extracted": "A",
+  "correct": false
+}

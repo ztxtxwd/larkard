@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "组件",
+  "response": "答案是 C。45不是90的整数倍，不符合collapsible_panel展开态图标旋转角度要求。",
+  "extracted": "C",
+  "correct": true
+}

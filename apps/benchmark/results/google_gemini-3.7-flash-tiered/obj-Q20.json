@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片（JSON 2.0）中原生支持图表组件，其标签为 `chart`，可用于渲染折线图、柱状图和饼图等数据可视化图表。",
+  "extracted": "C",
+  "correct": true
+}

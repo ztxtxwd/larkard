@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。理由：飞书卡片中 form 和 table 只能放在 body 根级，不能放进 column 等容器内。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。理由：飞书卡片 markdown 中需使用 `<at id=用户open_id></at>` 语法，且 open_id 必须真实有效才能通知到用户。",
+  "extracted": "B",
+  "correct": true
+}

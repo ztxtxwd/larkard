@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 name。表单容器（tag 为 form）的 name 字段用于标识提交的是哪个表单，回调中的 form_value 与之对应，用于区分同一页面中的多个表单。",
+  "extracted": "name",
+  "correct": true,
+  "weight": 12
+}

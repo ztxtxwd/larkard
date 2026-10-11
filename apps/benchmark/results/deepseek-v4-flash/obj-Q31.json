@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "交互",
+  "response": "答案是 C。飞书卡片 JSON 2.0 中标准的输入类组件 tag 是 `input`。",
+  "extracted": "C",
+  "correct": true
+}

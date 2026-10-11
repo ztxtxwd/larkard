@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。\n在 JSON 2.0 中，独立（非表单内）的 button 不能再使用组件顶层的 value 字段回传数据，这是 1.0 的写法；2.0 中自定义回传数据应放在 behaviors 的 callback 的 value 里，表单内的交互则需要在 form 容器内配合 name 使用。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

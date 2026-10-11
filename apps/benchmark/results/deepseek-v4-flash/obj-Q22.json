@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "组件",
+  "response": "答案是 B。飞书卡片文档规定表格组件（table）只能直接放在 body.elements 根级，不能嵌入其他容器。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。在 markdown 组件中需要使用 `<at id=用户open_id></at>` 语法并填入真实的 open_id，才能正确 @ 并通知到该用户。",
+  "extracted": "B",
+  "correct": true
+}

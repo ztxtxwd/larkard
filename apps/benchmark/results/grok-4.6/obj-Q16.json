@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "组件",
+  "response": "答案是 D。box组件可嵌套图片、文本等其他组件形成图文混排块，且常用于头像+文本组合。",
+  "extracted": "D",
+  "correct": false
+}

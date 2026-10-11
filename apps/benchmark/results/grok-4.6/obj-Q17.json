@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "组件",
+  "response": "答案是 B。footnote 组件专为卡片底部的小字备注设计（官方文档中即描述为“备注组件（小字说明，常放卡片底部）”）。 \n\nThe answer is B. footnote. The footnote component is specifically designed for small-font remarks at the bottom of Lark Cards (as described in the official documentation).",
+  "extracted": "B",
+  "correct": false
+}

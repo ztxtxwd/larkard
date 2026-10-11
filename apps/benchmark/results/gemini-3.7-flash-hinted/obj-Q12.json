@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "组件",
+  "response": "答案是 C。在飞书卡片规范中，图片组件通过 `img_key` 字段来引用上传到飞书平台的图片资源。",
+  "extracted": "C",
+  "correct": true
+}

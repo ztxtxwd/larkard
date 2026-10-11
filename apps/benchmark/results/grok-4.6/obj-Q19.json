@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "组件",
+  "response": "答案是 A。飞书卡片 JSON 2.0 中展示单个人员（头像+姓名）的组件 tag 是 user。",
+  "extracted": "A",
+  "correct": false
+}

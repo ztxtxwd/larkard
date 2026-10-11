@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片的图片组件通过 `img_key` 字段引用已上传的图片资源，而非直接使用 `url`、`src` 或 `image_id`。",
+  "extracted": "C",
+  "correct": true
+}

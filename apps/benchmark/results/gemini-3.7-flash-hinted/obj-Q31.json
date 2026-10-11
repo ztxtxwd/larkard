@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "交互",
+  "response": "答案是 C。飞书卡片中使用 `input` 作为文本输入框组件的 tag 名称（通过 `rows` 等属性区分单行或多行）。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "基础结构",
+  "response": "答案是 A。  \n根据飞书卡片 JSON 2.0 官方规范，config.update_multi 字段类型为 boolean（可省略时默认 false），因此合法取值仅为 true 或 false。",
+  "extracted": "A",
+  "correct": false
+}

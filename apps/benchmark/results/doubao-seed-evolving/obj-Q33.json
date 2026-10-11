@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片中通讯录选人组件的标签为 `select_person`。",
+  "extracted": "B",
+  "correct": true
+}

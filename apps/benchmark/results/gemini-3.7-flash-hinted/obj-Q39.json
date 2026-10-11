@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。飞书卡片设计规范推荐将主题色集中在卡片标题栏（header.template）以传达状态或品牌感知，而正文区域应保持中性与简洁以确保信息清晰易读。",
+  "extracted": "B",
+  "correct": true
+}

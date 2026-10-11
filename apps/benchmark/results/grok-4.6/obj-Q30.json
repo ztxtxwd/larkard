@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "交互",
+  "response": "答案是 B。表单提交按钮的 form_action_type 应设置为 \"submit\" 以触发表单提交（文档中 \"submit\" 是表单提交的标准 action_type，而非发送消息或确认弹窗）。",
+  "extracted": "B",
+  "correct": true
+}

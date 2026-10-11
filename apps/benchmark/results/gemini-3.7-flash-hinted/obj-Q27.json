@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片 2.0 中按钮的文案通过 `text` 字段定义，且必须使用包含 `tag` 和 `content` 的文本对象结构。",
+  "extracted": "B",
+  "correct": true
+}

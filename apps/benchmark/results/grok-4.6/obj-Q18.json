@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "组件",
+  "response": "答案是 A。Lark Card JSON 2.0 官方文档中，分隔线组件的 type 字段即为 divider。",
+  "extracted": "A",
+  "correct": false
+}

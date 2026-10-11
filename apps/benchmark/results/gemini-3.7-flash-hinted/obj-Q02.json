@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "基础结构",
+  "response": "答案是 A。在飞书卡片 JSON 2.0 规范中，卡片根对象的合法顶层字段为声明版本的 `schema`、卡片配置 `config`、全局跳转链接 `card_link`、标题组件 `header` 和正文内容容器 `body`。",
+  "extracted": "A",
+  "correct": true
+}

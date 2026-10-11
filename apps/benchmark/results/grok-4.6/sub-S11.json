@@ -1,0 +1,26 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"团队数据周报\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**本周概览**\\n- 总访问量：125000 次\\n- 新增用户：850 人\\n- 功能使用率：78%\"\n      },\n      {\n        \"type\": \"column_set\",\n        \"columns\": [\n          {\n            \"width\": 8,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**销售额**\\n120000 元\"\n              }\n            ]\n          },\n          {\n            \"width\": 8,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**客户数**\\n3000 人\"\n              }\n            ]\n          },\n          {\n            \"width\": 8,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**留存率**\\n92%\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"note\",\n        \"content\": \"备注：统计口径为公司内部数据平台导出，数据截至本周五。\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/tag: Invalid discriminator value. Expected 'column_set' | 'form' | 'interactive_container' | 'collapsible_panel' | 'div' | 'markdown' | 'img' | 'img_combination' | 'person' | 'person_list' | 'chart' | 'table' | 'hr' | 'note' | 'audio' | 'video' | 'button' | 'input' | 'overflow' | 'select_static' | 'multi_select_static' | 'select_person' | 'multi_select_person' | 'date_picker' | 'picker_time' | 'picker_datetime' | 'select_img' | 'checker'",
+        "/body/elements/2/elements: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

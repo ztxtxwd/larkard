@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。飞书卡片 Linter 规范建议卡片正文中的组件总数不超过 100 个，以保证卡片的渲染性能与良好的用户体验。",
+  "extracted": "C",
+  "correct": false
+}

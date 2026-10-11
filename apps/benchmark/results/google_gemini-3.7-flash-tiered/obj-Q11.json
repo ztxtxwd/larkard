@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q11",
+  "category": "组件",
+  "response": "答案是 B。在飞书卡片 2.0 中，`markdown` 组件专门用于渲染支持 Markdown 语法、@提及人员以及超链接等富文本内容。",
+  "extracted": "B",
+  "correct": true
+}

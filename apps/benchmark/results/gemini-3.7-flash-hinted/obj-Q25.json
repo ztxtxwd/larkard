@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "组件",
+  "response": "答案是 B。在飞书卡片 2.0 规范中，用于呈现多图聚合或九宫格布局的图片组合组件其标签名为 `img_combination`。",
+  "extracted": "B",
+  "correct": true
+}

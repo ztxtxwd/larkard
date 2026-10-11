@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q08",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 time_picker。时间选择器在飞书卡片 JSON 2.0 中对应的组件标签就是 time_picker，与只选日期的 date_picker 相对，同时包含日期与时间的是 datetime_picker。",
+  "extracted": "time_picker",
+  "correct": false,
+  "weight": 20
+}

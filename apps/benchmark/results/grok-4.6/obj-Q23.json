@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "组件",
+  "response": "答案是 A。<理由>在飞书卡片JSON 2.0中，可折叠面板组件的官方tag正是fold_panel（默认收起状态，点击展开）。",
+  "extracted": "A",
+  "correct": false
+}

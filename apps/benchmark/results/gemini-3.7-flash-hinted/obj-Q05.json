@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "基础结构",
+  "response": "答案是 A。`config.update_multi` 为布尔类型属性，合法取值为 `true`（支持多人协同更新）或 `false`（不支持，默认值）。",
+  "extracted": "A",
+  "correct": false
+}

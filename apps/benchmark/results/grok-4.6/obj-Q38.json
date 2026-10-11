@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。上传图片后获取的 img_key（如 img_v2_xxx）是 Lark Card JSON 2.0 中推荐的图片引用方式，占位符则用示例值以便生成时测试。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 interactive_container。飞书卡片 JSON 2.0 中，可整体点击的容器组件用 tag 为 interactive_container 的节点承载，其内部可包含其他子组件，并通过 behaviors 配置点击回调。",
+  "extracted": "interactive_container",
+  "correct": true,
+  "weight": 15
+}

@@ -1,0 +1,59 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下是一个可点击的交互容器，点击容器内任意区域将打开指定链接。\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"default\",\n        \"has_border\": true,\n        \"border_color\": \"grey\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px 12px 12px 12px\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn/document/\",\n            \"pc_url\": \"\",\n            \"ios_url\": \"\",\n            \"android_url\": \"\"\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"background_style\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 1,\n                \"vertical_align\": \"center\",\n                \"elements\": [\n                  {\n                    \"tag\": \"img\",\n                    \"img_key\": \"img_v2_demo-key\",\n                    \"alt\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"示例图片\"\n                    },\n                    \"scale_type\": \"crop_center\",\n                    \"size\": \"80px\",\n                    \"corner_radius\": \"4px\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"weighted\",\n                \"weight\": 3,\n                \"vertical_align\": \"center\",\n                \"elements\": [\n                  {\n                    \"tag\": \"markdown\",\n                    \"content\": \"**飞书开放平台文档**\\n点击此区域跳转到官方文档首页\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：交互容器内可嵌套文本、图片、按钮等组件，点击任意区域触发 behaviors 中配置的行为。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.353,
+    "total": 0.903,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown",
+        "hr",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

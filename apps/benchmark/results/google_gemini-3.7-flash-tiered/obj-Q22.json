@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "组件",
+  "response": "答案是 B。飞书卡片规范中表格（table）组件不支持嵌套在容器中，只能直接配置在卡片的根节点 `body.elements` 列表中。",
+  "extracted": "B",
+  "correct": true
+}

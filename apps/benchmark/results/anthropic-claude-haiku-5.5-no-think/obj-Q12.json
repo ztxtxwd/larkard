@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 `action_type`。\n\n在飞书卡片 JSON 2.0 中，表单容器内的按钮通过 `behaviors` 里的 `callback` 行为声明提交或重置事件，具体是在按钮的 `behaviors` 数组元素中设置 `action_type` 字段，取值为 `submit` 或 `reset`。",
+  "extracted": "action_type",
+  "correct": false,
+  "weight": 25
+}

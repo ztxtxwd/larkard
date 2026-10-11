@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "组件",
+  "response": "答案是 D。image_set 组件用于聚合多张图片并展示为九宫格布局。",
+  "extracted": "D",
+  "correct": false
+}

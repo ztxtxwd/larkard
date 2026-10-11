@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "基础结构",
+  "response": "答案是 D。理由：飞书卡片 JSON 2.0 根对象必须包含 schema（版本号）、header（头部）、body（主体）、tail（尾部/页脚）及 actions（操作）等字段，这些是官方规定的合法顶层字段。",
+  "extracted": "D",
+  "correct": false
+}

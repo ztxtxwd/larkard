@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "组件",
+  "response": "答案是 C。在飞书卡片 JSON 2.0 规范中，多列布局容器的标签为 `column_set`，其内部通过包含多个 `column` 来实现多列并排排版。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q01",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 JSON 2.0 需要在根对象显式声明 `\"schema\": \"2.0\"` 以启用 2.0 能力。",
+  "extracted": "B",
+  "correct": true
+}

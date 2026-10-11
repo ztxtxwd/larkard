@@ -1,0 +1,26 @@
+{
+  "kind": "subjective",
+  "taskId": "S15",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"🚨 [P0 严重告警] 核心网关服务延迟与错误率异常\"\n    },\n    \"template\": \"red\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**告警摘要**\\n**触发时间**：2023-11-20 14:32:15 (UTC+8)\\n**告警策略**：API 网关 5xx 错误率 > 5% 且 P99 响应耗时 > 2000ms\\n**影响范围**：生产环境 - 亚太核心集群 (prod-ap-southeast-1)\\n**当前状态**：🔴 持续异常（已持续 8 分钟）\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**关联服务状态一览**\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"grey\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**API Gateway**\\n🔴 错误率: 8.4%\\n⚠️ P99: 2350ms\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**Auth Service**\\n🟢 正常\\n⏱️ P99: 45ms\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"**Order DB (Master)**\\n🔴 连接池打满 (98%)\\n⚠️ CPU: 92%\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**最近事件追踪**\\n- `14:32:15` 触发告警：`api-gateway` 实例 5xx 请求数突破阈值\\n- `14:30:00` 检测到 `order-db-primary` 出现大量慢查询阻塞连接\\n- `14:28:40` 发布系统执行配置热更新 `v2.14.0-hotfix`\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"flow\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"查看详情\"\n                },\n                \"type\": \"primary\",\n                \"multi_url\": {\n                  \"url\": \"https://monitor.example.com/alerts/102938\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"静默 1 小时\"\n                },\n                \"type\": \"default\",\n                \"value\": {\n                  \"action\": \"silence_alert\",\n                  \"alert_id\": \"102938\",\n                  \"duration\": 3600\n                }\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/6/columns/0/elements/0/behaviors: Invalid input: expected array, received undefined",
+        "/body/elements/6/columns/1/elements/0/behaviors: Invalid input: expected array, received undefined"
+      ],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

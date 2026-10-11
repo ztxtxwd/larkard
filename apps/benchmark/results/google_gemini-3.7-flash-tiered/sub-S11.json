@@ -1,0 +1,23 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"📊 业务增长团队 · 数据周报 (W42)\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"统计周期：2023.10.16 - 2023.10.22\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**📌 本周要点概览**\\n• **核心突破**：新版引导流程上线，注册转化率创下近三月新高。\\n• **产品运营**：秋季促销活动圆满结束，周 GMV 目标达成率达 **112%**。\\n• **体验优化**：修复了核心链路的 4 个体验卡点，用户流失率显著下降。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**📈 核心指标看板**\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"none\",\n        \"background_style\": \"grey\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"<font color='grey'>日活跃用户 (DAU)</font>\\n**142.5k**\\n<font color='green'>↑ 12.8%</font>\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"<font color='grey'>付费转化率</font>\\n**4.85%**\\n<font color='green'>↑ 0.62%</font>\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"weighted\",\n            \"weight\": 1,\n            \"elements\": [\n              {\n                \"tag\": \"markdown\",\n                \"content\": \"<font color='grey'>周 GMV</font>\\n**¥ 1,280k**\\n<font color='green'>↑ 15.4%</font>\"\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"统计口径：数据截止至 2023.10.22 24:00；环比基准为上周自然周数据；GMV 剔除了退款与测试订单。\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 1,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

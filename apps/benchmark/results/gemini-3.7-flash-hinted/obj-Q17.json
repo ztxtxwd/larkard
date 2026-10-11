@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q17",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片中备注组件的标签名为 `note`，用于展示次要文本或图标等小字说明信息。",
+  "extracted": "C",
+  "correct": true
+}

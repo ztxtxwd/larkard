@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片图片组件通过 `img_key` 字段引用图片资源。",
+  "extracted": "C",
+  "correct": true
+}

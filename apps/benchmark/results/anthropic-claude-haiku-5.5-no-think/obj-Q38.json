@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q38",
+  "category": "布局约束",
+  "format": "bool",
+  "response": "答案是 否。table 组件在飞书卡片 JSON 2.0 中只能作为容器的直接子元素出现在 body.elements 等顶层可放置组件的位置，不允许嵌套在 column、column_set 等其它组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 12
+}

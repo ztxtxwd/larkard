@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "交互",
+  "response": "答案是 B。在飞书卡片规范中，人员选择器（选人下拉）组件对应的 tag 标签为 `select_person`。",
+  "extracted": "B",
+  "correct": true
+}

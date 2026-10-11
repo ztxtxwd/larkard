@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q10",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片配置中自定义字号（`custom_font_size`）支持设置的大小范围为 10px 到 40px。",
+  "extracted": "B",
+  "correct": true
+}

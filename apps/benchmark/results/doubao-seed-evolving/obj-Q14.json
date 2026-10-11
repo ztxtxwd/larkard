@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片 2.0 中实现多列并排布局使用 `column_set` 组件，其内部通过 `column` 定义各列。",
+  "extracted": "C",
+  "correct": true
+}

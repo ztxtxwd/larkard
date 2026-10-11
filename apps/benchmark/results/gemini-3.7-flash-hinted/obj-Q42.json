@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。在飞书卡片 markdown 元素中，需使用 `<at id=用户open_id></at>` 标签语法并传入有效的用户 ID 才能实现 @ 并通知到该用户。",
+  "extracted": "B",
+  "correct": true
+}

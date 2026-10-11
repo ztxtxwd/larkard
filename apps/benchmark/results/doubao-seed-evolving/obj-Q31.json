@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片 2.0 中真实的输入类组件 tag 是 `textarea`，用于多行文本输入；`textbox`、`input`、`edit_text` 都不是该体系中的真实组件标签。",
+  "extracted": "B",
+  "correct": false
+}

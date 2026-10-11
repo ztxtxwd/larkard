@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "基础结构",
+  "response": "答案是 C。在飞书卡片 JSON 2.0 中，卡片顶层的 `card_link` 字段用于配置整个卡片被点击时的全局跳转链接。",
+  "extracted": "C",
+  "correct": true
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "subjective",
+  "taskId": "S06",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"飞书卡片产品介绍\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"飞书卡片（Feishu Cards）是飞书平台提供的一套强大的卡片组件，用于构建交互式消息和通知。\\n\\n它允许开发者在飞书中展示丰富的内容，包括文本、图片、按钮和图表等，支持 Markdown 语法，包括加粗、斜体、列表、链接等排版。同时内置了按钮、图片、图表、表格、表单等高级组件，让消息更加生动和易读。\\n\\n广泛应用于企业内部沟通、项目管理、活动推广和客服服务等领域。通过卡片，用户可以直观地获取信息并进行交互操作，从而提升沟通效率和用户体验。\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 1,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [],
+      "goldenTagSequence": [],
+      "similarityBase": "render"
+    }
+  }
+}

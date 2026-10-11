@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "基础结构",
+  "response": "答案是 A。update_multi 是布尔类型，合法取值为 true 或 false。",
+  "extracted": "A",
+  "correct": false
+}

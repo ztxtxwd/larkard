@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "交互",
+  "response": "答案是 B。`overflow`（折叠按钮组）组件可以将多个次要操作项收拢为一个下拉或弹出式菜单（通常展示为“...”），点击后展开选择。",
+  "extracted": "B",
+  "correct": true
+}

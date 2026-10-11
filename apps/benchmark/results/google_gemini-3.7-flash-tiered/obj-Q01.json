@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q01",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片 JSON 2.0 在根对象中通过显式声明 `\"schema\": \"2.0\"` 来启用 2.0 版本的全部新特性与组件体系。",
+  "extracted": "B",
+  "correct": true
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "组件",
+  "response": "答案是 D。box 组件可作为容器嵌套其他组件，常用于「头像 + 文本」这类图文混排。",
+  "extracted": "D",
+  "correct": false
+}

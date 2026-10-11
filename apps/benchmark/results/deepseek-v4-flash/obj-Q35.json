@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "交互",
+  "response": "答案是 B。飞书卡片 JSON 2.0 中，为任意内容块整体附加点击行为的容器 tag 为 `interactive_container`。",
+  "extracted": "B",
+  "correct": true
+}

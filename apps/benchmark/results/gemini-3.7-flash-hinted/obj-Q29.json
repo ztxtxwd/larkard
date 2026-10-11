@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "交互",
+  "response": "答案是 A。飞书卡片 2.0 中表单容器组件 `form` 必须包含 `name` 属性作为卡片内的唯一标识以组织提交的数据。",
+  "extracted": "A",
+  "correct": true
+}

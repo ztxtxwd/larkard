@@ -1,0 +1,32 @@
+{
+  "kind": "subjective",
+  "taskId": "S12",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"update_multi\": true\n  },\n  \"card_link\": {\n    \"url\": \"https://open.feishu.cn\"\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"本周精选文章\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 飞书开放平台卡片 2.0 全新升级指南**\\n深度解析卡片 2.0 的全新交互规范与流式响应布局体系。\\n🕒 2024-03-20 · 🏷️ 开发者指南\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. 如何使用 Webhook 高效构建企业自动化工作流**\\n从 0 到 1 搭建飞书机器人与企业内部业务系统的告警与流转通道。\\n🕒 2024-03-18 · 🏷️ 最佳实践\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"note\",\n        \"elements\": [\n          {\n            \"tag\": \"plain_text\",\n            \"content\": \"点击卡片任意区域即可跳转至飞书开放平台查看更多\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.286,
+    "total": 0.893,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "markdown",
+        "hr",
+        "note",
+        "plain_text"
+      ],
+      "goldenTagSequence": [
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

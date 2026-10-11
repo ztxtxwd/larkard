@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "交互",
+  "response": "答案是 C。按钮组件通过 `on_click` 字段配置点击后的交互行为，如跳转链接、回传数据或提交表单等。",
+  "extracted": "C",
+  "correct": false
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "组件",
+  "response": "答案是 B。理由：飞书卡片 JSON 2.0 中分隔线组件的 tag 为 `hr`。",
+  "extracted": "B",
+  "correct": true
+}

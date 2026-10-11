@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "组件",
+  "response": "答案是 C。飞书卡片 JSON 2.0 中通过 `column_set` 组件实现多列并排布局。",
+  "extracted": "C",
+  "correct": true
+}

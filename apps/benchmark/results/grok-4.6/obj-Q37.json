@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。按最佳实践和linter默认规则，卡片嵌套深度不应超过8层（以避免渲染性能问题）。",
+  "extracted": "B",
+  "correct": true
+}

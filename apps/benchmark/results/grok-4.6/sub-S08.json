@@ -1,0 +1,40 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"请假申请\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"form\",\n        \"elements\": [\n          {\n            \"tag\": \"input\",\n            \"placeholder\": \"请输入请假事由\",\n            \"required\": true\n          },\n          {\n            \"tag\": \"select_static\",\n            \"placeholder\": \"请选择请假类型\",\n            \"required\": true,\n            \"options\": [\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"年假\"\n                },\n                \"value\": \"年假\"\n              },\n              {\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"病假\"\n                },\n                \"value\": \"病假\"\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"提交申请\"\n            },\n            \"type\": \"submit\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0,
+    "lint": 1,
+    "compile": 0,
+    "similarity": 1,
+    "total": 0.5,
+    "compiled": false,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/name: Invalid input: expected string, received undefined",
+        "/body/elements/0/elements/0/placeholder: Invalid input: expected object, received string",
+        "/body/elements/0/elements/1/behaviors: Invalid input: expected array, received undefined",
+        "/body/elements/0/elements/1/placeholder: Invalid input: expected object, received string",
+        "/body/elements/0/elements/2/behaviors: Invalid input: expected array, received undefined",
+        "/body/elements/0/elements/2/type: Invalid option: expected one of \"default\"|\"primary\"|\"danger\"|\"text\"|\"primary_text\"|\"danger_text\"|\"primary_filled\"|\"danger_filled\"|\"laser\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "form",
+        "input",
+        "select_static",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "form",
+        "input",
+        "select_static",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

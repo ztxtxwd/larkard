@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "基础结构",
+  "response": "答案是 A。飞书卡片 JSON 2.0 根对象的合法顶层字段为 `schema`、`config`、`card_link`、`header`、`body`。",
+  "extracted": "A",
+  "correct": true
+}

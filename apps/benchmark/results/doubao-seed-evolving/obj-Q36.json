@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q36",
+  "category": "易错与最佳实践",
+  "response": "答案是 C。form 和 table 属于块级容器组件，只能放在卡片 body 根级，不能嵌套进 column 等容器组件中。",
+  "extracted": "C",
+  "correct": true
+}

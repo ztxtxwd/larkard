@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "组件",
+  "response": "答案是 C。在飞书卡片 JSON 2.0 中，分栏组件 `column_set` 作为容器，内部通过包含多个 `column` 来实现多列并排布局。",
+  "extracted": "C",
+  "correct": true
+}

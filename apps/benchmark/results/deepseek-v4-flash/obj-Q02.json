@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q02",
+  "category": "基础结构",
+  "response": "答案是 A。理由：卡片 JSON 2.0 根对象合法顶层字段包含 schema、config、card_link、header、body 等，不含 style/content/footer 或 tail/actions。",
+  "extracted": "A",
+  "correct": true
+}

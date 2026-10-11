@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 callback。飞书卡片 2.0 中，按钮等组件的 behaviors 里配置 type 为 \"callback\"，点击后会把回调数据回传给应用服务端，与之相对的还有 open_url 等类型用于跳转链接。",
+  "extracted": "callback",
+  "correct": true,
+  "weight": 20
+}

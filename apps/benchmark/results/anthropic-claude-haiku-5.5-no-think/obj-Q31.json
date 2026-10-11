@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 5。\n\n在飞书卡片 JSON 2.0 中，column 的 weight 取值范围为 1 到 5 的整数，表示列在分栏布局中的相对宽度权重，超过 5 不被支持。",
+  "extracted": "5",
+  "correct": true,
+  "weight": 15
+}

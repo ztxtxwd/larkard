@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "交互",
+  "response": "答案是 B。表单内用于触发提交的按钮，其 `form_action_type` 应设置为 `submit`。",
+  "extracted": "B",
+  "correct": true
+}

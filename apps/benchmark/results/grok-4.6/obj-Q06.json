@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "基础结构",
+  "response": "答案是 C。card_link 字段位于 card 配置中，用于设置整个卡片被点击后跳转链接。",
+  "extracted": "C",
+  "correct": true
+}

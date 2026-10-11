@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q05",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 img_combination。飞书卡片 JSON 2.0 中，多图组合组件的 tag 为 img_combination，用于将多张图片按网格或组合形式展示。",
+  "extracted": "img_combination",
+  "correct": true,
+  "weight": 15
+}

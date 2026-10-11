@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "交互",
+  "response": "答案是 B。在飞书卡片 JSON 2.0 中，按钮等交互组件使用 `behaviors` 数组字段来配置点击后的跳转、回传或表单提交等具体交互行为。",
+  "extracted": "B",
+  "correct": true
+}

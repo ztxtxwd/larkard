@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "基础结构",
+  "response": "答案是 B。飞书卡片标题区（header）的标准结构中，title 需为包含 tag 和 content 的文本对象，并可通过 template 字段设置主题颜色。",
+  "extracted": "B",
+  "correct": true
+}

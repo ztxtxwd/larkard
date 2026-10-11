@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q04",
+  "category": "基础结构",
+  "response": "答案是 B。<理由>飞书卡片 JSON 2.0 中，header.title 需为带 tag 和 content 的文本对象，template 用于指定标题栏主题色，因此 B 是标准结构。>",
+  "extracted": "B",
+  "correct": true
+}

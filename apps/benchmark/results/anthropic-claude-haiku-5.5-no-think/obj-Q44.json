@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 A。在飞书卡片 JSON 2.0 的 callback 行为中，value 可以是任意 JSON 值（字符串、数字、对象等均可），点击后会原样回传给开发者的回调服务。",
+  "extracted": "A",
+  "correct": false,
+  "weight": 16
+}

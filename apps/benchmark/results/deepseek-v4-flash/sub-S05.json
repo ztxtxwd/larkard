@@ -1,0 +1,32 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"活动海报\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"年度技术沙龙现场照片：\"\n      },\n      {\n        \"tag\": \"img\",\n        \"img_key\": \"img_v2_demo-key\",\n        \"alt\": \"活动海报\",\n        \"preview\": true,\n        \"scale_type\": \"fit\",\n        \"horizontal_align\": \"center\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.85,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/alt: Invalid input: expected object, received string",
+        "/body/elements/1/scale_type: Invalid option: expected one of \"crop_center\"|\"crop_top\"|\"fit_horizontal\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "img"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "img"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

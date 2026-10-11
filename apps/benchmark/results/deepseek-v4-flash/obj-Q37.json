@@ -1,0 +1,8 @@
+{
+  "kind": "objective",
+  "taskId": "Q37",
+  "category": "易错与最佳实践",
+  "response": "答案是 B。linter 默认将卡片嵌套深度上限设为 8 层，超过会影响渲染性能并触发告警。",
+  "extracted": "B",
+  "correct": true
+}
