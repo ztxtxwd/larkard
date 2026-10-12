@@ -583,16 +583,18 @@ registerComponent('column_set', (el, ctx) => {
   const p = el.property || {};
   // RAW 用 camelCase（horizontalSpacingValue.value / flexMode / horizontalAlign），DSL 用 snake_case
   const gapRaw = p.horizontalSpacingValue?.value ?? p.horizontal_spacing;
-  const gap = gapRaw != null ? spacingToPx(gapRaw as number | string) : 8;
+  // #15/D5：客户端 columnGap = C.columnGap ?? 0，未显式指定时列贴合（无默认 8px）。
+  // 仅当显式给出 horizontal_spacing 时才输出 columnGap。
+  const gap = gapRaw != null ? spacingToPx(gapRaw as number | string) : 0;
   const flexMode = p.flexMode || p.flex_mode;
   const hAlign = p.horizontalAlign || p.horizontal_align;
   const style: Record<string, string> = {
     display: 'flex',
     flexWrap: flexMode === 'flow' || flexMode === 'wrap' ? 'wrap' : 'nowrap',
-    columnGap: gap + 'px',
     rowGap: '8px',
     alignItems: 'stretch',
   };
+  if (gap > 0) style.columnGap = gap + 'px';
   if (hAlign) {
     style.justifyContent =
       ({ left: 'flex-start', center: 'center', right: 'flex-end' } as Record<string, string>)[hAlign] || 'flex-start';
