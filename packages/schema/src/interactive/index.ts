@@ -457,50 +457,6 @@ export const DatePickerSchema = z
 export type DatePicker = z.infer<typeof DatePickerSchema>;
 
 /**
- * 日期选择器别名（picker_date）。与 date_picker 字段相同，官方 schema 并存。
- */
-export const PickerDateSchema = z
-  .object({
-    tag: z.literal('picker_date').describe('组件标签，固定为 picker_date'),
-    behaviors: BehaviorsSchema.optional().describe(
-      '表单外必填；进入 form 后可省略（交互随 submit 提交）',
-    ),
-    element_id: ElementIdSchema.optional().describe('组件唯一标识'),
-    margin: SpacingValueSchema.optional().describe('组件外边距'),
-    name: z
-      .string()
-      .optional()
-      .describe('表单项标识，卡片内唯一；表单内使用时必填'),
-    required: z.boolean().optional().describe('是否必填，默认 false'),
-    disabled: z.boolean().optional().describe('是否禁用，默认 false'),
-    disabled_tips: TipsTextSchema.optional().describe('禁用时的悬浮提示'),
-    width: InteractiveWidthSchema.optional().describe('组件宽度'),
-    initial_date: z
-      .string()
-      .optional()
-      .describe('默认选中日期，格式 yyyy-MM-dd'),
-    initial_datetime: z
-      .string()
-      .optional()
-      .describe('兼容字段：默认日期时间'),
-    initial_time: z
-      .string()
-      .optional()
-      .describe('兼容字段：默认时间'),
-    placeholder: TipsTextSchema.optional().describe('占位提示文案'),
-    confirm: ConfirmSchema.optional().describe('二次确认弹窗配置'),
-    value: z
-      .record(z.string(), z.unknown())
-      .optional()
-      .describe('历史回传字段'),
-  })
-  .describe(
-    '日期选择器（picker_date）。与 date_picker 等价的官方别名；新卡片优先写 date_picker',
-  );
-
-export type PickerDate = z.infer<typeof PickerDateSchema>;
-
-/**
  * 时间选择器（picker_time）。
  */
 export const PickerTimeSchema = z
