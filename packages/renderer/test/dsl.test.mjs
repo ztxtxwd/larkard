@@ -557,7 +557,7 @@ test('chart: hydrate 脚本/正文可用且含默认色板', () => {
   assert.match(tag, /<\/script>$/);
   const js = feishuChartHydrateJs();
   assert.match(js, /renderSync/);
-  assert.match(js, /#1664FF/);           // 默认色板
+  assert.match(js, /#4e83fd/);           // 默认色板（VChart light 主题首色）
   assert.match(js, new RegExp(CHART_SPEC_ATTR));
   assert.match(js, /setTimeout\(draw,250\)/); // async/defer CDN 未就绪时的退避重试
 });
@@ -572,7 +572,7 @@ test('chart: renderFeishuChart 接受 UMD 命名空间（.VChart 挂构造器）
   assert.ok(inst, '应成功构造实例');
   assert.equal(mount.__done, true);       // renderSync 被调用
   assert.equal(mount.innerHTML, '');      // 成功时清掉 loading 占位
-  assert.equal(seen.spec.color[0], '#1664FF'); // 注入默认色板
+  assert.equal(seen.spec.color[0], '#4e83fd'); // 注入默认色板（VChart light 主题首色）
 });
 
 /* ---- table 表格：语义 table + 列宽/对齐 + options 标签 + number 精度 ---- */

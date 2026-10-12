@@ -392,12 +392,16 @@ export const TABLE_HEAD_BG: Record<string, string> = {
 };
 
 /**
- * 图表（chart）默认序列色板。取自 VChart 官方默认主题的分类色序列，
- * 与网页版飞书卡片图表观感一致。hydrate 时若 spec 未显式给 color，注入此序列。
+ * 图表（chart）默认序列色板。#21/D11：对齐飞书卡片图表 VChart light 主题
+ * brand.light.normal 的 30 色序列（首色 #4e83fd），而非 VChart 通用默认。
+ * hydrate 时若 spec 未显式给 color，注入此序列。
  */
 export const CHART_PALETTE: string[] = [
-  '#1664FF', '#1AC6FF', '#FF8A00', '#3CC780', '#7442D4', '#FFC400',
-  '#304D77', '#B48DEB', '#009488', '#FF7DDA',
+  '#4e83fd', '#50cefb', '#935af6', '#fad355', '#f76964', '#ffa53d',
+  '#82a7fc', '#7edafb', '#ad82f7', '#f7dc82', '#f98e8b', '#ffba6b',
+  '#3370ff', '#14c0ff', '#7f3bf5', '#ffc60a', '#f54a45', '#ff8800',
+  '#bacefd', '#b1e8fc', '#cdb2fa', '#f8e6ab', '#fbbfbc', '#fed4a4',
+  '#245bdb', '#049fd7', '#6425d0', '#dc9b04', '#d83931', '#de7802',
 ];
 
 /**
