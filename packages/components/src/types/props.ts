@@ -280,6 +280,11 @@ export interface NoteProps extends CommonProps {
   isFooter?: boolean;
 }
 
+/** 引用块（blockquote）：内部按 renderElements 渲染子元素列表。 */
+export interface BlockquoteProps extends CommonProps {
+  children?: VNodeChild;
+}
+
 export interface AvatarProps extends CommonProps {
   userId: string;
   size?: 'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'custom';

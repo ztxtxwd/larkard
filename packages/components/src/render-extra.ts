@@ -427,6 +427,12 @@ export function tryRenderExtra(
         ...idOf(props),
         elements: renderChildren(props.children as VNodeChild),
       }) as FeishuElement;
+    case 'blockquote':
+      return compact({
+        tag: 'blockquote',
+        ...idOf(props),
+        elements: renderChildren(props.children as VNodeChild),
+      }) as FeishuElement;
     case 'avatar':
       return compact({
         tag: 'avatar',

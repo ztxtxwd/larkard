@@ -107,6 +107,7 @@ export namespace JSX {
     collapsible_panel: import('./types/props.js').CollapsiblePanelProps;
     collapse_divider: import('./types/props.js').CollapseDividerProps;
     note: import('./types/props.js').NoteProps;
+    blockquote: import('./types/props.js').BlockquoteProps;
     avatar: import('./types/props.js').AvatarProps;
     fallback_text: import('./types/props.js').FallbackTextProps;
     overflow: import('./types/props.js').OverflowProps;

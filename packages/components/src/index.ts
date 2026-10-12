@@ -15,6 +15,7 @@ export {
 export {
   Audio,
   Avatar,
+  Blockquote,
   Button,
   Card,
   CardElement,

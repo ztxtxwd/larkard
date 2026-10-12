@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   Audio,
   Avatar,
+  Blockquote,
   Chart,
   Checker,
   CollapseDivider,
@@ -75,6 +76,7 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
           children: [jsx(Markdown, { content: '细节' }), jsx(CollapseDivider, {})],
         }),
         jsx(Note, { isFooter: true, children: jsx(Markdown, { content: '脚注说明' }) }),
+        jsx(Blockquote, { children: jsx(Markdown, { content: '引用内容' }) }),
         jsx(Overflow, { text: '更多', options: [{ text: '复制', value: 'copy' }] }),
         jsx(MultiSelect, { name: 'tags', options: [{ label: '甲', value: 'a' }], selectedValues: ['a'] }),
         jsx(SelectPerson, { name: 'owner', options: ['ou_1'] }),
@@ -99,6 +101,7 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
     'chart',
     'table',
     'audio',
+    'blockquote',
     'video',
     'fallback_text',
     'interactive_container',
@@ -131,4 +134,10 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
   assert.ok(note, '应包含 note 元素');
   assert.equal(note?.is_footer, true);
   assert.equal(note?.elements?.[0]?.tag, 'markdown');
+
+  const quote = (card.body?.elements ?? []).find((el) => (el as { tag: string }).tag === 'blockquote') as
+    | { tag: string; elements?: Array<{ tag: string }> }
+    | undefined;
+  assert.ok(quote, '应包含 blockquote 元素');
+  assert.equal(quote?.elements?.[0]?.tag, 'markdown');
 });

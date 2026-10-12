@@ -3,6 +3,7 @@ import type { VNode } from '../types/vnode.js';
 import type {
   AudioProps,
   AvatarProps,
+  BlockquoteProps,
   ButtonProps,
   CardProps,
   ChartProps,
@@ -143,6 +144,11 @@ export function CollapseDivider(props: CollapseDividerProps = {}): VNode<Collaps
 /** 备注容器（note）：渲染为带边距的备注块，isFooter 标记底部备注。 */
 export function Note(props: NoteProps): VNode<NoteProps> {
   return jsx('note', props);
+}
+
+/** 引用块（blockquote）：渲染为引用容器，子元素按列表渲染。 */
+export function Blockquote(props: BlockquoteProps): VNode<BlockquoteProps> {
+  return jsx('blockquote', props);
 }
 
 export function Avatar(props: AvatarProps): VNode<AvatarProps> {
