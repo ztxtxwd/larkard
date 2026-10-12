@@ -154,7 +154,7 @@ export interface ElementProperty {
   showAvatar?: boolean;
   /** 展示姓名（person_v1 默认 true；person_list 按真值） */
   showName?: boolean;
-  /** 胶囊样式（DSL style:"capsule" 会转成此字段） */
+  /** 编辑器私有胶囊标记（已废弃：胶囊外形现由 style 字符串枚举 Normal/Capsule 直接驱动；保留仅作 raw→DSL 兼容丢弃） */
   pillShaped?: boolean;
 
   // ---- link ----（RAW 里 url 可能是对象 { pcURL, url, ... }）
@@ -185,8 +185,9 @@ export interface ElementProperty {
   token?: string;
   // size 复用上方 SizeName 字段位，但图标取值是 small/large1..4 另一套枚举，
   // 运行期按字符串查 ICON_SIZE_MAP；color 复用 NamedColor|string 字段。
-  // ud_icon 形态把 color/size 收进 property.style；standard_icon 直接挂 property。
-  style?: { color?: string; size?: string; [key: string]: unknown };
+  // ud_icon 形态把 color/size 收进 property.style（对象）；standard_icon 直接挂 property。
+  // person_v1 的 style 是客户端字符串枚举（Normal/Capsule），直接透传——故 style 为联合类型。
+  style?: string | { color?: string; size?: string; [key: string]: unknown };
 
   // ---- div 前置图标 ----（同一图标的两种形态，引擎取 udIcon || icon）
   icon?: CardElement;
