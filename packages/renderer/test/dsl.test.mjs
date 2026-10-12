@@ -253,13 +253,13 @@ test('person → person_v1，user_id → userID', () => {
   assert.equal(p.property.userID, 'ou_123');
 });
 
-test('person style=capsule → pillShaped', () => {
+test('person style=capsule → style=capsule', () => {
   const raw = dslToRaw({ body: { elements: [{
     tag: 'person', user_id: 'ou_123', style: 'capsule', show_avatar: true, show_name: true,
   }] } });
   const p = raw.body.property.elements[0];
-  assert.equal(p.property.pillShaped, true);
-  assert.equal(p.property.style, undefined);
+  assert.equal(p.property.style, 'capsule');
+  assert.equal(p.property.pillShaped, undefined);
 });
 
 /* ---- 未知 tag 透传 + 温和跳过 ---- */
@@ -300,12 +300,12 @@ test('parseMarkdown: <person id> → person_v1 with attrs', () => {
   assert.ok(els.some((e) => e.property?.content === '销售顾问'));
 });
 
-test('parseMarkdown: <person style=capsule> → pillShaped', () => {
+test('parseMarkdown: <person style=capsule> → style=capsule', () => {
   const els = parseMarkdown("<person id=\"ou_x\" style='capsule' />");
   const p = els.find((e) => e.tag === 'person_v1');
   assert.ok(p);
   assert.equal(p.property.userID, 'ou_x');
-  assert.equal(p.property.pillShaped, true);
+  assert.equal(p.property.style, 'capsule');
 });
 
 test('parseMarkdown: <audio> → markdown_audio（未闭合开标签，对齐官方示例）', () => {
