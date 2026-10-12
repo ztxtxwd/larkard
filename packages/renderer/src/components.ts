@@ -1324,6 +1324,59 @@ registerComponent('text_tag', (el) => {
   return h('span', { className: `${CLS}-text-tag ${CLS}-text-tag--${colorName}`, style }, extractText(p.text));
 });
 
+// local_datetime：markdown 内联时间戳（#14/D4）。客户端按 milliseconds+formatType+时区渲染，
+// 静态渲染器用浏览器本地时区 + Intl 兜底。formatType 为枚举字符串（含 date/time 关键字），
+// 识别不出时按「日期+时间」完整输出。
+registerComponent('local_datetime', (el) => {
+  const p = el.property || {};
+  let ms = Number(p.milliseconds ?? p.millisecond ?? p.value ?? 0);
+  if (!Number.isFinite(ms) || ms === 0) return null;
+  // 真机毫秒；偶发秒级时间戳（< 1e12）自动 ×1000 兜底
+  if (ms < 1e12) ms = ms * 1000;
+  const d = new Date(ms);
+  if (Number.isNaN(d.getTime())) return null;
+  const ft = String(p.formatType || p.format_type || '').toLowerCase();
+  const opts: Intl.DateTimeFormatOptions = ft.includes('time') && !ft.includes('date')
+    ? { hour: '2-digit', minute: '2-digit', hour12: false }
+    : ft.includes('date') && !ft.includes('time')
+      ? { year: 'numeric', month: '2-digit', day: '2-digit' }
+      : { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+  let text: string;
+  try {
+    text = new Intl.DateTimeFormat('zh-CN', opts).format(d);
+  } catch {
+    text = d.toLocaleString();
+  }
+  return h('span', { className: `${CLS}-local-datetime` }, text);
+});
+
+// number_tag：markdown 内联数字徽标（#14/D4）。跟随正文字号（ctx.textMetrics，缺省 14px），
+// 圆角小胶囊，复用 text_tag blue 色板。plainMode 下客户端降级纯文本——静态渲染无 plainMode，
+// 直接输出徽标（与 text_tag 一致）。
+registerComponent('number_tag', (el, ctx) => {
+  const p = el.property || {};
+  const raw = extractText(p.text);
+  const text = raw != null && raw !== '' ? raw : (p.content != null ? String(p.content) : '');
+  if (text === '') return null;
+  const parentFs = ctx.textMetrics?.fontSize ?? BASE_FONT_SIZE;
+  const fs = Math.max(11, Math.round(parentFs * 0.85));
+  const c = TAG_COLOR.blue;
+  const style: Record<string, string> = {
+    backgroundColor: c.bg,
+    color: c.text,
+    fontSize: fs + 'px',
+    lineHeight: '1.4',
+    padding: '0 4px',
+    borderRadius: '4px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    whiteSpace: 'nowrap',
+    margin: '0 2px',
+    verticalAlign: 'baseline',
+  };
+  return h('span', { className: `${CLS}-number-tag`, style }, text);
+});
+
 // emoji：飞书表情。short code（key，如 "Fire"）→ 雪碧图名（如 "fire"），
 // 渲染成 <i class="larkw-emoji__img--emoji-<name>">，靠单张 CDN 雪碧图 + background-position 出图
 // （定位/宽高由 EMOJI_SPRITE_CSS 以 em 给出，随 <i> 的 font-size 缩放）。
