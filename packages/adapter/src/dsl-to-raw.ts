@@ -143,14 +143,11 @@ function convertEl(el: Record<string, unknown>, colors: ColorRegistry): CardElem
   const tag = String(el.tag);
 
   // person → person_v1（渲染器注册的是 person_v1 / person_list）
-  // DSL style:"capsule" → pillShaped（与 markdown <person style=capsule> 一致）
+  // 飞书客户端 person 胶囊外形由 property.style 枚举（Normal/Capsule）派生
+  // （style:h=s.cK.Normal; b=h===s.cK.Capsule），全客户端无 pillShaped 读取点。
+  // 因此 DSL style:"capsule" 直接保留为 property.style="capsule"，不再合成 pillShaped。
   if (tag === 'person') {
     const property = buildProperty(el, 'person_v1', colors);
-    // ElementProperty.style 类型偏图标对象；DSL person 的 style 是 "capsule"|"normal" 字符串
-    if ((property as { style?: unknown }).style === 'capsule') {
-      property.pillShaped = true;
-      delete (property as Record<string, unknown>).style;
-    }
     return withRawElementId(el, { tag: 'person_v1', property });
   }
 

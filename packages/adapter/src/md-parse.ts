@@ -170,8 +170,10 @@ export function parseInline(text: string): CardElement[] {
         if (attrs.show_name != null) property!.showName = attrs.show_name !== 'false';
         if (attrs.show_avatar != null) property!.showAvatar = attrs.show_avatar !== 'false';
         if (attrs.size) property!.size = attrs.size;
-        // style=capsule → 胶囊外形；normal / 其它忽略
-        if (attrs.style === 'capsule') property!.pillShaped = true;
+        // style=capsule → 胶囊外形：飞书客户端 person 由 property.style 枚举
+        // （Normal/Capsule）派生胶囊外形，全客户端无 pillShaped 读取点。
+        // 直接保留 style 字符串，不再合成客户端不识别的 pillShaped。
+        if (attrs.style) property!.style = attrs.style;
         out.push({ tag: 'person_v1', property });
         i += m[0].length; continue;
       }
