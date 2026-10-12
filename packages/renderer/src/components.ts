@@ -1445,6 +1445,51 @@ registerComponent('number_tag', (el, ctx) => {
   return h('span', { className: `${CLS}-number-tag`, style }, text);
 });
 
+// vote-card-select：消息流投票卡片单选项（#24/D14，Tier C 流式组件）。
+// 客户端结构（d74b7f67be.js）：.vote-card-select[--voted] > .vote-card-select-content
+// + voted 时 .vote-card-select-result（"票数 R%"）+ .vote-card-select-progress 进度条。
+// 静态渲染器只渲只读结果态：选项文本 + 百分比 + 进度条；交互（onChange）留空。
+// 字段名以常见 RAW 形态兜底（content/text、count/total、percent、voted）。
+registerComponent('vote-card-select', (el) => {
+  const p = el.property || {};
+  const text = extractText(p.text) || (p.content != null ? String(p.content) : '');
+  if (!text) return null;
+  const voted = p.voted === true || p.isVoted === true || p.selected === true;
+  const count = Number(p.count ?? p.voteCount ?? 0) || 0;
+  const total = Number(p.total ?? p.totalCount ?? 0) || 0;
+  let percent = Number(p.percent ?? p.ratio ?? NaN);
+  if (!Number.isFinite(percent)) {
+    percent = total > 0 ? Math.round((count / total) * 1000) / 10 : 0;
+  }
+  const rootCls = `${CLS}-vote-card-select` + (voted ? ` ${CLS}-vote-card-select--voted` : '');
+  const kids: Array<ReturnType<typeof h> | null> = [
+    h('div', { className: `${CLS}-vote-card-select-content` }, text),
+  ];
+  if (voted) {
+    kids.push(
+      h('div', {
+        className: `${CLS}-vote-card-select-result`,
+        style: { fontSize: '12px', color: '#646a73', marginTop: '2px' },
+      }, `${count} 票 ${percent}%`),
+      h('div', {
+        className: `${CLS}-vote-card-select-progress`,
+        style: {
+          height: '4px', borderRadius: '2px', background: '#f2f3f5',
+          marginTop: '4px', overflow: 'hidden',
+        },
+      },
+        h('div', {
+          className: `${CLS}-vote-card-select-progress-bar`,
+          style: {
+            width: Math.min(100, Math.max(0, percent)) + '%',
+            height: '100%', background: '#4e83fd', borderRadius: '2px',
+          },
+        })),
+    );
+  }
+  return h('div', { className: rootCls, style: { padding: '8px 0' } }, kids);
+});
+
 // emoji：飞书表情。short code（key，如 "Fire"）→ 雪碧图名（如 "fire"），
 // 渲染成 <i class="larkw-emoji__img--emoji-<name>">，靠单张 CDN 雪碧图 + background-position 出图
 // （定位/宽高由 EMOJI_SPRITE_CSS 以 em 给出，随 <i> 的 font-size 缩放）。
