@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/store",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "把卡片运行时 state 封印进空分栏 action.multi_url（deflate + base64url），支持 DSL / RAW 回读",
   "type": "module",
   "main": "./dist/index.cjs",
