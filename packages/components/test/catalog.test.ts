@@ -17,6 +17,7 @@ import {
   Markdown,
   MultiSelect,
   MultiSelectPerson,
+  Note,
   Overflow,
   Person,
   PersonList,
@@ -73,6 +74,7 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
           iconExpandedAngle: -180,
           children: [jsx(Markdown, { content: '细节' }), jsx(CollapseDivider, {})],
         }),
+        jsx(Note, { isFooter: true, children: jsx(Markdown, { content: '脚注说明' }) }),
         jsx(Overflow, { text: '更多', options: [{ text: '复制', value: 'copy' }] }),
         jsx(MultiSelect, { name: 'tags', options: [{ label: '甲', value: 'a' }], selectedValues: ['a'] }),
         jsx(SelectPerson, { name: 'owner', options: ['ou_1'] }),
@@ -102,6 +104,7 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
     'interactive_container',
     'collapsible_panel',
     'collapse_divider',
+    'note',
     'overflow',
     'multi_select_static',
     'select_person',
@@ -121,4 +124,11 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
   assert.equal(image.alt?.content, '配图');
   assert.equal(image.scale_type, 'fit_horizontal');
   assert.equal(JSON.stringify(card).includes('function'), false);
+
+  const note = (card.body?.elements ?? []).find((el) => (el as { tag: string }).tag === 'note') as
+    | { tag: string; is_footer?: boolean; elements?: Array<{ tag: string }> }
+    | undefined;
+  assert.ok(note, '应包含 note 元素');
+  assert.equal(note?.is_footer, true);
+  assert.equal(note?.elements?.[0]?.tag, 'markdown');
 });

@@ -38,6 +38,7 @@ export {
   Markdown,
   MultiSelect,
   MultiSelectPerson,
+  Note,
   Overflow,
   Person,
   PersonList,

@@ -420,6 +420,13 @@ export function tryRenderExtra(
       return renderPanel(props, renderChildren);
     case 'collapse_divider':
       return compact({ tag: 'collapse_divider', ...idOf(props) }) as FeishuElement;
+    case 'note':
+      return compact({
+        tag: 'note',
+        is_footer: props.isFooter,
+        ...idOf(props),
+        elements: renderChildren(props.children as VNodeChild),
+      }) as FeishuElement;
     case 'avatar':
       return compact({
         tag: 'avatar',

@@ -273,6 +273,13 @@ export interface CollapsiblePanelProps extends CommonProps {
 
 export interface CollapseDividerProps extends CommonProps {}
 
+/** 备注容器（note）：带边距的底部/正文备注块。 */
+export interface NoteProps extends CommonProps {
+  children?: VNodeChild;
+  /** 是否为底部备注（isFooter），转发为 is_footer。 */
+  isFooter?: boolean;
+}
+
 export interface AvatarProps extends CommonProps {
   userId: string;
   size?: 'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'custom';

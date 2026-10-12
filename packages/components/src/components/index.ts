@@ -25,6 +25,7 @@ import type {
   MarkdownProps,
   MultiSelectPersonProps,
   MultiSelectProps,
+  NoteProps,
   OverflowProps,
   PersonListProps,
   PersonProps,
@@ -137,6 +138,11 @@ export function CollapsiblePanel(props: CollapsiblePanelProps): VNode<Collapsibl
 
 export function CollapseDivider(props: CollapseDividerProps = {}): VNode<CollapseDividerProps> {
   return jsx('collapse_divider', props);
+}
+
+/** 备注容器（note）：渲染为带边距的备注块，isFooter 标记底部备注。 */
+export function Note(props: NoteProps): VNode<NoteProps> {
+  return jsx('note', props);
 }
 
 export function Avatar(props: AvatarProps): VNode<AvatarProps> {
