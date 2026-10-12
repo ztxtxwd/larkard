@@ -58,7 +58,11 @@ function checkDepth(node: JsonNode, depth: number, path: string, ctx: Ctx): numb
     return max;
   }
   if (node.type !== 'object') return depth;
-  const childContainers = ['elements', 'children', 'columns', 'items'];
+  // 子容器键集合对齐客户端权威映射（模块 248895）：
+  //   Div:[extra,fields,text]、Note/Column/Markdown/Form/CollapsiblePanel 等:[elements]、
+  //   Action:[actions]、ColumnSet:[columns]、Checker:[buttonArea.buttons]、List:items。
+  // 统一键集策略下取其中以数组形态出现的子容器；'children' 为卡片 JSON 不存在的死键，已移除。
+  const childContainers = ['elements', 'actions', 'columns', 'fields', 'items'];
   for (const key of childContainers) {
     const child = getProp(node, key);
     if (child && (child.type === 'array' || child.type === 'object')) {

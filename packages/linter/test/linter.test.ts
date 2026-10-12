@@ -21,6 +21,26 @@ test('deep nesting warning', () => {
   assert.ok(ds.some((d) => d.rule === 'nesting-depth'));
 });
 
+test('div.fields 子容器计入嵌套深度', () => {
+  const ds = lint(
+    `{ "schema": "2.0", "body": { "elements": [
+       { "tag": "div", "fields": [ { "text": { "tag": "markdown", "content": "x" } } ] }
+     ] } }`,
+    { maxDepth: 2 },
+  );
+  assert.ok(ds.some((d) => d.rule === 'nesting-depth'));
+});
+
+test('action.actions 子容器计入嵌套深度', () => {
+  const ds = lint(
+    `{ "schema": "2.0", "body": { "elements": [
+       { "tag": "action", "actions": [ { "tag": "button", "text": { "tag": "plain_text", "content": "ok" } } ] }
+     ] } }`,
+    { maxDepth: 2 },
+  );
+  assert.ok(ds.some((d) => d.rule === 'nesting-depth'));
+});
+
 test('long text warning', () => {
   const long = 'x'.repeat(4000);
   const ds = lint(`{ "schema": "2.0", "body": { "elements": [{ "tag": "markdown", "content": "${long}" }] } }`);
