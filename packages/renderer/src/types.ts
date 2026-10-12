@@ -338,6 +338,15 @@ export interface RenderOptions {
    * 交互预览。默认关闭：回调按钮是不可点的 span，输入框是静态占位。
    * 打开后，回调按钮变成带 data-feishu-action 的 button，输入框/下拉框变成真实表单控件。
    * 宿主监听这些控件，自己把点击发回卡片服务。
+   *
+   * #23/D13 —— 宿主上报契约（静态渲染器不替宿主发请求）：
+   * 飞书客户端点击后组装 event_type="card.action.client_msg" 事件，并经
+   * im.v2.PutActionRequest（PUT_ACTION_V2，service id 2199）上报，信封必须自带：
+   *   - messageId / actionId / traceId（宿主从消息上下文取）
+   *   - form_value（表单控件当前值，key=字段 name）
+   *   - client_channel / value（来自 data-feishu-action 上的 action 原文）
+   * 若宿主直接复用 data-feishu-action 里的 action 原文上报，会缺上述信封字段，
+   * 须自行补齐 PUT_ACTION_V2 信封后再发。
    */
   interactive?: boolean;
 }
