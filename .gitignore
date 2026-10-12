@@ -6,3 +6,4 @@ dist
 .agents
 .pnpm-store
 feishu-web-dump
+/feishu-card-extract/
