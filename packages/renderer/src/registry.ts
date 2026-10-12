@@ -258,14 +258,49 @@ export function personAvatarSrc(person: PersonInfo | null, ctx: RenderContext): 
   return base + person.avatar_key + suffix;
 }
 
-/** 间距枚举/数值 -> px 数 */
+/**
+ * 间距枚举/数值 -> px 数。
+ * #16/D6：客户端 horizontal_spacing 与 vertical_spacing 是**两套不同枚举**：
+ *   horizontal: {small:4, default:8, large:12}      （无 medium / extra_large）
+ *   vertical:   {default:8, medium:12, large:16}    （无 small  / extra_large）
+ * 未知名值一律回落 default(8)。数字与像素串（"0px"/"12"）照常解析。
+ */
+const HORIZONTAL_SPACING_PX: Record<string, number> = { small: 4, default: 8, large: 12 };
+const VERTICAL_SPACING_PX: Record<string, number> = { default: 8, medium: 12, large: 16 };
+
+function namedSpacingToPx(v: string, map: Record<string, number>): number {
+  const named = map[v];
+  if (named != null) return named;
+  // 像素串（"0px" / "12px" / "6"）：取数值。飞书 DSL 的 spacing 常是这种形态，
+  // 若不解析会全部落到下面的默认 8，造成「0px 被当成 8px」等间距偏大。
+  const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/.exec(v.trim());
+  if (m) return Number(m[1]);
+  return map.default ?? 8;
+}
+
+/** horizontal_spacing（列间水平间距）枚举 → px */
+export function horizontalSpacingToPx(v: number | string | undefined): number {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') return namedSpacingToPx(v, HORIZONTAL_SPACING_PX);
+  return HORIZONTAL_SPACING_PX.default;
+}
+
+/** vertical_spacing（块内纵向间距）枚举 → px */
+export function verticalSpacingToPx(v: number | string | undefined): number {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') return namedSpacingToPx(v, VERTICAL_SPACING_PX);
+  return VERTICAL_SPACING_PX.default;
+}
+
+/**
+ * 通用间距解析（margin 简写等不区分横纵的场景）。
+ * 兼容旧调用方；对命名值取并集，未知值回落 default=8。
+ */
 export function spacingToPx(v: number | string | undefined): number {
   if (typeof v === 'number') return v;
   if (typeof v === 'string') {
     const named: Record<string, number> = { small: 4, medium: 8, large: 12, extra_large: 16, default: 8 };
     if (named[v] != null) return named[v];
-    // 像素串（"0px" / "12px" / "6"）：取数值。飞书 DSL 的 spacing 常是这种形态，
-    // 若不解析会全部落到下面的默认 8，造成「0px 被当成 8px」等间距偏大。
     const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/.exec(v.trim());
     if (m) return Number(m[1]);
   }

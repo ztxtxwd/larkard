@@ -29,7 +29,8 @@ import {
   lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
   resolveColor, resolveDimensionPx, resolveImageSize, resolveImageSrc, resolveMediaSrc,
-  resolveTextSizeKey, resolveURL, resolveVideoCoverSrc, sizeToPx, spacingToPx,
+  resolveTextSizeKey, resolveURL, resolveVideoCoverSrc, sizeToPx,
+  horizontalSpacingToPx, verticalSpacingToPx,
   textStyleToModifiers, textStyleToStyle,
 } from './registry';
 import { resolveCustomBorderLight } from '@open-feishu-card/adapter';
@@ -436,7 +437,7 @@ export function registerBuiltins(): void {
     const pad = boxToStyle(p.padding);
     if (pad) style.padding = pad;
     const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
-    if (vGap != null) style.rowGap = spacingToPx(vGap as number | string) + 'px';
+    if (vGap != null) style.rowGap = verticalSpacingToPx(vGap as number | string) + 'px';
     const props: Record<string, unknown> = { className: `${CLS}-body` };
     if (Object.keys(style).length) props.style = style;
     return h('div', props, renderElements(getChildElements(el), ctx));
@@ -585,7 +586,7 @@ registerComponent('column_set', (el, ctx) => {
   const gapRaw = p.horizontalSpacingValue?.value ?? p.horizontal_spacing;
   // #15/D5：客户端 columnGap = C.columnGap ?? 0，未显式指定时列贴合（无默认 8px）。
   // 仅当显式给出 horizontal_spacing 时才输出 columnGap。
-  const gap = gapRaw != null ? spacingToPx(gapRaw as number | string) : 0;
+  const gap = gapRaw != null ? horizontalSpacingToPx(gapRaw as number | string) : 0;
   const flexMode = p.flexMode || p.flex_mode;
   const hAlign = p.horizontalAlign || p.horizontal_align;
   const style: Record<string, string> = {
@@ -660,7 +661,7 @@ registerComponent('column', (el, ctx) => {
   // 纵向间距：列内元素唯一的间隔来源（flex row-gap）。缺省 8px（对齐飞书默认）。
   // 注意不要再叠加 CSS 的相邻兄弟 margin，否则间距翻倍——故 styles.css 里不给 column 子元素设 margin。
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
-  style.rowGap = (vGap != null ? spacingToPx(vGap as number | string) : 8) + 'px';
+  style.rowGap = (vGap != null ? verticalSpacingToPx(vGap as number | string) : 8) + 'px';
   // 背景：有底色挂 --bg（CSS 给 6px 圆角；默认 padding 仍是 0，内边距须 DSL 显式写）。
   const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
@@ -908,7 +909,7 @@ registerComponent('interactive_container', (el, ctx) => {
   const radius = resolveCornerRadius(p as Record<string, unknown>);
   if (radius != null) style.borderRadius = radius;
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
-  if (vGap != null) style.rowGap = spacingToPx(vGap as number | string) + 'px';
+  if (vGap != null) style.rowGap = verticalSpacingToPx(vGap as number | string) + 'px';
   // width/height：fill→100%；"48px"/widthValue.pixels→定宽高（图标容器）。
   const icWv = p.widthValue as { type?: string; value?: string | number } | undefined;
   const icHv = p.heightValue as { type?: string; value?: string | number } | undefined;
