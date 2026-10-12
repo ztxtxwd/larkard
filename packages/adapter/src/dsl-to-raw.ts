@@ -365,11 +365,13 @@ function buildProperty(el: Record<string, unknown>, tag: string, colors: ColorRe
     if (k === 'behaviors' && Array.isArray(v)) { property.actions = behaviorsToActions(v) as never; continue; }
     if (k === 'multi_url') { property.url = normalizeUrl(v) as never; continue; }
 
-    // checker.button_area：嵌套 buttons 需递归 convertEl（否则仍是扁平 DSL，渲不出）
+    // checker.button_area：嵌套 buttons 需递归 convertEl（否则仍是扁平 DSL，渲不出）。
+    // 飞书客户端 checker 从 property 解构 camelCase buttonArea（与 actions/confirm/
+    // disabledTips/hoverTips 并列），故 DSL button_area 递归后挂载为 property.buttonArea。
     if (k === 'button_area' && isRecord(v)) {
       const area: Record<string, unknown> = { ...v };
       if (Array.isArray(v.buttons)) area.buttons = v.buttons.map((b) => convertNode(b, colors));
-      property.button_area = area as never;
+      property.buttonArea = area as never;
       continue;
     }
 
