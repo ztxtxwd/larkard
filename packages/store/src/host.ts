@@ -5,7 +5,7 @@ import {
   STATE_URL_PREFIX,
 } from './codec.js';
 
-/** 专用空分栏宿主的 element_id（写入时保证；飞书/adapter 回读可能丢掉） */
+/** 专用空分栏宿主标识（写入时保证 id；element_id 保留作 DSL 别名。客户端/adapter 回读可能丢其中一个） */
 export const STATE_ELEMENT_ID = 'card_state';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -80,8 +80,10 @@ function extractStateUrl(node: Record<string, unknown>): string | null {
 }
 
 function isStateHost(node: Record<string, unknown>): boolean {
-  if (node.tag === 'column_set' && node.element_id === STATE_ELEMENT_ID) return true;
+  // 客户端元素对象标识键为 id（let{id,tag}=e），无 element_id 键读取；
+  // element_id 仅 DSL 别名。优先按 id 判定。
   if (node.tag === 'column_set' && node.id === STATE_ELEMENT_ID) return true;
+  if (node.tag === 'column_set' && node.element_id === STATE_ELEMENT_ID) return true;
   if (node.tag === 'column_set' && extractStateUrl(node)) return true;
   // RAW envelope 里 tag 可能在外层，id 在同级
   if (node.id === STATE_ELEMENT_ID && extractStateUrl(node)) return true;
@@ -92,6 +94,8 @@ function isStateHost(node: Record<string, unknown>): boolean {
 export function createStateHost(stateUrl: string): Record<string, unknown> {
   return {
     tag: 'column_set',
+    // 客户端元素标识键为 id；element_id 保留作 DSL 别名。
+    id: STATE_ELEMENT_ID,
     element_id: STATE_ELEMENT_ID,
     action: {
       // 飞书客户端多端链接用 camelCase multiURL；multi_url 保留作 DSL 兼容。
