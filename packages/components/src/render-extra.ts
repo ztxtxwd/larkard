@@ -39,7 +39,7 @@ function callbackOf(props: Props, url?: string): { value?: Record<string, unknow
   const value = action !== undefined || userValue !== undefined ? serializeActionValue(action, userValue) : undefined;
   const behaviors: FeishuBehavior[] = [];
   if (url) behaviors.push({ type: 'open_url', default_url: url });
-  if (value && Object.keys(value).length > 0) behaviors.push({ type: 'callback', value });
+  if (value && Object.keys(value).length > 0) behaviors.push({ type: 'action_request', value });
   return compact({ value, behaviors: behaviors.length > 0 ? behaviors : undefined });
 }
 

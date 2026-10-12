@@ -57,7 +57,7 @@ test('ApprovalCard 序列化为带 action 协议字段的卡片 JSON', () => {
     __action_id: 'approval.approve',
     __params: ['REQ-42', 'approve'],
   });
-  assert.equal(agree.behaviors?.[0]?.type, 'callback');
+  assert.equal(agree.behaviors?.[0]?.type, 'action_request');
 
   assert.deepEqual(reject.value, {
     request_id: 'REQ-42',
@@ -68,7 +68,7 @@ test('ApprovalCard 序列化为带 action 协议字段的卡片 JSON', () => {
   assert.deepEqual(detail.value, { key: 'val' });
   assert.deepEqual(detail.behaviors, [
     { type: 'open_url', default_url: 'https://open.feishu.cn' },
-    { type: 'callback', value: { key: 'val' } },
+    { type: 'action_request', value: { key: 'val' } },
   ]);
 
   const select = byTag<FeishuSelect>(roundTrip, 'select_static')[0];

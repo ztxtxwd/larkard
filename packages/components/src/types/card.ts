@@ -33,12 +33,20 @@ export interface OpenUrlBehavior {
   pc_url?: string;
 }
 
-export interface CallbackBehavior {
-  type: 'callback';
+/**
+ * 请求服务端动作交互。
+ * 客户端 ActionType 枚举为 action_request（客户端 chunk 中 "callback" 0 命中，
+ * 旧 callback 写法已弃用）。value 为回传服务端的自定义数据对象。
+ */
+export interface ActionRequestBehavior {
+  type: 'action_request';
   value: Record<string, unknown>;
 }
 
-export type FeishuBehavior = OpenUrlBehavior | CallbackBehavior;
+/** @deprecated 旧 wire 写法，客户端不识别，仅保留类型兼容。新卡片请用 ActionRequestBehavior。 */
+export type CallbackBehavior = ActionRequestBehavior;
+
+export type FeishuBehavior = OpenUrlBehavior | ActionRequestBehavior;
 
 export interface FeishuButton {
   tag: 'button';

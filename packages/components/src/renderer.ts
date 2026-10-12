@@ -2,7 +2,7 @@ import { serializeActionValue, type ActionInput } from './action.js';
 import { tryRenderExtra } from './render-extra.js';
 import { FRAGMENT, VNODE, isVNode, type VNode, type VNodeChild } from './types/vnode.js';
 import type {
-  CallbackBehavior,
+  ActionRequestBehavior,
   FeishuBehavior,
   FeishuButton,
   FeishuCardJson,
@@ -140,7 +140,7 @@ function behaviorsFor(
   const list: FeishuBehavior[] = [];
   if (url) list.push({ type: 'open_url', default_url: url });
   if (value && Object.keys(value).length > 0) {
-    const callback: CallbackBehavior = { type: 'callback', value };
+    const callback: ActionRequestBehavior = { type: 'action_request', value };
     list.push(callback);
   }
   return list.length > 0 ? list : undefined;
