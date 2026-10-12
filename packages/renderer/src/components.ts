@@ -507,7 +507,8 @@ export function registerBuiltins(): void {
 // 字号来源：DSL text_size / 中间态 textSize / 真机 RAW textStyle.size|platformSize。
 // small/notation=12px、normal=14px、heading=16px…；不给则回退正文默认 14px。
 // 并把字号注入 childCtx.textMetrics，供内联 person_v1 跟随（飞书 avatarFollowFontSize）。
-registerComponent('markdown', (el, ctx) => {
+// 客户端把 Markdown 与 MarkdownV1(tag=markdown_v1) 注册为同一组件，此处做别名（#13/D3）。
+function MarkdownComponent(el: CardElement, ctx: RenderContext) {
   const p = el.property || {};
   const style = { ...alignToStyle(p.textAlign), ...textStyleToStyle(p.textStyle) };
   applyOuterMargin(style, p.margin);
@@ -526,7 +527,9 @@ registerComponent('markdown', (el, ctx) => {
   return h('div', { className: `${CLS}-markdown`, style },
     h('div', { className: `${CLS}-markdown__children` }, renderElements(p.elements, childCtx))
   );
-});
+}
+registerComponent('markdown', MarkdownComponent);
+registerComponent('markdown_v1', MarkdownComponent);
 
 // plain_text：纯文本。类名对齐真机 .universal-card-text（break-spaces 保留连续空格）。
 // 颜色/加粗走修饰类 + color:var(--TOKEN)（引擎 he()），例如：
