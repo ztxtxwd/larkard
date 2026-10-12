@@ -436,6 +436,8 @@ export function registerBuiltins(): void {
     const style: Record<string, string> = {};
     const pad = boxToStyle(p.padding);
     if (pad) style.padding = pad;
+    // #18/D8：无显式 padding 时，按 header 模板收紧顶部 8px（其余三边走 CSS 12px）。
+    if (!pad && ctx.bodyPaddingTop != null) style.paddingTop = ctx.bodyPaddingTop + 'px';
     const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
     if (vGap != null) style.rowGap = verticalSpacingToPx(vGap as number | string) + 'px';
     const props: Record<string, unknown> = { className: `${CLS}-body` };

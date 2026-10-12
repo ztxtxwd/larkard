@@ -57,8 +57,16 @@ function buildCardVNode(card: CardInput, options: RenderOptions): VNode {
   const parts: Array<VNode | null> = [];
   if (jc.header) parts.push(renderElement(jc.header, ctx));
   const bodyEl = jc.body || jc.newBody;
-  // RAW 里 body 常无 tag（直接 { elements: [...] }），补上 'body' 以走 body 组件渲染。
-  if (bodyEl) parts.push(renderElement(bodyEl.tag ? bodyEl : { ...bodyEl, tag: 'body' }, ctx));
+  // #18/D8：客户端 s = !!header && (!template || template===default || template===disabled)
+  // 时 body paddingTop 从 12 收紧为 8。无 header 或彩色模板时保持 12。
+  if (bodyEl) {
+    const headerTpl = jc.header?.property?.template as string | undefined;
+    const compactHeader = !!jc.header
+      && (!headerTpl || headerTpl === 'default' || headerTpl === 'disabled');
+    const bodyCtx: RenderContext = compactHeader ? { ...ctx, bodyPaddingTop: 8 } : ctx;
+    // RAW 里 body 常无 tag（直接 { elements: [...] }），补上 'body' 以走 body 组件渲染。
+    parts.push(renderElement(bodyEl.tag ? bodyEl : { ...bodyEl, tag: 'body' }, bodyCtx));
+  }
 
   return h('div', {
     className: `${CLS}-root ${CLS}`,

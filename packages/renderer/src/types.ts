@@ -453,6 +453,11 @@ export interface RenderContext {
    * 子列无视自身 weight，按客户端同款 calc 宽度（用实际 columnGap）。
    */
   columnSet?: { flexMode?: string; gap: number };
+  /**
+   * body 顶部 padding（#18/D8）：header 存在且模板为 default/disabled/空时，
+   * 客户端把 body paddingTop 从 12 改为 8。由 index.ts 在渲染 body 前注入。
+   */
+  bodyPaddingTop?: number;
 }
 
 /** 组件渲染函数 */
