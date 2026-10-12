@@ -28,9 +28,14 @@ function walk(
 
 /** 从任意节点上抠出可能挂着的封印 URL */
 function extractStateUrl(node: Record<string, unknown>): string | null {
-  // DSL: action.multi_url.url
+  // DSL: action.multi_url.url；飞书客户端多端链接用 camelCase action.multiURL.url。
   const action = node.action;
   if (isRecord(action)) {
+    // 先读客户端 camelCase multiURL，再兼容 DSL 历史 snake_case multi_url。
+    const multiCamel = action.multiURL;
+    if (isRecord(multiCamel) && typeof multiCamel.url === 'string' && isStateUrl(multiCamel.url)) {
+      return multiCamel.url;
+    }
     const multi = action.multi_url;
     if (isRecord(multi) && typeof multi.url === 'string' && isStateUrl(multi.url)) {
       return multi.url;
@@ -89,9 +94,9 @@ export function createStateHost(stateUrl: string): Record<string, unknown> {
     tag: 'column_set',
     element_id: STATE_ELEMENT_ID,
     action: {
-      multi_url: {
-        url: stateUrl,
-      },
+      // 飞书客户端多端链接用 camelCase multiURL；multi_url 保留作 DSL 兼容。
+      multiURL: { url: stateUrl },
+      multi_url: { url: stateUrl },
     },
     columns: [
       {
