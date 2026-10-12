@@ -211,21 +211,21 @@ test('conformance: 已知分歧——官方 overflow.variable / form 内 select.
   );
 });
 
-test('conformance: picker_date 别名两边都接受', () => {
+test('conformance: date_picker 两边都接受（客户端渲染 tag）', () => {
   assertBoth(
     {
       schema: '2.0',
       body: {
         elements: [
           {
-            tag: 'picker_date',
+            tag: 'date_picker',
             initial_date: '2026-09-01',
             behaviors: [{ type: 'callback', value: {} }],
           },
         ],
       },
     },
-    'picker_date',
+    'date_picker',
   );
 });
 

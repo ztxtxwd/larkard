@@ -94,14 +94,14 @@ test('form 内 button/select 可不写 behaviors', () => {
   );
 });
 
-test('接受官方对齐的 avatar / picker_date / fallback_text / collapse_divider', () => {
+test('接受官方对齐的 avatar / date_picker / fallback_text / collapse_divider', () => {
   const ds = validate(`{
     "schema": "2.0",
     "body": {
       "elements": [
         { "tag": "avatar", "user_id": "ou_demo", "size": "medium" },
         {
-          "tag": "picker_date",
+          "tag": "date_picker",
           "initial_date": "2026-09-01",
           "behaviors": [{ "type": "callback", "value": { "k": "v" } }]
         },
