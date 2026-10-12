@@ -448,6 +448,11 @@ export interface RenderContext {
    * 有此字段时，person_v1 按正文字号缩放，而非独立组件的 size 枚举（默认 medium）。
    */
   textMetrics?: { fontSize: number; lineHeight: number };
+  /**
+   * column_set 注入给子 column 的分栏模式（#17/D7）：flexMode 为 stretch/bisect/trisect 时，
+   * 子列无视自身 weight，按客户端同款 calc 宽度（用实际 columnGap）。
+   */
+  columnSet?: { flexMode?: string; gap: number };
 }
 
 /** 组件渲染函数 */

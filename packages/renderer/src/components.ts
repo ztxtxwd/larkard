@@ -618,7 +618,10 @@ registerComponent('column_set', (el, ctx) => {
     style.margin = '0';
     style.padding = '0';
   }
-  return h('div', { className: cls, style }, renderElements(p.columns, ctx));
+  // #17/D7：把 flexMode + 实际 columnGap 下发给子 column，使其按
+  // stretch/bisect/trisect 输出客户端同款宽度 calc。
+  const childCtx: RenderContext = { ...ctx, columnSet: { flexMode, gap } };
+  return h('div', { className: cls, style }, renderElements(p.columns, childCtx));
 });
 
 function isStateHost(el: CardElement): boolean {
@@ -652,6 +655,26 @@ registerComponent('column', (el, ctx) => {
     style.width = w + 'px';
   } else {
     style.flexGrow = String(p.weight || 1);
+  }
+  // #17/D7：父 column_set 为 stretch/bisect/trisect 时，强制按客户端 calc 宽度
+  // （无视自身 weight）。gap 用父级实际 columnGap。
+  const cs = ctx.columnSet;
+  if (cs && cs.flexMode) {
+    const fm = String(cs.flexMode).toLowerCase();
+    const g = cs.gap || 0;
+    if (fm === 'stretch') {
+      style.width = '100%';
+      style.flexGrow = '0';
+      style.flexBasis = 'auto';
+    } else if (fm === 'bisect') {
+      style.width = `calc(50% - ${g / 2}px)`;
+      style.flexGrow = '0';
+      style.flexBasis = 'auto';
+    } else if (fm === 'trisect') {
+      style.width = `calc(33.33% - ${(2 * g) / 3}px)`;
+      style.flexGrow = '0';
+      style.flexBasis = 'auto';
+    }
   }
   const vAlign = p.verticalAlign || p.vertical_align;
   if (vAlign) {
