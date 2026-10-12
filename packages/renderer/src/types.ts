@@ -189,6 +189,8 @@ export interface ElementProperty {
   // ---- div 前置图标 ----（同一图标的两种形态，引擎取 udIcon || icon）
   icon?: CardElement;
   udIcon?: CardElement;
+  // ---- card_header 图标回退 ----（#20/D10：udIcon(token) → avatar(imageID)→Img Tiny）
+  avatar?: CardElement;
 
   // ---- chart ----
   // 图表：chart_spec 直接就是 VChart 规格（type/data/xField/yField/seriesField/stack/legends…）。

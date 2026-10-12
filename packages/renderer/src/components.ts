@@ -462,7 +462,7 @@ export function registerBuiltins(): void {
     ? renderElements(tags.slice(0, 3), tagCtx)
     : [];
 
-  // 左侧图标：udIcon 优先，回退 icon（与引擎 Rs 一致）
+  // 左侧图标：udIcon 优先（颜色取模板 title_color），回退 icon，再回退 avatar(imageID)→Img Tiny（#20/D10）
   const iconRaw = (p.udIcon || p.icon) as CardElement | undefined;
   let iconVNode: VNode | null = null;
   if (iconRaw && iconRaw.tag) {
@@ -475,6 +475,21 @@ export function registerBuiltins(): void {
       : { ...iconRaw, property: { ...ip, color: tpl.text } as never };
     const inner = renderIcon(iconEl, ctx);
     if (inner) iconVNode = h('div', { className: `${CLS}-header__icon` }, inner);
+  }
+  // avatar(imageID) 回退：客户端 createElement(Img,{mode:Tiny})，16px 圆角小图
+  if (!iconVNode) {
+    const avatarEl = p.avatar as CardElement | undefined;
+    const avatarSrc = avatarEl && avatarEl.property
+      ? resolveImageSrc(avatarEl.property as never, ctx)
+      : null;
+    if (avatarSrc) {
+      iconVNode = h('div', { className: `${CLS}-header__icon` },
+        h('img', {
+          src: avatarSrc,
+          alt: '',
+          style: { width: '16px', height: '16px', borderRadius: '4px', objectFit: 'cover' },
+        }));
+    }
   }
 
   const titleVNode = renderHeaderTextLeaf(p.title, ctx, `${CLS}-header__text-title`)
