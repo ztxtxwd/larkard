@@ -6,6 +6,14 @@
  * Line / Column（1-based），供 validator / linter / LSP 精确回溯到源码。
  *
  * 另提供文档形态解包：裸 Card JSON，或搭建工具 `{ name, dsl, variables }`。
+ *
+ * 【JSONC 容忍的边界】本解析器对双斜杠行注释、星号块注释与对象/数组尾逗号的容忍
+ * 仅作用于**本地编辑 / 校验态**（IDE 打开、LSP 实时诊断、lint 等）。
+ * 飞书客户端运行时渲染卡片时直接 `JSON.parse(card)`，全管线不做任何去注释 / JSONC
+ * 预处理；因此**发往客户端的卡片载荷必须是严格 JSON**——含注释或尾逗号的源码若被
+ * 直接当作卡片字符串发送，客户端 `JSON.parse` 会抛错。写出物经
+ * `serializeCardDocument` / `JSON.stringify` 序列化为严格 JSON，故实际线上载荷
+ * 不含注释，运行时不受影响。
  */
 
 export interface Pos {
@@ -116,7 +124,7 @@ class Parser {
     });
   }
 
-  /** 跳过空白、// 行注释、/* 块注释与尾逗号 */
+  /** 跳过空白、// 行注释、/* 块注释与尾逗号（仅本地编辑/校验态容忍，见文件头 JSONC 边界说明） */
   private skipTrivia(): void {
     while (this.i < this.src.length) {
       const c = this.src[this.i];
