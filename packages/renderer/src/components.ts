@@ -454,8 +454,13 @@ export function registerBuiltins(): void {
   const p = el.property || {};
   const tplKey = (p.template || 'default') as keyof typeof HEADER_TEMPLATE;
   const tpl = HEADER_TEMPLATE[tplKey] || HEADER_TEMPLATE.default;
+  // #19/D9：客户端 header textTagList.slice(0,3)，每项以 TextTag + parentFontSize 渲染。
+  // 标题字号 16px（见 .universal-card-header__text-title），注入 textMetrics 供内联跟随字号的组件缩放。
   const tags = (p.text_tag_list || p.textTagList) as CardElement[] | undefined;
-  const tagVNodes = Array.isArray(tags) && tags.length ? renderElements(tags, ctx) : [];
+  const tagCtx: RenderContext = { ...ctx, textMetrics: { fontSize: 16, lineHeight: 24 } };
+  const tagVNodes = Array.isArray(tags) && tags.length
+    ? renderElements(tags.slice(0, 3), tagCtx)
+    : [];
 
   // 左侧图标：udIcon 优先，回退 icon（与引擎 Rs 一致）
   const iconRaw = (p.udIcon || p.icon) as CardElement | undefined;
