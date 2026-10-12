@@ -103,7 +103,8 @@ export const CARD_TOP_LEVEL_KEYS: CompletionItem[] = [
 const ELEMENT_TAGS = [
   'column_set', 'column', 'form', 'interactive_container', 'collapsible_panel',
   'div', 'markdown', 'img', 'img_combination', 'person', 'person_list',
-  'chart', 'table', 'hr', 'audio', 'video',
+  'avatar', 'chart', 'table', 'hr', 'collapse_divider', 'fallback_text',
+  'audio', 'video',
   'input', 'button', 'overflow',
   'select_static', 'multi_select_static', 'select_person', 'multi_select_person',
   'date_picker', 'picker_time', 'picker_datetime', 'select_img', 'checker',
