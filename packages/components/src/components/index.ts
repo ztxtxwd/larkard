@@ -179,11 +179,6 @@ export function DatePicker(props: DatePickerProps): VNode<DatePickerProps> {
   return jsx('date_picker', props);
 }
 
-/** 官方与 date_picker 并存的别名标签 picker_date。 */
-export function PickerDate(props: DatePickerProps): VNode<DatePickerProps> {
-  return jsx('picker_date', props);
-}
-
 export function TimePicker(props: TimePickerProps): VNode<TimePickerProps> {
   return jsx('picker_time', props);
 }

@@ -319,7 +319,7 @@ function renderSelectPerson(tag: 'select_person' | 'multi_select_person', props:
   }) as FeishuElement;
 }
 
-function renderPicker(tag: 'date_picker' | 'picker_date' | 'picker_time' | 'picker_datetime', props: Props): FeishuElement {
+function renderPicker(tag: 'date_picker' | 'picker_time' | 'picker_datetime', props: Props): FeishuElement {
   return compact({
     tag,
     name: props.name,
@@ -458,7 +458,6 @@ export function tryRenderExtra(
     case 'multi_select_person':
       return renderSelectPerson('multi_select_person', props);
     case 'date_picker':
-    case 'picker_date':
     case 'picker_time':
     case 'picker_datetime':
       return renderPicker(type, props);

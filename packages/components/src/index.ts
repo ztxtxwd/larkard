@@ -43,7 +43,6 @@ export {
   Overflow,
   Person,
   PersonList,
-  PickerDate,
   PlainText,
   Select,
   SelectImg,

@@ -115,7 +115,6 @@ export namespace JSX {
     select_person: import('./types/props.js').SelectPersonProps;
     multi_select_person: import('./types/props.js').MultiSelectPersonProps;
     date_picker: import('./types/props.js').DatePickerProps;
-    picker_date: import('./types/props.js').DatePickerProps;
     picker_time: import('./types/props.js').TimePickerProps;
     picker_datetime: import('./types/props.js').DateTimePickerProps;
     select_img: import('./types/props.js').SelectImgProps;
