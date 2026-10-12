@@ -27,7 +27,7 @@ export interface LintDiagnostic {
 export interface LintOptions {
   maxDepth?: number; // default 8
   maxElements?: number; // default 200
-  maxTextLength?: number; // default 3000
+  maxTextLength?: number; // default 3000（经验阈值，非客户端硬性限制）
 }
 
 interface Ctx {
@@ -132,7 +132,7 @@ function lintLongText(node: JsonNode, ctx: Ctx): void {
         if (p.value.value.length > ctx.maxTextLength) {
           ctx.diagnostics.push({
             rule: 'long-text',
-            message: `文本长度 ${p.value.value.length} 超过 ${ctx.maxTextLength}，客户端会截断显示`,
+            message: `文本长度 ${p.value.value.length} 超过经验阈值 ${ctx.maxTextLength}，建议控制长度以保证可读性与展示效果（阈值为经验值，客户端按样式渲染、不会按字符数截断）`,
             severity: 'warning',
             range: p.value.range,
           });
@@ -142,6 +142,34 @@ function lintLongText(node: JsonNode, ctx: Ctx): void {
     }
   } else if (node.type === 'array') {
     for (const item of node.items) lintLongText(item, ctx);
+  }
+}
+
+/**
+ * Input 输入框的文本长度规则（对齐客户端表单校验硬约束）。
+ * 客户端事实：Input 组件 maxLength 缺省 1000，输入值长度超限会触发
+ * Lark_MessageCard_TextLengthErr（表单校验错误，非显示截断）。
+ * 静态卡片 JSON 中唯一可见的“输入值”是 default_value，故对其长度做校验。
+ */
+function lintInputMaxLength(node: JsonNode, ctx: Ctx): void {
+  if (node.type === 'object') {
+    const tagProp = node.properties.find((p) => p.key.value === 'tag');
+    if (tagProp && tagProp.value.type === 'string' && tagProp.value.value === 'input') {
+      const dv = getProp(node, 'default_value');
+      const ml = getProp(node, 'max_length');
+      const maxLen = ml && ml.type === 'number' ? ml.value : 1000;
+      if (dv && dv.type === 'string' && dv.value.length > maxLen) {
+        ctx.diagnostics.push({
+          rule: 'input-max-length',
+          message: `输入框默认值长度 ${dv.value.length} 超过 max_length ${maxLen}（缺省 1000），客户端提交表单时会报文本长度错误`,
+          severity: 'warning',
+          range: dv.range,
+        });
+      }
+    }
+    for (const p of node.properties) lintInputMaxLength(p.value, ctx);
+  } else if (node.type === 'array') {
+    for (const item of node.items) lintInputMaxLength(item, ctx);
   }
 }
 
@@ -172,6 +200,7 @@ export function lintAst(ast: JsonObjectNode | undefined, options: LintOptions = 
   lintEmptyBody(cardAst, ctx);
   lintMissingSchema(cardAst, ctx);
   lintLongText(cardAst, ctx);
+  lintInputMaxLength(cardAst, ctx);
   return ctx.diagnostics;
 }
 

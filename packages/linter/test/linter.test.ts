@@ -27,6 +27,18 @@ test('long text warning', () => {
   assert.ok(ds.some((d) => d.rule === 'long-text'));
 });
 
+test('input default_value exceeding max_length (default 1000) warns', () => {
+  const tooLong = 'x'.repeat(1001);
+  const ds = lint(`{ "schema": "2.0", "body": { "elements": [{ "tag": "input", "default_value": "${tooLong}" }] } }`);
+  assert.ok(ds.some((d) => d.rule === 'input-max-length'));
+});
+
+test('input default_value within explicit max_length does not warn', () => {
+  const val = 'x'.repeat(5);
+  const ds = lint(`{ "schema": "2.0", "body": { "elements": [{ "tag": "input", "max_length": 10, "default_value": "${val}" }] } }`);
+  assert.ok(!ds.some((d) => d.rule === 'input-max-length'));
+});
+
 test('builder document lints the dsl subtree', () => {
   const ds = lint(`{
     "name": "demo",
