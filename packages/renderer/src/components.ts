@@ -547,12 +547,30 @@ function MarkdownComponent(el: CardElement, ctx: RenderContext) {
     style.lineHeight = lineHeight + 'px';
   }
   const childCtx: RenderContext = { ...ctx, textMetrics: { fontSize, lineHeight } };
+  // #22/D12：客户端 plain_text/markdown 支持 property.lines（textLines），超出省略。
+  // 用 -webkit-line-clamp 纯 CSS 截断。
+  const linesStyle = lineClampStyle(p.lines ?? p.textLines);
   return h('div', { className: `${CLS}-markdown`, style },
-    h('div', { className: `${CLS}-markdown__children` }, renderElements(p.elements, childCtx))
+    h('div', {
+      className: `${CLS}-markdown__children`,
+      style: Object.keys(linesStyle).length ? linesStyle : undefined,
+    }, renderElements(p.elements, childCtx))
   );
 }
 registerComponent('markdown', MarkdownComponent);
 registerComponent('markdown_v1', MarkdownComponent);
+
+// #22/D12：lines → -webkit-line-clamp 截断样式（无效/非正数返回空）
+function lineClampStyle(lines: unknown): Record<string, string> {
+  const n = Number(lines);
+  if (!Number.isFinite(n) || n <= 0) return {};
+  return {
+    display: '-webkit-box',
+    WebkitLineClamp: String(Math.floor(n)),
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+  };
+}
 
 // plain_text：纯文本。类名对齐真机 .universal-card-text（break-spaces 保留连续空格）。
 // 颜色/加粗走修饰类 + color:var(--TOKEN)（引擎 he()），例如：
@@ -566,6 +584,8 @@ registerComponent('plain_text', (el) => {
   delete style.fontWeight;
   delete style.fontStyle;
   delete style.textDecoration;
+  // #22/D12：property.lines 最大行数截断
+  Object.assign(style, lineClampStyle(p.lines));
   return h('span', { className, style }, p.content != null ? String(p.content) : '');
 });
 
