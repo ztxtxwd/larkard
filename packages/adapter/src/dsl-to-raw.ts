@@ -99,9 +99,11 @@ function convertHeader(header: Record<string, unknown>, colors: ColorRegistry): 
       property[k === 'ud_icon' ? 'udIcon' : 'icon'] = convertEl(v, colors);
       continue;
     }
-    // text_tag_list 里的 text_tag 需递归 convertEl（否则 text 叶子仍是扁平 DSL）
+    // text_tag_list 里的 text_tag 需递归 convertEl（否则 text 叶子仍是扁平 DSL）。
+    // 飞书客户端 card_header 从 property 解构 camelCase textTagList（与 icon/udIcon 并列），
+    // 故 DSL text_tag_list 递归后挂载为 property.textTagList。
     if (k === 'text_tag_list' && Array.isArray(v)) {
-      property.text_tag_list = v.map((item) => convertNode(item, colors)) as CardElement[];
+      property.textTagList = v.map((item) => convertNode(item, colors)) as CardElement[];
       continue;
     }
     property[renameKey(k)] = coerceValue(k, v, colors);
