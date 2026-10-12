@@ -171,8 +171,7 @@ export function parseInline(text: string): CardElement[] {
         if (attrs.show_avatar != null) property!.showAvatar = attrs.show_avatar !== 'false';
         if (attrs.size) property!.size = attrs.size;
         // style=capsule → 胶囊外形（对齐客户端 style 枚举 Normal/Capsule；#1 收尾）
-        // ElementProperty.style 类型偏 ud_icon 样式对象，此处按字符串枚举写入需断言
-        if (attrs.style) (property as Record<string, unknown>)!.style = attrs.style;
+        if (attrs.style) property!.style = attrs.style;
         out.push({ tag: 'person_v1', property });
         i += m[0].length; continue;
       }

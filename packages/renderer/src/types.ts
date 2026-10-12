@@ -183,8 +183,9 @@ export interface ElementProperty {
   token?: string;
   // size 复用上方 SizeName 字段位，但图标取值是 small/large1..4 另一套枚举，
   // 运行期按字符串查 ICON_SIZE_MAP；color 复用 NamedColor|string 字段。
-  // ud_icon 形态把 color/size 收进 property.style；standard_icon 直接挂 property。
-  style?: { color?: string; size?: string; [key: string]: unknown };
+  // ud_icon 形态把 color/size 收进 property.style（对象）；person 胶囊等把 style
+  // 作为字符串枚举（'capsule'/'normal'）写入——与 adapter ElementProperty.style 对齐为联合类型。
+  style?: string | { color?: string; size?: string; [key: string]: unknown };
 
   // ---- div 前置图标 ----（同一图标的两种形态，引擎取 udIcon || icon）
   icon?: CardElement;
