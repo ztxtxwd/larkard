@@ -21,6 +21,8 @@ export interface ToastOptions {
   showTime?: number;
   /** 最大行数，超出截断省略，默认 1（客户端 maxLines:1） */
   maxLines?: number;
+  /** 视觉形态：'dark' 深色悬浮胶囊（默认）；'outlined' 浅底彩边（对齐客户端 .ud__notice--outlined） */
+  variant?: 'dark' | 'outlined';
 }
 
 export interface ToastAPI {
@@ -49,8 +51,8 @@ const TYPE_ICON: Record<ToastType, string> = {
   warning:
     '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">'
     + '<circle cx="8" cy="8" r="7" fill="#fad355"/>'
-    + '<rect x="7.2" y="3.8" width="1.6" height="4.6" rx="0.8" fill="#1f2329"/>'
-    + '<circle cx="8" cy="11.8" r="1" fill="#1f2329"/></svg>',
+    + '<rect x="7.2" y="3.8" width="1.6" height="4.6" rx="0.8" fill="#fff"/>'
+    + '<circle cx="8" cy="11.8" r="1" fill="#fff"/></svg>',
   error:
     '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">'
     + '<circle cx="8" cy="8" r="7" fill="#f54a45"/>'
@@ -70,8 +72,9 @@ function escapeHTML(s: string): string {
 export function renderToastHTML(type: ToastType, opts: ToastOptions): string {
   const maxLines = opts.maxLines ?? 1;
   const styleAttr = maxLines > 1 ? ` style="-webkit-line-clamp:${maxLines};"` : '';
+  const variantClass = opts.variant === 'outlined' ? ' universal-card-toast--outlined' : '';
   return (
-    `<div class="universal-card-toast universal-card-toast--${type}" role="status" aria-live="polite">`
+    `<div class="universal-card-toast universal-card-toast--${type}${variantClass}" role="status" aria-live="polite">`
     + `<span class="universal-card-toast__icon">${TYPE_ICON[type]}</span>`
     + `<span class="universal-card-toast__text"${styleAttr}>${escapeHTML(opts.content)}</span>`
     + `</div>`

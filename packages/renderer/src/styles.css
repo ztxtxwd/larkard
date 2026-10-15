@@ -1067,15 +1067,37 @@
   align-items: center;
   gap: 8px;
   max-width: 600px; /* 客户端 .ud__toast max-width:600px */
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 9px 16px; /* 客户端 .ud__notice--filled padding:9px 0 9px 16px */
+  border-radius: 6px; /* 客户端 .ud__notice border-radius:6px */
   background: rgba(31, 35, 41, 0.92); /* N900 深色半透明，白字 */
   color: #fff;
   font-size: 14px;
   line-height: 1.5;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  box-shadow: var(--shadow-s4-down, 0 4px 16px rgba(0, 0, 0, 0.16));
   margin-bottom: 16px; /* 客户端 .ud__toast margin-bottom:16px */
   animation: universal-card-toast-in 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+/* outlined 浅色变体：对齐客户端 .ud__notice--outlined.ud__notice-{type}
+   浅底 + 同色描边 + 深色文字（真机第二张：浅橙底橙边 warning） */
+.universal-card-toast--outlined {
+  background: #fff;
+  color: #1f2329;
+}
+.universal-card-toast--outlined.universal-card-toast--warning {
+  background: #fff7e6;
+  border: 1px solid #ff9d4c;
+}
+.universal-card-toast--outlined.universal-card-toast--error {
+  background: #fef1f1;
+  border: 1px solid #f54a45;
+}
+.universal-card-toast--outlined.universal-card-toast--info {
+  background: #e8f0ff;
+  border: 1px solid #3370ff;
+}
+.universal-card-toast--outlined.universal-card-toast--success {
+  background: #f0fbef;
+  border: 1px solid #34c724;
 }
 .universal-card-toast--leave {
   animation: universal-card-toast-out 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
