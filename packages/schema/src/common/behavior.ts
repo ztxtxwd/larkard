@@ -21,13 +21,13 @@ export const OpenUrlBehaviorSchema = z
 export type OpenUrlBehavior = z.infer<typeof OpenUrlBehaviorSchema>;
 
 /**
- * 请求服务端动作交互（客户端 ActionType.ActionRequest）。
- * 客户端运行时按 e.type === "action_request" 分派；value 为回传服务端的自定义数据对象。
+ * 客户端内部枚举 ActionRequest。开放平台发消息接口不接受这个 type
+ * （200621 unknown behavior type），发出去的卡片请用 callback。
  */
 export const ActionRequestBehaviorSchema = z
   .object({
     type: z.literal('action_request').describe(
-      '交互类型，固定为 action_request',
+      '客户端内部交互类型。im/v1/messages 不接受，发消息请用 callback',
     ),
     value: z
       .record(z.string(), z.unknown())
@@ -60,33 +60,23 @@ export const ClientMessageBehaviorSchema = z
 export type ClientMessageBehavior = z.infer<typeof ClientMessageBehaviorSchema>;
 
 /**
- * 回传交互（旧 wire 写法）。
- * @deprecated 客户端 ActionType 枚举为 action_request / client_message / open_url，
- * 带引号 "callback" 在客户端 chunk 中 0 命中。是否存在 wire JSON callback →
- * 内部 action_request 的归一化层无法从压缩代码确证，故保留兼容，新卡片请改用
- * action_request。
- *
+ * 回传交互。开放平台发消息（im/v1/messages）的卡片 JSON 使用这个 type。
  * value 需为 object；开放平台 SDK 仅支持 object。
  */
 export const CallbackBehaviorSchema = z
   .object({
-    type: z.literal('callback').describe(
-      '交互类型，固定为 callback（@deprecated，新卡片请用 action_request）',
-    ),
+    type: z.literal('callback').describe('交互类型，固定为 callback'),
     value: z
       .record(z.string(), z.unknown())
       .describe('回传给服务端的自定义数据对象；用简洁业务字段即可'),
   })
-  .describe(
-    '请求回调交互（type = callback，@deprecated；新卡片请用 action_request）',
-  );
+  .describe('请求回调交互（type = callback）');
 
 export type CallbackBehavior = z.infer<typeof CallbackBehaviorSchema>;
 
 /**
  * 组件交互行为。使用 type 作为判别字段。
- * 客户端 ActionType 共三种：action_request / client_message / open_url；
- * callback 为旧 wire 写法，保留兼容（归一化层不可见，先不拒绝）。
+ * 发消息用 open_url / callback。action_request、client_message 是客户端内部枚举，解析时仍接受。
  */
 export const BehaviorSchema = z
   .discriminatedUnion('type', [
@@ -96,7 +86,7 @@ export const BehaviorSchema = z
     CallbackBehaviorSchema,
   ])
   .describe(
-    '组件交互行为：open_url（打开链接）/ action_request（请求服务端动作）/ client_message（客户端消息）；callback 为旧写法，兼容保留',
+    '组件交互行为：open_url（打开链接）/ callback（请求服务端动作）；action_request、client_message 为客户端内部枚举',
   );
 
 export type Behavior = z.infer<typeof BehaviorSchema>;

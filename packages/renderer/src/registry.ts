@@ -190,7 +190,7 @@ export function extractPlainText(node: unknown): string {
   return out.join('').replace(/\s+/g, ' ').trim();
 }
 
-/** 图片地址解析：options.resolveImage -> src/url/img_url -> imageBaseURL+imageID */
+/** 图片地址解析：options.resolveImage -> src/url/img_url -> imageBaseURL+(imageID|img_key) */
 export function resolveImageSrc(p: ElementProperty, ctx: RenderContext): string | null {
   if (ctx.options.resolveImage) {
     const r = ctx.options.resolveImage(p);
@@ -199,7 +199,8 @@ export function resolveImageSrc(p: ElementProperty, ctx: RenderContext): string 
   if (p.src) return p.src;
   if (p.url) return resolveURL(p.url) || null;
   if (p.img_url) return p.img_url;
-  if (p.imageID && ctx.options.imageBaseURL) return ctx.options.imageBaseURL + p.imageID;
+  const imageId = p.imageID || (p as { img_key?: string }).img_key;
+  if (imageId && ctx.options.imageBaseURL) return ctx.options.imageBaseURL + imageId;
   return null;
 }
 
@@ -252,6 +253,7 @@ export function personAvatarSrc(person: PersonInfo | null, ctx: RenderContext): 
     const r = ctx.options.resolvePersonAvatar(person);
     if (r) return r;
   }
+  if (person.avatar_url) return person.avatar_url;
   if (!person.avatar_key) return null;
   const base = ctx.options.avatarBaseURL || PERSON_AVATAR_BASE;
   const suffix = ctx.options.avatarURLSuffix ?? PERSON_AVATAR_SUFFIX;

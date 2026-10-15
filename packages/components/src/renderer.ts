@@ -140,7 +140,7 @@ function behaviorsFor(
   const list: FeishuBehavior[] = [];
   if (url) list.push({ type: 'open_url', default_url: url });
   if (value && Object.keys(value).length > 0) {
-    const callback: ActionRequestBehavior = { type: 'action_request', value };
+    const callback: ActionRequestBehavior = { type: 'callback', value };
     list.push(callback);
   }
   return list.length > 0 ? list : undefined;
@@ -161,6 +161,7 @@ function renderButton(props: ButtonProps, inherited?: InheritedAction): FeishuBu
     width: props.width,
     disabled: props.disabled,
     name: props.name,
+    icon: normalizeIcon(props.icon),
     form_action_type: formActionType,
     ...withElementId(props),
     value,
@@ -187,6 +188,7 @@ function renderMarkdown(props: MarkdownProps): FeishuElement {
     content: props.content ?? textOf(props.children),
     text_align: props.textAlign,
     text_size: props.textSize,
+    icon: normalizeIcon(props.icon),
     ...withElementId(props),
   }) as FeishuElement;
 }
@@ -201,12 +203,20 @@ function renderPlainText(props: PlainTextProps): FeishuElement {
 
 function renderHeader(props: HeaderProps, fallbackTheme?: FeishuHeader['template']): FeishuHeader {
   if (!props.title) throw new Error('Header 需要 title');
+  const textTagList = props.textTagList?.map((tag) =>
+    compact({
+      tag: 'text_tag' as const,
+      text: plain(tag.text),
+      color: tag.color,
+    }),
+  );
   return compact({
     title: plain(props.title),
     subtitle: props.subtitle ? plain(props.subtitle) : undefined,
     template: props.theme ?? fallbackTheme,
     icon: normalizeIcon(props.icon),
     padding: props.padding,
+    text_tag_list: textTagList && textTagList.length > 0 ? textTagList : undefined,
   }) as FeishuHeader;
 }
 
@@ -217,6 +227,9 @@ function renderColumn(props: ColumnProps, inherited?: InheritedAction): FeishuCo
     weight: props.weight,
     vertical_align: props.verticalAlign,
     padding: props.padding,
+    direction: props.direction,
+    vertical_spacing: props.verticalSpacing,
+    background_style: props.backgroundStyle,
     ...withElementId(props),
     elements: renderElements(props.children, inherited),
   }) as FeishuColumn;
@@ -293,6 +306,8 @@ function renderHost(node: VNode, inherited?: InheritedAction): FeishuElement {
         tag: 'column_set',
         flex_mode: props.flexMode,
         horizontal_spacing: props.horizontalSpacing,
+        horizontal_align: props.horizontalAlign,
+        background_style: props.backgroundStyle,
         ...withElementId(props),
         columns,
       }) as FeishuElement;
@@ -307,6 +322,8 @@ function renderHost(node: VNode, inherited?: InheritedAction): FeishuElement {
         name: props.name,
         padding: props.padding,
         direction: props.direction,
+        vertical_align: props.verticalAlign,
+        horizontal_spacing: props.horizontalSpacing,
         ...withElementId(props),
         elements: renderElements(props.children, next),
       }) as FeishuElement;
@@ -366,6 +383,15 @@ export function renderToCard(element: VNode): FeishuCardJson {
     schema: '2.0',
     config: props.config,
     header,
-    body: elements.length > 0 ? { elements } : undefined,
+    body:
+      elements.length > 0
+        ? compact({
+            direction: props.bodyDirection,
+            padding: props.bodyPadding,
+            vertical_spacing: props.bodyVerticalSpacing,
+            horizontal_align: props.bodyHorizontalAlign,
+            elements,
+          })
+        : undefined,
   }) as FeishuCardJson;
 }

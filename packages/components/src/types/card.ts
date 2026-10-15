@@ -34,19 +34,18 @@ export interface OpenUrlBehavior {
 }
 
 /**
- * 请求服务端动作交互。
- * 客户端 ActionType 枚举为 action_request（客户端 chunk 中 "callback" 0 命中，
- * 旧 callback 写法已弃用）。value 为回传服务端的自定义数据对象。
+ * 请求服务端动作。开放平台发消息（im/v1/messages）只接受 type = callback；
+ * action_request 是客户端内部枚举，写进卡片 JSON 会返回 200621 unknown behavior type。
  */
-export interface ActionRequestBehavior {
-  type: 'action_request';
+export interface CallbackBehavior {
+  type: 'callback';
   value: Record<string, unknown>;
 }
 
-/** @deprecated 旧 wire 写法，客户端不识别，仅保留类型兼容。新卡片请用 ActionRequestBehavior。 */
-export type CallbackBehavior = ActionRequestBehavior;
+/** @deprecated 与 CallbackBehavior 相同。发出去的类型必须是 callback。 */
+export type ActionRequestBehavior = CallbackBehavior;
 
-export type FeishuBehavior = OpenUrlBehavior | ActionRequestBehavior;
+export type FeishuBehavior = OpenUrlBehavior | CallbackBehavior;
 
 export interface FeishuButton {
   tag: 'button';
@@ -56,6 +55,7 @@ export interface FeishuButton {
   width?: string;
   disabled?: boolean;
   name?: string;
+  icon?: IconObject;
   form_action_type?: 'submit' | 'reset';
   element_id?: string;
   margin?: string;
@@ -76,6 +76,7 @@ export interface FeishuMarkdown {
   content: string;
   text_align?: 'left' | 'center' | 'right';
   text_size?: string;
+  icon?: IconObject;
   element_id?: string;
   margin?: string;
 }
@@ -95,6 +96,9 @@ export interface FeishuColumn {
   margin?: string;
   vertical_align?: 'top' | 'center' | 'bottom';
   padding?: string;
+  direction?: 'vertical' | 'horizontal';
+  vertical_spacing?: string;
+  background_style?: string;
 }
 
 export interface FeishuColumnSet {
@@ -102,6 +106,8 @@ export interface FeishuColumnSet {
   columns: FeishuColumn[];
   flex_mode?: 'none' | 'stretch' | 'flow' | 'bisect' | 'trisect';
   horizontal_spacing?: string;
+  horizontal_align?: 'left' | 'center' | 'right';
+  background_style?: string;
   element_id?: string;
   margin?: string;
 }
@@ -150,6 +156,8 @@ export interface FeishuForm {
   margin?: string;
   padding?: string;
   direction?: 'vertical' | 'horizontal';
+  vertical_align?: 'top' | 'center' | 'bottom';
+  horizontal_spacing?: string;
 }
 
 /** JSON 2.0 其余正文元素。字段与官方组件文档对齐，按 tag 区分。 */
@@ -185,12 +193,19 @@ export type HeaderTemplate =
   | 'grey'
   | 'default';
 
+export interface FeishuTextTag {
+  tag: 'text_tag';
+  text: PlainTextObject;
+  color?: string;
+}
+
 export interface FeishuHeader {
   title: PlainTextObject;
   subtitle?: PlainTextObject;
   template?: HeaderTemplate;
   icon?: IconObject;
   padding?: string;
+  text_tag_list?: FeishuTextTag[];
 }
 
 export interface CardConfig {
@@ -201,6 +216,9 @@ export interface CardConfig {
   streaming_mode?: boolean;
   locales?: string[];
   summary?: { content?: string; i18n_content?: Record<string, string> };
+  style?: {
+    color?: Record<string, { light_mode?: string; dark_mode?: string }>;
+  };
 }
 
 export interface FeishuCardJson {
@@ -211,5 +229,7 @@ export interface FeishuCardJson {
     elements: FeishuElement[];
     direction?: 'vertical' | 'horizontal';
     padding?: string;
+    vertical_spacing?: string;
+    horizontal_align?: 'left' | 'center' | 'right';
   };
 }

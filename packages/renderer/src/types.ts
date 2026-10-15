@@ -96,6 +96,8 @@ export interface ElementProperty {
 
   // ---- img ----
   imageID?: string;
+  /** DSL 公开字段；dslToRaw 常原样留在 property（未改名为 imageID） */
+  img_key?: string;
   origin_key?: string;
   src?: string;
   url?: string | LinkURL;
@@ -320,7 +322,7 @@ export interface RenderOptions {
   /** 音视频地址前缀：最终 src = mediaBaseURL + fileID */
   mediaBaseURL?: string;
   /**
-   * 人员表（open_id -> { content 姓名, avatar_key 头像 }）。
+   * 人员表（open_id -> { content 姓名, avatar_key / avatar_url 头像 }）。
    * person_v1 / person_list 元素只带 ID，姓名/头像在此反查。
    * 异步渲染（renderCardToStringAsync）会自动从 json_attachment.persons 填入；
    * 同步渲染若想出名字/头像，需手动传入。缺省时人员降级为固定头像 +「赵天雄」。
@@ -356,7 +358,8 @@ export interface RenderOptions {
  * 人员信息：person_v1 / person_list / at 元素只带 ID，姓名与头像 key 在这里。
  * 取自飞书消息 content 的 json_attachment.persons（按 open_id「ou_...」索引）；
  * fetchCardMessage 还会把信封 mentions 与 at_users 合并进来（含 @_user_N 别名键）。
- * avatar_key 是公开可访问的头像图 key（无需鉴权，见 PERSON_AVATAR_BASE）。
+ * avatar_key 是公开可访问的头像图 key（无需鉴权，见 PERSON_AVATAR_BASE）；
+ * 本地预览也可用 avatar_url（含 data URI）直接给头像地址。
  */
 export interface PersonInfo {
   person_id?: string;
@@ -365,6 +368,11 @@ export interface PersonInfo {
   type?: number;
   /** 头像图 key（形如 v3_00te_...），拼 avatarBaseURL 取图 */
   avatar_key?: string;
+  /**
+   * 直接可用的头像 URL（含 data URI）。
+   * 本地预览虚拟用户没有飞书 avatar_key 时用这个；优先级低于 resolvePersonAvatar，高于 avatar_key。
+   */
+  avatar_url?: string;
 }
 
 /**

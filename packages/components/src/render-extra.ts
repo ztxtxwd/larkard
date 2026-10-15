@@ -39,7 +39,7 @@ function callbackOf(props: Props, url?: string): { value?: Record<string, unknow
   const value = action !== undefined || userValue !== undefined ? serializeActionValue(action, userValue) : undefined;
   const behaviors: FeishuBehavior[] = [];
   if (url) behaviors.push({ type: 'open_url', default_url: url });
-  if (value && Object.keys(value).length > 0) behaviors.push({ type: 'action_request', value });
+  if (value && Object.keys(value).length > 0) behaviors.push({ type: 'callback', value });
   return compact({ value, behaviors: behaviors.length > 0 ? behaviors : undefined });
 }
 
@@ -57,12 +57,15 @@ function mediaFallback(fallback: unknown): unknown {
 }
 
 function renderImage(props: Props): FeishuElement {
+  const fit = (props.scaleType ?? props.mode) as string | undefined;
   return compact({
     tag: 'img',
     img_key: props.imgKey,
     alt: plain(String(props.alt ?? '')),
     title: typeof props.title === 'string' ? plain(props.title) : undefined,
-    scale_type: props.scaleType,
+    // 飞书历史字段 mode 与文档字段 scale_type 并存，兼容原模板
+    mode: fit,
+    scale_type: fit,
     size: props.size,
     corner_radius: props.cornerRadius,
     preview: props.preview,
@@ -207,9 +210,11 @@ function renderInteractive(
   renderChildren: (children: VNodeChild) => FeishuElement[],
 ): FeishuElement {
   const url = typeof props.url === 'string' ? props.url : undefined;
+  // 发消息接口不接受容器上的 value，回传数据只放在 behaviors 里。
+  const { behaviors } = callbackOf(props, url);
   return compact({
     tag: 'interactive_container',
-    ...callbackOf(props, url),
+    behaviors,
     width: props.width,
     height: props.height,
     direction: props.direction,

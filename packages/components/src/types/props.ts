@@ -11,7 +11,20 @@ export interface CommonProps {
 export interface CardProps extends CommonProps {
   headerTheme?: HeaderTemplate;
   config?: CardConfig;
+  /** body.direction */
+  bodyDirection?: 'vertical' | 'horizontal';
+  /** body.padding */
+  bodyPadding?: string;
+  /** body.vertical_spacing */
+  bodyVerticalSpacing?: string;
+  /** body.horizontal_align */
+  bodyHorizontalAlign?: 'left' | 'center' | 'right';
   children?: VNodeChild;
+}
+
+export interface HeaderTextTag {
+  text: string;
+  color?: string;
 }
 
 export interface HeaderProps {
@@ -21,6 +34,8 @@ export interface HeaderProps {
   icon?: string | { tag?: 'standard_icon'; token: string; color?: string } | { tag: 'custom_icon'; img_key: string };
   theme?: HeaderTemplate;
   padding?: string;
+  /** header.text_tag_list */
+  textTagList?: HeaderTextTag[];
 }
 
 export interface DivProps extends CommonProps {
@@ -36,6 +51,7 @@ export interface MarkdownProps extends CommonProps {
   content?: string;
   textAlign?: 'left' | 'center' | 'right';
   textSize?: string;
+  icon?: string | { tag?: 'standard_icon'; token: string; color?: string } | { tag: 'custom_icon'; img_key: string };
   children?: VNodeChild;
 }
 
@@ -68,6 +84,8 @@ export interface ButtonProps extends CommonProps {
   size?: 'tiny' | 'small' | 'medium' | 'large';
   width?: string;
   name?: string;
+  /** 按钮左侧图标。 */
+  icon?: string | { tag?: 'standard_icon'; token: string; color?: string } | { tag: 'custom_icon'; img_key: string };
   /** 表单内提交/重置。 */
   formActionType?: 'submit' | 'reset';
   submit?: boolean;
@@ -81,12 +99,17 @@ export interface ColumnProps extends CommonProps {
   weight?: number;
   verticalAlign?: 'top' | 'center' | 'bottom';
   padding?: string;
+  direction?: 'vertical' | 'horizontal';
+  verticalSpacing?: string;
+  backgroundStyle?: string;
   children?: VNodeChild;
 }
 
 export interface ColumnSetProps extends CommonProps {
   flexMode?: 'none' | 'stretch' | 'flow' | 'bisect' | 'trisect';
   horizontalSpacing?: string;
+  horizontalAlign?: 'left' | 'center' | 'right';
+  backgroundStyle?: string;
   children?: VNodeChild;
 }
 
@@ -96,6 +119,8 @@ export interface FormProps extends CommonProps {
   action?: ActionInput;
   value?: Record<string, unknown>;
   direction?: 'vertical' | 'horizontal';
+  verticalAlign?: 'top' | 'center' | 'bottom';
+  horizontalSpacing?: string;
   padding?: string;
   children?: VNodeChild;
 }
