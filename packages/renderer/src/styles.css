@@ -1049,3 +1049,52 @@
 }
 .universal-card-root.theme-dark .universal-card-markdown { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-hr { background-color: #2e2e30; }
+
+/* ---- Toast 宿主（对齐客户端 .ud__toast.ud__notice：顶部下拉、深色胶囊） ---- */
+.universal-card-toast-host {
+  position: fixed;
+  top: 32px; /* 客户端组件配置 toast:{top:32} */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 300;
+  pointer-events: none;
+}
+.universal-card-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 600px; /* 客户端 .ud__toast max-width:600px */
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(31, 35, 41, 0.92); /* N900 深色半透明，白字 */
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  margin-bottom: 16px; /* 客户端 .ud__toast margin-bottom:16px */
+  animation: universal-card-toast-in 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+.universal-card-toast--leave {
+  animation: universal-card-toast-out 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+.universal-card-toast__icon {
+  flex: none;
+  display: inline-flex;
+}
+.universal-card-toast__text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+@keyframes universal-card-toast-in {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes universal-card-toast-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-100%); margin-bottom: 0; }
+}

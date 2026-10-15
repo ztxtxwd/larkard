@@ -131,6 +131,9 @@ export {
   AUDIO_HYDRATED_ATTR, AUDIO_PLAY_ICON_SVG, AUDIO_PAUSE_ICON_SVG,
 } from './audio-hydrate';
 export { CHART_PALETTE } from './constants';
+// Toast 宿主：对齐客户端 kernel.toast，action 响应里的 toast 提示在预览页弹出。
+export { createToastHost, renderToastHTML } from './toast';
+export type { ToastAPI, ToastOptions, ToastType } from './toast';
 export * from './types';
 // 异步渲染（按 access token 自动拉图 / 按 message_id 拉取整条消息）。
 // 注意：remote.ts 反向 import 本文件的 renderCard*，但只在异步函数运行时调用，
