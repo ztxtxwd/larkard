@@ -626,9 +626,12 @@ registerComponent('column_set', (el, ctx) => {
   const p = el.property || {};
   // RAW 用 camelCase（horizontalSpacingValue.value / flexMode / horizontalAlign），DSL 用 snake_case
   const gapRaw = p.horizontalSpacingValue?.value ?? p.horizontal_spacing;
-  // #15/D5：客户端 columnGap = C.columnGap ?? 0，未显式指定时列贴合（无默认 8px）。
-  // 仅当显式给出 horizontal_spacing 时才输出 columnGap。
-  const gap = gapRaw != null ? horizontalSpacingToPx(gapRaw as number | string) : 0;
+  // #30（纠正 #15）：公开 DSL 不写 horizontal_spacing 时等价于 "default" → 8px。
+  // 客户端配置表 horizontal_spacing.default.margin=8，渲染前 fallback（horizontalSpacingFallback）
+  // 会把缺省补成 default；adapter TAG_DEFAULT_DROPS 也确认 RAW 常态值即 "default"，仅在
+  // RAW→DSL 时删除。#15 误把"样式解析后 columnGap ?? 0"这层兜底当成了 DSL 缺省语义，
+  // 导致未指定间距的列在网页预览里贴死，与真机（省略=8px）分叉。
+  const gap = gapRaw != null ? horizontalSpacingToPx(gapRaw as number | string) : horizontalSpacingToPx('default');
   const flexMode = p.flexMode || p.flex_mode;
   const hAlign = p.horizontalAlign || p.horizontal_align;
   const style: Record<string, string> = {
@@ -636,8 +639,8 @@ registerComponent('column_set', (el, ctx) => {
     flexWrap: flexMode === 'flow' || flexMode === 'wrap' ? 'wrap' : 'nowrap',
     rowGap: '8px',
     alignItems: 'stretch',
+    columnGap: gap + 'px',
   };
-  if (gap > 0) style.columnGap = gap + 'px';
   if (hAlign) {
     style.justifyContent =
       ({ left: 'flex-start', center: 'center', right: 'flex-end' } as Record<string, string>)[hAlign] || 'flex-start';

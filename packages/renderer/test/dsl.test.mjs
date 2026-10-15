@@ -195,6 +195,50 @@ test('column: width="120px" → widthValue 定宽', () => {
   assert.equal(col.property.width, undefined);
 });
 
+/* ---- column_set horizontal_spacing 缺省（#30 纠正 #15）---- */
+
+test('column_set: 未写 horizontal_spacing → 等价 "default" → column-gap:8px（对齐真机省略=8px）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [
+      { tag: 'column_set', flex_mode: 'bisect', columns: [
+        { tag: 'column', elements: [{ tag: 'button', text: 'A', behaviors: [] }] },
+        { tag: 'column', elements: [{ tag: 'button', text: 'B', behaviors: [] }] },
+      ] },
+    ] },
+  });
+  // 缺省即 default=8px，不是 0（#15 误把"样式解析后 ??0 兜底"当成 DSL 缺省）
+  assert.match(html, /universal-card-column-set[^>]*style="[^"]*column-gap:\s*8px/);
+  // 8px 间距下两列 bisect：每列抵消 4px → calc(50% - 4px)
+  assert.match(html, /width:\s*calc\(50%\s*-\s*4px\)/);
+});
+
+test('column_set: 显式 horizontal_spacing="0px" → 列贴合 column-gap:0px', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [
+      { tag: 'column_set', horizontal_spacing: '0px', flex_mode: 'bisect', columns: [
+        { tag: 'column', elements: [{ tag: 'markdown', content: 'A' }] },
+        { tag: 'column', elements: [{ tag: 'markdown', content: 'B' }] },
+      ] },
+    ] },
+  });
+  assert.match(html, /universal-card-column-set[^>]*style="[^"]*column-gap:\s*0px/);
+  assert.match(html, /width:\s*calc\(50%\s*-\s*0px\)/);
+});
+
+test('column_set: 显式 horizontal_spacing="default" → 8px（与缺省一致）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [
+      { tag: 'column_set', horizontal_spacing: 'default', columns: [
+        { tag: 'column', elements: [{ tag: 'markdown', content: 'A' }] },
+      ] },
+    ] },
+  });
+  assert.match(html, /universal-card-column-set[^>]*style="[^"]*column-gap:\s*8px/);
+});
+
 /* ---- button behaviors → actions ---- */
 
 test('button: behaviors[open_url] → 可点链接', () => {
