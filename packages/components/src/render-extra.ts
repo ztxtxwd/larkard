@@ -56,16 +56,32 @@ function mediaFallback(fallback: unknown): unknown {
   return undefined;
 }
 
+/**
+ * img 的缩放取值，写 scale_type。官方 scale_type 枚举：crop_center / crop_top / fit_horizontal。
+ *
+ * 历史字段 mode 的官方枚举里**没有 crop_top**（只有 fit_horizontal / crop_center / large /
+ * medium / small / tiny / stretch / big）：把 crop_top 写进 mode，卡片校验会报
+ * "img mode is not supported"（回调 200673）。旧代码给 mode / scale_type 双写，crop_top
+ * 正好踩这个雷。所以缩放值一律走 scale_type，绝不落进 mode。
+ */
+const SCALE_VALUES = new Set(['crop_center', 'crop_top', 'fit_horizontal']);
+
 function renderImage(props: Props): FeishuElement {
-  const fit = (props.scaleType ?? props.mode) as string | undefined;
+  const scaleType = typeof props.scaleType === 'string' ? props.scaleType : undefined;
+  const legacyMode = typeof props.mode === 'string' ? props.mode : undefined;
+  // 按来源分派：scaleType 就是 scale_type；历史 mode 只在它本身是缩放值时也按缩放处理。
+  const scale = scaleType ?? (legacyMode && SCALE_VALUES.has(legacyMode) ? legacyMode : undefined);
+  // 历史 mode 剩下的都是官方枚举里的尺寸值（large / medium / …），原样保留给旧模板；
+  // 缩放值不会落进 mode。
+  const mode =
+    !scaleType && legacyMode && !SCALE_VALUES.has(legacyMode) ? legacyMode : undefined;
   return compact({
     tag: 'img',
     img_key: props.imgKey,
     alt: plain(String(props.alt ?? '')),
     title: typeof props.title === 'string' ? plain(props.title) : undefined,
-    // 飞书历史字段 mode 与文档字段 scale_type 并存，兼容原模板
-    mode: fit,
-    scale_type: fit,
+    mode,
+    scale_type: scale,
     size: props.size,
     corner_radius: props.cornerRadius,
     preview: props.preview,

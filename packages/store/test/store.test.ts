@@ -5,6 +5,7 @@ import {
   STATE_CODEC_VERSION,
   STATE_ELEMENT_ID,
   STATE_URL_PREFIX,
+  createStateHost,
   decodeStateUrl,
   encodeStateUrl,
   findStateHost,
@@ -80,10 +81,12 @@ describe('seal / read / unseal', () => {
     assert.ok(host);
     assert.equal(host!.tag, 'column_set');
     assert.equal(host!.element_id, STATE_ELEMENT_ID);
+    assert.equal(host!.id, undefined);
     assert.deepEqual(
       (host!.action as { multi_url: { url: string } }).multi_url.url,
       url,
     );
+    assert.equal((host!.action as { multiURL?: unknown }).multiURL, undefined);
     // 只写 url，不复制三端
     const multi = (host!.action as { multi_url: Record<string, string> }).multi_url;
     assert.equal(multi.pc_url, undefined);
@@ -94,6 +97,7 @@ describe('seal / read / unseal', () => {
     const cols = host!.columns as Array<Record<string, unknown>>;
     assert.equal(cols.length, 1);
     assert.deepEqual(cols[0]!.elements, []);
+    assert.equal(host!.margin, '-8px 0 0 0');
 
     assert.deepEqual(readCardState(card), state);
 
@@ -101,6 +105,54 @@ describe('seal / read / unseal', () => {
     const els = (card.body as { elements: unknown[] }).elements;
     assert.equal((els[0] as { tag: string }).tag, 'markdown');
     assert.equal((els[els.length - 1] as { element_id: string }).element_id, STATE_ELEMENT_ID);
+  });
+
+  it('offsets the host by the body vertical spacing', () => {
+    const card = baseCard();
+    (card.body as { vertical_spacing: string }).vertical_spacing = '12px';
+    sealCardState(card, { n: 1 });
+    assert.equal(findStateHost(card)?.margin, '-12px 0 0 0');
+
+    // 客户端纵向枚举 {default:8, medium:12, large:16}；横向那套 {small,default,large} 不能用。
+    const named = baseCard();
+    (named.body as { vertical_spacing: string }).vertical_spacing = 'large';
+    sealCardState(named, { n: 1 });
+    assert.equal(findStateHost(named)?.margin, '-16px 0 0 0');
+
+    const medium = baseCard();
+    (medium.body as { vertical_spacing: string }).vertical_spacing = 'medium';
+    sealCardState(medium, { n: 1 });
+    assert.equal(findStateHost(medium)?.margin, '-12px 0 0 0');
+
+    // small / extra_large 不是纵向 token，客户端回落 default(8)。
+    const unknown = baseCard();
+    (unknown.body as { vertical_spacing: string }).vertical_spacing = 'extra_large';
+    sealCardState(unknown, { n: 1 });
+    assert.equal(findStateHost(unknown)?.margin, '-8px 0 0 0');
+  });
+
+  it('reads the RAW body spacing', () => {
+    const card = baseCard();
+    (card.body as Record<string, unknown>).property = {
+      verticalSpacingValue: { type: 'pixels', value: 16 },
+      elements: [],
+    };
+    sealCardState(card, { n: 1 });
+    assert.equal(findStateHost(card)?.margin, '-16px 0 0 0');
+  });
+
+  it('skips the offset when the body lays out horizontally', () => {
+    const card = baseCard();
+    (card.body as { direction: string }).direction = 'horizontal';
+    sealCardState(card, { n: 1 });
+    assert.equal(findStateHost(card)?.margin, undefined);
+  });
+
+  it('createStateHost only writes margin when a gap is given', () => {
+    const plain = createStateHost(`${STATE_URL_PREFIX}s1.abc`);
+    assert.equal(plain.margin, undefined);
+    assert.equal(createStateHost(`${STATE_URL_PREFIX}s1.abc`, '12px').margin, '-12px 0 0 0');
+    assert.equal(createStateHost(`${STATE_URL_PREFIX}s1.abc`, 0).margin, undefined);
   });
 
   it('replaces previous host on re-seal', () => {
