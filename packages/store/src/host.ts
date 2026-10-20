@@ -5,7 +5,7 @@ import {
   STATE_URL_PREFIX,
 } from './codec.js';
 
-/** 专用空分栏宿主标识（写入时保证 id；element_id 保留作 DSL 别名。客户端/adapter 回读可能丢其中一个） */
+/** 专用空分栏宿主标识。发出去只写 element_id（官方 schema 不收 id）；客户端回读时标识键可能是 id。 */
 export const STATE_ELEMENT_ID = 'card_state';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -90,16 +90,89 @@ function isStateHost(node: Record<string, unknown>): boolean {
   return false;
 }
 
-/** 构造专用空分栏宿主（只写 url，避免 4 份复制吃额度） */
-export function createStateHost(stateUrl: string): Record<string, unknown> {
+/**
+ * 正文纵向间距（px）。
+ *
+ * 客户端的**横向 / 纵向间距是两套不同的枚举**（与 packages/renderer/src/registry.ts 的
+ * VERTICAL_SPACING_PX 同源，来自客户端反推 #16/D6）：
+ *   纵向 vertical : {default:8, medium:12, large:16}   —— 无 small / extra_large
+ *   横向 horizontal: {small:4, default:8, large:12}     —— 无 medium / extra_large
+ * 未知名值一律回落 default(8)；像素串（"12px"）照字面解析。
+ *
+ * 别用 schema 里 SpacingTokenSchema 那套并集值（small 4 / medium 8 / large 12 /
+ * extra_large 16）——那是横纵并集，套到纵向字段上会差 4px。
+ */
+const VERTICAL_SPACING_PX: Record<string, number> = { default: 8, medium: 12, large: 16 };
+const DEFAULT_VERTICAL_SPACING_PX = VERTICAL_SPACING_PX.default;
+
+/** 间距枚举 / 像素串 / 数字 → px（纵向口径） */
+function spacingPx(value: number | string | undefined): number {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : DEFAULT_VERTICAL_SPACING_PX;
+  if (typeof value !== 'string') return DEFAULT_VERTICAL_SPACING_PX;
+  const v = value.trim();
+  const named = VERTICAL_SPACING_PX[v];
+  if (named != null) return named;
+  const matched = /^(-?\d+(?:\.\d+)?)(?:px)?$/.exec(v);
+  return matched ? Number(matched[1]) : DEFAULT_VERTICAL_SPACING_PX;
+}
+
+/** 正文方向。DSL 在 body.direction；RAW 在 body.property.direction。 */
+function bodyDirection(card: Record<string, unknown>): string | undefined {
+  const body = isRecord(card.body) ? card.body : undefined;
+  if (!body) return undefined;
+  const property = isRecord(body.property) ? body.property : undefined;
+  const dir = body.direction ?? property?.direction;
+  return typeof dir === 'string' ? dir : undefined;
+}
+
+/** RAW 正文里的纵向间距回显：{type:'pixels', value:12} */
+function rawVerticalSpacing(property: Record<string, unknown> | undefined): number | string | undefined {
+  if (!property) return undefined;
+  const echo = property.verticalSpacingValue;
+  if (isRecord(echo) && typeof echo.value === 'number') return echo.value;
+  const v = property.vertical_spacing;
+  return typeof v === 'number' || typeof v === 'string' ? v : undefined;
+}
+
+/**
+ * 正文纵向间距。DSL 写在 body.vertical_spacing；RAW 写在 body.property.verticalSpacingValue
+ * （{type:'pixels', value:12}）或 body.property.vertical_spacing。
+ */
+function bodyVerticalSpacingPx(card: Record<string, unknown>): number {
+  const body = isRecord(card.body) ? card.body : undefined;
+  if (!body) return DEFAULT_VERTICAL_SPACING_PX;
+  const property = isRecord(body.property) ? body.property : undefined;
+  const raw = body.vertical_spacing ?? rawVerticalSpacing(property);
+  return spacingPx(raw as number | string | undefined);
+}
+
+/**
+ * 宿主要抵掉的间距。正文纵向排列时，宿主前面那段纵向间距要抵掉；横向排列时宿主前面
+ * 是列间距，负上外边距只会把宿主顶上去，不抵。
+ */
+function bodyHostGapPx(card: Record<string, unknown>): number {
+  if (bodyDirection(card) === 'horizontal') return 0;
+  return bodyVerticalSpacingPx(card);
+}
+
+/**
+ * 构造专用空分栏宿主（只写 url，避免 4 份复制吃额度）。
+ *
+ * gap：宿主前面那段正文纵向间距（枚举 / px 串 / 数字）。大于 0 时用等值负上外边距抵掉
+ * ——真机把空分栏留在正文流里，前面仍有一段间距；网页渲染器把宿主移出排版，不受此值影响。
+ * 传 0（默认）表示不写 margin。
+ */
+export function createStateHost(stateUrl: string, gap: number | string = 0): Record<string, unknown> {
+  const gapPx = spacingPx(gap);
   return {
     tag: 'column_set',
-    // 客户端元素标识键为 id；element_id 保留作 DSL 别名。
-    id: STATE_ELEMENT_ID,
+    // 发出去只写 element_id。id 是客户端回读时的标识键，官方 schema 不收（写了会 200621）。
     element_id: STATE_ELEMENT_ID,
+    // 真机把空分栏留在正文流里，前面仍有一段 vertical_spacing。
+    // 负的上外边距把这段间距抵掉。网页渲染器会把宿主移出排版，不受这个值影响。
+    ...(gapPx > 0 ? { margin: `-${gapPx}px 0 0 0` } : {}),
     action: {
-      // 飞书客户端多端链接用 camelCase multiURL；multi_url 保留作 DSL 兼容。
-      multiURL: { url: stateUrl },
+      // 发出去的卡片只写 multi_url。multiURL 是客户端回读时的 camelCase，官方 schema 不收（200621）。
       multi_url: { url: stateUrl },
     },
     columns: [
@@ -186,7 +259,7 @@ export function sealCardState(card: Record<string, unknown>, state: unknown): st
 
   // 去掉旧宿主（含 adapter 残留的 actions 形态）
   const next = elements.filter((el) => !(isRecord(el) && isStateHost(el)));
-  next.push(createStateHost(stateUrl));
+  next.push(createStateHost(stateUrl, bodyHostGapPx(card)));
   const body = card.body as Record<string, unknown>;
   body.elements = next;
   return stateUrl;

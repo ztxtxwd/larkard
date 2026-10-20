@@ -32,6 +32,7 @@ import {
 } from '../src/index.js';
 import { Card } from '../src/components/index.js';
 import type { FeishuCardJson, FeishuElement } from '../src/types/card.js';
+import type { ImageProps } from '../src/types/props.js';
 
 function tagsOf(card: FeishuCardJson): string[] {
   const tags: string[] = [];
@@ -119,10 +120,16 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
     assert.ok(tags.includes(tag), `缺少 ${tag}`);
   }
 
-  const image = card.body?.elements[0] as { img_key?: string; alt?: { content?: string }; scale_type?: string };
+  const image = card.body?.elements[0] as {
+    img_key?: string;
+    alt?: { content?: string };
+    scale_type?: string;
+    mode?: string;
+  };
   assert.equal(image.img_key, 'img_a');
   assert.equal(image.alt?.content, '配图');
   assert.equal(image.scale_type, 'fit_horizontal');
+  assert.equal(image.mode, undefined);
   assert.equal(JSON.stringify(card).includes('function'), false);
 
   const note = (card.body?.elements ?? []).find((el) => (el as { tag: string }).tag === 'note') as
@@ -137,4 +144,36 @@ test('JSON 2.0 组件都能序列化出官方 tag', () => {
     | undefined;
   assert.ok(quote, '应包含 blockquote 元素');
   assert.equal(quote?.elements?.[0]?.tag, 'markdown');
+});
+
+test('img 缩放走 scale_type；历史 mode 只保留尺寸值', () => {
+  const renderImage = (props: Record<string, unknown>) =>
+    renderToCard(
+      jsx(Card, {
+        children: [jsx(Image, { imgKey: 'img_x', alt: '图', ...props } as unknown as ImageProps)],
+      }),
+    ).body?.elements[0] as { mode?: string; scale_type?: string; size?: string };
+
+  // scaleType 直接进 scale_type，绝不写 mode（官方 mode 枚举里没有 crop_top）。
+  const cropTop = renderImage({ scaleType: 'crop_top' });
+  assert.equal(cropTop.scale_type, 'crop_top');
+  assert.equal(cropTop.mode, undefined);
+
+  const fit = renderImage({ scaleType: 'fit_horizontal' });
+  assert.equal(fit.scale_type, 'fit_horizontal');
+  assert.equal(fit.mode, undefined);
+
+  // 集合外的取值也只进 scale_type，不会掉进 mode。
+  const unknown = renderImage({ scaleType: 'crop_bottom' });
+  assert.equal(unknown.scale_type, 'crop_bottom');
+  assert.equal(unknown.mode, undefined);
+
+  // 历史 mode：缩放值按缩放处理，尺寸值原样保留给旧模板。
+  const legacyScale = renderImage({ mode: 'fit_horizontal' });
+  assert.equal(legacyScale.scale_type, 'fit_horizontal');
+  assert.equal(legacyScale.mode, undefined);
+
+  const legacySize = renderImage({ mode: 'large' });
+  assert.equal(legacySize.mode, 'large');
+  assert.equal(legacySize.scale_type, undefined);
 });
