@@ -27,11 +27,21 @@ export interface HeaderTextTag {
   color?: string;
 }
 
+/**
+ * 图标输入：token 字符串，或标准/自定义 icon 对象。
+ * `size` 是官方 icon 对象字段（如 "10px 10px"），必须原样透传——
+ * 折叠面板箭头、markdown 前缀图标都依赖它，丢掉会回落 16px。
+ */
+export type IconInput =
+  | string
+  | { tag?: 'standard_icon'; token: string; color?: string; size?: string }
+  | { tag: 'custom_icon'; img_key: string; size?: string };
+
 export interface HeaderProps {
   title: string;
   subtitle?: string;
   /** 图标 token，或已经是飞书 icon 对象。 */
-  icon?: string | { tag?: 'standard_icon'; token: string; color?: string } | { tag: 'custom_icon'; img_key: string };
+  icon?: IconInput;
   theme?: HeaderTemplate;
   padding?: string;
   /** header.text_tag_list */
@@ -41,7 +51,7 @@ export interface HeaderProps {
 export interface DivProps extends CommonProps {
   text?: string;
   markdown?: boolean;
-  icon?: string | { tag?: 'standard_icon'; token: string; color?: string };
+  icon?: IconInput;
   width?: string;
   textSize?: string;
   children?: VNodeChild;
@@ -51,7 +61,7 @@ export interface MarkdownProps extends CommonProps {
   content?: string;
   textAlign?: 'left' | 'center' | 'right';
   textSize?: string;
-  icon?: string | { tag?: 'standard_icon'; token: string; color?: string } | { tag: 'custom_icon'; img_key: string };
+  icon?: IconInput;
   children?: VNodeChild;
 }
 
@@ -98,8 +108,10 @@ export interface ColumnProps extends CommonProps {
   width?: 'auto' | 'weighted' | (string & {});
   weight?: number;
   verticalAlign?: 'top' | 'center' | 'bottom';
+  horizontalAlign?: 'left' | 'center' | 'right';
   padding?: string;
   direction?: 'vertical' | 'horizontal';
+  horizontalSpacing?: string;
   verticalSpacing?: string;
   backgroundStyle?: string;
   children?: VNodeChild;
@@ -109,6 +121,7 @@ export interface ColumnSetProps extends CommonProps {
   flexMode?: 'none' | 'stretch' | 'flow' | 'bisect' | 'trisect';
   horizontalSpacing?: string;
   horizontalAlign?: 'left' | 'center' | 'right';
+  verticalAlign?: 'top' | 'center' | 'bottom';
   backgroundStyle?: string;
   children?: VNodeChild;
 }
@@ -143,6 +156,8 @@ export interface SelectOptionProp {
   label?: string;
   text?: string;
   value: string;
+  /** 选项前缀图标（官方 options[].icon） */
+  icon?: IconInput;
 }
 
 export interface SelectProps extends CommonProps {
@@ -156,6 +171,8 @@ export interface SelectProps extends CommonProps {
   required?: boolean;
   disabled?: boolean;
   width?: string;
+  /** 边框样式：default（带边框）/ text（无边框） */
+  type?: 'default' | 'text';
 }
 
 export interface ImageProps extends CommonProps {
@@ -270,6 +287,14 @@ export interface InteractiveContainerProps extends CommonProps {
   width?: string;
   height?: string;
   direction?: 'vertical' | 'horizontal';
+  /** 容器内子组件水平对齐 */
+  horizontalAlign?: 'left' | 'center' | 'right';
+  /** 容器内子组件垂直对齐 */
+  verticalAlign?: 'top' | 'center' | 'bottom';
+  /** 容器内子组件水平间距：small/medium/large/extra_large 或 "Npx" */
+  horizontalSpacing?: string;
+  /** 容器内子组件垂直间距：small/medium/large/extra_large 或 "Npx" */
+  verticalSpacing?: string;
   padding?: string;
   backgroundStyle?: string;
   hasBorder?: boolean;
@@ -283,15 +308,20 @@ export interface InteractiveContainerProps extends CommonProps {
 export interface CollapsiblePanelProps extends CommonProps {
   title: string;
   titleMarkdown?: boolean;
+  /** 展开态标题文案；不写时沿用 title（官方 header.expanded_title） */
+  expandedTitle?: string;
   expanded?: boolean;
-  icon?: string;
+  icon?: IconInput;
   iconPosition?: 'left' | 'right' | 'follow_text';
   iconExpandedAngle?: -180 | -90 | 90 | 180;
   backgroundColor?: string;
   headerBackgroundColor?: string;
   borderColor?: string;
   cornerRadius?: string;
+  /** 面板内边距（collapsible_panel.padding） */
   padding?: string;
+  /** 标题区内边距（header.padding），与面板 padding 是不同字段 */
+  headerPadding?: string;
   direction?: 'vertical' | 'horizontal';
   children?: VNodeChild;
 }

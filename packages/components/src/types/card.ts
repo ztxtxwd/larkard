@@ -16,11 +16,14 @@ export interface StandardIconObject {
   tag: 'standard_icon';
   token: string;
   color?: string;
+  /** 图标尺寸，如 "10px 10px"；官方 icon 对象字段 */
+  size?: string;
 }
 
 export interface CustomIconObject {
   tag: 'custom_icon';
   img_key: string;
+  size?: string;
 }
 
 export type IconObject = StandardIconObject | CustomIconObject;

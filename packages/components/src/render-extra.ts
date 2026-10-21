@@ -234,6 +234,12 @@ function renderInteractive(
     width: props.width,
     height: props.height,
     direction: props.direction,
+    // 布局四件套：漏掉会让容器内子组件退化成「左上角贴边、固定 4px 行距」，
+    // 真机上和参考卡片的居中/间距效果对不上。
+    horizontal_align: props.horizontalAlign,
+    vertical_align: props.verticalAlign,
+    horizontal_spacing: props.horizontalSpacing,
+    vertical_spacing: props.verticalSpacing,
     padding: props.padding,
     background_style: props.backgroundStyle,
     has_border: props.hasBorder,
@@ -266,7 +272,15 @@ function renderPanel(
         tag: props.titleMarkdown ? 'markdown' : 'plain_text',
         content: props.title,
       },
+      // 展开态标题：真机折叠/展开时切换 title ↔ expanded_title。
+      // 不写则沿用 title，避免展开后标题文案空白。
+      expanded_title:
+        typeof props.expandedTitle === 'string'
+          ? { tag: props.titleMarkdown ? 'markdown' : 'plain_text', content: props.expandedTitle }
+          : undefined,
       background_color: props.headerBackgroundColor,
+      // header.padding 与面板级 padding 是两个不同字段，不能混用
+      padding: props.headerPadding,
       icon: icon(props.icon),
       icon_position: props.iconPosition,
       icon_expanded_angle: props.iconExpandedAngle,

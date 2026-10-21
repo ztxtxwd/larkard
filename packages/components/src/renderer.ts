@@ -3,6 +3,7 @@ import { tryRenderExtra } from './render-extra.js';
 import { FRAGMENT, VNODE, isVNode, type VNode, type VNodeChild } from './types/vnode.js';
 import type {
   ActionRequestBehavior,
+  CustomIconObject,
   FeishuBehavior,
   FeishuButton,
   FeishuCardJson,
@@ -11,6 +12,7 @@ import type {
   FeishuHeader,
   IconObject,
   PlainTextObject,
+  StandardIconObject,
   TextObject,
 } from './types/card.js';
 import type {
@@ -117,10 +119,17 @@ function textObject(content: string, markdown?: boolean): TextObject {
 function normalizeIcon(icon: HeaderProps['icon']): IconObject | undefined {
   if (icon === undefined) return undefined;
   if (typeof icon === 'string') return { tag: 'standard_icon', token: icon };
-  if ('img_key' in icon) return { tag: 'custom_icon', img_key: icon.img_key };
-  const standard: IconObject = { tag: 'standard_icon', token: icon.token };
-  if (icon.color) standard.color = icon.color;
-  return standard;
+  // size 必须透传：折叠面板箭头 "10px 10px"、markdown 前缀图标都靠它，
+  // 丢掉会回落到渲染器默认 16px，和真机大小对不上。
+  if ('img_key' in icon) {
+    return compact({ tag: 'custom_icon', img_key: icon.img_key, size: icon.size }) as CustomIconObject;
+  }
+  return compact({
+    tag: 'standard_icon',
+    token: icon.token,
+    color: icon.color,
+    size: icon.size,
+  }) as StandardIconObject;
 }
 
 function withElementId(props: { elementId?: string; margin?: string }): {
@@ -226,8 +235,10 @@ function renderColumn(props: ColumnProps, inherited?: InheritedAction): FeishuCo
     width: props.width,
     weight: props.weight,
     vertical_align: props.verticalAlign,
+    horizontal_align: props.horizontalAlign,
     padding: props.padding,
     direction: props.direction,
+    horizontal_spacing: props.horizontalSpacing,
     vertical_spacing: props.verticalSpacing,
     background_style: props.backgroundStyle,
     ...withElementId(props),
@@ -261,11 +272,17 @@ function renderSelect(props: SelectProps): FeishuElement {
   return compact({
     tag: 'select_static',
     name: props.name,
+    // 边框样式：default 带边框 / text 无边框；官方字段名就是 type
+    type: props.type,
     placeholder: props.placeholder ? plain(props.placeholder) : undefined,
-    options: props.options.map((option) => ({
-      text: plain(option.label ?? option.text ?? option.value),
-      value: option.value,
-    })),
+    options: props.options.map((option) =>
+      compact({
+        text: plain(option.label ?? option.text ?? option.value),
+        value: option.value,
+        // 选项前缀图标：standard_icon / custom_icon，官方 options[].icon
+        icon: normalizeIcon(option.icon),
+      }),
+    ),
     initial_option: initial,
     required: props.required,
     disabled: props.disabled,
@@ -307,6 +324,7 @@ function renderHost(node: VNode, inherited?: InheritedAction): FeishuElement {
         flex_mode: props.flexMode,
         horizontal_spacing: props.horizontalSpacing,
         horizontal_align: props.horizontalAlign,
+        vertical_align: props.verticalAlign,
         background_style: props.backgroundStyle,
         ...withElementId(props),
         columns,
