@@ -1113,3 +1113,73 @@ test('interactive_container: 未写 align 时不输出 justify/align（交给 CS
   assert.equal(/column-gap/.test(style), false);
   assert.equal(/row-gap/.test(style), false);
 });
+
+/* ---- overflow 折叠按钮组 ---- */
+
+test('overflow: 不再被静默丢弃，输出「…」触发器', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'overflow', options: [
+      { text: { tag: 'plain_text', content: '按钮 4' }, value: 'button_4' },
+    ] }] },
+  });
+  // 此前该 tag 未注册 → renderElement 返回 null，整块消失
+  assert.match(html, /universal-card-overflow/);
+  assert.match(html, /ud-icon_more_outlined/);
+});
+
+test('overflow: 静态预览不输出菜单（无交互能力）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'overflow', options: [
+      { text: { tag: 'plain_text', content: '按钮 4' }, value: 'button_4' },
+    ] }] },
+  });
+  assert.equal(html.includes('universal-card-overflow__menu'), false);
+  assert.equal(html.includes('<details'), false);
+});
+
+test('overflow: interactive 输出菜单项文案与跳转', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'overflow', options: [
+      { text: { tag: 'plain_text', content: '按钮 4' }, value: 'button_4' },
+      { text: { tag: 'plain_text', content: '按钮 5' }, value: 'button_5', multi_url: { url: 'https://feishu.cn' } },
+    ] }] },
+  }, { interactive: true });
+  assert.match(html, /<details[^>]*class="universal-card-overflow"/);
+  assert.match(html, />按钮 4</);
+  assert.match(html, /<a[^>]*href="https:\/\/feishu\.cn"[^>]*>按钮 5</);
+});
+
+/* ---- interactive_container 边框语义 ---- */
+
+function icBorder(ic) {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'interactive_container', elements: [{ tag: 'markdown', content: 'x' }], ...ic }] },
+  });
+  const m = html.match(/class="universal-card-interactive-container[^"]*"[^>]*style="([^"]*)"/);
+  return m ? m[1] : '';
+}
+
+test('interactive_container: has_border=true 时 border_color 生效', () => {
+  assert.match(icBorder({ has_border: true, border_color: 'grey' }), /border:1px solid #646a73/);
+});
+
+test('interactive_container: has_border=false 时 border_color 不生效', () => {
+  // 官方语义：border_color 仅在 has_border 为 true 时生效
+  assert.equal(/border:/.test(icBorder({ has_border: false, border_color: 'grey' })), false);
+});
+
+test('interactive_container: 只写 border_color 不画边框', () => {
+  assert.equal(/border:/.test(icBorder({ border_color: 'grey' })), false);
+});
+
+test('interactive_container: has_border=true 无 border_color 走默认边框类', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'interactive_container', has_border: true, elements: [{ tag: 'markdown', content: 'x' }] }] },
+  });
+  assert.match(html, /universal-card-interactive-container--bordered/);
+});

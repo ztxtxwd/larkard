@@ -443,6 +443,32 @@
 /* 非跳转按钮：保留外观，但不可点（默认光标、无 hover、不响应点击） */
 .universal-card-button--static { cursor: default; pointer-events: none; }
 
+/* ---- overflow 折叠按钮组 ---- */
+/* 真机是一个「…」图标按钮，点击弹出选项菜单。静态预览只画触发器（--static 不可点）。 */
+.universal-card-overflow { display: inline-flex; position: relative; vertical-align: middle; }
+.universal-card-overflow--static { display: inline-flex; }
+.universal-card-overflow__summary {
+  list-style: none; cursor: pointer; display: inline-flex;
+}
+/* 去掉 <summary> 的浏览器默认三角标记 */
+.universal-card-overflow__summary::-webkit-details-marker { display: none; }
+.universal-card-overflow__summary::marker { content: ''; }
+/* 菜单：默认隐藏，<details open> 时浮在触发器下方 */
+.universal-card-overflow__menu {
+  display: none;
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 20;
+  min-width: 120px; padding: 4px 0;
+  background: #fff; border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(31, 35, 41, 0.15), 0 0 1px rgba(31, 35, 41, 0.2);
+}
+.universal-card-overflow[open] > .universal-card-overflow__menu { display: block; }
+.universal-card-overflow__item {
+  display: block; padding: 6px 12px;
+  font-size: 14px; line-height: 22px; color: #1f2329;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+}
+.universal-card-overflow__item:hover { background: #f5f6f7; }
+
 /* ---- 表单（预览：仅透传，无表单语义） ---- */
 .universal-card-form { display: flex; flex-direction: column; row-gap: 8px; }
 .universal-card-form > * { width: 100%; }

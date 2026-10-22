@@ -961,9 +961,12 @@ registerComponent('interactive_container', (el, ctx) => {
   const borderNamed = (p.border_color ?? (p as { borderColor?: string }).borderColor) as string | undefined;
   const borderCustom = resolveCustomBorderLight(p);
   // 优先 customBorderColor（dslToRaw 已展开登记色）；命名色走色板。cus-/mm_* 别名本身解析不出。
-  const borderColor = (borderCustom ? resolveColor(borderCustom) : undefined)
+  const borderColorResolved = (borderCustom ? resolveColor(borderCustom) : undefined)
     ?? resolveColor(borderNamed);
-  const hasBorder = borderColor != null || p.hasBorder === true || p.has_border === true;
+  // 官方语义：border_color 仅在 has_border 为 true 时生效。
+  // 只写 border_color 而不开 has_border 不应画出边框（此前会，导致「没开边框却有线」）。
+  const hasBorder = p.hasBorder === true || p.has_border === true;
+  const borderColor = hasBorder ? borderColorResolved : undefined;
   const cls = `${CLS}-interactive-container`
     + (clickable ? ` ${CLS}-interactive-container--action` : '')
     + (hasBorder && !borderColor ? ` ${CLS}-interactive-container--bordered` : '')
@@ -1196,6 +1199,64 @@ function readCallbackValue(p: { value?: unknown; actions?: unknown; behaviors?: 
   };
   return fromList(p.actions) ?? fromList(p.behaviors) ?? (isRecord(p.value) ? p.value : null);
 }
+
+// overflow：折叠按钮组。真机渲染成一个「…」图标按钮，点击弹出选项菜单；
+// 选项文案只在菜单里，不占正文位置。此前该 tag 未注册，renderElement 直接返回 null，
+// 整块在预览里凭空消失（真机却有）。
+// 预览：静态态输出「…」图标按钮（不可点），interactive 态用原生 <details> 做纯 CSS 下拉，
+// 每个选项是一个按钮外观的行，带 open_url 的选项渲染成 <a>。
+registerComponent('overflow', (el, ctx) => {
+  const p = el.property || {};
+  const disabled = p.disabled === true;
+  const options = Array.isArray(p.options) ? p.options : [];
+  const widthTok = (p.width ?? (p.widthValue as { value?: string } | undefined)?.value) as string | undefined;
+  const block = widthTok === 'fill';
+  // 触发器：与 button 同款外观（default 灰边），图标尺寸跟随按钮字号
+  const triggerIcon = renderIcon(
+    { tag: 'standard_icon', property: { token: 'more_outlined', size: '14px' } } as CardElement,
+    ctx,
+  );
+  const triggerCls = `${CLS}-button ${CLS}-button--default ${CLS}-button--static ${CLS}-overflow__trigger`
+    + (disabled ? ` ${CLS}-button--disabled` : '')
+    + (block ? ` ${CLS}-button--block` : '');
+  const trigger = triggerIcon
+    ? h('span', { className: triggerCls }, h('span', { className: `${CLS}-button__icon` }, triggerIcon))
+    : h('span', { className: triggerCls }, '···');
+
+  // 菜单项：文案取 options[].text（plain_text 叶子），url 取 multi_url.url 兜底
+  const items = options.map((raw) => {
+    const opt = isRecord(raw) ? raw : {};
+    // options[].text 在 DSL 里是扁平 { tag, content }，经 dslToRaw 后是 { property: { content } }；
+    // extractPlainText 只认 property.content，故两处都兜一下。
+    const textObj = opt.text;
+    const label = (isRecord(textObj) && typeof textObj.content === 'string'
+      ? textObj.content
+      : extractPlainText(textObj)) || extractPlainText(opt);
+    const multi = isRecord(opt.multi_url) ? opt.multi_url : undefined;
+    const href = resolveURL(multi?.url ?? opt.url);
+    const itemCls = `${CLS}-overflow__item`;
+    if (href && !disabled) {
+      return h('a', { className: itemCls, href, target: '_blank', rel: 'noopener' }, label);
+    }
+    return h('span', { className: itemCls }, label);
+  });
+
+  const style: Record<string, string> = {};
+  if (p.margin) applyOuterMargin(style, p.margin);
+  const styleProp = Object.keys(style).length ? { style } : {};
+
+  // 静态预览：没有交互能力，只画触发器，避免出现点了没反应的假菜单
+  if (!ctx.options.interactive) {
+    return h('span', { className: `${CLS}-overflow ${CLS}-overflow--static`, ...styleProp }, trigger);
+  }
+  // interactive：<details> 驱动纯 CSS 下拉，无需 JS
+  return h(
+    'details',
+    { className: `${CLS}-overflow`, ...styleProp },
+    h('summary', { className: `${CLS}-overflow__summary` }, trigger),
+    h('div', { className: `${CLS}-overflow__menu` }, items),
+  );
+});
 
 // form：静态预览只透传子元素。interactive 时变成真 <form>，提交由宿主 preventDefault。
 registerComponent('form', (el, ctx) => {
