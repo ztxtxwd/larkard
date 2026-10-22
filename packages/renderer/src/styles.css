@@ -288,6 +288,13 @@
   word-break: break-word;
   vertical-align: middle;
 }
+/* 前缀图标（markdown.icon）：与首行文字垂直居中，右侧留 4px。
+   容器是 flex row，图标作为首个 flex 子项参与排布。 */
+.universal-card-markdown__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-right: 4px;
+  height: 1.6em;
+}
 .universal-card-markdown__children {
   flex: 1;
   min-width: 0;

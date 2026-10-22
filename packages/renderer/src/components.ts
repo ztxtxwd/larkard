@@ -550,12 +550,67 @@ function MarkdownComponent(el: CardElement, ctx: RenderContext) {
   // #22/D12：客户端 plain_text/markdown 支持 property.lines（textLines），超出省略。
   // 用 -webkit-line-clamp 纯 CSS 截断。
   const linesStyle = lineClampStyle(p.lines ?? p.textLines);
+  // 前缀图标：官方 markdown.icon 支持 standard_icon（token）与 custom_icon（img_key）。
+  // 此前只渲染 property.elements，icon 被整块丢弃，带图标的分区标题会缺图标。
+  const iconVNode = renderPrefixIcon(p.icon, ctx, fontSize);
   return h('div', { className: `${CLS}-markdown`, style },
+    iconVNode,
     h('div', {
       className: `${CLS}-markdown__children`,
       style: Object.keys(linesStyle).length ? linesStyle : undefined,
     }, renderElements(p.elements, childCtx))
   );
+}
+
+/**
+ * 文本前缀图标（markdown.icon / 同类字段）。
+ * standard_icon 走图标字体；custom_icon 用 img_key 出 <img>。
+ * 尺寸跟随文本字号：未显式给 size 时用 1em，与真机「图标随文字大小」一致。
+ */
+function renderPrefixIcon(
+  raw: unknown,
+  ctx: RenderContext,
+  fontSize: number,
+): VNode | null {
+  if (!isRecord(raw)) return null;
+  // 两种形态都要认：
+  //   DSL 扁平形态   { tag:'standard_icon', token, color }
+  //   RAW 嵌套形态   { tag:'standard_icon', property:{ token, color } }（dslToRaw 输出）
+  const inner = isRecord(raw.property) ? raw.property : raw;
+  const tag = typeof raw.tag === 'string' ? raw.tag : 'standard_icon';
+  const sizeProp = typeof inner.size === 'string'
+    ? inner.size
+    : (typeof raw.size === 'string' ? raw.size : undefined);
+  if (tag === 'custom_icon') {
+    const imgKey = typeof inner.img_key === 'string'
+      ? inner.img_key
+      : (typeof raw.img_key === 'string' ? raw.img_key : undefined);
+    if (!imgKey) return null;
+    // img_key 走与 img 组件相同的解析（宿主可注入 resolveImage 换成本地资源）
+    const src = resolveImageSrc({ img_key: imgKey } as never, ctx) ?? imgKey;
+    const sizePx = sizeProp && /^\d/.test(sizeProp)
+      ? Number(/^(\d+(?:\.\d+)?)/.exec(sizeProp)![1])
+      : fontSize;
+    return h('span', { className: `${CLS}-markdown__icon` },
+      h('img', {
+        src,
+        alt: '',
+        style: { width: sizePx + 'px', height: sizePx + 'px', objectFit: 'contain' },
+      }));
+  }
+  const token = typeof inner.token === 'string' ? inner.token : '';
+  if (!token) return null;
+  const iconNode = renderIcon({
+    tag: 'standard_icon',
+    property: {
+      token,
+      color: typeof inner.color === 'string' ? inner.color : undefined,
+      // 未显式给 size 时跟随文本字号，避免回落到固定 16px 与文字不搭
+      size: sizeProp ?? fontSize + 'px',
+    },
+  } as CardElement, ctx);
+  if (!iconNode) return null;
+  return h('span', { className: `${CLS}-markdown__icon` }, iconNode);
 }
 registerComponent('markdown', MarkdownComponent);
 registerComponent('markdown_v1', MarkdownComponent);

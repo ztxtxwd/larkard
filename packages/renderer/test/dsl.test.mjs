@@ -1183,3 +1183,42 @@ test('interactive_container: has_border=true 无 border_color 走默认边框类
   });
   assert.match(html, /universal-card-interactive-container--bordered/);
 });
+
+/* ---- markdown 前缀图标（icon）---- */
+
+function mdHtml(icon, extra = {}) {
+  return renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'markdown', content: '文本', icon, ...extra }] },
+  });
+}
+
+test('markdown: 输出 standard_icon 前缀图标（此前整块丢弃）', () => {
+  const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined', color: 'orange' });
+  assert.match(html, /universal-card-markdown__icon/);
+  assert.match(html, /ud-icon_chat_outlined/);
+  assert.match(html, /color:#c25705/);
+});
+
+test('markdown: 图标未给 size 时跟随文本字号', () => {
+  for (const [size, px] of [['small', 12], ['normal', 14], ['heading', 16]]) {
+    const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined' }, { text_size: size });
+    assert.match(html, new RegExp(`ud-icon_chat_outlined" style="font-size:${px}px`), `${size} 应为 ${px}px`);
+  }
+});
+
+test('markdown: 显式 size 覆盖字号跟随', () => {
+  const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined', size: '20px' });
+  assert.match(html, /ud-icon_chat_outlined" style="font-size:20px/);
+});
+
+test('markdown: custom_icon 用 img_key 出 <img>', () => {
+  const html = mdHtml({ tag: 'custom_icon', img_key: 'img_v2_abc' });
+  assert.match(html, /universal-card-markdown__icon/);
+  assert.match(html, /<img[^>]*src="img_v2_abc"/);
+});
+
+test('markdown: 无 icon 时不输出图标容器', () => {
+  const html = mdHtml(undefined);
+  assert.equal(html.includes('universal-card-markdown__icon'), false);
+});
