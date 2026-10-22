@@ -2,7 +2,8 @@
  * @open-feishu-card/linter
  *
  * 与 validator（Schema 正确性）互补的静态最佳实践检查：
- * 嵌套深度、元素数量、超长文本、空 body、硬编码用户 ID 等。
+ * 嵌套深度、元素数量、超长文本、空 body、硬编码用户 ID、
+ * Markdown 加粗星号贴空格等。
  *
  * 输入可为裸 Card JSON，或搭建工具文档；规则作用在解包后的卡片子树上。
  */
@@ -12,8 +13,10 @@ import {
   astToValue,
   type JsonNode,
   type JsonObjectNode,
+  type JsonStringNode,
   type Range,
 } from '@open-feishu-card/parser';
+import { findBoldSpaceIssues } from './markdown-bold-space.js';
 
 export type LintSeverity = 'warning' | 'information' | 'hint';
 
@@ -177,6 +180,88 @@ function lintInputMaxLength(node: JsonNode, ctx: Ctx): void {
   }
 }
 
+/** 该对象是否是渲染 Markdown 的文本载体（markdown 组件 / lark_md / markdown 文本对象） */
+function markdownContentNode(node: JsonObjectNode): JsonStringNode | undefined {
+  const tag = getProp(node, 'tag');
+  if (!tag || tag.type !== 'string') return undefined;
+  if (tag.value !== 'markdown' && tag.value !== 'lark_md') return undefined;
+  const content = getProp(node, 'content');
+  return content && content.type === 'string' ? content : undefined;
+}
+
+/** table 中 data_type 为 lark_md / markdown 的列，行值同样是 Markdown 字符串 */
+function tableMarkdownCells(node: JsonObjectNode): JsonStringNode[] {
+  const tag = getProp(node, 'tag');
+  if (!tag || tag.type !== 'string' || tag.value !== 'table') return [];
+  const columns = getProp(node, 'columns');
+  const rows = getProp(node, 'rows');
+  if (!columns || columns.type !== 'array' || !rows || rows.type !== 'array') return [];
+
+  const mdColumns = new Set<string>();
+  for (const col of columns.items) {
+    if (col.type !== 'object') continue;
+    const name = getProp(col, 'name');
+    const dataType = getProp(col, 'data_type');
+    if (
+      name?.type === 'string' &&
+      dataType?.type === 'string' &&
+      (dataType.value === 'lark_md' || dataType.value === 'markdown')
+    ) {
+      mdColumns.add(name.value);
+    }
+  }
+  if (mdColumns.size === 0) return [];
+
+  const cells: JsonStringNode[] = [];
+  for (const row of rows.items) {
+    if (row.type !== 'object') continue;
+    for (const p of row.properties) {
+      if (mdColumns.has(p.key.value) && p.value.type === 'string') cells.push(p.value);
+    }
+  }
+  return cells;
+}
+
+function reportBoldSpace(nodes: JsonNode[], ctx: Ctx): void {
+  for (const node of nodes) {
+    if (node.type !== 'string') continue;
+    const issues = findBoldSpaceIssues(node.value);
+    if (issues.length === 0) continue;
+    const samples = issues.slice(0, 3).map((issue) => `「${issue.sample}」`).join('、');
+    const more = issues.length > 3 ? ` 等 ${issues.length} 处` : '';
+    ctx.diagnostics.push({
+      rule: 'markdown-bold-space',
+      message:
+        `加粗星号内侧紧贴空格${more}：${samples}。` +
+        'Markdown 要求 ** 与文字之间不能有空格，否则不会加粗、** 会按字面显示；' +
+        '文字内部的空格无影响，去掉星号内侧的空格即可（如 **标题**）',
+      severity: 'warning',
+      range: node.range,
+    });
+  }
+}
+
+/**
+ * Markdown 加粗星号贴空格的检测。
+ * 覆盖 markdown 组件 content、lark_md / markdown 文本对象，以及 table 的
+ * lark_md / markdown 列单元格。
+ */
+function lintMarkdownBoldSpace(node: JsonNode, ctx: Ctx): void {
+  if (node.type === 'array') {
+    for (const item of node.items) lintMarkdownBoldSpace(item, ctx);
+    return;
+  }
+  if (node.type !== 'object') return;
+
+  const targets: JsonNode[] = [];
+  const content = markdownContentNode(node);
+  if (content) targets.push(content);
+  targets.push(...tableMarkdownCells(node));
+  reportBoldSpace(targets, ctx);
+
+  for (const p of node.properties) lintMarkdownBoldSpace(p.value, ctx);
+}
+
 function lintMissingSchema(root: JsonObjectNode, ctx: Ctx): void {
   if (!getProp(root, 'schema')) {
     ctx.diagnostics.push({
@@ -205,6 +290,7 @@ export function lintAst(ast: JsonObjectNode | undefined, options: LintOptions = 
   lintMissingSchema(cardAst, ctx);
   lintLongText(cardAst, ctx);
   lintInputMaxLength(cardAst, ctx);
+  lintMarkdownBoldSpace(cardAst, ctx);
   return ctx.diagnostics;
 }
 
