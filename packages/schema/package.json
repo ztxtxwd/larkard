@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/schema",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "飞书卡片 JSON Schema 2.0 的 Zod 规范定义与类型导出",
   "type": "module",
   "main": "./dist/index.cjs",
