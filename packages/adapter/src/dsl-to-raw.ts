@@ -444,9 +444,15 @@ function wrapHeaderText(v: unknown): CardElement {
 }
 
 /**
- * behaviors:[{type,default_url,pc_url?…}] → actions:[{type,action:{url,pcURL?…}}]
- * 渲染器读 actions[].action.url（https 兜底）；平台 URL 用 camelCase 旁路字段，
- * 与 raw→DSL 的 projectOpenUrlFields 对称，保证复制按钮 lark://copy 可 round-trip。
+ * behaviors:[{type,default_url,pc_url?…}] → actions:[{type,action:{url,…}}]
+ *
+ * 输出对齐服务端存储形态（im.message.get raw_card_content）：
+ *   - 回调写 `type:'action_request'`（服务端就是这个拼写；`callback` 只在旧数据里出现）。
+ *     渲染器只在 open_url 时看 type，换掉不影响预览。
+ *   - 平台 URL 用服务端 snake_case（pc_url / ios_url / android_url），
+ *     而不是编辑器/历史数据里的 camelCase。raw→DSL 的 projectOpenUrlFields 两种拼写都收。
+ *
+ * 渲染器读 actions[].action.url（https 兜底），复制按钮 lark://copy 可 round-trip。
  */
 function behaviorsToActions(
   behaviors: unknown[],
@@ -455,20 +461,21 @@ function behaviorsToActions(
   for (const b of behaviors) {
     if (!isRecord(b)) continue;
     const type = typeof b.type === 'string' ? b.type : 'open_url';
-    if (type === 'callback') {
-      out.push({ type: 'callback', action: { value: isRecord(b.value) ? b.value : {} } });
+    if (type === 'callback' || type === 'action_request') {
+      const value = isRecord(b.value) || typeof b.value === 'string' ? b.value : {};
+      out.push({ type: 'action_request', action: { value } });
       continue;
     }
     const action: Record<string, unknown> = { url: normalizeUrl(b.default_url) };
-    if (typeof b.pc_url === 'string' && b.pc_url) action.pcURL = b.pc_url;
-    if (typeof b.ios_url === 'string' && b.ios_url) action.iosURL = b.ios_url;
-    if (typeof b.android_url === 'string' && b.android_url) action.androidURL = b.android_url;
+    if (typeof b.pc_url === 'string' && b.pc_url) action.pc_url = b.pc_url;
+    if (typeof b.ios_url === 'string' && b.ios_url) action.ios_url = b.ios_url;
+    if (typeof b.android_url === 'string' && b.android_url) action.android_url = b.android_url;
     out.push({ type, action });
   }
   return out;
 }
 
-/** column_set/column 的 multi_url → RAW open_url action（平台字段 camelCase）。 */
+/** column_set/column 的 multi_url → RAW open_url action（平台字段用服务端 snake_case）。 */
 function multiUrlToOpenUrlAction(
   multi: Record<string, unknown>,
 ): { type: 'open_url'; action: Record<string, unknown> } {
@@ -479,10 +486,10 @@ function multiUrlToOpenUrlAction(
         ? multi.default_url
         : '';
   const action: Record<string, unknown> = { url };
-  if (typeof multi.pc_url === 'string' && multi.pc_url) action.pcURL = multi.pc_url;
-  if (typeof multi.ios_url === 'string' && multi.ios_url) action.iosURL = multi.ios_url;
+  if (typeof multi.pc_url === 'string' && multi.pc_url) action.pc_url = multi.pc_url;
+  if (typeof multi.ios_url === 'string' && multi.ios_url) action.ios_url = multi.ios_url;
   if (typeof multi.android_url === 'string' && multi.android_url) {
-    action.androidURL = multi.android_url;
+    action.android_url = multi.android_url;
   }
   return { type: 'open_url', action };
 }

@@ -309,13 +309,17 @@ export function spacingToPx(v: number | string | undefined): number {
   return 8;
 }
 
-/** 解析链接：url 可能是字符串，也可能是多端地址对象 { pcURL, url, ... } */
+/**
+ * 解析链接：url 可能是字符串，也可能是多端地址对象 { pcURL, url, ... }。
+ * 两种拼写都认：编辑器/历史 RAW 是 camelCase，服务端存储与 dslToRaw 输出是 snake_case。
+ */
 export function resolveURL(url: unknown): string {
   if (!url) return '';
   if (typeof url === 'string') return url;
   if (typeof url === 'object') {
     const u = url as Record<string, string | undefined>;
-    return u.pcURL || u.url || u.iosURL || u.androidURL || u.harmonyURL || '';
+    return u.pcURL || u.pc_url || u.url || u.iosURL || u.ios_url || u.androidURL
+      || u.android_url || u.harmonyURL || u.harmony_url || '';
   }
   return '';
 }

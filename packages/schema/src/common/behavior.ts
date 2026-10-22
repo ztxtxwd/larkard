@@ -61,14 +61,16 @@ export type ClientMessageBehavior = z.infer<typeof ClientMessageBehaviorSchema>;
 
 /**
  * 回传交互。开放平台发消息（im/v1/messages）的卡片 JSON 使用这个 type。
- * value 需为 object；开放平台 SDK 仅支持 object。
+ *
+ * value 通常为 object；服务端也接受字符串载荷（发 `value: "str_value"` 的
+ * 卡片可以发出），读回时服务端会回显该字符串，因此这里两者都收。
  */
 export const CallbackBehaviorSchema = z
   .object({
     type: z.literal('callback').describe('交互类型，固定为 callback'),
     value: z
-      .record(z.string(), z.unknown())
-      .describe('回传给服务端的自定义数据对象；用简洁业务字段即可'),
+      .union([z.record(z.string(), z.unknown()), z.string()])
+      .describe('回传给服务端的自定义数据；通常为对象，也接受字符串载荷'),
   })
   .describe('请求回调交互（type = callback）');
 

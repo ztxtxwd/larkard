@@ -4,7 +4,13 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { isRawCardEnvelope, rawCardToDsl, rawToDsl } from "../src/raw-to-dsl.js";
+import {
+  isRawCardEnvelope,
+  rawCardToDsl,
+  rawToDsl,
+  type RawToDslWarning,
+} from "../src/raw-to-dsl.js";
+import { dslToRaw } from "../src/dsl-to-raw.js";
 
 const FIXTURES = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures");
 
@@ -568,6 +574,195 @@ describe("button projection", () => {
       ios_url: copy,
       android_url: copy,
     });
+  });
+});
+
+/**
+ * 服务端（im.message.get?raw_card_content）把回调存成
+ * `{ type:'action_request', action:{ actionID, isValueObjectType, value:"" } }`，
+ * 而编辑器 / 旧数据写 `callback`。此前只认 `callback`，真实服务器返回的
+ * action_request 全部落进 return undefined，整条 action 消失。
+ */
+describe("callback / action_request projection", () => {
+  const card = (property: Record<string, unknown>) => ({
+    schema: "2.0",
+    body: { tag: "body", property: { elements: [{ tag: "button", property }] } },
+  });
+
+  it("projects RAW action_request (server storage) to callback behaviors", () => {
+    const dsl = rawToDsl(
+      card({
+        text: { tag: "plain_text", property: { content: "投票" } },
+        actions: [
+          {
+            type: "action_request",
+            action: { actionID: "act_v1_abc", isValueObjectType: true, value: "" },
+          },
+        ],
+      }),
+    ) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(btn.behaviors).toEqual([{ type: "callback", value: {} }]);
+  });
+
+  it("round-trips a callback object through dslToRaw → rawToDsl", () => {
+    const dsl = {
+      schema: "2.0",
+      body: {
+        elements: [
+          {
+            tag: "button",
+            text: { tag: "plain_text", content: "投票" },
+            behaviors: [{ type: "callback", value: { vote: "A" } }],
+          },
+        ],
+      },
+    };
+    const raw = dslToRaw(dsl) as Record<string, unknown>;
+    // dslToRaw 输出服务端拼写
+    const actions = (
+      (raw.body as Record<string, unknown>).property as Record<string, unknown>
+    ).elements as Array<Record<string, unknown>>;
+    expect((actions[0]!.property as Record<string, unknown>).actions).toEqual([
+      { type: "action_request", action: { value: { vote: "A" } } },
+    ]);
+    const back = rawToDsl(raw) as AnyDsl;
+    const btn = (back.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(btn.behaviors).toEqual([{ type: "callback", value: { vote: "A" } }]);
+  });
+
+  it("keeps a string callback value (send API accepts string payloads)", () => {
+    const dsl = rawToDsl(
+      card({
+        text: { tag: "plain_text", property: { content: "go" } },
+        actions: [{ type: "action_request", action: { value: "str_value" } }],
+      }),
+    ) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(btn.behaviors).toEqual([{ type: "callback", value: "str_value" }]);
+  });
+
+  it("treats cleared object payload as {} and reports it through onWarn", () => {
+    const warnings: RawToDslWarning[] = [];
+    rawToDsl(
+      card({
+        text: { tag: "plain_text", property: { content: "go" } },
+        actions: [
+          { type: "action_request", action: { actionID: "act_v1_x", isValueObjectType: true, value: "" } },
+        ],
+      }),
+      { onWarn: (w) => warnings.push(w) },
+    );
+    expect(warnings.map((w) => w.code)).toContain("callback_payload_cleared");
+  });
+
+  it("projects interactive_container action_request to behaviors", () => {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [
+            {
+              tag: "interactive_container",
+              property: {
+                actions: [{ type: "action_request", action: { value: { k: "v" } } }],
+                elements: [],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+    const box = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(box.behaviors).toEqual([{ type: "callback", value: { k: "v" } }]);
+  });
+
+  it("keeps unknown action types verbatim instead of dropping them, and warns", () => {
+    const warnings: RawToDslWarning[] = [];
+    const dsl = rawToDsl(
+      card({
+        text: { tag: "plain_text", property: { content: "go" } },
+        actions: [{ type: "open_app", action: { appID: "cli_x", extra: 1 } }],
+      }),
+      { onWarn: (w) => warnings.push(w) },
+    ) as AnyDsl;
+    const btn = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(btn.behaviors).toEqual([
+      { type: "open_app", action: { app_id: "cli_x", extra: 1 } },
+    ]);
+    expect(warnings.map((w) => w.code)).toContain("unknown_action_type");
+  });
+
+  it("warns when a column_set callback action cannot be represented in ColumnAction", () => {
+    const warnings: RawToDslWarning[] = [];
+    const dsl = rawToDsl(
+      {
+        schema: "2.0",
+        body: {
+          tag: "body",
+          property: {
+            elements: [
+              {
+                tag: "column_set",
+                property: {
+                  actions: [{ type: "action_request", action: { value: { a: 1 } } }],
+                  columns: [{ tag: "column", property: { elements: [] } }],
+                },
+              },
+            ],
+          },
+        },
+      },
+      { onWarn: (w) => warnings.push(w) },
+    ) as AnyDsl;
+    const host = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(host.action).toBeUndefined();
+    expect(warnings.map((w) => w.code)).toContain("unrepresentable_action");
+    // 只报一次（不叠加 unknown_action_type / callback_payload_cleared）
+    expect(warnings).toHaveLength(1);
+  });
+
+  it("keeps the open_url mapping but still reports a co-located callback on column_set", () => {
+    const warnings: RawToDslWarning[] = [];
+    const dsl = rawToDsl(
+      {
+        schema: "2.0",
+        body: {
+          tag: "body",
+          property: {
+            elements: [
+              {
+                tag: "column_set",
+                property: {
+                  actions: [
+                    { type: "open_url", action: { url: "https://example.com" } },
+                    { type: "action_request", action: { value: { a: 1 } } },
+                  ],
+                  columns: [{ tag: "column", property: { elements: [] } }],
+                },
+              },
+            ],
+          },
+        },
+      },
+      { onWarn: (w) => warnings.push(w) },
+    ) as AnyDsl;
+    const host = (dsl.body as { elements: Record<string, unknown>[] }).elements[0]!;
+    expect(host.action).toEqual({ multi_url: { url: "https://example.com" } });
+    expect(warnings.map((w) => w.code)).toEqual(["unrepresentable_action"]);
+  });
+
+  it("does not warn for plain open_url actions", () => {
+    const warnings: RawToDslWarning[] = [];
+    rawToDsl(
+      card({
+        text: { tag: "plain_text", property: { content: "go" } },
+        actions: [{ type: "open_url", action: { url: "https://example.com" } }],
+      }),
+      { onWarn: (w) => warnings.push(w) },
+    );
+    expect(warnings).toEqual([]);
   });
 });
 

@@ -73,7 +73,10 @@ export function isRawCardEnvelope(value: unknown): boolean {
   return typeof v.json_card === "string" && typeof v.card_schema === "number";
 }
 
-export function rawCardToDsl(envelope: unknown): unknown {
+export function rawCardToDsl(
+  envelope: unknown,
+  options?: RawToDslOptions,
+): unknown {
   if (!isRawCardEnvelope(envelope)) return envelope;
   const env = envelope as RawEnvelope;
   let inner: unknown;
@@ -85,21 +88,45 @@ export function rawCardToDsl(envelope: unknown): unknown {
   const ctx = makeCtx({
     images: env.json_attachment?.images ?? {},
     atUsers: env.json_attachment?.at_users ?? {},
+    onWarn: options?.onWarn,
   });
   return convertRoot(inner, ctx);
+}
+
+/** rawToDsl 的诊断级别。默认静默：只有传了 onWarn 才会回调。 */
+export interface RawToDslWarning {
+  /**
+   * unknown_action_type: action.type 不认识（已原样保留进 behaviors）
+   * callback_payload_cleared: 服务端把回调载荷换成了 actionID / 清空
+   * unrepresentable_action: 该宿主（column_set / column）的公开 schema 没有可放 action 的字段
+   */
+  code: "unknown_action_type" | "callback_payload_cleared" | "unrepresentable_action";
+  /** 可读诊断，中文 */
+  message: string;
+  /** 持有 actions 的元素 tag：button / interactive_container / column_set / column */
+  ownerTag?: string;
+}
+
+/** 诊断通道；不传则完全不打扰调用方。 */
+export interface RawToDslOptions {
+  onWarn?: (warning: RawToDslWarning) => void;
 }
 
 interface Ctx {
   images: AttachmentImageMap;
   atUsers: AttachmentAtUserMap;
   colors: ColorRegistry;
+  onWarn?: (warning: RawToDslWarning) => void;
 }
 
-function makeCtx(partial?: Partial<Pick<Ctx, 'images' | 'atUsers'>>): Ctx {
+function makeCtx(
+  partial?: Partial<Pick<Ctx, 'images' | 'atUsers' | 'onWarn'>>,
+): Ctx {
   return {
     images: partial?.images ?? {},
     atUsers: partial?.atUsers ?? {},
     colors: createColorRegistry(),
+    onWarn: partial?.onWarn,
   };
 }
 
@@ -821,6 +848,125 @@ function openUrlFieldsToMultiUrl(fields: OpenUrlFields): Record<string, string> 
   return multi;
 }
 
+/**
+ * RAW action.type values that mean "send the payload back to the server".
+ * The server stores callbacks as `action_request` (that's what
+ * im.message.get?card_msg_content_type=raw_card_content returns); the editor
+ * and older data use `callback`. Accept both — matching only `callback`
+ * silently deleted every server-returned action.
+ */
+const RAW_CALLBACK_TYPES = new Set(["callback", "action_request"]);
+
+/**
+ * Project the payload of a RAW callback/action_request into the public
+ * `value`.
+ *
+ * The server scrubs what it returns: a callback sent with
+ * `value: {k:'v'}` comes back as
+ * `{ actionID:'act_v1_…', isValueObjectType:true, value:"" }` — a reference to
+ * the stored payload, not the payload. `isValueObjectType` records that the
+ * original was an object, so:
+ *   - object (local raw / unscrubbed): keep as-is
+ *   - non-empty string (server echoes string payloads): keep — the send API
+ *     accepts a string value
+ *   - "" with isValueObjectType: original was an object but the payload is
+ *     gone → {}
+ *   - "" without it: payload was a string; the only honest value is ""
+ */
+function callbackValueFromRaw(
+  inner: Record<string, unknown>,
+  ownerTag: string | undefined,
+  warn: Ctx["onWarn"],
+): unknown {
+  const v = inner.value;
+  if (isRecord(v)) return v;
+  if (typeof v === "string" && v.length > 0) return v;
+
+  const hadObjectValue = inner.isValueObjectType === true;
+  const hasActionId = typeof inner.actionID === "string" && inner.actionID.length > 0;
+  if (hadObjectValue) {
+    warn?.({
+      code: "callback_payload_cleared",
+      ownerTag,
+      message:
+        `服务端把回调对象载荷换成了 actionID 引用${hasActionId ? ` (${String(inner.actionID)})` : ""}，` +
+        "投影出的 behaviors.value 是空对象，点击回调拿不到原始参数。保住参数需发送侧留存原始 DSL。",
+    });
+    return {};
+  }
+  if (hasActionId) {
+    warn?.({
+      code: "callback_payload_cleared",
+      ownerTag,
+      message:
+        `服务端把回调载荷换成了 actionID 引用 (${String(inner.actionID)})，原值已不可见；` +
+        "投影出的 behaviors.value 保留空字符串，点击回调拿不到原始参数。",
+    });
+    return "";
+  }
+  if (v === undefined) {
+    // user_card_content returns `{ type:'callback' }` with no value at all.
+    warn?.({
+      code: "callback_payload_cleared",
+      ownerTag,
+      message:
+        "回调 action 没有 value（服务端回读形态），投影为 behaviors.value: {}；" +
+        "点击回调拿不到原始参数，需发送侧留存原始 DSL。",
+    });
+    return {};
+  }
+  // Explicit empty string: the payload really was a string and it was empty.
+  return "";
+}
+
+/**
+ * RAW `actions: [{ type, action: { ... } }]` 单条 → 公开 DSL behavior。
+ *
+ * Shared by every host that stores click config as RAW actions (button /
+ * interactive_container / column_set / column). Unknown types are kept
+ * verbatim (snake_cased, no `action` envelope) instead of dropped, so
+ * downstream at least sees the field — the same philosophy the rest of this
+ * converter follows for unrecognized input.
+ */
+function actionEntryToBehavior(
+  entry: unknown,
+  ownerTag: string | undefined,
+  ctx: Ctx,
+  /** 覆盖 ctx.onWarn；column_set / column 传 null 静默，由调用方统一报 unrepresentable_action。 */
+  onWarn: Ctx["onWarn"] | null = ctx.onWarn,
+): Record<string, unknown> | undefined {
+  if (!isRecord(entry)) return undefined;
+  const inner = isRecord(entry.action) ? entry.action : {};
+  const type = typeof entry.type === "string" ? entry.type : undefined;
+
+  if (type === "open_url") {
+    const fields = projectOpenUrlFields(inner);
+    return fields ? { type: "open_url", ...fields } : undefined;
+  }
+
+  if (type && RAW_CALLBACK_TYPES.has(type)) {
+    return {
+      type: "callback",
+      value: callbackValueFromRaw(inner, ownerTag, onWarn ?? undefined),
+    };
+  }
+
+  const kept: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(entry)) {
+    if (k === "type" || k === "action") continue;
+    kept[snake(k)] = convertGeneric(v, ctx);
+  }
+  if (type) kept.type = type;
+  if (Object.keys(inner).length > 0) kept.action = convertGeneric(inner, ctx);
+
+  onWarn?.({
+    code: "unknown_action_type",
+    ownerTag,
+    message: `未识别的 action type: ${type ?? "(无 type)"}；已按原样保留进 behaviors，发往飞书前请清洗。`,
+  });
+  return kept;
+}
+
 function convertProperty(
   property: Record<string, unknown>,
   ownerTag: string | undefined,
@@ -1061,26 +1207,16 @@ function convertField(
   //     -> behaviors:[{type:"open_url", default_url, pc_url?, ios_url?, android_url?}]
   //   actionType:"link" + actions:[{action:{url,pcURL?...},type:"open_url"}]
   //     -> multi_url:{url, pc_url?, ios_url?, android_url?}
-  //   action_request callbacks live above the DSL (cardkit entity handles
-  //     them via card_id-stamped buttons); we drop them.
+  //   action_request (the server's spelling of callback) / callback
+  //     -> behaviors:[{type:"callback", value}]
   // The `actionType` field is editor-internal, dropped after dispatch.
   // Platform URLs (pcURL/iosURL/androidURL) must round-trip: copy buttons put
   // `lark://client/core/copy?value=…` there and https only on default_url.
   if (ownerTag === "button" && key === "action_type") return DROP;
   if (ownerTag === "button" && key === "actions" && Array.isArray(rawValue)) {
-    const behaviors: Array<Record<string, unknown>> = [];
-    for (const a of rawValue) {
-      if (!isRecord(a)) continue;
-      const inner = isRecord(a.action) ? a.action : {};
-      const t = typeof a.type === "string" ? a.type : undefined;
-      if (t === "callback") {
-        behaviors.push({ type: "callback", value: isRecord(inner.value) ? inner.value : {} });
-        continue;
-      }
-      if (t !== "open_url") continue;
-      const fields = projectOpenUrlFields(inner);
-      if (fields) behaviors.push({ type: "open_url", ...fields });
-    }
+    const behaviors = rawValue
+      .map((a) => actionEntryToBehavior(a, ownerTag, ctx))
+      .filter((b): b is Record<string, unknown> => b !== undefined);
     if (behaviors.length === 0) return DROP;
     if (
       siblings.buttonActionType === "link" &&
@@ -1095,27 +1231,16 @@ function convertField(
   }
 
   // interactive_container click interaction. The raw editor stores it as
-  // `actions: [{ type:'open_url', action:{ url, pcURL?… } }]` (or a callback). But the
-  // public DSL 2.0 has NO `actions` property on interactive_container — the
-  // click config is `behaviors` (required), the same shape buttons use:
+  // `actions: [{ type:'open_url', action:{ url, pcURL?… } }]` (or a callback,
+  // which the server returns as `action_request`). But the public DSL 2.0 has
+  // NO `actions` property on interactive_container — the click config is
+  // `behaviors` (required), the same shape buttons use:
   //   open_url  -> { type:'open_url', default_url, pc_url?, ios_url?, android_url? }
   //   callback  -> { type:'callback', value }
   // Emitting `actions` makes Feishu reject the card ("unknown property: actions").
   if (ownerTag === "interactive_container" && key === "actions" && Array.isArray(rawValue)) {
     const behaviors = rawValue
-      .map((a): Record<string, unknown> | undefined => {
-        if (!isRecord(a)) return undefined;
-        const inner = isRecord(a.action) ? a.action : {};
-        const t = typeof a.type === "string" ? a.type : undefined;
-        if (t === "open_url") {
-          const fields = projectOpenUrlFields(inner);
-          return fields ? { type: "open_url", ...fields } : undefined;
-        }
-        if (t === "callback") {
-          return { type: "callback", value: inner.value ?? {} };
-        }
-        return undefined;
-      })
+      .map((a) => actionEntryToBehavior(a, ownerTag, ctx))
       .filter((b): b is Record<string, unknown> => b !== undefined);
     if (behaviors.length === 0) return DROP;
     return ["behaviors", behaviors];
@@ -1124,18 +1249,32 @@ function convertField(
   // column_set / column：RAW `actions:[{type:'open_url', action:{url,…}}]`
   // → 公开 DSL `action: { multi_url: { url, pc_url?, … } }`。
   // 公开 schema 没有顶层 `actions`；漏投影会导致 element 宿主（如 card_state）丢 URL。
+  //
+  // 公开 ColumnAction 只有 multi_url，放不下回调载荷。回调/未知 type 不能静默丢：
+  // 报 unrepresentable_action，让调用方知道这份 RAW 里还有东西投影不出来。
   if (
     (ownerTag === "column_set" || ownerTag === "column") &&
     key === "actions" &&
     Array.isArray(rawValue)
   ) {
-    for (const a of rawValue) {
-      if (!isRecord(a)) continue;
-      if (a.type !== "open_url") continue;
-      const inner = isRecord(a.action) ? a.action : {};
-      const fields = projectOpenUrlFields(inner);
-      if (!fields) continue;
-      return ["action", { multi_url: openUrlFieldsToMultiUrl(fields) }];
+    // 这里的诊断统一由下面按「投影不出来」报一次，避免同一个 action 被报两遍。
+    const behaviors = rawValue
+      .map((a) => actionEntryToBehavior(a, ownerTag, ctx, null))
+      .filter((b): b is Record<string, unknown> => b !== undefined);
+    const openUrl = behaviors.find((b) => b.type === "open_url");
+    const unrepresentable = behaviors.filter((b) => b.type !== "open_url");
+    if (unrepresentable.length > 0) {
+      ctx.onWarn?.({
+        code: "unrepresentable_action",
+        ownerTag,
+        message:
+          `${ownerTag} 的 actions 含 ${unrepresentable.map((b) => String(b.type)).join(" / ")}，` +
+          "公开 DSL 的 ColumnAction 只有 multi_url，无法投影；该 action 不会出现在 DSL 里。",
+      });
+    }
+    if (openUrl) {
+      const { type: _t, ...fields } = openUrl;
+      return ["action", { multi_url: openUrlFieldsToMultiUrl(fields as unknown as OpenUrlFields) }];
     }
     return DROP;
   }
@@ -1880,12 +2019,12 @@ function snake(key: string): string {
  * - already-parsed `{ json_card: object, json_attachment? }`
  * - `{ card: ... }` / bare card (e.g. output of `dslToRaw`) → `convertRoot`
  */
-export function rawToDsl(raw: unknown): unknown {
-  if (isRawCardEnvelope(raw)) return rawCardToDsl(raw);
+export function rawToDsl(raw: unknown, options?: RawToDslOptions): unknown {
+  if (isRawCardEnvelope(raw)) return rawCardToDsl(raw, options);
 
   if (typeof raw === "string") {
     try {
-      return rawToDsl(JSON.parse(raw));
+      return rawToDsl(JSON.parse(raw), options);
     } catch {
       return raw;
     }
@@ -1907,6 +2046,7 @@ export function rawToDsl(raw: unknown): unknown {
     const ctx = makeCtx({
       images: (isRecord(attachment.images) ? attachment.images : {}) as AttachmentImageMap,
       atUsers: (isRecord(attachment.at_users) ? attachment.at_users : {}) as AttachmentAtUserMap,
+      onWarn: options?.onWarn,
     });
     return convertRoot(inner, ctx);
   }
@@ -1915,14 +2055,14 @@ export function rawToDsl(raw: unknown): unknown {
   if (isRecord(raw.card)) {
     const card = raw.card;
     if (typeof card.json_card === "string" || isRecord(card.json_card)) {
-      return rawToDsl(card);
+      return rawToDsl(card, options);
     }
-    return convertRoot(card, makeCtx());
+    return convertRoot(card, makeCtx({ onWarn: options?.onWarn }));
   }
 
   // Bare card (renderer RAW from dslToRaw, or already-unwrapped json_card)
   if ("body" in raw || "header" in raw || "schema" in raw) {
-    return convertRoot(raw, makeCtx());
+    return convertRoot(raw, makeCtx({ onWarn: options?.onWarn }));
   }
 
   return raw;

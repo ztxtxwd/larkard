@@ -349,11 +349,15 @@ test('dslToRaw/rawToDsl round-trips open_url platform URLs (copy button)', () =>
     },
   };
   const raw = dslToRaw(dsl) as any;
+  // 输出对齐服务端存储拼写（snake_case），而不是编辑器/历史数据的 camelCase。
   const action = raw.body.property.elements[0].property.actions[0].action;
   assert.equal(action.url, 'https://miao.cards');
-  assert.equal(action.pcURL, copy);
-  assert.equal(action.iosURL, copy);
-  assert.equal(action.androidURL, copy);
+  assert.equal(action.pc_url, copy);
+  assert.equal(action.ios_url, copy);
+  assert.equal(action.android_url, copy);
+  assert.equal(action.pcURL, undefined);
+  assert.equal(action.iosURL, undefined);
+  assert.equal(action.androidURL, undefined);
 
   const back = rawToDsl(raw) as any;
   assert.deepEqual(back.body.elements[0].behaviors[0], {
@@ -391,8 +395,9 @@ test('dslToRaw writes element_id as outer RAW id (not property)', () => {
   assert.equal(btn.id, 'btn_submit');
   assert.equal(md.property.element_id, undefined);
   assert.equal(btn.property.element_id, undefined);
+  // 服务端把回调存成 action_request；DSL→RAW 输出同一拼写，往返才能对齐。
   assert.deepEqual(btn.property.actions, [
-    { type: 'callback', action: { value: { action: 'go' } } },
+    { type: 'action_request', action: { value: { action: 'go' } } },
   ]);
 
   const back = rawToDsl(raw) as any;

@@ -13,6 +13,7 @@ export {
   isRawCardEnvelope,
   degradeUnknown,
 } from './raw-to-dsl.js';
+export type { RawToDslOptions, RawToDslWarning } from './raw-to-dsl.js';
 export { normalizeStoredCardColors, createColorRegistry, registerColorEntry } from './normalize-stored-colors.js';
 export type { CustomColorEntry } from './normalize-stored-colors.js';
 export {

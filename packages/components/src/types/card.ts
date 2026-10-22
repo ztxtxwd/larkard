@@ -37,16 +37,17 @@ export interface OpenUrlBehavior {
 }
 
 /**
- * 请求服务端动作。开放平台发消息（im/v1/messages）只接受 type = callback；
- * action_request 是客户端内部枚举，写进卡片 JSON 会返回 200621 unknown behavior type。
+ * 请求服务端动作。公开 DSL 写 type = callback；服务端存储/回读用
+ * action_request（im.message.get raw_card_content 就是这个拼写）。
+ * value 通常为对象，服务端也接受字符串载荷。
  */
 export interface CallbackBehavior {
   type: 'callback';
-  value: Record<string, unknown>;
+  value: Record<string, unknown> | string;
 }
 
-/** @deprecated 与 CallbackBehavior 相同。发出去的类型必须是 callback。 */
-export type ActionRequestBehavior = CallbackBehavior;
+/** 与 CallbackBehavior 相同，只是用服务端的 type 拼写（RAW/存储形态）。 */
+export type ActionRequestBehavior = CallbackBehavior & { type: 'action_request' };
 
 export type FeishuBehavior = OpenUrlBehavior | CallbackBehavior;
 

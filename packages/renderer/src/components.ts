@@ -1241,12 +1241,17 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-/** 按钮 / 下拉的回传对象。DSL 写在 value 上，RAW 写在 actions[].action.value。 */
+/**
+ * 按钮 / 下拉的回传对象。DSL 写在 value 上，RAW 写在 actions[].action.value。
+ * 回调 type 认两种拼写：`callback`（公开 DSL / 旧数据）与 `action_request`
+ * （服务端存储与 dslToRaw 输出的拼写）。
+ */
 function readCallbackValue(p: { value?: unknown; actions?: unknown; behaviors?: unknown }): Record<string, unknown> | null {
   const fromList = (list: unknown): Record<string, unknown> | null => {
     if (!Array.isArray(list)) return null;
     for (const item of list) {
-      if (!isRecord(item) || item.type !== 'callback') continue;
+      if (!isRecord(item)) continue;
+      if (item.type !== 'callback' && item.type !== 'action_request') continue;
       const inner = isRecord(item.action) ? item.action : item;
       if (isRecord(inner.value)) return inner.value;
     }
