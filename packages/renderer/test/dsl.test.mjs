@@ -1071,3 +1071,45 @@ test('avatar / collapse_divider / fallback_text / picker_date 可渲染', () => 
   assert.match(html, /universal-card-collapse-divider/);
   assert.match(html, /universal-card-collapsible-panel/);
 });
+
+/* ---- interactive_container 布局字段（direction / align / spacing）---- */
+
+function icStyle(ic) {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'interactive_container', width: '48px', height: '48px', elements: [{ tag: 'markdown', content: 'x' }], ...ic }] },
+  });
+  const m = html.match(/class="universal-card-interactive-container"[^>]*style="([^"]*)"/);
+  assert.ok(m, 'interactive_container 应输出内联 style');
+  return m[1];
+}
+
+test('interactive_container: direction=vertical 时 vertical_align→justify、horizontal_align→align', () => {
+  const style = icStyle({ direction: 'vertical', vertical_align: 'center', horizontal_align: 'right' });
+  assert.match(style, /justify-content:center/);
+  assert.match(style, /align-items:flex-end/);
+  // 纵向主轴不需要显式 flex-direction（CSS 默认 column）
+  assert.equal(/flex-direction:\s*row/.test(style), false);
+});
+
+test('interactive_container: direction=horizontal 时两个 align 的 flex 轴交换', () => {
+  const style = icStyle({ direction: 'horizontal', vertical_align: 'center', horizontal_align: 'right' });
+  assert.match(style, /flex-direction:row/);
+  // 主轴横向：horizontal_align 走 justify，vertical_align 走 align
+  assert.match(style, /justify-content:flex-end/);
+  assert.match(style, /align-items:center/);
+});
+
+test('interactive_container: horizontal_spacing→column-gap、vertical_spacing→row-gap', () => {
+  const style = icStyle({ horizontal_spacing: '12px', vertical_spacing: '6px' });
+  assert.match(style, /column-gap:12px/);
+  assert.match(style, /row-gap:6px/);
+});
+
+test('interactive_container: 未写 align 时不输出 justify/align（交给 CSS 默认）', () => {
+  const style = icStyle({});
+  assert.equal(/justify-content/.test(style), false);
+  assert.equal(/align-items/.test(style), false);
+  assert.equal(/column-gap/.test(style), false);
+  assert.equal(/row-gap/.test(style), false);
+});

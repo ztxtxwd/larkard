@@ -976,6 +976,27 @@ registerComponent('interactive_container', (el, ctx) => {
   if (borderColor) style.border = `1px solid ${borderColor}`;
   const radius = resolveCornerRadius(p as Record<string, unknown>);
   if (radius != null) style.borderRadius = radius;
+
+  // 布局：direction 决定主轴，两个 align 字段落到哪个 flex 属性也随之交换。
+  //   direction=vertical  → 主轴纵向：vertical_align→justify-content，horizontal_align→align-items
+  //   direction=horizontal→ 主轴横向：horizontal_align→justify-content，vertical_align→align-items
+  // 漏读这几个字段会让容器内子组件退化成「左上贴边、固定 4px 行距」，与真机对不上。
+  const horizontalDir = p.direction === 'horizontal';
+  if (horizontalDir) style.flexDirection = 'row';
+  const hAlign = p.horizontal_align ?? (p as { horizontalAlign?: string }).horizontalAlign;
+  const vAlign = p.vertical_align ?? (p as { verticalAlign?: string }).verticalAlign;
+  const H_ALIGN: Record<string, string> = { left: 'flex-start', center: 'center', right: 'flex-end' };
+  const V_ALIGN: Record<string, string> = { top: 'flex-start', center: 'center', bottom: 'flex-end' };
+  const justify = horizontalDir ? H_ALIGN[hAlign as string] : V_ALIGN[vAlign as string];
+  const align = horizontalDir ? V_ALIGN[vAlign as string] : H_ALIGN[hAlign as string];
+  if (justify) style.justifyContent = justify;
+  if (align) style.alignItems = align;
+
+  // 间距：与 direction 无关——horizontal_spacing 恒为列间距，vertical_spacing 恒为行间距。
+  // CSS 的 row-gap 4px 是兜底默认值，仅在未显式给 vertical_spacing 时生效。
+  const hGap = p.horizontalSpacingValue?.value ?? p.horizontal_spacing
+    ?? (p as { horizontalSpacing?: string }).horizontalSpacing;
+  if (hGap != null) style.columnGap = horizontalSpacingToPx(hGap as number | string) + 'px';
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
   if (vGap != null) style.rowGap = verticalSpacingToPx(vGap as number | string) + 'px';
   // width/height：fill→100%；"48px"/widthValue.pixels→定宽高（图标容器）。
