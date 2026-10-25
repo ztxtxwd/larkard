@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 已移除根级 `i18n_elements`，多语言改为在组件内用 `i18n_*` 属性（如 `i18n_content`）表达。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

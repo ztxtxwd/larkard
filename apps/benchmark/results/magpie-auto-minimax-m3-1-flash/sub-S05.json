@@ -1,0 +1,34 @@
+{
+  "kind": "subjective",
+  "taskId": "S05",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"折叠按钮组（overflow）示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**普通按钮**\\n通过 `behaviors` 配置点击行为。\"\n      },\n      {\n        \"tag\": \"button\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"查看详情\"\n        },\n        \"type\": \"primary\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**折叠按钮组**\\n点击「…」展开菜单。菜单项仍使用 `button` 组件，并通过 `behaviors` 配置交互行为。\"\n      },\n      {\n        \"tag\": \"overflow\",\n        \"options\": [\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"审批通过\"\n            },\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"key\": \"overflow_approve\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"稍后处理\"\n            },\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"key\": \"overflow_later\"\n                }\n              }\n            ]\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"查看帮助\"\n            },\n            \"behaviors\": [\n              {\n                \"type\": \"open_url\",\n                \"default_url\": \"https://open.feishu.cn/document/\"\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.444,
+    "total": 0.917,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "button",
+        "hr",
+        "markdown",
+        "overflow"
+      ],
+      "goldenTagSequence": [
+        "button",
+        "button",
+        "button",
+        "overflow"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

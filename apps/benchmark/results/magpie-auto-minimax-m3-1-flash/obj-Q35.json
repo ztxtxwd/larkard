@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 person。官方 table.columns.data_type 枚举中，「人员」对应 person。",
+  "extracted": "person",
+  "correct": false,
+  "weight": 15
+}

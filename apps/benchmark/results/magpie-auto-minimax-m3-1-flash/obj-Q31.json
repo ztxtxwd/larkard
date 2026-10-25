@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 10。官方约定 column.weight 的最大合法整数为 10。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

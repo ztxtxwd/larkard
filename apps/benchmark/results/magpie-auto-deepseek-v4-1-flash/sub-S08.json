@@ -1,0 +1,69 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**交互容器（interactive_container）** 用于将多个交互组件组合在一起，支持整体点击与表单提交。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"default\",\n        \"has_border\": true,\n        \"border_color\": \"grey\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px 12px 12px 12px\",\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"点击下方按钮触发回调事件。\"\n          },\n          {\n            \"tag\": \"button\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"点击触发回调\"\n            },\n            \"type\": \"primary\",\n            \"width\": \"default\",\n            \"behaviors\": [\n              {\n                \"type\": \"callback\",\n                \"value\": {\n                  \"action\": \"container_click\",\n                  \"source\": \"interactive_container_demo\"\n                }\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"interactive_container\",\n        \"width\": \"fill\",\n        \"height\": \"auto\",\n        \"background_style\": \"default\",\n        \"has_border\": true,\n        \"border_color\": \"blue\",\n        \"corner_radius\": \"8px\",\n        \"padding\": \"12px 12px 12px 12px\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://open.feishu.cn/document/\",\n            \"pc_url\": \"https://open.feishu.cn/document/\",\n            \"ios_url\": \"https://open.feishu.cn/document/\",\n            \"android_url\": \"https://open.feishu.cn/document/\"\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"整个容器可点击，跳转飞书开放平台文档。\"\n          },\n          {\n            \"tag\": \"div\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"点击卡片区域打开链接\"\n            },\n            \"text_size\": \"notation\",\n            \"text_color\": \"grey\"\n          }\n        ]\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"form\",\n        \"name\": \"demo_form\",\n        \"elements\": [\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"表单内的交互组件随提交一起发送。\"\n          },\n          {\n            \"tag\": \"input\",\n            \"name\": \"remark_input\",\n            \"placeholder\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"请输入备注\"\n            },\n            \"label\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"备注\"\n            },\n            \"input_type\": \"text\",\n            \"width\": \"fill\"\n          },\n          {\n            \"tag\": \"column_set\",\n            \"flex_mode\": \"none\",\n            \"horizontal_spacing\": \"default\",\n            \"columns\": [\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"提交\"\n                    },\n                    \"type\": \"primary\",\n                    \"name\": \"submit_btn\",\n                    \"form_action_type\": \"submit\"\n                  }\n                ]\n              },\n              {\n                \"tag\": \"column\",\n                \"width\": \"auto\",\n                \"elements\": [\n                  {\n                    \"tag\": \"button\",\n                    \"text\": {\n                      \"tag\": \"plain_text\",\n                      \"content\": \"重置\"\n                    },\n                    \"type\": \"default\",\n                    \"name\": \"reset_btn\",\n                    \"form_action_type\": \"reset\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.381,
+    "total": 0.832,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/behaviors: 组件 \"interactive_container\" 在表单外必须配置 behaviors 数组（open_url / callback）；进入 form 后可省略（交互随 submit 提交）"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "interactive_container",
+        "markdown",
+        "button",
+        "interactive_container",
+        "markdown",
+        "div",
+        "hr",
+        "form",
+        "markdown",
+        "input",
+        "column_set",
+        "button",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

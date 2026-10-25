@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q45",
+  "category": "2.0破坏性变更",
+  "format": "mcq",
+  "response": "答案是 B。JSON 2.0 的图片组件不再提供旧版通栏开关属性，官方约定通过将 margin 设为负值来实现通栏效果。",
+  "extracted": "B",
+  "correct": true,
+  "weight": 10
+}

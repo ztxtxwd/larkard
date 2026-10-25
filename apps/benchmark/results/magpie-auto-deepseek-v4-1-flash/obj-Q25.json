@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q25",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 的 markdown 组件已移除旧版 `[文本]($urlVal)` 配合 href 的差异化跳转语法，跳转需改用 `link` 等标准写法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

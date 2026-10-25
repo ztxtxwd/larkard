@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 action_type。表单容器内按钮通过该字段声明提交或重置动作。",
+  "extracted": "action_type",
+  "correct": false,
+  "weight": 25
+}

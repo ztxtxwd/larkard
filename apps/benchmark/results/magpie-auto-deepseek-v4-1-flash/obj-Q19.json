@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 form_name。  \n理由：飞书卡片 2.0 的表单容器通过 `form_name` 标识表单，回传提交数据时据此区分是哪一个表单。",
+  "extracted": "form_name",
+  "correct": false,
+  "weight": 12
+}

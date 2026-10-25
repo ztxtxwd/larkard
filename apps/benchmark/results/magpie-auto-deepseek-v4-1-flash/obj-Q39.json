@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q39",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 -180。  \n理由：飞书卡片折叠面板 `icon_expanded_angle` 未设置时默认按展开状态旋转 -180 度。",
+  "extracted": "-180",
+  "correct": false,
+  "weight": 10
+}

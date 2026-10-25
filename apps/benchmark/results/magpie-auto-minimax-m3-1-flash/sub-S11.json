@@ -1,0 +1,31 @@
+{
+  "kind": "subjective",
+  "taskId": "S11",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"表格组件示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"table\",\n        \"page_size\": 5,\n        \"row_height\": \"low\",\n        \"header_style\": {\n          \"text_align\": \"left\",\n          \"text_size\": \"normal\",\n          \"background_style\": \"grey\",\n          \"text_color\": \"default\",\n          \"bold\": true,\n          \"lines\": 1\n        },\n        \"columns\": [\n          {\n            \"name\": \"customer_name\",\n            \"display_name\": \"客户名称\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"scale\",\n            \"display_name\": \"规模\",\n            \"data_type\": \"text\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"arr\",\n            \"display_name\": \"ARR\",\n            \"data_type\": \"number\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"owner\",\n            \"display_name\": \"跟进人\",\n            \"data_type\": \"person\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"signed_date\",\n            \"display_name\": \"签约日期\",\n            \"data_type\": \"date\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"website\",\n            \"display_name\": \"链接\",\n            \"data_type\": \"link\",\n            \"width\": \"auto\"\n          },\n          {\n            \"name\": \"enterprise_image\",\n            \"display_name\": \"企业图片\",\n            \"data_type\": \"image\",\n            \"width\": \"auto\"\n          }\n        ],\n        \"rows\": [\n          {\n            \"customer_name\": \"星云科技\",\n            \"scale\": \"1000-4999 人\",\n            \"arr\": 1200000,\n            \"owner\": \"ou_demo123\",\n            \"signed_date\": \"2025-01-15\",\n            \"website\": \"https://www.feishu.cn\",\n            \"enterprise_image\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer_name\": \"蓝海集团\",\n            \"scale\": \"500-999 人\",\n            \"arr\": 860000,\n            \"owner\": \"ou_demo123\",\n            \"signed_date\": \"2025-02-20\",\n            \"website\": \"https://www.feishu.cn\",\n            \"enterprise_image\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer_name\": \"星河网络\",\n            \"scale\": \"100-499 人\",\n            \"arr\": 420000,\n            \"owner\": \"ou_demo123\",\n            \"signed_date\": \"2025-03-08\",\n            \"website\": \"https://www.feishu.cn\",\n            \"enterprise_image\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer_name\": \"云帆软件\",\n            \"scale\": \"50-99 人\",\n            \"arr\": 180000,\n            \"owner\": \"ou_demo123\",\n            \"signed_date\": \"2025-04-12\",\n            \"website\": \"https://www.feishu.cn\",\n            \"enterprise_image\": \"img_v2_demo-key\"\n          },\n          {\n            \"customer_name\": \"晨光智能\",\n            \"scale\": \"10-49 人\",\n            \"arr\": 96000,\n            \"owner\": \"ou_demo123\",\n            \"signed_date\": \"2025-05-18\",\n            \"website\": \"https://www.feishu.cn\",\n            \"enterprise_image\": \"img_v2_demo-key\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.25,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 1,
+    "total": 0.775,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/0/columns/3/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/5/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\"",
+        "/body/elements/0/columns/6/data_type: Invalid option: expected one of \"text\"|\"lark_md\"|\"options\"|\"number\"|\"persons\"|\"date\"|\"markdown\""
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "table"
+      ],
+      "goldenTagSequence": [
+        "table"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

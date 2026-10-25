@@ -273,6 +273,18 @@
       "extra": {
         "reasoning_effort": "none"
       }
+    },
+    {
+      "name": "magpie-auto-deepseek-v4-1-flash",
+      "model": "group/auto-deepseek-v4-1-flash",
+      "baseUrl": "http://127.0.0.1:3425/v1",
+      "apiKey": "local"
+    },
+    {
+      "name": "magpie-auto-minimax-m3-1-flash",
+      "model": "group/auto-minimax-m3-1-flash",
+      "baseUrl": "http://127.0.0.1:3425/v1",
+      "apiKey": "local"
     }
   ]
 }

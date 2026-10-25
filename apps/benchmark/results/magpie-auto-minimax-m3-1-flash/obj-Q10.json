@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q10",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 check_tag。飞书卡片 JSON 2.0 使用 `tag: \"check_tag\"` 标识勾选组件。",
+  "extracted": "check_tag",
+  "correct": false,
+  "weight": 8
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 fit_horizontal。<理由>飞书卡片 img 组件的 scale_type 支持 crop_center、fit_horizontal、fit_vertical、fit_page 等枚举，其中 fit_horizontal 表示水平拉伸贴齐。</理由>",
+  "extracted": "fit_horizontal",
+  "correct": true,
+  "weight": 12
+}

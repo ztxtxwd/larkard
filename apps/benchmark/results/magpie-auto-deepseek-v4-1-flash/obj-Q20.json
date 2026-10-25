@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q20",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。  \n理由：飞书卡片 JSON 2.0 已移除备注组件 `tag=note`，不再支持该写法。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

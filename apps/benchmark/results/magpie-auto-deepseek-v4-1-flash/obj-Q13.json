@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q13",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 submit。<在飞书卡片 2.0 的表单容器中，`form_action_type` 为 `submit` 表示提交表单，另有 `reset` 表示重置。>",
+  "extracted": "submit",
+  "correct": true,
+  "weight": 20
+}

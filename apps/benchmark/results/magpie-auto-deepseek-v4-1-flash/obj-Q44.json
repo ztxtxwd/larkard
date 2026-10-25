@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q44",
+  "category": "交互协议",
+  "format": "mcq",
+  "response": "答案是 C。callback 类型 behaviors 的 value 字段要求为字符串，用于回传交互动作的标识值。",
+  "extracted": "C",
+  "correct": false,
+  "weight": 16
+}

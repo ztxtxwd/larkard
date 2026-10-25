@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 primary_filled。\n\n飞书卡片 button 的 type 枚举中，`primary_filled` 表示蓝底白字的填充主按钮，而 `primary` 是带边框的蓝字文本按钮。",
+  "extracted": "primary_filled",
+  "correct": true,
+  "weight": 15
+}

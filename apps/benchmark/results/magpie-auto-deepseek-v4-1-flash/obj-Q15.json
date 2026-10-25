@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q15",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 中回传数据统一走 `behaviors` 里的 `callback`（或 `open_url` 等）承载，组件顶层的 `value` 属于 1.0 写法，2.0 不再沿用它做回传交互。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 25
+}

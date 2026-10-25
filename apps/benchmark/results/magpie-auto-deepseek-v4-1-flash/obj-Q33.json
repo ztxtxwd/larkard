@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q33",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 20。  \n理由：飞书卡片 2.0 的间距 token 中，`extra_large` 对应的水平间距像素值为 20。",
+  "extracted": "20",
+  "correct": false,
+  "weight": 10
+}

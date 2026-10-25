@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q26",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 notation。\n\n理由：飞书卡片文本组件（div 内 plain_text/lark_md）通过 `text_size` 字段设置字号，官方枚举包含 normal、heading、notation 等，其中 notation 即比正文更小的辅助说明/备注字号。",
+  "extracted": "notation",
+  "correct": true,
+  "weight": 20
+}

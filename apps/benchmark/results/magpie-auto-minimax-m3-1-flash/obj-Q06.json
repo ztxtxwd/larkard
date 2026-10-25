@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q06",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 action。该组件是可响应用户点击操作的交互容器。",
+  "extracted": "action",
+  "correct": false,
+  "weight": 15
+}

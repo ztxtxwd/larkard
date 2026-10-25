@@ -1,0 +1,34 @@
+{
+  "kind": "subjective",
+  "taskId": "S04",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**勾选器（Checker）示例**\\n请勾选下方选项。\"\n      },\n      {\n        \"tag\": \"form\",\n        \"elements\": [\n          {\n            \"tag\": \"checker\",\n            \"name\": \"checker\",\n            \"text\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"这是一个勾选器\"\n            },\n            \"value\": \"1\",\n            \"checked\": true\n          }\n        ],\n        \"submit\": {\n          \"text\": {\n            \"tag\": \"plain_text\",\n            \"content\": \"提交\"\n          },\n          \"type\": \"primary\"\n        }\n      }\n    ]\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"勾选器（Checker）示例\"\n    },\n    \"template\": \"blue\"\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.5,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.333,
+    "total": 0.75,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/1/name: Invalid input: expected string, received undefined",
+        "/body/elements/1/elements/0/value: Invalid input: expected record, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "form",
+        "checker"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "checker",
+        "checker"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

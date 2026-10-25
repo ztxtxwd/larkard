@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q07",
+  "category": "tag命名",
+  "format": "fill",
+  "response": "答案是 overflow。\n理由：飞书卡片 2.0 中「折叠按钮组 / 更多操作」对应组件的 tag 精确为 `overflow`。",
+  "extracted": "overflow",
+  "correct": true,
+  "weight": 15
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q22",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 是。JSON 2.0 支持在卡片根级通过 `i18n_elements` 配置全局多语言内容。",
+  "extracted": "是",
+  "correct": false,
+  "weight": 15
+}

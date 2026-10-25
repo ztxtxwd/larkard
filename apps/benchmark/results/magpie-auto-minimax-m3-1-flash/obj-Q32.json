@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q32",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 trisect。`column_set.flex_mode` 的 `trisect` 枚举值表示窄屏下三列等分。",
+  "extracted": "trisect",
+  "correct": true,
+  "weight": 15
+}

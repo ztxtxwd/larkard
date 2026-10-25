@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q34",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 10。  \n飞书卡片 table 组件的 `page_size` 未显式设置时按官方约定默认每页 10 行。",
+  "extracted": "10",
+  "correct": false,
+  "weight": 15
+}

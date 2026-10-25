@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q40",
+  "category": "枚举与字段",
+  "format": "mcq",
+  "response": "答案是 B。-90 不在合法枚举内，`icon_expanded_angle` 仅支持 -180、-90…不对，按官方约定它支持 180、-180、90、-90 中的正负 180 与 90，-90 合法；实际非法值为 45 之外的… \n\n更正：答案是 C。45 不是 `icon_expanded_angle` 的合法枚举值，官方仅支持 -180、-90、90、180。",
+  "extracted": "B",
+  "correct": false,
+  "weight": 10
+}

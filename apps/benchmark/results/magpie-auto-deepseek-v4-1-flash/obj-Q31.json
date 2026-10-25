@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q31",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 20。  \n飞书卡片 column 的 weight 用于按权重分配列宽，官方约定合法整数范围为 1–20，因此上限是 20。",
+  "extracted": "20",
+  "correct": false,
+  "weight": 15
+}

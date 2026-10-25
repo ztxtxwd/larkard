@@ -1,0 +1,31 @@
+{
+  "kind": "subjective",
+  "taskId": "S03",
+  "difficulty": "easy",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"普通文本（div）示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"这是一段普通文本内容，用于展示 div 组件的基础用法。\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"lark_md\",\n          \"content\": \"**加粗文本**，*斜体文本*，[链接示例](https://www.feishu.cn)\"\n        }\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"备注：以上为飞书卡片 JSON 2.0 普通文本文档示例。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"button\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"了解更多\"\n        },\n        \"type\": \"primary\",\n        \"behaviors\": [\n          {\n            \"type\": \"open_url\",\n            \"default_url\": \"https://www.feishu.cn\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.333,
+    "total": 0.9,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "div",
+        "div",
+        "div",
+        "hr",
+        "button"
+      ],
+      "goldenTagSequence": [
+        "div"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "kind": "subjective",
+  "taskId": "S10",
+  "difficulty": "hard",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"Buttons\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"以下展示飞书卡片中常见的按钮样式：镭射、禁用、primary、default 等。\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"flow\",\n        \"horizontal_spacing\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"镭射按钮\"\n                },\n                \"type\": \"laser\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"laser_click\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"禁用按钮\"\n                },\n                \"type\": \"default\",\n                \"disabled\": true\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"Primary\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"primary_click\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"Default\"\n                },\n                \"type\": \"default\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"default_click\"\n                    }\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"column_set\",\n        \"flex_mode\": \"flow\",\n        \"horizontal_spacing\": \"default\",\n        \"columns\": [\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"Danger\"\n                },\n                \"type\": \"danger\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"callback\",\n                    \"value\": {\n                      \"action\": \"danger_click\"\n                    }\n                  }\n                ]\n              }\n            ]\n          },\n          {\n            \"tag\": \"column\",\n            \"width\": \"auto\",\n            \"elements\": [\n              {\n                \"tag\": \"button\",\n                \"text\": {\n                  \"tag\": \"plain_text\",\n                  \"content\": \"打开链接\"\n                },\n                \"type\": \"primary\",\n                \"behaviors\": [\n                  {\n                    \"type\": \"open_url\",\n                    \"default_url\": \"https://open.feishu.cn/document\"\n                  }\n                ]\n              }\n            ]\n          }\n        ]\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"提示：点击按钮将触发回调或打开链接。\"\n        },\n        \"text_size\": \"notation\",\n        \"text_color\": \"grey\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.842,
+    "total": 0.901,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/body/elements/2/columns/1/elements/0/behaviors: 组件 \"button\" 在表单外必须配置 behaviors 数组（open_url / callback）；进入 form 后可省略（交互随 submit 提交）"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "hr",
+        "column_set",
+        "button",
+        "button",
+        "button",
+        "button",
+        "column_set",
+        "button",
+        "button",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "column_set",
+        "button",
+        "button",
+        "column_set",
+        "button",
+        "button",
+        "button",
+        "button"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

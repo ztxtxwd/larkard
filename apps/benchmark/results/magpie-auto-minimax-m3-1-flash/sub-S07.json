@@ -1,0 +1,54 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"style\": {\n      \"color\": \"blue\"\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本语法使用示例\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**<audio> 音频播放器示例**\\n以下示例使用同一个公开 MP3 地址，展示默认效果及可选属性。\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**默认效果**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**show_time = true：显示音频时长**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**show_time = false：不显示音频时长**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"false\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**自定义颜色：color 使用十六进制色值**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\" color=\\\"#1677FF\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**枚举颜色：color 使用预置颜色名**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\" color=\\\"blue\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**style = speak：语音播放样式**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\" style=\\\"speak\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**fallback：音频无法播放时显示兜底文案**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\" fallback=\\\"音频加载失败，请稍后重试\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading-1\",\n        \"content\": \"**text_size = heading-1**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading-2\",\n        \"content\": \"**text_size = heading-2**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading-3\",\n        \"content\": \"**text_size = heading-3**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading-4\",\n        \"content\": \"**text_size = heading-4**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"normal\",\n        \"content\": \"**text_size = normal**\\n<audio src=\\\"https://mdn.github.io/webaudio-examples/audio-basics/outfoxing.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.963,
+    "total": 0.919,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/config/style/color: Invalid input: expected record, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

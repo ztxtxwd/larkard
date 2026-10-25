@@ -78,12 +78,12 @@ export const ImageSchema = z
       .describe(
         '裁剪/缩放方式，默认 crop_center。内容图/截图/通栏配图用 fit_horizontal；crop_center/crop_top 仅用于缩略图/小头像式配图',
       ),
-    /** stretch / large / medium / small / tiny / "Wpx Hpx" */
+    /** stretch / large / medium / small / tiny / "Wpx Hpx" / "W:H" */
     size: z
       .string()
       .optional()
       .describe(
-        '图片尺寸：stretch / large / medium / small / tiny，或自定义 "Wpx Hpx"。仅对 crop_center/crop_top 生效；fit_horizontal 时不要写 size',
+        '图片尺寸：stretch / large / medium / small / tiny，或自定义 "Wpx Hpx" / 宽高比 "W:H"（如 "1:1"）。仅对 crop_center/crop_top 生效；fit_horizontal 时不要写 size',
       ),
     transparent: z
       .boolean()

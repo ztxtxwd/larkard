@@ -1,0 +1,53 @@
+{
+  "kind": "subjective",
+  "taskId": "S07",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"config\": {\n    \"style\": {\n      \"color\": {\n        \"text_color\": \"grey\"\n      }\n    }\n  },\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"富文本语法使用示例 · 音频播放器\"\n    },\n    \"subtitle\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"<audio> 标签用法一览\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**1. 默认效果**\\n<audio src=\\\"https://example.com/audio.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**2. show_time：显示时长**\\n<audio src=\\\"https://example.com/audio.mp3\\\" show_time=\\\"true\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**3. 自定义颜色 color**\\n<audio src=\\\"https://example.com/audio.mp3\\\" color=\\\"#FF8800\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**4. 枚举色 color**\\n<audio src=\\\"https://example.com/audio.mp3\\\" color=\\\"blue\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**5. style=\\\"speak\\\" 语音播报样式**\\n<audio src=\\\"https://example.com/audio.mp3\\\" style=\\\"speak\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"content\": \"**6. fallback：不支持时的降级文案**\\n<audio src=\\\"https://example.com/audio.mp3\\\" fallback=\\\"当前客户端不支持音频播放\\\"></audio>\"\n      },\n      {\n        \"tag\": \"hr\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading\",\n        \"content\": \"不同 text_size 下的播放器\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"normal\",\n        \"content\": \"**normal**\\n<audio src=\\\"https://example.com/audio.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"notation\",\n        \"content\": \"**notation**\\n<audio src=\\\"https://example.com/audio.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"markdown\",\n        \"text_size\": \"heading\",\n        \"content\": \"**heading**\\n<audio src=\\\"https://example.com/audio.mp3\\\"></audio>\"\n      },\n      {\n        \"tag\": \"div\",\n        \"text\": {\n          \"tag\": \"plain_text\",\n          \"content\": \"说明：以上示例仅演示 <audio> 富文本标签的写法，音频地址为示例值。\",\n          \"text_size\": \"notation\",\n          \"text_color\": \"grey\"\n        }\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 0.75,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.769,
+    "total": 0.89,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [
+        "/config/style/color/text_color: Invalid input: expected object, received string"
+      ],
+      "lintIssues": [],
+      "tagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "hr",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "div"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

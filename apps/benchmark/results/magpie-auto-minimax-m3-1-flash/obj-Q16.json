@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q16",
+  "category": "交互协议",
+  "format": "bool",
+  "response": "答案是 否。表单组件在用户填写过程中仅暂存输入值，不会立即触发服务端回调。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 16
+}

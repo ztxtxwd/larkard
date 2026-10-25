@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q23",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。JSON 2.0 规定卡片正文元素必须放在 `body.elements` 中，根对象不再直接挂 `elements`。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q27",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 laser。\n「镭射按钮」在 button 组件的 type 字段中对应的枚举值为 laser。",
+  "extracted": "laser",
+  "correct": true,
+  "weight": 10
+}

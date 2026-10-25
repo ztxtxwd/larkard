@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 auto。<在飞书卡片 2.0 中 column 的 width 支持 auto/weighted/具体像素，按 weight 权重分配时填 auto，真正的权重写在 weight 字段。>",
+  "extracted": "auto",
+  "correct": false,
+  "weight": 20
+}

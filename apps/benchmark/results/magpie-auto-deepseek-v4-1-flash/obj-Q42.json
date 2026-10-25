@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q42",
+  "category": "基础结构",
+  "format": "fill",
+  "response": "答案是 20。  \n理由：飞书卡片 JSON 2.0 中自定义 `element_id` 的最大长度为 20 个字符。",
+  "extracted": "20",
+  "correct": true,
+  "weight": 15
+}

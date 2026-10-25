@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-08T11:50:35.030Z",
+  "generatedAt": "2026-10-19T14:19:16.451Z",
   "models": [
     {
       "model": "azure-gpt-6-astra-no-think",
@@ -797,6 +797,87 @@
       "selfEval": "#### 做得好\n\n- 客观题整体正确率为 **36/45（80%）**，说明对飞书卡片 JSON 2.0 的基础结构、表单约束、2.0 破坏性变更等掌握较好。\n- **表单约束 3/3、2.0 破坏性变更 7/7、基础结构 2/2**，这些部分表现稳定。\n- 主观题 **13 道中 11 道编译通过**，说明大多数场景下能产出可被工具链接受的卡片结构。\n- 多道主观题 schema 得分较高：\n  - S01、S02、S03、S08、S10、S12 的 schema 均为 **100%**\n  - 其中 S03 达到 **100% 总分**\n- hard 难度题整体并不差：\n  - S10：94.6%\n  - S12：93.8%\n  - S11、S13 虽有 schema 问题，但仍编译通过并取得中等以上分数。\n\n#### 做得不好\n\n- 在一些官方 tag、枚举值、字段名上记忆不准确，导致客观题丢分：\n  - 把 `multi_select_static` 记成了 `select_static_multi`\n  - 把 `picker_time` 记成了 `time_picker`\n  - 把 `form_action_type` 误答为 `behavior`\n  - 把提交表单取值 `submit` 误答为 `form_submit`\n  - 把按钮蓝底白字类型 `primary_filled` 误答为 `default`\n  - 把图片水平拉伸 `fit_horizontal` 误答为 `crop_center`\n  - 把 `trisect` 误答为 `none`\n  - 把表格人员列 `persons` 误答为 `person`\n  - 把表格最大列数 `50` 误答为 `10`\n- 主观题中有两题编译失败：\n  - S07：`config.style.color` 中颜色配置期望 object，却给了 string。\n  - S09：部分元素缺少必需的 `header` 对象。\n- 主观题暴露出对部分组件 schema 的掌握不稳定：\n  - S04、S13 中 `action_type` 使用了不被接受的枚举值。\n  - S05 中 select 选项的 `value` 应为 string，却给了 object。\n  - S06 中 `combination_mode` 枚举值使用错误。\n  - S11 中 table `data_type` 使用了不合法枚举。\n- 表格相关表现相对薄弱：\n  - 客观题表格部分仅 **2/4**\n  - 主观题 S11 中表格列类型也出现了非法 `data_type`。\n\n#### 已掌握的知识\n\n- 已基本掌握飞书卡片 JSON 2.0 的整体结构和基础配置。\n- 已掌握表单的一些基础约束，客观题表单约束部分全对。\n- 已掌握 JSON 2.0 的破坏性变更相关知识，客观题该部分全对。\n- 能够完成多数 easy、medium、hard 主观场景，并让卡片通过编译。\n- 对常见布局、交互、基础组件有一定熟悉度，主观题大部分能达到较高 schema 分数。\n- 能正确处理不少复杂题型，尤其是 S10、S12 等 hard 题得分较高，说明并非只会简单卡片。\n\n#### 尚未掌握的知识\n\n- **官方 tag 命名仍需加强**，尤其是容易受通用前端或直觉命名影响的组件：\n  - 多选静态下拉是 `multi_select_static`\n  - 时间选择器是 `picker_time`\n- **表单交互协议需要进一步明确**：\n  - 表单容器内提交/重置按钮字段是 `form_action_type`\n  - 取值是 `submit` / `reset`\n  - 同时主观题中又出现了 `action_type` 枚举不合法的问题，说明按钮交互协议在不同上下文中的用法还不够稳。\n- **枚举值记忆不够准确**：\n  - 按钮类型：`primary_filled`\n  - 图片缩放：`fit_horizontal`\n  - 窄屏三列等分：`trisect`\n  - 表格人员列：`persons`\n- **表格能力需要补强**：\n  - `data_type` 的合法枚举需要记清，包括 `text`、`lark_md`、`options`、`number`、`persons`、`date`、`markdown`\n  - 表格最大列数是 `50`\n- **schema 细节仍有漏洞**：\n  - `config.style.color` 不是简单字符串，而是对象结构。\n  - 某些组件的 `header` 是必需对象。\n  - select 组件 option 的 `value` 应为 string，而不是 object。\n  - `combination_mode` 只能使用官方允许的枚举，如 `double`、`triple`、`bisect`、`trisect`。\n- 需要区分飞书卡片 JSON 2.0 的官方字段和通用前端/HTML 直觉，避免自行类推字段名或枚举名。\n\n#### 总评\n\n这次评测整体表现中上：客观题 **36/45**，主观题 **11/13 编译通过**，说明我已经具备生成飞书卡片 JSON 2.0 的基本能力，并能处理不少中高复杂度场景。\n\n主要短板不是完全不了解卡片体系，而是对官方 schema 的精确字段、tag 和枚举值掌握不够稳定。一部分错误属于**个别枚举或数字记错**，例如 `primary_filled`、`fit_horizontal`、`trisect`、`persons`、最大 50 列；另一部分则体现出**领域知识不足或套用通用前端直觉**，例如把 `picker_time` 写成 `time_picker`，把 `multi_select_static` 写成 `select_static_multi`，以及在交互协议中误用字段或枚举。\n\n后续提升重点应放在：系统记忆官方 tag、交互协议字段、表格 schema、样式配置结构，以及各类枚举值的精确写法。整体来看，基础已经具备，但要达到稳定可靠地产出飞书卡片 JSON 2.0，还需要进一步减少“看起来合理但不符合官方 schema”的写法。"
     },
     {
+      "model": "magpie-auto-minimax-m3-1-flash",
+      "objectiveAccuracy": 0.597,
+      "objectiveRawAccuracy": 0.5778,
+      "objectiveByCategory": {
+        "tag命名": {
+          "correct": 4,
+          "total": 10,
+          "weighted": 75,
+          "weightSum": 173
+        },
+        "交互协议": {
+          "correct": 6,
+          "total": 7,
+          "weighted": 122,
+          "weightSum": 147
+        },
+        "表单约束": {
+          "correct": 2,
+          "total": 3,
+          "weighted": 45,
+          "weightSum": 57
+        },
+        "2.0破坏性变更": {
+          "correct": 4,
+          "total": 7,
+          "weighted": 65,
+          "weightSum": 120
+        },
+        "枚举与字段": {
+          "correct": 4,
+          "total": 7,
+          "weighted": 50,
+          "weightSum": 87
+        },
+        "布局约束": {
+          "correct": 4,
+          "total": 5,
+          "weighted": 57,
+          "weightSum": 72
+        },
+        "表格": {
+          "correct": 1,
+          "total": 4,
+          "weighted": 16,
+          "weightSum": 56
+        },
+        "基础结构": {
+          "correct": 1,
+          "total": 2,
+          "weighted": 10,
+          "weightSum": 25
+        }
+      },
+      "subjectiveDims": {
+        "jsonParse": 1,
+        "schema": 0.8269,
+        "lint": 1,
+        "compile": 1,
+        "similarity": 0.7191,
+        "total": 0.906
+      },
+      "compilePassRate": 1,
+      "subjectiveByDifficulty": {
+        "easy": {
+          "total": 4,
+          "count": 3.7
+        },
+        "medium": {
+          "total": 5,
+          "count": 4.486
+        },
+        "hard": {
+          "total": 4,
+          "count": 3.592
+        }
+      },
+      "overallScore": 0.7824,
+      "taskCount": 58,
+      "selfEval": "#### 做得好\n\n- 主观题共 13 道，全部编译通过；其中 8 道 schema 为 100%，说明已具备生成基本可编译飞书卡片的能力。\n- 简单题整体稳定：S01、S02、S03 得分率分别为 100%、95%、100%，且 schema 全部通过。\n- 复杂题中也能完成较高质量的综合输出：S10 得分 97%、schema 100%；S12 得分 95.9%、schema 100%。\n- 交互协议掌握较好，客观题达到 6/7；布局约束达到 4/5，说明大部分通用交互结构和布局规则已经掌握。\n- 主观题平均得分约 90.6%，体现了较好的卡片组织能力、字段组合能力和整体完成度。\n\n#### 做得不好\n\n- 客观题仅 26/45，得分率约 57.8%，明显低于主观题，反映出“能生成卡片”与“严格符合官方规范”之间仍有较大差距。\n- tag 命名只有 4/10，是最突出的短板。Q02、Q06、Q07、Q08、Q09、Q10 分别答成 `person_picker`、`action`、`button_group`、`time_picker`、`date_time_picker`、`check_tag`，正确名称应为 `select_person`、`interactive_container`、`overflow`、`picker_time`、`picker_datetime`、`checker`。\n- 这些错误并非单纯拼写问题，而是多次按自造名称或通用前端概念推断官方 tag，说明对 JSON 2.0 专用组件词汇还不熟。\n- 表单字段语义混淆：Q12 将 `form_action_type` 答成 `action_type`；Q19 将表单的 `name` 答成 `id`。\n- 对 2.0 破坏性变更掌握不完整：Q20 错判 `note` 仍受支持，Q22 错判根级 `i18n_elements` 仍受支持，Q24 错判 `config.update_multi` 可以显式写 `false`。\n- 表格专项仅 1/4。`page_size` 默认值、`persons` 复数枚举、最大 50 列等细节均未答对。\n- 主观题虽然全部“编译通过”，但部分任务仍有严格 schema 错误，说明编译成功不能等同于字段类型和嵌套结构完全合法：\n  - S04：缺少必需的 `name`，且 `value` 类型不符合对象要求。\n  - S06：`combination_mode` 枚举非法，且缺少 `img_list`。\n  - S07：`config.style.color` 应为对象而非字符串。\n  - S11：多处 `data_type` 不在允许枚举中。\n  - S13：`user_id` 缺失，未满足字符串字段要求。\n\n#### 已掌握的知识\n\n- 已能稳定生成可编译的飞书卡片 JSON，且在简单到困难任务中都能保持结构完整。\n- 对多数交互行为和基础布局已有较完整认识：交互协议 6/7、布局约束 4/5。\n- 已能处理不少复杂卡片的组件组合、配置组织及内容层级；S10、S12 的高 schema 得分是直接证据。\n- 对表单基础约束和 2.0 破坏性变更已有部分掌握，分别达到 2/3 和 4/7，但尚未达到稳定准确的程度。\n- 在已知正确枚举和字段结构的基础上，能够完成较高分的综合任务，说明主要问题不是 JSON 编写能力，而是规范细节的精确记忆与调用。\n\n#### 尚未掌握的知识\n\n- **领域知识不足，需要系统补齐：**\n  - JSON 2.0 官方 tag 词汇表，尤其是 `select_person`、`interactive_container`、`overflow`、`picker_time`、`picker_datetime`、`checker`。\n  - 表单的专用属性名和语义：`form_action_type` 用于声明提交/重置行为，`name` 用于标识具体表单。\n  - 2.0 破坏性变更规则：`note` 已废弃；根级 `i18n_elements` 不再支持；`update_multi` 只能为 `true` 或省略。\n  - 严格 schema 的字段类型与必填关系，尤其是对象、数组、字符串以及组件专用配置之间的区别。\n\n- **个别枚举或数字记忆错误：**\n  - 按钮填充枚举应为 `primary_filled`，不是 `default`。\n  - 图片缩放枚举应为 `fit_horizontal`，不是 `stretch`。\n  - `icon_expanded_angle` 默认值应为 `180`，不是 `-180`。\n  - `column.weight` 上限为 `5`。\n  - `table.page_size` 默认值为 `5`。\n  - 人员列的 `data_type` 为复数 `persons`。\n  - 表格最多支持 `50` 列。\n  - `element_id` 最大长度为 `20` 个字符。\n\n- 上述枚举和数字错误单项看似孤立，但多个类别同时出错，说明目前还不能把官方规范细节视为稳定掌握。\n\n#### 总评\n\n本次表现呈现出明显的“两层能力差异”：主观题 13/13 编译通过、8 道 schema 满分，说明生成和组织卡片的基本能力较好；但客观题仅 26/45，说明面对“必须精确填写官方 tag、字段名、枚举和限制值”的场景时，规范记忆仍是主要瓶颈。\n\n问题可明确分为两类：一类是领域知识不足，包括把 JSON 2.0 组件按通用前端或自造名称命名、混淆表单字段语义，以及不了解破坏性变更；另一类是个别枚举和数字记错，如 `primary_filled`、`fit_horizontal`、`persons`、默认 5、最大 50、最大 20 等。当前不能评价为已全面掌握飞书 Card JSON 2.0，更准确的结论是：**具备较好的卡片生成与组织能力，但官方词汇、精确 schema 和限制值的掌握仍不稳定。**"
+    },
+    {
       "model": "kivy-deepseek-v4_1-flash-no-think",
       "objectiveAccuracy": 0.6581,
       "objectiveRawAccuracy": 0.6667,
@@ -876,6 +957,87 @@
       "overallScore": 0.7745,
       "taskCount": 58,
       "selfEval": "#### 做得好\n\n- **基础结构与 2.0 破坏性变更**：基础结构 2/2 满分，2.0 破坏性变更 6/7，说明对卡片整体骨架（config/header/body/elements）和 2.0 相对 1.0 的主要迁移点掌握得比较扎实。\n- **主观题编译通过率高**：13 道主观题中 12 道编译通过，其中 S01–S05、S10、S12、S13 的 schema 均为 100%，S13 总分 98.3%、S01 95.0%、S12 94.8%，说明在「能写出合法可编译卡片」这件事上整体是稳的。\n- **表格方向**：表格 3/4，只错了一个 data_type 枚举，说明 table 结构本身理解到位。\n- **表单约束**：2/3，只错了一个字段名，方向基本正确。\n\n#### 做得不好\n\n- **tag 命名（6/10）**：这是最集中的失分区。错题里 Q02（select_person 写成 picker_person_single）、Q07（overflow 写成 collapsible_panel）、Q08（picker_time 写成 time_picker）、Q09（picker_datetime 写成 date_picker）全部是「自己按语义拼了一个看起来合理的名字」，而不是官方枚举。这是典型的**领域知识不足**——把通用命名直觉当成了官方 tag。\n- **布局约束（2/5）**：Q30（weighted 写成 weight）、Q32（trisect 写成 bisect）、Q33（extra_large=16 写成 20）三连错。前两个是枚举记错，第三个是 token→像素映射记错，属于**个别枚举/数字记错**。\n- **交互协议（4/7）**：Q12（form_action_type 写成 name）、Q13（submit 答案被污染成一段解析文本）、Q14（callback 写成 config）三处错。Q13 的答案明显是输出串了，不是知识问题；Q12/Q14 是字段名/取值记错。\n- **主观题 S07 编译失败**：`config/style/color/light` 下缺 `light_mode`/`dark_mode`，说明对 2.0 主题色配置的必填结构没记全，schema=0%。\n- **主观题 S09 schema=25%**：header icon token 用了不在合法枚举里的值，报错列表极长——本质还是「icon token 必须从官方枚举里选」这一点没落实。\n- **主观题 S06/S08/S11 schema=75%**：分别是 combination_mode 枚举写错、表单外 interactive_container 缺 behaviors、table 列 data_type 写错，都是**枚举/约束记错**，不是结构不会写。\n\n#### 已掌握的知识\n\n- 卡片 JSON 2.0 的基础骨架：config、header、body、elements 的组织方式。\n- 2.0 破坏性变更的主体（6/7），包括 update_multi 在 2.0 下只能为 true 或省略这类约束。\n- table 组件的整体结构（columns + rows），只差一个 data_type 枚举。\n- form 容器的基本用法，知道表单内交互随 submit 提交。\n- 能稳定产出 schema 100%、可编译的卡片（S01–S05、S10、S12、S13）。\n\n#### 尚未掌握的知识\n\n- **官方 tag 命名体系**：`select_person`、`overflow`、`picker_time`、`picker_datetime` 这类「picker_/select_ 前缀 + 语义」的官方命名规则没有内化，仍在按直觉造名字。\n- **表单交互字段名**：`form_action_type`（按钮上声明 submit/reset 的属性）、form 容器自身的 `name` 字段，这两个容易和通用 `name` 混淆。\n- **回传交互协议**：behaviors 回传是 `type: callback` 并带 value 对象，不是 `config`。\n- **button type 枚举**：`primary_filled`（蓝底白字）与 `primary`（蓝字有边框）的区别没分清，误答 default。\n- **布局枚举与 token 数值**：`width: weighted`、`flex_mode: trisect`、`horizontal_spacing` 的 token→像素映射（small=4/medium=8/large=12/extra_large=16）。\n- **table 列 data_type 枚举**：人员列是 `persons`（复数），不是 options/person。\n- **折叠面板 header 图标旋转角**：`icon_expanded_angle` 默认 180（合法值仅 ±90、±180），误答 -180。\n- **2.0 主题色配置结构**：`config/style/color/light` 与 `dark` 下必须同时给 `light_mode`/`dark_mode`。\n- **header icon token 必须取自官方枚举**，不能自造。\n\n#### 总评\n\n整体是一份「结构能力明显强于枚举记忆」的成绩单。客观题 30/45，失分几乎全部集中在**官方枚举/字段名/数值**上，而不是卡片结构或逻辑；主观题 12/13 编译通过、多道 schema 满分，也印证了「会搭骨架、但细节枚举靠猜」这个画像。\n\n需要区分两类问题：\n1. **领域知识不足**——tag 命名（Q02/Q07/Q08/Q09）和 icon token（S09）属于这一类，本质是把 HTML/通用前端的命名直觉套到了飞书卡片上，需要专门去记官方 tag 表。\n2. **个别枚举/数字记错**——Q30/Q32/Q33/Q28/Q35/Q39、S06/S11 属于这一类，是零散的枚举值和 token 数值没背准，补一张对照表即可。\n\n下一步优先级：先把**官方 tag 命名规则**和**枚举对照表**（button type、flex_mode、width、spacing token、data_type、icon token）过一遍，这两块补上后客观题和主观题 schema 分都会有明显提升。"
+    },
+    {
+      "model": "magpie-auto-deepseek-v4-1-flash",
+      "objectiveAccuracy": 0.6811,
+      "objectiveRawAccuracy": 0.6667,
+      "objectiveByCategory": {
+        "tag命名": {
+          "correct": 7,
+          "total": 10,
+          "weighted": 113,
+          "weightSum": 173
+        },
+        "交互协议": {
+          "correct": 5,
+          "total": 7,
+          "weighted": 106,
+          "weightSum": 147
+        },
+        "表单约束": {
+          "correct": 2,
+          "total": 3,
+          "weighted": 45,
+          "weightSum": 57
+        },
+        "2.0破坏性变更": {
+          "correct": 7,
+          "total": 7,
+          "weighted": 120,
+          "weightSum": 120
+        },
+        "枚举与字段": {
+          "correct": 5,
+          "total": 7,
+          "weighted": 67,
+          "weightSum": 87
+        },
+        "布局约束": {
+          "correct": 0,
+          "total": 5,
+          "weighted": 0,
+          "weightSum": 72
+        },
+        "表格": {
+          "correct": 2,
+          "total": 4,
+          "weighted": 26,
+          "weightSum": 56
+        },
+        "基础结构": {
+          "correct": 2,
+          "total": 2,
+          "weighted": 25,
+          "weightSum": 25
+        }
+      },
+      "subjectiveDims": {
+        "jsonParse": 1,
+        "schema": 0.75,
+        "lint": 1,
+        "compile": 0.9231,
+        "similarity": 0.5081,
+        "total": 0.8358
+      },
+      "compilePassRate": 0.9231,
+      "subjectiveByDifficulty": {
+        "easy": {
+          "total": 4,
+          "count": 3.6399999999999997
+        },
+        "medium": {
+          "total": 5,
+          "count": 3.737
+        },
+        "hard": {
+          "total": 4,
+          "count": 3.4890000000000003
+        }
+      },
+      "overallScore": 0.774,
+      "taskCount": 58,
+      "selfEval": "#### 做得好\n\n- **2.0 破坏性变更 7/7 全对**，这是最容易踩坑的一块，说明对 2.0 与旧版差异、以及「不能沿用旧写法」这一点有清晰认识。\n- 基础结构 2/2、tag 命名 7/10、枚举与字段 5/7，整体对卡片骨架和大部分命名规则掌握较稳。\n- 主观题整体表现明显好于客观题：13 道中 12 道编译通过，S12、S13 拿到 schema=100%，S01–S05 分数均在 88% 以上，说明在完整场景下能把结构搭对。\n- 交互协议、表单约束这类「配置行为」的问题大部分答对，说明对 open_url / callback / form 提交流程有基本模型。\n\n#### 做得不好\n\n错题可以分成两类，性质不同：\n\n**一、领域知识不足（套用了通用前端 / HTML 直觉，用错 tag 或语义）**\n\n- Q02 人员选择写成 `person_select`（正确 `select_person`）、Q08 写成 `time_picker`（正确 `picker_time`）、Q09 写成 `date_time_picker`（正确 `picker_datetime`）——这是同一类错误的三个表现：把「语义化英文」直译成 tag，而 Lark 的命名是「`select_` / `picker_` 前缀 + 对象」的固定词序，不是自然英语语序。\n- Q12 用 `action_type` 代替 `form_action_type`、Q19 用 `form_name` 代替 `name`——属于「按直觉猜字段名」，没有回到官方字段表核对。\n- Q38 认为 table 可以嵌进 column——这是明显的通用前端思维（\"表格当然能放进布局容器\"），但 Lark 明确禁止 table 内嵌、只能放根节点。这题错得最有代表性。\n- Q44 callback.value 认为必须是字符串——同样是把「值一般是字符串」的通用直觉套上来，官方要求是对象。\n- S06 用了 `combination_mode` 且取值写成 `double/triple`，还漏了 `img_list` 必填数组——把「图片组合」的概念拼成了不存在的字段组合。\n- S09 大量 `header.icon.token` 用了不在枚举内的图标名（报错列表极长），说明对 icon token 白名单基本没有记忆，靠自造名字。\n- S11 表格列 `data_type` 写成 `persons` 以外的错值（报错显示至少 3 列非法），与 Q35 的 `persons` 错误同源，是同一个知识点没记牢，反复失分。\n\n**二、个别枚举 / 数字记错（知道有这个概念，但记错了值）**\n\n- Q30 `column.width` 权重分配应填 `weighted`，答成 `auto`——知道有「按权重」这回事，但枚举名记错。\n- Q31 `column.weight` 上限应为 5，答成 20——纯数字记忆错误。\n- Q32 窄屏三列等分应为 `trisect`，答成 `bisect`——`bisect/trisect` 两个近形枚举混淆。\n- Q33 `extra_large` 应为 16px，答成 20——间距 token 映射表没背准。\n- Q34 `page_size` 默认值应为 5，答成 10——数字记错。\n- Q35 人员列 `data_type` 应为 `persons`，答成 `people`——语义对、枚举名错。\n- Q39 展开旋转角默认 180，答成 -180（合法但非默认）；Q40 又把「哪个不合法」错选成 -90（实际 -90 合法，45 才不合法）——两题连错，说明对「合法值集合 ±90/±180」和「默认 180」没分清。\n- **布局约束 0/5 是整张试卷最差的一块**，Q30–Q33、Q38 五道布局题全错，集中在 `column_set` / `column` 的 width、weight、flex_mode、spacing 四个维度上。\n\n#### 已掌握的知识\n\n- 卡片 2.0 相对旧版的破坏性变更（7/7）。\n- 卡片基础结构：根节点、body、elements 的基本组织方式。\n- 大部分 tag 命名规则（10 题对 7），以及单选、文本等常规组件的 tag。\n- 交互协议主干：callback / open_url 两类 behaviors 的使用场景，form 内按钮随 submit 提交的机制（S08、S10 的报错都是「表单外缺 behaviors」，说明对「表单内外行为差异」的理解方向是对的，只是落到具体 children 时漏配）。\n- 表单容器与提交/重置的基本流程。\n- 主观题中简单到中等难度的整卡构造：S01–S05 结构分均在 88 分以上。\n\n#### 尚未掌握的知识\n\n- **布局约束全体系**：`column_set.flex_mode` 全部枚举（none/stretch/flow/bisect/trisect）及各自场景、`column.width` 的 `auto` 与 `weighted` 的区别、`weight` 的 1–5 整数范围、`horizontal_spacing` 的 token→px 映射（4/8/12/16）。这是最需要系统补的一块。\n- **Lark 特有的命名词序**：`select_person`、`picker_time`、`picker_datetime` 一类「前缀 + 对象」的 tag 规则，不能按自然英语猜。\n- **表单相关字段名的官方叫法**：`form_action_type`（不是 action_type）、form 容器的 name 字段。\n- **组件嵌套约束**：table 只能放根节点、不能内嵌；分栏不支持内嵌 table。\n- **icon token 白名单**：`header.icon.token` 只能取 outlined/filled/colorful 三类固定枚举，不能自造名字（S09 大面积失分点）。\n- **表格列的 data_type 枚举全集**：text / lark_md / markdown / options / number / persons / date；人员列是 `persons` 复数。\n- **数值型默认值**：table `page_size` 默认 5、范围 [1,10]；折叠面板默认旋转 180、合法值仅 ±90/±180。\n- **callback.value 必须是 object** 的类型约束。\n- **图片组合组件的正确字段**：不是 `combination_mode` + `double/triple`，且需配 `img_list` 数组。\n\n#### 总评\n\n客观题 30/45，主观题 13 道过 12 道、S12/S13 满分，整体处于「能搭出大部分可用卡片、但细节枚举和布局参数靠猜」的水平。\n\n失分结构很清晰：**2.0 破坏性变更、基础结构、交互主干这些\"框架性\"知识是通的；失分几乎全部集中在\"查表型\"细节上**——tag 词序、字段名、枚举值、数值默认值、嵌套约束。而且其中相当一部分错题属于同一种思维模式：把通顺的英文或通用前端习惯（table 可以嵌套、value 是字符串、weight 可以很大、时间选择器叫 time_picker）直接当成 Lark 规范，没有回到官方字段表核对。\n\n建议的补法：\n1. 先整块补**布局约束**（flex_mode / width / weight / spacing 四张表），这是当前最大短板，且 S06、S11 的 schema 失败也和布局、列类型相关。\n2. 把 **tag 词序规则**和**表单字段名**整理成一页速查，专治「直译英文」习惯。\n3. 记牢几个数值：weight 1–5、page_size 默认 5（上限 10）、spacing 4/8/12/16、旋转 180/±90/±180。\n4. icon token 不要自造，只从 outlined / filled / colorful 白名单里挑。\n\n一句话：**方向对、骨架对，输在\"该查表时没查表\"**。把枚举与数字类知识固化成清单，客观题分数能很快上去。"
     },
     {
       "model": "kivy-qwen3_8-max-hinted-no-think",

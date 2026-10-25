@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q24",
+  "category": "2.0破坏性变更",
+  "format": "bool",
+  "response": "答案是 否。  \n理由：飞书卡片 JSON 2.0 的 `config.update_multi` 是布尔配置项，官方约定其默认值即为 `false`，只需在需要开启时写 `true`，不支持/不建议显式写 `false`。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 15
+}

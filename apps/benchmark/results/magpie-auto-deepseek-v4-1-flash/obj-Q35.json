@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q35",
+  "category": "表格",
+  "format": "fill",
+  "response": "答案是 people。  \n飞书卡片表格列的人员类型在 `data_type` 中使用枚举值 `people`。",
+  "extracted": "people",
+  "correct": false,
+  "weight": 15
+}

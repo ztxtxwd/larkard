@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q28",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 default。官方 button.type 枚举中，default 表示蓝底白字填充按钮，primary 表示蓝字有边框文案按钮。",
+  "extracted": "default",
+  "correct": false,
+  "weight": 15
+}

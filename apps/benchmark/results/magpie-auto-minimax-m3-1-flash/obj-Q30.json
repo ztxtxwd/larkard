@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q30",
+  "category": "布局约束",
+  "format": "fill",
+  "response": "答案是 weighted。`width` 字段取 `weighted` 时，列宽会按 `weight` 权重分配。",
+  "extracted": "weighted",
+  "correct": true,
+  "weight": 20
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q14",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 callback。<理由>飞书卡片 2.0 中回传交互由 behaviors 里的 type: \"callback\" 定义，用户点击后把 action 值回传给服务端。",
+  "extracted": "callback",
+  "correct": true,
+  "weight": 20
+}

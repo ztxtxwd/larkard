@@ -1,0 +1,55 @@
+{
+  "kind": "subjective",
+  "taskId": "S08",
+  "difficulty": "medium",
+  "response": "```json\n{\n  \"schema\": \"2.0\",\n  \"header\": {\n    \"title\": {\n      \"tag\": \"plain_text\",\n      \"content\": \"交互容器 Demo\"\n    },\n    \"template\": \"blue\"\n  },\n  \"body\": {\n    \"elements\": [\n      {\n        \"tag\": \"interactive_container\",\n        \"behaviors\": [\n          {\n            \"type\": \"callback\",\n            \"value\": {\n              \"key\": \"interactive_container_click\"\n            }\n          }\n        ],\n        \"elements\": [\n          {\n            \"tag\": \"img\",\n            \"img_key\": \"img_v2_demo-key\",\n            \"alt\": {\n              \"tag\": \"plain_text\",\n              \"content\": \"交互容器示例图片\"\n            },\n            \"preview\": true\n          },\n          {\n            \"tag\": \"markdown\",\n            \"content\": \"**交互容器示例**\\n点击图片或文字区域，将触发 `interactive_container_click` 回调。\"\n          }\n        ]\n      }\n    ]\n  }\n}\n```",
+  "score": {
+    "jsonParse": 1,
+    "schema": 1,
+    "lint": 1,
+    "compile": 1,
+    "similarity": 0.2,
+    "total": 0.88,
+    "compiled": true,
+    "details": {
+      "parseErrors": [],
+      "schemaErrors": [],
+      "lintIssues": [],
+      "tagSequence": [
+        "interactive_container",
+        "img",
+        "markdown"
+      ],
+      "goldenTagSequence": [
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "column_set",
+        "markdown",
+        "markdown",
+        "interactive_container",
+        "markdown",
+        "column_set",
+        "div",
+        "interactive_container",
+        "column_set",
+        "img",
+        "markdown"
+      ],
+      "similarityBase": "golden"
+    }
+  }
+}

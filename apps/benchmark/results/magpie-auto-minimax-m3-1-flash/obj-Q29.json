@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q29",
+  "category": "枚举与字段",
+  "format": "fill",
+  "response": "答案是 stretch。`stretch` 表示图片水平拉伸贴齐容器。",
+  "extracted": "stretch",
+  "correct": false,
+  "weight": 12
+}

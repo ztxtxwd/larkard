@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q12",
+  "category": "交互协议",
+  "format": "fill",
+  "response": "答案是 action_type。  \n飞书卡片里按钮通过 `action_type` 字段声明其行为类型，表单容器的提交/重置按钮即用它指定为 submit/reset。",
+  "extracted": "action_type",
+  "correct": false,
+  "weight": 25
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q19",
+  "category": "表单约束",
+  "format": "fill",
+  "response": "答案是 id。  \n表单容器的 `id` 字段用于唯一标识具体提交的表单。",
+  "extracted": "id",
+  "correct": false,
+  "weight": 12
+}

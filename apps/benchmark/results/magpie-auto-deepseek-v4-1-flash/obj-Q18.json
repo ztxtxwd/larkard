@@ -1,0 +1,10 @@
+{
+  "kind": "objective",
+  "taskId": "Q18",
+  "category": "表单约束",
+  "format": "bool",
+  "response": "答案是 否。  \n理由：飞书卡片 2.0 中 form 是顶层容器组件，官方约定其只能作为卡片根级/顶层组件使用，不允许被内嵌在 column 等其它组件内部。",
+  "extracted": "否",
+  "correct": true,
+  "weight": 20
+}
