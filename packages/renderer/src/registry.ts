@@ -357,6 +357,11 @@ export function horizontalMarginPx(margin: unknown): { left: number; right: numb
  * 把 margin 写进 style；若有水平外边距且当前/默认是撑满宽，则改成
  * `calc(100% - L - R)`，避免与 `.universal-card-body > * { width:100% }` 叠加溢出。
  * 已有明确像素宽（如图标框 48px）时不改 width。
+ *
+ * 负外边距＝出血（如顶层大图 margin:-20px 顶到卡片边）：真机那个带 margin 的盒子
+ * width 是 auto，负 margin 会让它同时向两侧撑宽；渲染器这边盒子已经写死 width:100%，
+ * 光加负 margin 只会整体左移、右边留一条空白，所以要把宽度改成 `calc(100% + |L+R|)`，
+ * 并放开 max-width（CSS 的 max-width:100% 会把出血宽度夹回容器宽，右边又留白）。
  */
 export function applyOuterMargin(
   style: Record<string, string>,
@@ -367,11 +372,13 @@ export function applyOuterMargin(
   style.margin = mg;
   const { left, right } = horizontalMarginPx(margin);
   const inset = left + right;
-  if (inset <= 0) return;
+  if (inset === 0) return;
   const w = style.width;
   if (w && /px$/i.test(w) && !w.includes('%')) return; // 定宽元素保持原宽
   if (!w || w === '100%' || w === 'fill') {
-    style.width = `calc(100% - ${inset}px)`;
+    style.width = inset > 0 ? `calc(100% - ${inset}px)` : `calc(100% + ${-inset}px)`;
+    // 出血时盒子比容器宽，max-width:100% 会被夹回容器宽 → 右边又留白，放开。
+    if (inset < 0) style.maxWidth = 'none';
   }
 }
 

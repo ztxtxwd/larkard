@@ -361,8 +361,11 @@
    这里不再给相邻子元素设 margin-top——否则与 row-gap 叠加，间距翻倍。 */
 
 /* ---- 图片 ---- */
+/* 真机网页版 .universal-card-image__host{border-radius:0}：图片默认直角，
+   圆角只由 DSL/RAW 的 corner_radius 内联给出（见 img 组件）。
+   之前这里写死 4px，导致没写 corner_radius 的图在渲染器里四角被圆掉，与真机不符。 */
 .universal-card-image__wrapper { display: flex; max-width: 100%; }
-.universal-card-image__host { max-width: 100%; height: auto; object-fit: cover; border-radius: 4px; }
+.universal-card-image__host { max-width: 100%; height: auto; object-fit: cover; border-radius: 0; }
 .universal-card-image__placeholder {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 80px; min-height: 48px; padding: 8px 12px;

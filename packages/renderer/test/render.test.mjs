@@ -679,6 +679,60 @@ test('RAW: img fit_horizontal + horizontal margin → calc width', () => {
   assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
 });
 
+// 负水平外边距＝出血（顶层大图 margin:-20px 顶到卡片边）。真机那个盒子 width:auto，
+// 负 margin 让它同时往两侧撑宽；渲染器盒子写死 width:100%，光加负 margin 只会整体左移、
+// 右边留一条空白，所以宽度要改成 calc(100% + |L+R|)，并放开 max-width（否则被夹回容器宽）。
+test('RAW: img 负水平外边距 → 出血到容器两边（calc(100% + 40px) + max-width:none）', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img',
+    property: {
+      imageKey: 'img_test',
+      scaleType: 'fit_horizontal',
+      margin: {
+        top: { type: 'pixels', value: -20 },
+        right: { type: 'pixels', value: -20 },
+        bottom: { type: 'pixels', value: 0 },
+        left: { type: 'pixels', value: -20 },
+      },
+      alt: { tag: 'plain_text', property: { content: '' } },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-image__wrapper[^>]*margin:-20px -20px 0px -20px/);
+  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% \+ 40px\)/);
+  assert.match(html, /universal-card-image__wrapper[^>]*max-width:none/);
+});
+
+// 真机网页版 .universal-card-image__host{border-radius:0}：不写 corner_radius 就是直角，
+// 圆角只由 corner_radius 内联给出。之前 CSS 写死 4px，导致图片四角被圆掉，与真机不符。
+test('img 圆角：未声明 corner_radius 时不加圆角（对齐真机 border-radius:0）', () => {
+  assert.match(ALL_CSS, /\.universal-card-image__host\s*\{[^}]*border-radius:\s*0/);
+
+  const bare = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'img',
+      img_key: 'img_test',
+      scale_type: 'fit_horizontal',
+      alt: { tag: 'plain_text', content: '图' },
+    }] },
+  });
+  const img = bare.match(/class="universal-card-image__(?:host|placeholder)"[^>]*>/)?.[0] || '';
+  assert.ok(img, bare);
+  assert.doesNotMatch(img, /border-radius/);
+
+  const rounded = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'img',
+      img_key: 'img_test',
+      scale_type: 'fit_horizontal',
+      corner_radius: '8px',
+      alt: { tag: 'plain_text', content: '图' },
+    }] },
+  });
+  assert.match(rounded, /universal-card-image__(?:host|placeholder)[^>]*border-radius:8px/);
+});
+
 // 真机 video / fill 按钮常带左右 20px；原先未 applyOuterMargin，左右贴边。
 test('RAW: video + horizontal margin → calc width', () => {
   const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
