@@ -1354,3 +1354,83 @@ test('markdown inline <at>: resolves name from persons map when available', () =
   assert.match(html, /@刘广宇/);
   assert.doesNotMatch(html, /@张三/);
 });
+
+// ---- 预览与真机一致性（header 底色 / 控件宽度分档） ----
+
+test('header: default 模板白底 + __bg--no-template（真机不设背景色）', () => {
+  const html = renderCardToString({ json_card: {
+    header: { tag: 'card_header', property: {
+      template: 'default',
+      title: { tag: 'plain_text', property: { content: '添加信息源' } },
+    } },
+    body: { tag: 'body', property: { elements: [] } },
+  } });
+  // 真机 default/disabled 模板的 bg_color 是空串，透出卡根 --bg-float(#ffffff)
+  assert.match(html, /background-color:#ffffff/);
+  assert.doesNotMatch(html, /background-color:#f5f6f7/);
+  // 无模板 → header 底部不留额外内边距
+  assert.match(html, /universal-card-header__bg--no-template/);
+});
+
+test('header: 彩色模板仍上色，且不挂 --no-template', () => {
+  const html = renderCardToString({ json_card: {
+    header: { tag: 'card_header', property: {
+      template: 'blue',
+      title: { tag: 'plain_text', property: { content: '标题' } },
+    } },
+    body: { tag: 'body', property: { elements: [] } },
+  } });
+  assert.match(html, /universal-card-header--blue/);
+  assert.doesNotMatch(html, /universal-card-header__bg--no-template/);
+});
+
+test('input: 默认 100% 但上限 282px；width=fill 解除上限', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'input', property: { name: 'q', placeholder: '搜索' } },
+    { tag: 'input', property: { name: 'q2', placeholder: '搜索', width: 'fill' } },
+  ] } } } });
+  assert.match(html, /style="width:100%;max-width:282px"/);
+  assert.match(html, /style="width:100%;max-width:none"/);
+});
+
+test('select: 默认定宽 282px；type=text 自适应无边框；width=fill 撑满', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'select_static', property: { name: 'c', placeholder: '按分类浏览' } },
+    { tag: 'select_static', property: { name: 'c2', placeholder: '浏览', type: 'text' } },
+    { tag: 'select_static', property: { name: 'c3', placeholder: '浏览', width: 'fill' } },
+  ] } } } });
+  assert.match(html, /style="width:282px;max-width:100%"/);
+  assert.match(html, /universal-card-input--text" style="width:auto;max-width:100%"/);
+  assert.match(html, /style="width:100%;max-width:none"/);
+});
+
+test('button: 未写 width → --auto（宽屏自适应、窄屏撑满）；text 族恒 --block', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'button', property: {
+      type: 'primary',
+      text: { tag: 'plain_text', property: { content: '搜索' } },
+    } },
+    { tag: 'button', property: {
+      type: 'primary_text',
+      text: { tag: 'plain_text', property: { content: '查看' } },
+    } },
+  ] } } } });
+  assert.match(html, /universal-card-button--primary universal-card-button--auto/);
+  assert.match(html, /universal-card-button--primary_text universal-card-button--block/);
+});
+
+test('styles: 控件宽度相关规则与真机一致', () => {
+  // 表单容器的纵向间距 12px（真机 schema 2.0）
+  assert.match(ALL_CSS, /\.universal-card-form\s*\{[^}]*row-gap:\s*12px/);
+  // 卡片根是容器查询的参照物，阈值 320px 即真机的 isWide 判定
+  assert.match(ALL_CSS, /\.universal-card-root\s*\{[^}]*container-type:\s*inline-size/);
+  assert.match(ALL_CSS, /@container universal-card \(max-width:\s*320px\)\s*\{\s*\.universal-card-button--auto\s*\{\s*width:\s*100%/);
+  // 自适应按钮不被父级拉伸
+  assert.match(ALL_CSS, /\.universal-card-button\s*\{[^}]*align-self:\s*flex-start/);
+  assert.match(ALL_CSS, /\.universal-card-button--auto\s*\{\s*width:\s*auto/);
+  // 按钮不参与 body/form 的「子元素撑满」
+  assert.match(ALL_CSS, /\.universal-card-body > \*:not\(\.universal-card-button\)/);
+  assert.match(ALL_CSS, /\.universal-card-form > \*:not\(\.universal-card-button\)/);
+  // input 默认上限 282px
+  assert.match(ALL_CSS, /\.universal-card-input,\s*\.universal-card-input--static\s*\{[^}]*max-width:\s*282px/);
+});

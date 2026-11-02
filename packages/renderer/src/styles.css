@@ -26,6 +26,9 @@
   width: 100%;
   max-width: 605px;
   box-sizing: border-box;
+  /* 真机按「卡片容器宽度 > 320px」区分宽/窄屏按钮档位，这里用容器查询复刻 */
+  container-type: inline-size;
+  container-name: universal-card;
   /* BEGIN PALETTE VARS (auto-generated from constants.ts PALETTE) */
   /* 正文 color:var(--O400) 等依赖这些变量；与飞书 :root light 色阶对齐 */
   --B50: #f0f4ff;
@@ -208,6 +211,8 @@
   /* 对齐飞书：max(100%, 605px) 140px，窄卡不把高光拉稀 */
   background-size: max(100%, 605px) 140px;
 }
+/* default/disabled 模板真机不设背景色（bg_color 为空串），此时 header 不留底部内边距 */
+.universal-card-header__bg--no-template { padding-bottom: 0; }
 /* 内容行：左侧图标 + 右侧标题区（对齐网页版 header__content = row） */
 .universal-card-header__content {
   width: 100%;
@@ -274,7 +279,9 @@
   column-gap: 12px;
   align-items: flex-start;
 }
-.universal-card-body > * { width: 100%; box-sizing: border-box; }
+/* 交互控件不参与「子元素撑满」：按钮的宽度由真机规则决定（见 .universal-card-button--auto），
+   若被这条 blanket 规则拉到 100%，窄屏/宽屏分档就失效了。 */
+.universal-card-body > *:not(.universal-card-button) { width: 100%; box-sizing: border-box; }
 
 /* ---- markdown 段落 ---- */
 /* 对齐网页版：line-height 默认 1.6；具体字号/行高由组件内联 style 按 text_size 给出 */
@@ -394,10 +401,14 @@
   flex-shrink: 0; height: 1.2em; color: inherit;
 }
 .universal-card-button__icon .universal-card-icon { color: inherit; }
-/* 宽度：对齐真机——body > * { width:100% }、列 flex stretch 会把按钮撑满所在行/列。
-   不再强制 width:auto（那是网页版观感；真机独立成行的按钮默认占满整行）。
-   width:"fill" 显式挂 --block，与缺省撑满同宽，并供 margin calc 识别。 */
-.universal-card-button--block { width: 100%; }
+/* 宽度：对齐真机 ud__button 的 isWide 分档（真机按「卡片容器宽度 > 320px」判定）：
+   宽屏 → 自适应内容宽（--auto）；窄屏（≤320px）→ 撑满整行（下方 @container 规则覆盖）。
+   text 族与 width:"fill" 恒定撑满（--block）。
+   align-self:flex-start —— 父级（body/form/column）默认 align-items:stretch，
+   只写 width:auto 仍会被拉伸，必须同时阻止拉伸。 */
+.universal-card-button { min-width: 58px; align-self: flex-start; }
+.universal-card-button--block { width: 100%; min-width: unset; }
+.universal-card-button--auto { width: auto; }
 
 /* —— outlined 描边族 —— */
 /* default：灰描边 + 白底 + 深字（未加变体类的裸 .universal-card-button 已是白底深字，
@@ -424,6 +435,8 @@
 .universal-card-button--danger_text {
   border-color: transparent; background: transparent; padding: 4px 8px;
   justify-content: flex-start;
+  /* 真机 text 族按钮不设最小宽度 */
+  min-width: unset;
 }
 .universal-card-button--text { color: #1f2329; }
 .universal-card-button--primary_text { color: #1456f0; }
@@ -459,6 +472,8 @@
 .universal-card-overflow--static { display: inline-flex; }
 .universal-card-overflow__summary {
   list-style: none; cursor: pointer; display: inline-flex;
+  /* 真机折叠按钮的最小宽度是 32px（普通按钮是 58px） */
+  min-width: 32px;
 }
 /* 去掉 <summary> 的浏览器默认三角标记 */
 .universal-card-overflow__summary::-webkit-details-marker { display: none; }
@@ -480,8 +495,9 @@
 .universal-card-overflow__item:hover { background: #f5f6f7; }
 
 /* ---- 表单（预览：仅透传，无表单语义） ---- */
-.universal-card-form { display: flex; flex-direction: column; row-gap: 8px; }
-.universal-card-form > * { width: 100%; }
+/* row-gap 12px：对齐真机 schema 2.0 表单容器 */
+.universal-card-form { display: flex; flex-direction: column; row-gap: 12px; }
+.universal-card-form > *:not(.universal-card-button) { width: 100%; }
 /* input / select：静态预览是只读框；interactive 去掉 --static，成为可输入控件 */
 .universal-card-input,
 .universal-card-input--static {
@@ -489,6 +505,13 @@
   font-family: inherit; font-size: 14px; line-height: 20px;
   background: #fff; border: 1px solid #dee0e3; border-radius: 6px;
   color: #1f2329; width: 100%;
+  /* 真机 input 默认 max-width:282px（width:"fill" 时由内联样式放开） */
+  max-width: 282px;
+}
+/* select type:"text"：真机是无边框、内容自适应宽的下拉 */
+.universal-card-input--text {
+  border-color: transparent; background: transparent;
+  min-height: 26px; padding: 1px 7px; width: auto;
 }
 .universal-card-input--static {
   color: #8f959e; background: #f5f6f7;
@@ -1155,4 +1178,11 @@
 @keyframes universal-card-toast-out {
   from { opacity: 1; transform: translateY(0); }
   to { opacity: 0; transform: translateY(-100%); margin-bottom: 0; }
+}
+
+/* ---- 窄屏分档（真机 isWide：卡片容器宽度 > 320px 为宽屏） ----
+   真机规则：default/primary/primary_filled/danger/danger_filled/laser 按钮在窄屏撑满整行，
+   宽屏则自适应内容宽。@container 不增加选择器权重，靠源码顺序在 --auto 规则之后覆盖。 */
+@container universal-card (max-width: 320px) {
+  .universal-card-button--auto { width: 100%; }
 }
