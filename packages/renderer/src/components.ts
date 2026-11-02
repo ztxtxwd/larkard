@@ -30,7 +30,7 @@ import {
   registerComponent, renderElement, renderElements,
   resolveColor, resolveDimensionPx, resolveImageSize, resolveImageSrc, resolveMediaSrc,
   resolveTextSizeKey, resolveURL, resolveVideoCoverSrc, sizeToPx,
-  horizontalSpacingToPx, verticalSpacingToPx,
+  horizontalMarginPx, horizontalSpacingToPx, verticalSpacingToPx,
   textStyleToModifiers, textStyleToStyle,
 } from './registry';
 import { resolveCustomBorderLight } from '@open-feishu-card/adapter';
@@ -504,12 +504,17 @@ export function registerBuiltins(): void {
     subtitleVNode,
   ];
 
+  // 无模板（default/disabled）时客户端给 __bg 挂 --no-template：
+  // 底部 padding 收成 0，header 与 body 之间的间距交给 body 的 paddingTop（客户端 #18/D8 收成 8px）。
+  const tplKey2 = (p.template || 'default') as string;
+  const noTemplate = !tplKey2 || tplKey2 === 'default' || tplKey2 === 'disabled';
+
   return h('div', {
     className: `${CLS}-header ${CLS}-header--${p.template || 'default'}`,
     style: { backgroundColor: tpl.bg, color: tpl.text },
   },
     h('div', {
-      className: `${CLS}-header__bg`,
+      className: `${CLS}-header__bg${noTemplate ? ` ${CLS}-header__bg--no-template` : ''}`,
       // 内联 base64 高光纹理；图宽=header 宽使亮带居中；padding 透传 DSL（默认 12px）
       style: (() => {
         const s: Record<string, string> = { backgroundImage: `url(${HEADER_BG_LIGHT})` };
@@ -1201,18 +1206,41 @@ registerComponent('button', (el, ctx) => {
     ? resolveURL((p.actions.find((a) => (a as { type?: string }).type === 'open_url') as { action?: { url?: unknown } } | undefined)?.action?.url)
     : '';
   const url = actionUrl || resolveURL(p.url) || p.behaviors?.[0]?.default_url?.url;
-  // width:"fill" → 撑满所在列（block）。真机 RAW 用 widthValue:{type:'builtin_width',value:'fill'}，
-  // DSL / 部分路径仍可能直接带 width:"fill"——两处都认（对齐 audio）。
-  // 缺省宽度也由布局撑满（body > * / 列 stretch），与真机一致；--block 仍标记显式 fill。
+  // 宽度：真机按「容器宽度是否 > 320px」分档（客户端 useIsWide + oa() 的宽度策略）：
+  //   default/primary/primary_filled/danger/danger_filled/laser → 宽屏内容自适应、窄屏撑满整行
+  //   text/primary_text/danger_text（纯文字族）→ 恒撑满整行，文字仍靠左
+  //   width:"fill" → 恒撑满；width:"120px" → 定宽
+  // 真机 RAW 用 widthValue:{type:'builtin_width',value:'fill'}，DSL 直接写 width:"fill"——两处都认。
   const wv = p.widthValue as { type?: string; value?: string | number } | undefined;
   const widthTok = (p.width ?? wv?.value) as string | number | undefined;
-  const block = widthTok === 'fill';
-  const base = `${CLS}-button ${CLS}-button--${type}${block ? ` ${CLS}-button--block` : ''}`;
-  // 外边距（如 margin:12px 20px）；水平 margin 用 calc 抵消 body>*{width:100%}。
+  const isFill = widthTok === 'fill';
+  const pxWidth = /^\d+(\.\d+)?px$/i.test(String(widthTok ?? '')) ? String(widthTok) : '';
+  // 纯文字族恒撑满（客户端 NonFill 策略 → "100%"）
+  const textFamily = type === 'text' || type === 'primary_text' || type === 'danger_text';
+  const block = isFill || textFamily;
+  // 其余（未写 width）→ 宽屏自适应、窄屏撑满
+  const auto = !block && !pxWidth;
+  const base = `${CLS}-button ${CLS}-button--${type}`
+    + (block ? ` ${CLS}-button--block` : '')
+    + (auto ? ` ${CLS}-button--auto` : '');
+  // 外边距（如 margin:12px 20px）。撑满的按钮用 calc 抵消左右 margin（对齐真机元素壳的算法）；
+  // 自适应宽度的按钮保持内容宽，margin 直接给，只用 max-width 防溢出。
   const style: Record<string, string> = {};
-  if (p.margin) {
-    style.width = '100%';
-    applyOuterMargin(style, p.margin);
+  if (pxWidth) {
+    style.width = pxWidth;
+    if (p.margin) applyOuterMargin(style, p.margin);
+  } else if (p.margin) {
+    if (block) {
+      style.width = '100%';
+      applyOuterMargin(style, p.margin);
+    } else {
+      // 自适应宽度不写死 inline width：窄屏撑满由 @container 规则控制，
+      // 内联样式优先级更高，写死会盖掉窄屏分档。
+      applyOuterMargin(style, p.margin);
+      const { left, right } = horizontalMarginPx(p.margin);
+      const inset = left + right;
+      if (inset > 0) style.maxWidth = `calc(100% - ${inset}px)`;
+    }
   }
   const styleProp = Object.keys(style).length ? { style } : {};
   const extra = p as ElementProperty & Record<string, unknown>;
@@ -1328,15 +1356,66 @@ registerComponent('form', (el, ctx) => {
 });
 
 // input / select：静态预览是只读框。interactive 时变成可输入控件，name 进入 FormData。
+/**
+ * 真机宽度规则（客户端 oa() / eo()，逆向自飞书网页版引擎）：
+ * - input / date_picker：默认 100% 但上限 282px（`.universal-card-input__container--default-width`）；
+ *   width=fill 解除上限；width="120px" 定宽。
+ * - select（单选/多选/人员）：默认定宽 282px（eo() 的 `{maxWidth:"100%", width:"282px"}`）；
+ *   type="text" 内容自适应且无边框（eo() 只给 maxWidth）；width=fill / width="auto" → 100%。
+ */
+function fieldWidthStyle(p: Record<string, unknown>, kind: 'input' | 'select'): Record<string, string> {
+  const wv = p.widthValue as { type?: string; value?: string | number } | undefined;
+  const raw = String(p.width ?? wv?.value ?? '');
+  const style: Record<string, string> = {};
+  if (/^\d+(\.\d+)?px$/i.test(raw)) {
+    style.width = raw;
+    style.maxWidth = '100%';
+    return style;
+  }
+  if (raw === 'fill') {
+    style.width = '100%';
+    style.maxWidth = 'none';
+    return style;
+  }
+  if (kind === 'select') {
+    // width:"auto" 在客户端走 DefaultFill（100%），与 "default"（282px）不同
+    if (raw === 'auto') {
+      style.width = '100%';
+      style.maxWidth = '100%';
+      return style;
+    }
+    if (p.type === 'text') {
+      style.width = 'auto';
+      style.maxWidth = '100%';
+      return style;
+    }
+    style.width = '282px';
+    style.maxWidth = '100%';
+    return style;
+  }
+  style.width = '100%';
+  style.maxWidth = '282px';
+  return style;
+}
+
 function renderStaticField(el: CardElement) {
-  const p = el.property || {};
+  const p = (el.property || {}) as ElementProperty & Record<string, unknown>;
   const ph = extractPlainText(p.placeholder) || '';
-  return h('div', { className: `${CLS}-input ${CLS}-input--static` }, ph);
+  const kind = isSelectTag(el.tag) ? 'select' : 'input';
+  const cls = `${CLS}-input ${CLS}-input--static`
+    + (kind === 'select' && p.type === 'text' ? ` ${CLS}-input--text` : '');
+  return h('div', { className: cls, style: fieldWidthStyle(p, kind) }, ph);
 }
 
 function fieldText(value: unknown): string {
   if (typeof value === 'string') return value;
   return extractPlainText(value);
+}
+
+/** 下拉类组件（单选/多选/人员）走 select 的宽度规则 */
+function isSelectTag(tag: string): boolean {
+  return tag === 'select_static' || tag === 'multi_select_static'
+    || tag === 'select_person' || tag === 'multi_select_person';
 }
 
 function renderInteractiveField(el: CardElement) {
@@ -1348,13 +1427,15 @@ function renderInteractiveField(el: CardElement) {
   const actionProp = callback
     ? { 'data-feishu-action': JSON.stringify(callback), 'data-feishu-tag': el.tag }
     : {};
-  if (el.tag === 'select_static' || el.tag === 'multi_select_static') {
+  if (isSelectTag(el.tag)) {
     const initial = p.initial_option ?? p.initialOption;
     const options = Array.isArray(p.options) ? p.options : [];
+    const cls = `${CLS}-input` + (p.type === 'text' ? ` ${CLS}-input--text` : '');
     return h('select', {
-      className: `${CLS}-input`,
+      className: cls,
+      style: fieldWidthStyle(p, 'select'),
       ...nameProp,
-      ...(el.tag === 'multi_select_static' ? { multiple: true } : {}),
+      ...(el.tag === 'multi_select_static' || el.tag === 'multi_select_person' ? { multiple: true } : {}),
       ...actionProp,
     }, [
       h('option', { value: '' }, ph),
@@ -1373,6 +1454,7 @@ function renderInteractiveField(el: CardElement) {
   const inputType = el.tag === 'date_picker' ? 'date' : el.tag === 'picker_time' ? 'time' : 'text';
   return h('input', {
     className: `${CLS}-input`,
+    style: fieldWidthStyle(p, 'input'),
     type: inputType,
     placeholder: ph,
     value: typeof def === 'string' ? def : '',

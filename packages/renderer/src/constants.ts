@@ -134,7 +134,10 @@ export function paletteColor(raw: string | undefined): string | undefined {
  * grey / neutral → bg N500 + text N00（白字中灰底；飞书 token 为
  * --udtoken-message-card-*-neutral。高光用通用强纹理 aac0718d1d，
  * 叠加后观感对齐官方样图 / 真机，避免旧弱纹理显得过深）；
- * default 为浅灰底深字（N50 / N900）。
+ * default 为**白底深字**：客户端 fallbackStyle 里 default/disabled 的 bg_color 是空串
+ * （客户端 be8b738f.js 的 header fallbackStyle），即不设背景色，透出卡片根的
+ * --bg-float（#ffffff）。此前这里写 #f5f6f7（N50），预览里就多出一条浅灰标题栏，
+ * 真机并没有。
  */
 export const HEADER_TEMPLATE: Record<HeaderTemplate, { bg: string; text: string }> = (() => {
   const bgException: Record<string, string> = { neutral: 'N500', grey: 'N500' };
@@ -153,7 +156,7 @@ export const HEADER_TEMPLATE: Record<HeaderTemplate, { bg: string; text: string 
       text: PALETTE[textException[n] || letter + '600'],
     };
   }
-  out.default = { bg: '#f5f6f7', text: '#1f2329' };
+  out.default = { bg: '#ffffff', text: '#1f2329' };
   return out;
 })();
 
