@@ -1,5 +1,12 @@
 # @open-feishu-card/validator
 
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies [d14e395]
+  - @open-feishu-card/schema@0.1.10
+
 ## 0.1.8
 
 ### Patch Changes

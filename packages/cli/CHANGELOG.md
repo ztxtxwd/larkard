@@ -1,5 +1,12 @@
 # @open-feishu-card/cli
 
+## 0.1.25
+
+### Patch Changes
+
+- @open-feishu-card/compiler@0.1.24
+  - @open-feishu-card/validator@0.1.9
+
 ## 0.1.24
 
 ### Patch Changes
