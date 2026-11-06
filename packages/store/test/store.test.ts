@@ -2,9 +2,13 @@ import assert from 'node:assert/strict';
 import { deflateSync } from 'node:zlib';
 import { describe, it } from 'node:test';
 import {
+  CARD_SIZE_BUDGET,
   STATE_CODEC_VERSION,
   STATE_ELEMENT_ID,
   STATE_URL_PREFIX,
+  StateCodecError,
+  buildStateHostPatch,
+  cardByteLength,
   createStateHost,
   decodeStateUrl,
   encodeStateUrl,
@@ -231,6 +235,82 @@ describe('seal / read / unseal', () => {
     assert.deepEqual(unsealCardState(card), { bye: 1 });
     assert.equal(findStateHost(card), null);
     assert.equal(readCardState(card), null);
+  });
+});
+
+describe('named hosts', () => {
+  it('keeps several hosts side by side, each read by id', () => {
+    const card = baseCard();
+    sealCardState(card, { program: 'p1' }, { id: 'card_prog' });
+    sealCardState(card, { n: 1 });
+    sealCardState(card, { n: 2 });
+
+    assert.deepEqual(readCardState(card, { id: 'card_prog' }), { program: 'p1' });
+    assert.deepEqual(readCardState(card), { n: 2 });
+    const ids = (card.body as { elements: Array<{ element_id?: string }> }).elements
+      .map((el) => el.element_id)
+      .filter(Boolean);
+    assert.deepEqual(ids, ['card_prog', STATE_ELEMENT_ID]);
+  });
+
+  it('does not let the default host read a named host', () => {
+    const card = baseCard();
+    sealCardState(card, { program: 'p1' }, { id: 'card_prog' });
+    assert.equal(readCardState(card), null);
+    assert.equal(findStateHost(card), null);
+    assert.equal(readCardState(card, { id: 'other' }), null);
+  });
+
+  it('reads named hosts from the RAW shape', () => {
+    const prog = encodeStateUrl({ program: 1 });
+    const state = encodeStateUrl({ n: 3 });
+    const rawHost = (id: string, url: string) => ({
+      id,
+      tag: 'column_set',
+      property: { actions: [{ type: 'open_url', action: { url } }], columns: [] },
+    });
+    const card = { body: { property: { elements: [rawHost('card_prog', prog), rawHost(STATE_ELEMENT_ID, state)] } } };
+    assert.deepEqual(readCardState(card, { id: 'card_prog' }), { program: 1 });
+    assert.deepEqual(readCardState(card), { n: 3 });
+  });
+
+  it('reads through the raw_card_content envelope', () => {
+    const card = baseCard();
+    sealCardState(card, { program: 'p1' }, { id: 'card_prog' });
+    sealCardState(card, { n: 7 });
+    const envelope = { json_card: JSON.stringify(card), json_attachment: {}, card_schema: 2 };
+    assert.deepEqual(readCardState(envelope), { n: 7 });
+    assert.deepEqual(readCardState(envelope, { id: 'card_prog' }), { program: 'p1' });
+    assert.ok(findStateHost(envelope));
+  });
+
+  it('unseals only the requested host', () => {
+    const card = baseCard();
+    sealCardState(card, { program: 'p1' }, { id: 'card_prog' });
+    sealCardState(card, { n: 1 });
+    assert.deepEqual(unsealCardState(card, { id: 'card_prog' }), { program: 'p1' });
+    assert.deepEqual(readCardState(card), { n: 1 });
+  });
+
+  it('rejects ids the platform would refuse', () => {
+    assert.throws(() => sealCardState(baseCard(), 1, { id: '1abc' }), StateCodecError);
+    assert.throws(() => createStateHost(`${STATE_URL_PREFIX}s1.abc`, 0, { id: 'a'.repeat(21) }), StateCodecError);
+  });
+});
+
+describe('buildStateHostPatch', () => {
+  it('builds a CardKit partial_update_element op for the host', () => {
+    const op = buildStateHostPatch({ n: 5 }, { id: 'card_state' });
+    assert.equal(op.action, 'partial_update_element');
+    assert.equal(op.params.element_id, STATE_ELEMENT_ID);
+    assert.deepEqual(decodeStateUrl(op.params.partial_element.action.multi_url.url), { n: 5 });
+  });
+});
+
+describe('cardByteLength', () => {
+  it('counts UTF-8 bytes of the serialized card', () => {
+    assert.equal(cardByteLength({ a: '中' }), JSON.stringify({ a: '中' }).length + 2);
+    assert.ok(CARD_SIZE_BUDGET === 30 * 1024);
   });
 });
 

@@ -2,19 +2,37 @@ import {
   decodeStateUrl,
   encodeStateUrl,
   isStateUrl,
+  StateCodecError,
   STATE_URL_PREFIX,
 } from './codec.js';
 
 /** 专用空分栏宿主标识。发出去只写 element_id（官方 schema 不收 id）；客户端回读时标识键可能是 id。 */
 export const STATE_ELEMENT_ID = 'card_state';
 
+/** 宿主选项。一张卡可挂多个宿主（如不可变程序 + 可变状态），按 id 区分。 */
+export interface StateHostOptions {
+  /** 宿主 element_id，默认 `card_state`。须符合官方 element_id 规则。 */
+  id?: string;
+}
+
+const ELEMENT_ID_PATTERN = /^[A-Za-z][A-Za-z0-9_]{0,19}$/;
+
+function hostIdOption(options: StateHostOptions | undefined): string {
+  const id = options?.id ?? STATE_ELEMENT_ID;
+  if (!ELEMENT_ID_PATTERN.test(id)) {
+    throw new StateCodecError(`宿主 id 不合法：${id}（字母开头，仅字母/数字/下划线，不超过 20 字符）`);
+  }
+  return id;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/** visit 返回 false 时不再深入该节点的子树。 */
 function walk(
   node: unknown,
-  visit: (obj: Record<string, unknown>, parent: Record<string, unknown> | null) => void,
+  visit: (obj: Record<string, unknown>, parent: Record<string, unknown> | null) => void | false,
   parent: Record<string, unknown> | null = null,
 ): void {
   if (Array.isArray(node)) {
@@ -22,7 +40,7 @@ function walk(
     return;
   }
   if (!isRecord(node)) return;
-  visit(node, parent);
+  if (visit(node, parent) === false) return;
   for (const value of Object.values(node)) walk(value, visit, node);
 }
 
@@ -79,15 +97,16 @@ function extractStateUrl(node: Record<string, unknown>): string | null {
   return null;
 }
 
-function isStateHost(node: Record<string, unknown>): boolean {
+function isStateHost(node: Record<string, unknown>, id: string): boolean {
   // 客户端元素对象标识键为 id（let{id,tag}=e），无 element_id 键读取；
   // element_id 仅 DSL 别名。优先按 id 判定。
-  if (node.tag === 'column_set' && node.id === STATE_ELEMENT_ID) return true;
-  if (node.tag === 'column_set' && node.element_id === STATE_ELEMENT_ID) return true;
-  if (node.tag === 'column_set' && extractStateUrl(node)) return true;
-  // RAW envelope 里 tag 可能在外层，id 在同级
-  if (node.id === STATE_ELEMENT_ID && extractStateUrl(node)) return true;
-  return false;
+  const hostId = typeof node.id === 'string' ? node.id : node.element_id;
+  if (typeof hostId === 'string') {
+    // RAW envelope 里 tag 可能在外层，id 在同级
+    return hostId === id && (node.tag === 'column_set' || extractStateUrl(node) !== null);
+  }
+  // adapter 投影可能丢掉标识：无标识的封印分栏只能当默认宿主认，否则多宿主会互相串号。
+  return id === STATE_ELEMENT_ID && node.tag === 'column_set' && extractStateUrl(node) !== null;
 }
 
 /**
@@ -162,12 +181,17 @@ function bodyHostGapPx(card: Record<string, unknown>): number {
  * ——真机把空分栏留在正文流里，前面仍有一段间距；网页渲染器把宿主移出排版，不受此值影响。
  * 传 0（默认）表示不写 margin。
  */
-export function createStateHost(stateUrl: string, gap: number | string = 0): Record<string, unknown> {
+export function createStateHost(
+  stateUrl: string,
+  gap: number | string = 0,
+  options?: StateHostOptions,
+): Record<string, unknown> {
+  const id = hostIdOption(options);
   const gapPx = spacingPx(gap);
   return {
     tag: 'column_set',
     // 发出去只写 element_id。id 是客户端回读时的标识键，官方 schema 不收（写了会 200621）。
-    element_id: STATE_ELEMENT_ID,
+    element_id: id,
     // 真机把空分栏留在正文流里，前面仍有一段 vertical_spacing。
     // 负的上外边距把这段间距抵掉。网页渲染器会把宿主移出排版，不受这个值影响。
     ...(gapPx > 0 ? { margin: `-${gapPx}px 0 0 0` } : {}),
@@ -199,23 +223,55 @@ function ensureBodyElements(card: Record<string, unknown>): unknown[] {
   return body.elements as unknown[];
 }
 
-/** 在卡片上查找 state 宿主 column_set */
-export function findStateHost(card: Record<string, unknown>): Record<string, unknown> | null {
+/**
+ * `im.message.get?card_msg_content_type=raw_card_content` 的 content 是一层信封：
+ * `{ json_card: "<卡片 JSON 字符串>", json_attachment, card_schema }`。认出来就拆开。
+ */
+function unwrapEnvelope(card: Record<string, unknown>): Record<string, unknown> {
+  if (typeof card.json_card !== 'string') return card;
+  try {
+    const inner: unknown = JSON.parse(card.json_card);
+    return isRecord(inner) ? inner : card;
+  } catch {
+    return card;
+  }
+}
+
+/** 在卡片上查找 state 宿主 column_set（默认 `card_state`，可按 id 找命名宿主） */
+export function findStateHost(
+  cardOrEnvelope: Record<string, unknown>,
+  options?: StateHostOptions,
+): Record<string, unknown> | null {
+  const card = unwrapEnvelope(cardOrEnvelope);
+  const id = hostIdOption(options);
   let found: Record<string, unknown> | null = null;
   walk(card, (obj) => {
     if (found) return;
-    if (isStateHost(obj)) found = obj;
+    if (isStateHost(obj, id)) found = obj;
   });
   return found;
 }
 
+/** 节点挂着别的宿主标识：兜底扫描时跳过，免得默认宿主读到命名宿主的数据。 */
+function belongsToOtherHost(node: Record<string, unknown>): boolean {
+  const hostId = typeof node.id === 'string' ? node.id : node.element_id;
+  return typeof hostId === 'string' && hostId !== STATE_ELEMENT_ID && extractStateUrl(node) !== null;
+}
+
 /**
  * 从卡片读取封印 state（不改卡）。
- * 兼容：DSL `action.multi_url`、adapter 投影的 `actions[]`、RAW `property.actions`。
+ * 兼容：DSL `action.multi_url`、adapter 投影的 `actions[]`、RAW `property.actions`，
+ * 以及 raw_card_content 的 `{ json_card }` 信封。
+ * 命名宿主只按 id 查找；全树兜底扫描仅用于默认宿主。
  */
-export function readCardState<T = unknown>(card: Record<string, unknown>): T | null {
+export function readCardState<T = unknown>(
+  cardOrEnvelope: Record<string, unknown>,
+  options?: StateHostOptions,
+): T | null {
+  const card = unwrapEnvelope(cardOrEnvelope);
+  const id = hostIdOption(options);
   // 优先专用宿主
-  const host = findStateHost(card);
+  const host = findStateHost(card, { id });
   if (host) {
     const url = extractStateUrl(host);
     if (url) {
@@ -223,18 +279,19 @@ export function readCardState<T = unknown>(card: Record<string, unknown>): T | n
       return state as T | null;
     }
   }
+  if (id !== STATE_ELEMENT_ID) return null;
 
   // 兜底：全树扫封印 URL（adapter 可能丢掉 element_id）
   let decoded: unknown | null = null;
   walk(card, (obj) => {
-    if (decoded !== null) return;
+    if (decoded !== null || belongsToOtherHost(obj)) return false;
     const url = extractStateUrl(obj);
     if (url) decoded = decodeStateUrl(url);
   });
   // 再扫纯字符串字段
   if (decoded === null) {
     walk(card, (obj) => {
-      if (decoded !== null) return;
+      if (decoded !== null || belongsToOtherHost(obj)) return false;
       for (const v of Object.values(obj)) {
         if (typeof v === 'string' && v.startsWith(STATE_URL_PREFIX)) {
           const s = decodeStateUrl(v);
@@ -250,16 +307,21 @@ export function readCardState<T = unknown>(card: Record<string, unknown>): T | n
 }
 
 /**
- * 把 state 封印进卡片：写入/更新空分栏 `card_state` 的 `action.multi_url.url`。
- * 就地修改 card；返回编码后的 URL。
+ * 把 state 封印进卡片：写入/更新空分栏宿主（默认 `card_state`）的 `action.multi_url.url`。
+ * 只替换同 id 的旧宿主，其它命名宿主保留。就地修改 card；返回编码后的 URL。
  */
-export function sealCardState(card: Record<string, unknown>, state: unknown): string {
+export function sealCardState(
+  card: Record<string, unknown>,
+  state: unknown,
+  options?: StateHostOptions,
+): string {
+  const id = hostIdOption(options);
   const stateUrl = encodeStateUrl(state);
   const elements = ensureBodyElements(card);
 
   // 去掉旧宿主（含 adapter 残留的 actions 形态）
-  const next = elements.filter((el) => !(isRecord(el) && isStateHost(el)));
-  next.push(createStateHost(stateUrl, bodyHostGapPx(card)));
+  const next = elements.filter((el) => !(isRecord(el) && isStateHost(el, id)));
+  next.push(createStateHost(stateUrl, bodyHostGapPx(card), { id }));
   const body = card.body as Record<string, unknown>;
   body.elements = next;
   return stateUrl;
@@ -269,11 +331,39 @@ export function sealCardState(card: Record<string, unknown>, state: unknown): st
  * 读取并移除宿主分栏（可选，用于迁移）。
  * 返回解码到的 state；没有则 null。
  */
-export function unsealCardState<T = unknown>(card: Record<string, unknown>): T | null {
-  const state = readCardState<T>(card);
+export function unsealCardState<T = unknown>(
+  card: Record<string, unknown>,
+  options?: StateHostOptions,
+): T | null {
+  const id = hostIdOption(options);
+  const state = readCardState<T>(card, { id });
   const body = isRecord(card.body) ? card.body : null;
   if (body && Array.isArray(body.elements)) {
-    body.elements = body.elements.filter((el) => !(isRecord(el) && isStateHost(el)));
+    body.elements = body.elements.filter((el) => !(isRecord(el) && isStateHost(el, id)));
   }
   return state;
+}
+
+/** CardKit 局部更新（batch_update）里改写宿主封印的一条操作。 */
+export interface StateHostPatch {
+  action: 'partial_update_element';
+  params: {
+    element_id: string;
+    partial_element: { action: { multi_url: { url: string } } };
+  };
+}
+
+/**
+ * 生成只改宿主封印的 CardKit `partial_update_element` 操作，可与视图改动放进同一次
+ * batch_update，让状态与视图一起生效。宿主须已随卡片发出（同 id）。
+ */
+export function buildStateHostPatch(state: unknown, options?: StateHostOptions): StateHostPatch {
+  const id = hostIdOption(options);
+  return {
+    action: 'partial_update_element',
+    params: {
+      element_id: id,
+      partial_element: { action: { multi_url: { url: encodeStateUrl(state) } } },
+    },
+  };
 }

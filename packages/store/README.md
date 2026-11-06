@@ -47,6 +47,36 @@ const state = readCardState<{ step: number }>(card)
 unsealCardState(card) // 读出并移除宿主
 ```
 
+### 多个命名宿主
+
+一张卡可以挂多个宿主，按 `id`（即宿主的 `element_id`）区分，例如不可变的程序和可变的状态分开存：
+
+```ts
+sealCardState(card, program, { id: 'card_prog' })
+sealCardState(card, state) // 默认 id = card_state
+
+readCardState(card, { id: 'card_prog' })
+readCardState(card)
+```
+
+`sealCardState` 只替换同 id 的旧宿主。命名宿主只按 id 查找；丢了标识的封印分栏只会被当成默认宿主。`id` 须符合官方 `element_id` 规则（字母开头，仅字母/数字/下划线，≤ 20 字符），否则抛 `StateCodecError`。
+
+### CardKit 局部更新
+
+卡片实体发出后，只改状态时不必全量更新，用 `buildStateHostPatch` 生成一条 `partial_update_element` 操作，和视图改动放进同一次 `batch_update`：
+
+```ts
+const op = buildStateHostPatch(nextState) // { action: 'partial_update_element', params: { element_id: 'card_state', ... } }
+```
+
+### 体积预算
+
+```ts
+import { CARD_SIZE_BUDGET, cardByteLength } from '@open-feishu-card/store'
+
+if (cardByteLength(card) > CARD_SIZE_BUDGET) { /* 超出官方建议的 30KB */ }
+```
+
 编解码也可单独用：
 
 ```ts
@@ -59,7 +89,7 @@ const data = decodeStateUrl(url)
 - 请走 **`raw_card_content`**（或等价 RAW）。`user_card_content` 会丢掉 URL，解不出 state。
 - adapter 可能投影成 `actions[]`；`readCardState` 已兼容 DSL / adapter / RAW 几种形态。
 - 封印（`sealCardState`）针对 **DSL** 卡片：宿主追加在 `body.elements` 末尾。
-- 卡片总大小有上限（约 153KB 量级，以官方为准）；封印大对象前先估体积。
+- 卡片体积官方建议控制在 30KB 以内（`CARD_SIZE_BUDGET`）；封印大对象前先用 `cardByteLength` 估体积。
 
 ## 相关包
 

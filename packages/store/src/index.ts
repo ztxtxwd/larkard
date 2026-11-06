@@ -33,9 +33,14 @@ export {
 
 export {
   STATE_ELEMENT_ID,
+  buildStateHostPatch,
   createStateHost,
   findStateHost,
   readCardState,
   sealCardState,
   unsealCardState,
+  type StateHostOptions,
+  type StateHostPatch,
 } from './host.js';
+
+export { CARD_SIZE_BUDGET, cardByteLength } from './size.js';
