@@ -200,10 +200,14 @@ function convertEl(el: Record<string, unknown>, colors: ColorRegistry): CardElem
       }
     }
     if (tag === 'video') {
-      const cover = el.image_key ?? el.cover_image_key ?? el.coverImageID;
+      // 公开 DSL 官方形态是 cover: { img_key }；扁平 image_key / cover_image_key 是兼容别名。
+      const nestedCover = isRecord(el.cover) ? el.cover.img_key : undefined;
+      const cover = nestedCover ?? el.image_key ?? el.cover_image_key ?? el.coverImageID;
       if (typeof cover === 'string' && cover) property.coverImageID = cover;
       delete (property as Record<string, unknown>).image_key;
       delete (property as Record<string, unknown>).cover_image_key;
+      // RAW 只认 coverImageID；留下嵌套 cover 会被飞书当未知属性（200621）。
+      delete (property as Record<string, unknown>).cover;
     }
     return withRawElementId(el, { tag, property });
   }

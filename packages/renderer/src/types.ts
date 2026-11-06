@@ -118,6 +118,14 @@ export interface ElementProperty {
   coverImageID?: string;
   image_key?: string;
   cover_image_key?: string;
+  /** 公开 DSL 官方封面形态 cover: { img_key }；部分 RAW 嵌套 imageID / image_id 等 */
+  cover?: string | {
+    img_key?: string;
+    imageID?: string;
+    image_id?: string;
+    cover_image_id?: string;
+    coverImageId?: string;
+  };
   /** 是否显示时长（视频角标 / 音频时间） */
   showTime?: boolean;
   show_time?: boolean;

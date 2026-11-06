@@ -229,9 +229,17 @@ export function resolveMediaSrc(
   return null;
 }
 
-/** 视频封面：coverImageID（RAW，常为 img_v3_...）/ image_key · cover_image_key（DSL）→ 走图片解析 */
+/**
+ * 视频封面：coverImageID（RAW，常为 img_v3_...）/ image_key · cover_image_key（DSL 扁平别名）
+ * / cover: { img_key }（公开 DSL 官方形态，部分 RAW 也会嵌套）→ 走图片解析。
+ */
 export function resolveVideoCoverSrc(p: ElementProperty, ctx: RenderContext): string | null {
-  const coverId = (p.coverImageID ?? p.image_key ?? p.cover_image_key) as string | undefined;
+  const cover = p.cover;
+  const coverId = (p.coverImageID ?? p.image_key ?? p.cover_image_key
+    ?? (typeof cover === 'string'
+      ? cover
+      : cover?.img_key ?? cover?.imageID ?? cover?.image_id
+        ?? cover?.cover_image_id ?? cover?.coverImageId)) as string | undefined;
   if (!coverId) return null;
   return resolveImageSrc({ imageID: coverId }, ctx);
 }

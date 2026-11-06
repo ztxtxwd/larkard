@@ -408,6 +408,32 @@ test('dslToRaw writes element_id as outer RAW id (not property)', () => {
   ]);
 });
 
+test('dslToRaw: video cover.img_key → coverImageID（公开 DSL 官方形态）', () => {
+  const raw = dslToRaw({
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'video',
+          file_key: 'file_v3_video',
+          cover: { img_key: 'img_v3_cover' },
+          show_time: true,
+        },
+      ],
+    },
+  }) as any;
+
+  const video = raw.body.property.elements[0];
+  assert.equal(video.property.fileID, 'file_v3_video');
+  assert.equal(video.property.coverImageID, 'img_v3_cover');
+  // 嵌套 cover 不能漏进 RAW（飞书会按未知属性 200621 拒收）
+  assert.equal(video.property.cover, undefined);
+
+  // 回读仍投影成公开 DSL 的 cover: { img_key }
+  const back = rawToDsl(raw) as any;
+  assert.deepEqual(back.body.elements[0].cover, { img_key: 'img_v3_cover' });
+});
+
 test('dslToRaw/rawToDsl round-trips column_set state host (element_id + action.multi_url)', () => {
   const stateUrl = 'lark://msgcard/unsupported_action#s1.ZGVtbw';
   const dsl = {

@@ -264,6 +264,55 @@ test('markdown_audio: inline 胶囊样式，且不误用降级 url', () => {
   assert.match(html, /--universal-card-audio-time-font-size:12px/);
 });
 
+test('video: DSL cover.img_key → poster / 封面图', () => {
+  const dsl = {
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'video',
+        file_key: 'file_v3_cover',
+        cover: { img_key: 'img_v3_cover' },
+        show_time: true,
+      }],
+    },
+  };
+  const imageOptions = {
+    resolveImage: (p) => (p.imageID === 'img_v3_cover' ? 'https://cdn/cover.jpg' : null),
+  };
+
+  // 有媒体源 → 原生 poster
+  const playable = renderDslToString(dsl, {
+    ...imageOptions,
+    resolveMedia: (p, kind) => (kind === 'video' && p.fileID === 'file_v3_cover'
+      ? 'https://cdn/v.mp4' : null),
+  });
+  assert.match(playable, /<video[^>]*poster="https:\/\/cdn\/cover\.jpg"/);
+
+  // 无媒体源 → 封面壳显示封面图，而不是默认封面
+  const shell = renderDslToString(dsl, imageOptions);
+  assert.match(shell, /universal-card-video__host-image[^>]*src="https:\/\/cdn\/cover\.jpg"/);
+  assert.doesNotMatch(shell, /universal-card-video__default-cover/);
+});
+
+test('video: RAW 嵌套 cover 也能取封面', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        tag: 'body',
+        property: {
+          elements: [{
+            tag: 'video',
+            property: { fileID: 'file_v3_raw', cover: { imageID: 'img_v3_raw_cover' } },
+          }],
+        },
+      },
+    },
+  }, {
+    resolveImage: (p) => (p.imageID === 'img_v3_raw_cover' ? 'https://cdn/raw-cover.jpg' : null),
+  });
+  assert.match(html, /universal-card-video__host-image[^>]*src="https:\/\/cdn\/raw-cover\.jpg"/);
+});
+
 test('DSL audio/video → RAW 字段映射后可渲染', () => {
   const html = renderDslToString({
     schema: '2.0',
