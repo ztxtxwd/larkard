@@ -1483,3 +1483,139 @@ test('styles: 控件宽度相关规则与真机一致', () => {
   // input 默认上限 282px
   assert.match(ALL_CSS, /\.universal-card-input,\s*\.universal-card-input--static\s*\{[^}]*max-width:\s*282px/);
 });
+
+test('img_combination 渲染 double 布局与解析后的图片', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        elements: [{
+          tag: 'img_combination',
+          property: {
+            combinationMode: 'double',
+            imgList: [{ imageID: 'img_one' }, { imageID: 'img_two' }],
+            cornerRadiusValue: { type: 'pixels', value: 8 },
+          },
+        }],
+      },
+    },
+  }, { imageBaseURL: 'https://img.example/' });
+  assert.match(html, /universal-card-img-combination--double/);
+  assert.match(html, /universal-card-img-combination__item/);
+  assert.match(html, /https:\/\/img\.example\/img_one/);
+  assert.match(html, /https:\/\/img\.example\/img_two/);
+  assert.match(html, /border-radius:8px/);
+});
+
+test('img_combination triple 渲染左大图 + 右列', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        elements: [{
+          tag: 'img_combination',
+          property: {
+            combinationMode: 'triple',
+            imgList: [{ imageID: 'a' }, { imageID: 'b' }, { imageID: 'c' }],
+          },
+        }],
+      },
+    },
+  }, { imageBaseURL: 'https://img.example/' });
+  assert.match(html, /universal-card-img-combination__left/);
+  assert.match(html, /universal-card-img-combination__right/);
+  assert.equal((html.match(/universal-card-img-combination__item/g) || []).length, 3);
+});
+
+test('select_img 渲染网格、选中/禁用态与表单内 checkbox', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        elements: [{
+          tag: 'form',
+          property: {
+            elements: [{
+              tag: 'select_img',
+              property: {
+                options: [
+                  { imageID: 'img_one', value: 'a' },
+                  { imageID: 'img_two', value: 'b', disabled: true },
+                ],
+                value: ['a'],
+                multiSelect: true,
+                layout: 'trisect',
+                aspectRatio: '1:1',
+              },
+            }],
+          },
+        }],
+      },
+    },
+  }, { imageBaseURL: 'https://img.example/' });
+  assert.match(html, /universal-card-select-img--trisect/);
+  assert.match(html, /universal-card-select-img__item-wrapper--selected/);
+  assert.match(html, /universal-card-select-img__item-wrapper--disabled/);
+  assert.match(html, /universal-card-select-img__checkbox-box--square/);
+  assert.match(html, /universal-card-select-img__checkbox-box--checked/);
+  assert.match(html, /aspect-ratio:1\/1/);
+});
+
+test('select_img 表单外不渲染 checkbox（仅用描边表达选中）', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        elements: [{
+          tag: 'select_img',
+          property: {
+            options: [{ imageID: 'img_one', value: 'a' }],
+            value: ['a'],
+          },
+        }],
+      },
+    },
+  }, { imageBaseURL: 'https://img.example/' });
+  assert.match(html, /item-wrapper--selected/);
+  assert.doesNotMatch(html, /universal-card-select-img__checkbox/);
+});
+
+test('renderDslToString 支持 img_combination / select_img 公开 DSL', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'img_combination',
+          combination_mode: 'bisect',
+          img_list: [{ img_key: 'img_a' }, { img_key: 'img_b' }],
+        },
+        {
+          tag: 'select_img',
+          style: 'default',
+          layout: 'bisect',
+          options: [{ img_key: 'img_a', value: 'a' }],
+          selected_values: ['a'],
+        },
+      ],
+    },
+  }, { imageBaseURL: 'https://img.example/' });
+  assert.match(html, /universal-card-img-combination--bisect/);
+  assert.match(html, /https:\/\/img\.example\/img_a/);
+  assert.match(html, /universal-card-select-img--bisect/);
+  assert.match(html, /universal-card-select-img__item-wrapper--selected/);
+});
+
+test('img_combination: 数值型 cornerRadiusValue 也转为圆角', () => {
+  const html = renderCardToString({
+    json_card: {
+      body: {
+        elements: [{
+          tag: 'img_combination',
+          property: {
+            combinationMode: 'bisect',
+            imgList: [{ imageID: 'img_one' }],
+            cornerRadiusValue: 6,
+          },
+        }],
+      },
+    },
+  }, { imageBaseURL: 'https://img.example/' });
+  assert.match(html, /border-radius:6px/);
+});

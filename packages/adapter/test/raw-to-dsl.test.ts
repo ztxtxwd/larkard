@@ -1434,3 +1434,158 @@ describe("element_id (RAW id → DSL element_id)", () => {
   });
 });
 
+
+describe("img_combination projection", () => {
+  it("projects combinationMode / imgList / cornerRadiusValue / transparent", () => {
+    const dsl = rawToDsl({
+      json_card: {
+        schema: "2.0",
+        body: {
+          elements: [
+            {
+              id: "_2",
+              tag: "img_combination",
+              property: {
+                combinationMode: "double",
+                imgList: [
+                  { imageID: "10", index: 0, transparent: true },
+                  { imageID: "11", index: 1 },
+                ],
+                cornerRadiusValue: { type: "pixels", value: 8 },
+                transparent: false,
+              },
+            },
+          ],
+        },
+      },
+      json_attachment: {
+        images: {
+          "10": { origin_key: "img_v3_combination_a" },
+          "11": { origin_key: "img_v3_combination_b" },
+        },
+      },
+    }) as AnyDsl;
+
+    const el = findElements(dsl, (e) => e.tag === "img_combination")[0]!;
+    expect(el).toMatchObject({
+      tag: "img_combination",
+      combination_mode: "double",
+      img_list: [
+        { img_key: "img_v3_combination_a", transparent: true },
+        { img_key: "img_v3_combination_b" },
+      ],
+      corner_radius: "8px",
+      combination_transparent: false,
+    });
+    // 编辑器渲染态 index 不进公开 DSL。
+    expect(JSON.stringify(el)).not.toContain("imageID");
+    expect(JSON.stringify(el)).not.toContain("index");
+  });
+
+  it("keeps an already-public img_key item and falls back to img_id", () => {
+    const dsl = rawToDsl({
+      json_card: {
+        body: {
+          elements: [
+            {
+              tag: "img_combination",
+              property: {
+                combinationMode: "bisect",
+                imgList: [{ img_key: "img_v3_public" }, { imageID: "42" }],
+              },
+            },
+          ],
+        },
+      },
+    }) as AnyDsl;
+
+    const el = findElements(dsl, (e) => e.tag === "img_combination")[0]!;
+    expect(el.img_list).toEqual([
+      { img_key: "img_v3_public" },
+      { img_id: "42" },
+    ]);
+  });
+});
+
+describe("select_img projection", () => {
+  it("projects options (imageID → img_key), camelCase config and actions → behaviors", () => {
+    const dsl = rawToDsl({
+      json_card: {
+        schema: "2.0",
+        body: {
+          elements: [
+            {
+              id: "_3",
+              tag: "select_img",
+              property: {
+                options: [
+                  {
+                    imageID: "20",
+                    value: "a",
+                    disabled: true,
+                    disabledTips: {
+                      tag: "plain_text",
+                      property: { content: "不可选" },
+                    },
+                    hoverTips: {
+                      tag: "plain_text",
+                      property: { content: "选项 A" },
+                    },
+                    transparent: true,
+                  },
+                  { imageID: "21", value: "b" },
+                ],
+                multiSelect: true,
+                selectedValues: ["a"],
+                layout: "trisect",
+                style: "laser",
+                aspectRatio: "1:1",
+                canPreview: false,
+                widthValue: { type: "pixels", value: 300 },
+                disabledTips: {
+                  tag: "plain_text",
+                  property: { content: "整体禁用" },
+                },
+                actions: [{ type: "action_request", action: { value: { k: "v" } } }],
+              },
+            },
+          ],
+        },
+      },
+      json_attachment: {
+        images: {
+          "20": { origin_key: "img_v3_select_a" },
+          "21": { origin_key: "img_v3_select_b" },
+        },
+      },
+    }) as AnyDsl;
+
+    const el = findElements(dsl, (e) => e.tag === "select_img")[0]!;
+    expect(el).toMatchObject({
+      tag: "select_img",
+      multi_select: true,
+      selected_values: ["a"],
+      layout: "trisect",
+      style: "laser",
+      aspect_ratio: "1:1",
+      can_preview: false,
+      width: "300px",
+      disabled_tips: { tag: "plain_text", content: "整体禁用" },
+      behaviors: [{ type: "callback", value: { k: "v" } }],
+    });
+    expect(el.actions).toBeUndefined();
+    expect(el.options).toEqual([
+      {
+        img_key: "img_v3_select_a",
+        value: "a",
+        disabled: true,
+        disabled_tips: { tag: "plain_text", content: "不可选" },
+        hover_tips: { tag: "plain_text", content: "选项 A" },
+        transparent: true,
+      },
+      { img_key: "img_v3_select_b", value: "b" },
+    ]);
+    // 自动编号（_3）不是合法公开 id，投影时丢弃。
+    expect(el.element_id).toBeUndefined();
+  });
+});

@@ -177,3 +177,57 @@ test('img 缩放走 scale_type；历史 mode 只保留尺寸值', () => {
   assert.equal(legacySize.mode, 'large');
   assert.equal(legacySize.scale_type, undefined);
 });
+
+test('img_combination / select_img 透传图片 ID、transparent 与提示文案', () => {
+  const card = renderToCard(
+    jsx(Card, {
+      children: [
+        jsx(ImgCombination, {
+          mode: 'double',
+          images: [
+            { imgKey: 'img_a', imgId: 'id_a', transparent: true },
+            'img_b',
+          ],
+          cornerRadius: '8px',
+        }),
+        jsx(SelectImg, {
+          options: [{
+            imgKey: 'img_a',
+            imgId: 'id_a',
+            value: 'a',
+            disabled: true,
+            disabledTips: '不可选',
+            hoverTips: '悬浮',
+            transparent: true,
+          }],
+          disabledTips: '整体禁用',
+        }),
+      ],
+    }),
+  );
+
+  const combo = card.body?.elements[0] as {
+    img_list?: Array<Record<string, unknown>>;
+    corner_radius?: string;
+  };
+  assert.deepEqual(combo.img_list, [
+    { img_key: 'img_a', img_id: 'id_a', transparent: true },
+    { img_key: 'img_b' },
+  ]);
+  assert.equal(combo.corner_radius, '8px');
+
+  const select = card.body?.elements[1] as {
+    options?: Array<Record<string, unknown>>;
+    disabled_tips?: unknown;
+  };
+  assert.deepEqual(select.options, [{
+    img_key: 'img_a',
+    img_id: 'id_a',
+    value: 'a',
+    disabled: true,
+    disabled_tips: { tag: 'plain_text', content: '不可选' },
+    hover_tips: { tag: 'plain_text', content: '悬浮' },
+    transparent: true,
+  }]);
+  assert.deepEqual(select.disabled_tips, { tag: 'plain_text', content: '整体禁用' });
+});

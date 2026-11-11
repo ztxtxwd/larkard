@@ -477,9 +477,15 @@ export function resolveCornerRadius(property: Record<string, unknown> | undefine
     return sizeToPx(t);
   }
   if (direct != null) return sizeToPx(direct as number | string);
-  const echo = property.cornerRadiusValue as { type?: string; value?: number | string } | undefined;
-  if (echo && typeof echo.value === 'number') return echo.value + 'px';
-  if (echo && typeof echo.value === 'string' && echo.value.trim()) return sizeToPx(echo.value);
+  const echo = property.cornerRadiusValue;
+  // 少数 RAW 直接把像素数写在 cornerRadiusValue（非 {type:'pixels',value} echo）。
+  if (typeof echo === 'number') return echo + 'px';
+  if (typeof echo === 'string' && echo.trim()) return sizeToPx(echo);
+  if (echo && typeof echo === 'object') {
+    const value = (echo as { type?: string; value?: number | string }).value;
+    if (typeof value === 'number') return value + 'px';
+    if (typeof value === 'string' && value.trim()) return sizeToPx(value);
+  }
   return undefined;
 }
 /** RAW 的 padding/margin 对象 {top,right,bottom,left:{type:'pixels',value}} -> CSS 速记 */

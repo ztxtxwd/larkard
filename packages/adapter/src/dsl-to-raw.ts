@@ -343,6 +343,52 @@ function buildProperty(el: Record<string, unknown>, tag: string, colors: ColorRe
       }
     }
 
+    // img_combination：公开 DSL 用 snake_case + img_key；渲染器/RAW 用
+    // combinationMode / imgList / imageID。container 的 combination_transparent
+    // 在 RAW 里落在每张图和容器共享的 transparent 上。
+    if (tag === 'img_combination') {
+      if (k === 'combination_mode') { property.combinationMode = v as never; continue; }
+      if (k === 'img_list' && Array.isArray(v)) {
+        property.imgList = v.map((item) => {
+          if (!isRecord(item)) return item;
+          const key = item.img_key ?? item.imgKey ?? item.img_id ?? item.imgId;
+          return compactRecord({
+            imageID: typeof key === 'string' ? key : undefined,
+            transparent: typeof item.transparent === 'boolean' ? item.transparent : undefined,
+          });
+        });
+        continue;
+      }
+      if (k === 'combination_transparent') { property.transparent = v as never; continue; }
+    }
+
+    // select_img：options 的 img_key → RAW imageID；camelCase 配置字段对齐渲染器。
+    if (tag === 'select_img') {
+      if (k === 'options' && Array.isArray(v)) {
+        property.options = v.map((item) => {
+          if (!isRecord(item)) return item;
+          const key = item.img_key ?? item.imgKey ?? item.img_id ?? item.imgId;
+          return compactRecord({
+            imageID: typeof key === 'string' ? key : undefined,
+            value: item.value,
+            disabled: item.disabled,
+            disabled_tips: item.disabled_tips !== undefined ? wrapTextLeaf(item.disabled_tips) : undefined,
+            hover_tips: item.hover_tips !== undefined ? wrapTextLeaf(item.hover_tips) : undefined,
+            transparent: item.transparent,
+          });
+        });
+        continue;
+      }
+      if (k === 'multi_select') { property.multiSelect = v as never; continue; }
+      if (k === 'selected_values') { property.selectedValues = v as never; continue; }
+      if (k === 'can_preview') { property.canPreview = v as never; continue; }
+      if (k === 'aspect_ratio') { property.aspectRatio = v as never; continue; }
+      if (k === 'disabled_tips') {
+        property.disabledTips = wrapTextLeaf(v) as never;
+        continue;
+      }
+    }
+
     // 文本叶子：title/subtitle/alt/hover_tips/placeholder → {tag:plain_text,property:{content}}
     if (TEXT_LEAF_KEYS.has(k)) { property[renameKey(k)] = wrapTextLeaf(v); continue; }
 
@@ -523,6 +569,14 @@ function pxValue(s: string): number | null {
   if (m) return Number(m[1]);
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
+}
+
+/** 丢掉值为 undefined 的键，避免把 editor 不收的显式 null/undefined 写进 RAW。 */
+function compactRecord<T extends Record<string, unknown>>(obj: T): T {
+  for (const key of Object.keys(obj)) {
+    if (obj[key] === undefined) delete obj[key];
+  }
+  return obj;
 }
 
 function isRecord(v: unknown): v is Record<string, unknown> {

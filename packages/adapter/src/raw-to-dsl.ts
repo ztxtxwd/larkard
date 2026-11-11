@@ -697,6 +697,79 @@ function unwrapInner(node: Record<string, unknown>, ctx: Ctx): unknown {
     return out;
   }
 
+  // img_combination (多图混排). Raw shape:
+  //   { combinationMode, imgList: [{ imageID, transparent, index }],
+  //     cornerRadiusValue, transparent }
+  // Public DSL: { combination_mode, img_list: [{ img_key, img_id?, transparent? }],
+  //   corner_radius?, combination_transparent? }.
+  // `index` is editor render state and `imageID` is an attachment id resolved
+  // through json_attachment.images — the public send path only accepts img_key.
+  if (tag === "img_combination") {
+    const converted = convertProperty(property, tag, ctx) as Record<string, unknown>;
+    const out: Record<string, unknown> = { tag };
+    if (typeof converted.combination_mode === "string") {
+      out.combination_mode = converted.combination_mode;
+    }
+
+    const rawList = Array.isArray(property.imgList)
+      ? property.imgList
+      : Array.isArray(property.img_list)
+        ? property.img_list
+        : undefined;
+    if (rawList) {
+      out.img_list = rawList
+        .map((item) => (isRecord(item) ? projectImgCombinationItem(item, ctx) : undefined))
+        .filter((item): item is Record<string, unknown> => item !== undefined);
+    }
+
+    // Editor stores container transparency as `transparent`; the public field
+    // is `combination_transparent`.
+    const transparent =
+      property.combinationTransparent ??
+      property.combination_transparent ??
+      property.transparent;
+    if (typeof transparent === "boolean") out.combination_transparent = transparent;
+
+    if (converted.corner_radius !== undefined) {
+      out.corner_radius = converted.corner_radius;
+    } else if (typeof property.cornerRadiusValue === "number") {
+      // 少数 RAW 直接存数值（非 {type:'pixels',value} echo）；公开 DSL 用字符串。
+      out.corner_radius = `${property.cornerRadiusValue}px`;
+    } else if (typeof property.corner_radius === "string") {
+      out.corner_radius = property.corner_radius;
+    }
+    if (typeof converted.img_list_length === "number") {
+      out.img_list_length = converted.img_list_length;
+    }
+    if (converted.margin !== undefined) out.margin = converted.margin;
+    return out;
+  }
+
+  // select_img (多图选择). Raw options carry `imageID` (attachment id) and
+  // camelCase config; the public DSL wants `img_key` + snake_case. Click config
+  // is stored as `actions` in raw but is `behaviors` in schema 2.0.
+  if (tag === "select_img") {
+    const converted = convertProperty(property, tag, ctx) as Record<string, unknown>;
+    const out: Record<string, unknown> = { tag, ...converted };
+
+    const rawOptions = Array.isArray(property.options) ? property.options : undefined;
+    if (rawOptions) {
+      out.options = rawOptions.map((option) =>
+        isRecord(option) ? projectSelectImgOption(option, ctx) : {},
+      );
+    }
+
+    if (Array.isArray(property.actions)) {
+      const behaviors = property.actions
+        .map((a) => actionEntryToBehavior(a, tag, ctx))
+        .filter((b): b is Record<string, unknown> => b !== undefined);
+      delete out.actions;
+      if (behaviors.length > 0) out.behaviors = behaviors;
+    }
+
+    return out;
+  }
+
   // `div` comes in two shapes, distinguished by its `text` child's tag:
   //
   //   v1 lark_md wrapper:  text.tag === 'markdown' | 'lark_md'
@@ -1949,6 +2022,64 @@ function resolveAttachmentImgKey(rawValue: unknown, ctx: Ctx): string | undefine
   if (typeof origin === "string" && origin) return origin;
   if (id.startsWith("img_")) return id;
   return undefined;
+}
+
+/**
+ * 原子图片 key → 公开 DSL 的 `{ img_key }` / `{ img_id }`。
+ * RAW 的 `imageID` 是附件表 key，优先经 json_attachment.images 还原 origin_key；
+ * 已带 `img_key` 的（dslToRaw 产物 / 部分 RAW）原样保留。还原不了且形如 img_ 的
+ * 仍按 img_key 输出，其余保留为官方允许的 img_id。
+ */
+function projectImageKey(
+  item: Record<string, unknown>,
+  ctx: Ctx,
+): { img_key?: string; img_id?: string } {
+  const direct =
+    typeof item.img_key === "string" ? item.img_key
+      : typeof item.imgKey === "string" ? item.imgKey
+      : undefined;
+  if (direct) return { img_key: direct };
+
+  const id = item.imageID ?? item.image_id ?? item.imgId ?? item.img_id;
+  const resolved = resolveAttachmentImgKey(id, ctx);
+  if (resolved) return { img_key: resolved };
+  if (typeof id === "string" || typeof id === "number") return { img_id: String(id) };
+  return {};
+}
+
+/** img_combination.img_list 单项：imageID → img_key，保留 transparent。 */
+function projectImgCombinationItem(
+  item: Record<string, unknown>,
+  ctx: Ctx,
+): Record<string, unknown> | undefined {
+  const out: Record<string, unknown> = projectImageKey(item, ctx);
+  if (typeof item.transparent === "boolean") out.transparent = item.transparent;
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** select_img.options 单项：imageID → img_key，tips 叶子归一，保留 disabled/value/transparent。 */
+function projectSelectImgOption(
+  item: Record<string, unknown>,
+  ctx: Ctx,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = projectImageKey(item, ctx);
+  if (typeof item.value === "string") out.value = item.value;
+  if (typeof item.disabled === "boolean") out.disabled = item.disabled;
+  const disabledTips = projectTipsText(item.disabled_tips ?? item.disabledTips);
+  if (disabledTips) out.disabled_tips = disabledTips;
+  const hoverTips = projectTipsText(item.hover_tips ?? item.hoverTips);
+  if (hoverTips) out.hover_tips = hoverTips;
+  if (typeof item.transparent === "boolean") out.transparent = item.transparent;
+  return out;
+}
+
+/** RAW `{tag:'plain_text', property:{content}}` / 扁平 `{tag,content}` / 字符串 → PlainText。 */
+function projectTipsText(value: unknown): Record<string, unknown> | undefined {
+  if (typeof value === "string") return { tag: "plain_text", content: value };
+  if (!isRecord(value)) return undefined;
+  const property = isRecord(value.property) ? value.property : value;
+  const content = typeof property.content === "string" ? property.content : "";
+  return { tag: "plain_text", content };
 }
 
 /** Project video.cover (nested or flat residues) into public `{ img_key }`. */

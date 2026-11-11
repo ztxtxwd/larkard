@@ -556,6 +556,10 @@ export const SelectImgSchema = z
         z
           .object({
             img_key: z.string().describe('图片 key（上传图片接口返回）'),
+            img_id: z
+              .string()
+              .optional()
+              .describe('图片 ID（平台字段；优先使用 img_key）'),
             value: z.string().optional().describe('选项回传值'),
             disabled: z
               .boolean()
@@ -565,6 +569,10 @@ export const SelectImgSchema = z
               '禁用时的悬浮提示',
             ),
             hover_tips: TipsTextSchema.optional().describe('悬浮提示'),
+            transparent: z
+              .boolean()
+              .optional()
+              .describe('图片是否透明底色，默认 false'),
           })
           .describe('多图选择选项'),
       )

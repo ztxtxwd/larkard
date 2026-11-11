@@ -122,6 +122,14 @@ export const ImgCombinationSchema = z
         z
           .object({
             img_key: z.string().describe('图片 key（上传图片接口返回）'),
+            img_id: z
+              .string()
+              .optional()
+              .describe('图片 ID（平台字段；优先使用 img_key）'),
+            transparent: z
+              .boolean()
+              .optional()
+              .describe('单张图片是否透明底色，默认 false'),
           })
           .describe('混排中的单张图片'),
       )

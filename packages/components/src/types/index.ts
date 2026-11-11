@@ -46,6 +46,7 @@ export type {
   HeaderProps,
   HrProps,
   ImageProps,
+  ImgCombinationImageProp,
   ImgCombinationProps,
   InputProps,
   InteractiveContainerProps,

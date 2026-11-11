@@ -486,6 +486,11 @@ export interface RenderContext {
    * 客户端把 body paddingTop 从 12 改为 8。由 index.ts 在渲染 body 前注入。
    */
   bodyPaddingTop?: number;
+  /**
+   * 是否处于 form 容器内。真机 select_img 仅在表单内显示选中态 checkbox/radio，
+   * 表单外只是可点击的图片选项。form 渲染子元素时注入，不改变外部 ctx。
+   */
+  inForm?: boolean;
 }
 
 /** 组件渲染函数 */

@@ -843,6 +843,177 @@ registerComponent('img', (el, ctx) => {
   );
 });
 
+// img_combination：多图混排。
+// 结构与比例逆向自网页版 .universal-card-img-combination：
+//   double  左窄(32.4%, 24:33) + 右宽(67.6%, 49.33:33)
+//   triple  左大(66.5%, 1:1) + 右侧两小(33%, 1:1)
+//   bisect / trisect  等宽方格换行（50% / 33.33%，1:1）
+// RAW：combinationMode / imgList[{ imageID, transparent }] / cornerRadiusValue；
+// DSL：combination_mode / img_list[{ img_key }] / corner_radius。
+const IMG_COMBINATION_LIMIT: Record<string, number | undefined> = {
+  double: 2,
+  triple: 3,
+};
+
+/** 混排中的单张图：填满所在格，按容器 corner_radius 裁圆角。 */
+function renderCombinationImage(
+  item: Record<string, unknown>,
+  cornerRadius: string | undefined,
+  ctx: RenderContext,
+) {
+  const src = resolveImageSrc(item as ElementProperty, ctx);
+  const style: Record<string, string> = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    display: 'block',
+  };
+  if (cornerRadius) style.borderRadius = cornerRadius;
+  return src
+    ? h('img', { className: `${CLS}-image__host`, src, alt: '', style })
+    : h('div', { className: `${CLS}-image__placeholder`, style }, '[图片]');
+}
+
+registerComponent('img_combination', (el, ctx) => {
+  const p = el.property || {};
+  const rawList = Array.isArray(p.imgList)
+    ? p.imgList
+    : Array.isArray(p.img_list)
+      ? p.img_list
+      : [];
+  if (rawList.length === 0) return null;
+
+  const mode = String(p.combinationMode ?? p.combination_mode ?? 'double');
+  const limit = IMG_COMBINATION_LIMIT[mode];
+  const list = (limit ? rawList.slice(0, limit) : rawList)
+    .map((item) => (typeof item === 'string' ? { img_key: item } : item))
+    .filter(isRecord);
+  if (list.length === 0) return null;
+
+  const cornerRadius = resolveCornerRadius(p as Record<string, unknown>);
+  const containerStyle: Record<string, string> = {};
+  applyOuterMargin(containerStyle, p.margin);
+  const cls = `${CLS}-img-combination ${CLS}-img-combination--${mode}`;
+  const itemNode = (item: Record<string, unknown>) =>
+    h(
+      'div',
+      { className: `${CLS}-img-combination__item` },
+      renderCombinationImage(item, cornerRadius, ctx),
+    );
+
+  // triple：第一张占左侧大图，其余进右列。
+  if (mode === 'triple') {
+    const [first, ...rest] = list;
+    return h(
+      'div',
+      { className: cls, style: containerStyle },
+      h(
+        'div',
+        { className: `${CLS}-img-combination__item ${CLS}-img-combination__left` },
+        renderCombinationImage(first, cornerRadius, ctx),
+      ),
+      h('div', { className: `${CLS}-img-combination__right` }, rest.map(itemNode)),
+    );
+  }
+
+  return h('div', { className: cls, style: containerStyle }, list.map(itemNode));
+});
+
+// select_img：多图选择。静态预览对齐网页版：
+// - 网格布局（stretch 单列 / bisect 两列 / trisect 三列），每格按 aspect_ratio 裁切；
+// - 选中项 2px 主题色描边；禁用项半透明白遮罩；
+// - 表单内左上角显示 checkbox（多选）或 radio（单选）——真机仅 in-form 渲染。
+// RAW：options[{ imageID, value, disabled, disabledTips }] / multiSelect / selectedValues；
+// DSL：options[{ img_key, value }] / multi_select / selected_values。
+function readSelectImgValues(p: Record<string, unknown>): string[] {
+  const raw = p.selectedValues ?? p.selected_values ?? p.value;
+  let value: unknown = raw;
+  if (typeof value === 'string') {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return typeof value === 'string' && value ? [value] : [];
+    }
+  }
+  if (isRecord(value) && Array.isArray(value.value)) value = value.value;
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === 'string');
+}
+
+function renderSelectImgCheckbox(checked: boolean, disabled: boolean, multiple: boolean) {
+  const boxClass = `${CLS}-select-img__checkbox-box`
+    + (multiple ? ` ${CLS}-select-img__checkbox-box--square` : '')
+    + (checked ? ` ${CLS}-select-img__checkbox-box--checked` : '');
+  return h(
+    'div',
+    {
+      className: `${CLS}-select-img__checkbox`
+        + (disabled ? ` ${CLS}-select-img__checkbox--disabled` : ''),
+    },
+    h('span', { className: boxClass }),
+  );
+}
+
+registerComponent('select_img', (el, ctx) => {
+  const p = el.property || {};
+  const options = Array.isArray(p.options) ? p.options : [];
+  if (options.length === 0) return null;
+
+  const layout = String(p.layout ?? 'bisect');
+  const aspectRatio = String(p.aspectRatio ?? p.aspect_ratio ?? '16:9').replace(':', '/');
+  const multiple = p.multiSelect === true || p.multi_select === true;
+  const disabledAll = p.disabled === true;
+  const selected = readSelectImgValues(p);
+  const containerStyle: Record<string, string> = {};
+  applyOuterMargin(containerStyle, p.margin);
+
+  const items = options.map((rawOption) => {
+    const option: Record<string, unknown> = isRecord(rawOption)
+      ? rawOption
+      : { img_key: rawOption };
+    const value = typeof option.value === 'string' ? option.value : undefined;
+    const isSelected = value !== undefined && selected.includes(value);
+    const disabled = disabledAll || option.disabled === true;
+    // 真机：禁用时优先 disabled_tips，否则 disabledTips；可用时取 hover_tips。
+    const tip = disabled
+      ? extractText((option.disabled_tips ?? option.disabledTips) as never)
+      : extractText((option.hover_tips ?? option.hoverTips) as never);
+    const src = resolveImageSrc(option as ElementProperty, ctx);
+    const wrapperClass = `${CLS}-select-img__item-wrapper`
+      + (isSelected ? ` ${CLS}-select-img__item-wrapper--selected` : '')
+      + (disabled ? ` ${CLS}-select-img__item-wrapper--disabled` : '');
+    const itemClass = `${CLS}-select-img__item`
+      + (disabled ? ` ${CLS}-select-img__item--disabled` : '');
+    return h(
+      'div',
+      { className: wrapperClass },
+      h(
+        'div',
+        { className: itemClass, style: { aspectRatio }, title: tip || undefined },
+        ctx.inForm ? renderSelectImgCheckbox(isSelected, disabled, multiple) : null,
+        src
+          ? h('img', {
+              className: `${CLS}-image__host`,
+              src,
+              alt: '',
+              style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
+            })
+          : h(
+              'div',
+              { className: `${CLS}-image__placeholder`, style: { width: '100%', height: '100%' } },
+              '[图片]',
+            ),
+      ),
+    );
+  });
+
+  return h(
+    'div',
+    { className: `${CLS}-select-img ${CLS}-select-img--${layout}`, style: containerStyle },
+    items,
+  );
+});
+
 // video：视频。真机网页版有 src 时直接 <video controls>；无 src 时出封面 + 播放钮。
 // RAW：fileID / coverImageID / showTime / enableDownload；DSL：file_key / image_key / show_time。
 registerComponent('video', (el, ctx) => {
@@ -1348,7 +1519,8 @@ registerComponent('overflow', (el, ctx) => {
 
 // form：静态预览只透传子元素。interactive 时变成真 <form>，提交由宿主 preventDefault。
 registerComponent('form', (el, ctx) => {
-  const children = renderElements(el.property?.elements, ctx);
+  // 子元素在表单上下文里渲染：select_img 需要据此显示 checkbox/radio 选中态。
+  const children = renderElements(el.property?.elements, { ...ctx, inForm: true });
   const className = `${CLS}-form`;
   if (!ctx.options.interactive) return h('div', { className }, children);
   const name = typeof el.property?.name === 'string' ? el.property.name : '';

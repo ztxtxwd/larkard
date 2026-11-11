@@ -186,9 +186,15 @@ export interface ImageProps extends CommonProps {
   transparent?: boolean;
 }
 
+export interface ImgCombinationImageProp {
+  imgKey: string;
+  imgId?: string;
+  transparent?: boolean;
+}
+
 export interface ImgCombinationProps extends CommonProps {
   mode: 'double' | 'triple' | 'bisect' | 'trisect';
-  images: Array<string | { imgKey: string }>;
+  images: Array<string | ImgCombinationImageProp>;
   transparent?: boolean;
   cornerRadius?: string;
 }
@@ -447,8 +453,12 @@ export interface DateTimePickerProps extends CommonProps {
 
 export interface SelectImgOptionProp {
   imgKey: string;
+  imgId?: string;
   value?: string;
   disabled?: boolean;
+  disabledTips?: string;
+  hoverTips?: string;
+  transparent?: boolean;
 }
 
 export interface SelectImgProps extends CommonProps {
@@ -463,6 +473,7 @@ export interface SelectImgProps extends CommonProps {
   value?: Record<string, unknown>;
   required?: boolean;
   disabled?: boolean;
+  disabledTips?: string;
   width?: string;
   canPreview?: boolean;
 }

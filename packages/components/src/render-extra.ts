@@ -95,9 +95,15 @@ function renderImgCombination(props: Props): FeishuElement {
   return compact({
     tag: 'img_combination',
     combination_mode: props.mode,
-    img_list: images.map((item) => ({
-      img_key: typeof item === 'string' ? item : (item as { imgKey: string }).imgKey,
-    })),
+    img_list: images.map((item) =>
+      typeof item === 'string'
+        ? { img_key: item }
+        : compact({
+            img_key: (item as { imgKey: string }).imgKey,
+            img_id: (item as { imgId?: string }).imgId,
+            transparent: (item as { transparent?: boolean }).transparent,
+          }),
+    ),
     combination_transparent: props.transparent,
     corner_radius: props.cornerRadius,
     ...idOf(props),
@@ -378,8 +384,12 @@ function renderSelectImg(props: Props): FeishuElement {
       const option = item as Props;
       return compact({
         img_key: option.imgKey,
+        img_id: option.imgId,
         value: option.value,
         disabled: option.disabled,
+        disabled_tips: tips(option.disabledTips),
+        hover_tips: tips(option.hoverTips),
+        transparent: option.transparent,
       });
     }),
     name: props.name,
@@ -390,6 +400,7 @@ function renderSelectImg(props: Props): FeishuElement {
     selected_values: props.selectedValues,
     required: props.required,
     disabled: props.disabled,
+    disabled_tips: tips(props.disabledTips),
     width: props.width,
     can_preview: props.canPreview,
     ...callbackOf(props),

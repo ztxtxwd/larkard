@@ -469,3 +469,89 @@ test('dslToRaw/rawToDsl round-trips column_set state host (element_id + action.m
   assert.equal(backHost.actions, undefined);
   assert.deepEqual(backHost.action, { multi_url: { url: stateUrl } });
 });
+
+test('dslToRaw / rawToDsl round-trips img_combination + select_img', () => {
+  const dsl = {
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'img_combination',
+          combination_mode: 'double',
+          img_list: [{ img_key: 'img_a' }, { img_key: 'img_b', transparent: true }],
+          combination_transparent: true,
+          corner_radius: '8px',
+        },
+        {
+          tag: 'form',
+          name: 'f1',
+          elements: [
+            {
+              tag: 'select_img',
+              name: 'pick',
+              options: [
+                {
+                  img_key: 'img_a',
+                  value: 'a',
+                  disabled: true,
+                  disabled_tips: { tag: 'plain_text', content: '不可选' },
+                },
+                { img_key: 'img_b', value: 'b' },
+              ],
+              multi_select: true,
+              layout: 'trisect',
+              style: 'laser',
+              aspect_ratio: '1:1',
+              selected_values: ['a'],
+              can_preview: false,
+            },
+          ],
+        },
+      ],
+    },
+  };
+
+  const raw = dslToRaw(dsl) as any;
+  const combo = raw.body.property.elements[0];
+  assert.equal(combo.property.combinationMode, 'double');
+  assert.deepEqual(combo.property.imgList, [
+    { imageID: 'img_a' },
+    { imageID: 'img_b', transparent: true },
+  ]);
+  assert.equal(combo.property.transparent, true);
+
+  const select = raw.body.property.elements[1].property.elements[0];
+  assert.equal(select.tag, 'select_img');
+  assert.equal(select.property.multiSelect, true);
+  assert.equal(select.property.selectedValues[0], 'a');
+  assert.equal(select.property.aspectRatio, '1:1');
+  assert.equal(select.property.canPreview, false);
+  assert.equal(select.property.options[0].imageID, 'img_a');
+  assert.deepEqual(select.property.options[0].disabled_tips, {
+    tag: 'plain_text',
+    property: { content: '不可选' },
+  });
+
+  const back = rawToDsl(raw) as any;
+  assert.deepEqual(back.body.elements[0], {
+    tag: 'img_combination',
+    combination_mode: 'double',
+    img_list: [{ img_key: 'img_a' }, { img_key: 'img_b', transparent: true }],
+    combination_transparent: true,
+    corner_radius: '8px',
+  });
+  const backSelect = back.body.elements[1].elements[0];
+  assert.equal(backSelect.tag, 'select_img');
+  assert.equal(backSelect.multi_select, true);
+  assert.deepEqual(backSelect.selected_values, ['a']);
+  assert.equal(backSelect.layout, 'trisect');
+  assert.equal(backSelect.style, 'laser');
+  assert.equal(backSelect.aspect_ratio, '1:1');
+  assert.equal(backSelect.can_preview, false);
+  assert.deepEqual(backSelect.options[0], {
+    img_key: 'img_a',
+    value: 'a',
+    disabled: true,
+    disabled_tips: { tag: 'plain_text', content: '不可选' },
+  });
+});

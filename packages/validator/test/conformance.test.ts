@@ -162,6 +162,54 @@ test('conformance: 容器/交互常用组件同时通过两边', () => {
   );
 });
 
+test('conformance: img_combination / select_img 两边都接受', () => {
+  assertBoth(
+    {
+      schema: '2.0',
+      body: {
+        elements: [
+          {
+            tag: 'img_combination',
+            combination_mode: 'double',
+            img_list: [
+              { img_key: 'img_demo_a' },
+              { img_key: 'img_demo_b', transparent: true },
+            ],
+            combination_transparent: false,
+            corner_radius: '8px',
+          },
+          {
+            tag: 'form',
+            name: 'f1',
+            elements: [
+              {
+                tag: 'select_img',
+                name: 'pick',
+                options: [
+                  { img_key: 'img_demo_a', value: 'a', transparent: true },
+                  {
+                    img_key: 'img_demo_b',
+                    value: 'b',
+                    disabled: true,
+                    disabled_tips: { tag: 'plain_text', content: '不可选' },
+                  },
+                ],
+                style: 'default',
+                layout: 'bisect',
+                multi_select: true,
+                selected_values: ['a'],
+                aspect_ratio: '1:1',
+                can_preview: true,
+              },
+            ],
+          },
+        ],
+      },
+    },
+    'multi-image',
+  );
+});
+
 test('conformance: 已知分歧——官方 overflow.variable / form 内 select.behaviors 过严', () => {
   const card = {
     schema: '2.0',
