@@ -1,5 +1,15 @@
 # @open-feishu-card/language-server
 
+## 0.1.28
+
+### Patch Changes
+
+- Updated dependencies [42fb7bd]
+- Updated dependencies [42fb7bd]
+  - @open-feishu-card/schema@0.3.0
+  - @open-feishu-card/compiler@0.1.26
+  - @open-feishu-card/validator@0.1.11
+
 ## 0.1.27
 
 ### Patch Changes
