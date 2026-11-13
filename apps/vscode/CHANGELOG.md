@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.20
+
+- 折叠面板（`collapsible_panel`）补齐 header 字段：`expanded_title`（展开 / 收起切换标题）、`width`、`vertical_align`、`position`、`background_color`；面板级 `direction` / `horizontal_spacing` / `vertical_spacing` / `horizontal_align` / `vertical_align` 生效；`expanded` 缺省改为收起（对齐真机）
+- `column` 的 `horizontal_align` / `direction` 与 `horizontal_spacing` 在预览里生效；`column_set.vertical_align` 不再生效（真机 `disableVerticalConfig`，需写到每个 `column` 上）
+- Bundles schema 0.3.0、adapter 0.4.1、renderer 0.5.0、components 0.4.0
+
+## 0.2.19（补记）
+
+- Bundles renderer 0.2.28、adapter 0.3.18、schema 0.1.7
+
 ## 0.2.18
 
 - 预览里的默认按钮按真机撑满整行，纯文字按钮文字靠左

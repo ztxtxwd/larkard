@@ -16,7 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       mode: ${{ steps.select-mode.outputs.mode }}
-      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
     permissions:
       contents: read
     steps:
@@ -37,21 +36,23 @@ jobs:
       - id: select-mode
         uses: changesets/action/select-mode@v2
 
+  # 直接发版：把版本号 + changelog 提交推到 main，不经过 PR。
   version:
     if: needs.select-mode.outputs.mode == 'version'
     needs: select-mode
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
+          fetch-depth: 0
           persist-credentials: false
 
       # changeset version 生成 changelog 时需要本地 git fetch 追溯 changeset 所在提交
-      # （@changesets/git deepenCloneBy）；checkout 已禁用凭据持久化，这里临时注入。
-      - name: Authenticate git for changesets changelog attribution
+      # （@changesets/git deepenCloneBy）；同一份配置也让后面的 git push 带上 token。
+      - name: Authenticate git for changesets changelog attribution and push
         run: >-
           git config --global
           url."https://x-access-token:${{ github.token }}@github.com/".insteadOf
@@ -68,47 +69,31 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - uses: changesets/action/version@v2
-        with:
-          script: pnpm ci:version
-          commit-message: 'chore: version packages'
-          pr-title: 'chore: version packages'
+      - name: Bump versions and changelogs
+        run: pnpm ci:version
 
-  pack:
-    if: needs.select-mode.outputs.mode == 'publish'
-    needs: select-mode
-    runs-on: ubuntu-latest
-    outputs:
-      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - name: Commit and push version bump to main
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No version changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: version packages"
+          git push origin HEAD:main
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.30.3
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          package-manager-cache: false
-
-      - run: pnpm install --frozen-lockfile
-
-      - run: pnpm --filter "./packages/*" build
-
-      - run: pnpm --filter "./packages/*" test
-
-      - id: pack
-        uses: changesets/action/pack@v2
-        with:
-          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
-
+  # 用 GITHUB_TOKEN 推的提交不会再触发新的 workflow run，所以 version 之后必须
+  # 在同一轮里接着 build / test / publish。mode=publish（版本号已被手动提交）也走这里。
   publish:
-    needs: pack
+    needs: [select-mode, version]
+    if: >-
+      always()
+      && needs.select-mode.result == 'success'
+      && needs.version.result != 'failure'
+      && needs.version.result != 'cancelled'
+      && (needs.select-mode.outputs.mode == 'publish' || needs.select-mode.outputs.mode == 'version')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -116,7 +101,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
+          fetch-depth: 0
           persist-credentials: false
+
+      # 发布后 changeset publish 会打 release tag，这里同样用 token 推送
+      - name: Authenticate git for tag push
+        run: >-
+          git config --global
+          url."https://x-access-token:${{ github.token }}@github.com/".insteadOf
+          "https://github.com/"
 
       - uses: pnpm/action-setup@v4
         with:
@@ -134,6 +128,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - uses: changesets/action/publish@v2
-        with:
-          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+      - run: pnpm --filter "./packages/*" build
+
+      - run: pnpm --filter "./packages/*" test
+
+      - name: Publish to npm
+        run: pnpm exec changeset publish
+
+      - name: Push release tags
+        run: git push --tags
