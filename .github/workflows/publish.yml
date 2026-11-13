@@ -105,12 +105,13 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # 发布后 changeset publish 会打 release tag，这里同样用 token 推送
+      # 发布后 changeset publish 会打 release tag，这里同样用 token 推送；
+      # git tag -m 需要 committer 身份，缺少配置时 changeset 会静默失败但仍打印“Created git tags”。
       - name: Authenticate git for tag push
-        run: >-
-          git config --global
-          url."https://x-access-token:${{ github.token }}@github.com/".insteadOf
-          "https://github.com/"
+        run: |
+          git config --global url."https://x-access-token:${{ github.token }}@github.com/".insteadOf "https://github.com/"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - uses: pnpm/action-setup@v4
         with:
