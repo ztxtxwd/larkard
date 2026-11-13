@@ -1,5 +1,47 @@
 # @open-feishu-card/adapter
 
+## 0.4.2
+
+### Patch Changes
+
+- 90395f9: 修复 RAW→DSL 丢失 `column.widthValue` 权重，导致 `flex_mode: stretch` 的
+  weighted 列在预览里变成 1:1（真机是 1:2）。
+  
+  真机的列宽渲染（网页版引擎 `ao()`）以 `widthValue` 为准，`width` + `weight`
+  只是没有回显时的兜底：
+  
+  ```js
+  if (widthValue) {
+    if (type === 'column_width_weighted') { flexBasis = 0; flexGrow = value; }
+    // pixels / builtin auto 同理
+  } else if (width) { width / weight 兜底 }
+  ```
+  
+  adapter 之前把 `column_width_weighted` 回显当成“和 `width` + `weight` 冗余”
+  直接丢掉。但 RAW 里的 `weight` 常常是默认值 1（甚至缺失），真正的权重只在
+  `widthValue.value` 里 —— 丢掉回显后 DSL 只剩 `weight: 1`，渲染器就按 1:1 排。
+  
+  现在 column 的回显按真机优先级投影：
+  
+  - `column_width_weighted` → `width: "weighted"` + `weight: value`
+  - `builtin_column_width` → `width: value`（`auto` 等）
+  - `pixels` → `width: "Npx"`
+  
+  `weight` 与 `widthValue.value` 冲突时以 `widthValue` 为准（与真机一致）。
+- 979b3b9: `img.title` 按真机 BaseText 渲染（此前完全忽略，预览里图片标题丢失）：
+  
+  **结构 / 样式对齐真机 dump**
+  
+  - 外壳 `.universal-card-image`（width:100%，承载 margin）+ 上方 `.universal-card-image__title`（`margin-bottom:8px`），与真机 CSS 一致。
+  - `__wrapper` 补齐 `position:relative / align-items:center / flex:0 1 auto / width:100% / overflow:hidden`；`__host` 补齐 `width:100% / font-size:0 / position:static`（对齐真机 `universal-card-image` 规则）。
+  - 外边距（含 `margin:8px 20px`、负 margin 出血）挂到外壳上，标题与图片作为整体参与布局，`calc` 宽度照旧。
+  
+  **文本能力**
+  
+  - 支持官方 BaseText 的 `plain_text` 与 `lark_md`：`lark_md` 按 markdown 子树渲染（对齐 / 字号 / 粗体等生效）。
+  - 标题的 `text_size` / `text_color` 折叠进 `textStyle`（等价真机服务端归一）；`lines` / `text_lines` 支持行数截断；空标题不占位。
+  - RAW ↔ DSL 往返补齐：`rawToDsl` 把图片标题投影成 `plain_text | lark_md` 并保留 `text_size` / `text_color` / `text_align` / `lines`；DSL→RAW 的文本叶子补上 `lines`。
+
 ## 0.4.1
 
 ### Patch Changes
