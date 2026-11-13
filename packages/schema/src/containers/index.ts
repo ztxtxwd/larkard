@@ -53,7 +53,7 @@ export const ColumnSchema = z
       .string()
       .optional()
       .describe(
-        '列宽：auto / weighted / [16,600]px。并排按钮须与按钮 width 配套：① 满宽均分 → weighted + weight:1，按钮 width:fill；② 内容自适应 → auto，按钮不写 width。图标行：auto 放图标 + weighted 放文本',
+        '列宽：auto / weighted / [16,600]px（越界 px 客户端忽略、退回 auto，不报错也不夹取）。px 不是绝对宽度：整行超过卡片内容宽（PC 内容区约 576px、手机约 277px）时整行按比例压缩；flex_mode 只在窄屏会覆盖 width。并排按钮须与按钮 width 配套：① 满宽均分 → weighted + weight:1，按钮 width:fill；② 内容自适应 → auto，按钮不写 width。图标行：auto 放图标 + weighted 放文本',
       ),
     /** width 为 weighted 时的权重，1–5 */
     weight: z
@@ -62,7 +62,9 @@ export const ColumnSchema = z
       .min(1)
       .max(5)
       .optional()
-      .describe('width 为 weighted 时的权重，取值 1–5；等宽并排常用 1'),
+      .describe(
+        'width 为 weighted 时的权重，取值 1–5；等宽并排常用 1。越界（非 1–5 整数）时客户端会把该列降级成 auto，同行其它 weighted 列分掉剩余宽度',
+      ),
     horizontal_spacing: SpacingTokenSchema.optional().describe(
       '列内子组件水平间距',
     ),

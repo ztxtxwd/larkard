@@ -208,9 +208,11 @@ test('column_set: 未写 horizontal_spacing → 等价 "default" → column-gap:
     ] },
   });
   // 缺省即 default=8px，不是 0（#15 误把"样式解析后 ??0 兜底"当成 DSL 缺省）
-  assert.match(html, /universal-card-column-set[^>]*style="[^"]*column-gap:\s*8px/);
-  // 8px 间距下两列 bisect：每列抵消 4px → calc(50% - 4px)
-  assert.match(html, /width:\s*calc\(50%\s*-\s*4px\)/);
+  assert.match(html, /universal-card-column-set universal-card-column-set--bisect/);
+  assert.match(html, /column-gap:\s*8px/);
+  // 窄屏 bisect 的 calc 在样式表里，间距以内联 CSS 变量传给 calc()（真机同款 50% - gap/2）
+  assert.match(html, /--universal-card-column-gap:8px/);
+  assert.match(ALL_CSS, /calc\(50% - var\(--universal-card-column-gap, 8px\) \/ 2\)/);
 });
 
 test('column_set: 显式 horizontal_spacing="0px" → 列贴合 column-gap:0px', () => {
@@ -223,8 +225,8 @@ test('column_set: 显式 horizontal_spacing="0px" → 列贴合 column-gap:0px',
       ] },
     ] },
   });
-  assert.match(html, /universal-card-column-set[^>]*style="[^"]*column-gap:\s*0px/);
-  assert.match(html, /width:\s*calc\(50%\s*-\s*0px\)/);
+  assert.match(html, /column-gap:\s*0px/);
+  assert.match(html, /--universal-card-column-gap:0px/);
 });
 
 test('column_set: 显式 horizontal_spacing="default" → 8px（与缺省一致）', () => {

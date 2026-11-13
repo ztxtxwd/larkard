@@ -359,7 +359,7 @@
 .universal-card-div__content { flex: 1; min-width: 0; }
 
 /* ---- 布局：column_set / column ---- */
-.universal-card-column-set { display: flex; }
+.universal-card-column-set { display: flex; flex-wrap: nowrap; }
 .universal-card-column { box-sizing: border-box; overflow-wrap: anywhere; }
 /* 真机：有背景才挂 --bg。column_set 额外 4px 内边距；column 只圆角、不加默认 padding。 */
 .universal-card-column-set--bg { padding: 4px; border-radius: 6px; }
@@ -1291,4 +1291,42 @@
    宽屏则自适应内容宽。@container 不增加选择器权重，靠源码顺序在 --auto 规则之后覆盖。 */
 @container universal-card (max-width: 320px) {
   .universal-card-button--auto { width: 100%; }
+}
+
+/* ---- column_set 的 flex_mode 只在窄屏生效（对齐客户端 isWide） ----
+   客户端 ni()：`isWide && (flexMode = None)`，宽屏（容器 > 320px）下 flex_mode 整个作废，
+   列的 width / weighted 照常；窄屏才走 ei()：
+     stretch → width:100%（配合 wrap 每列独占一行）
+     bisect  → calc(50% - gap/2)
+     trisect → calc(33.33% - 2gap/3)
+     flow    → width:auto（px / weighted 全部忽略，按内容宽排列）
+   这些覆盖必须用 !important：列宽是内联 style 输出的。
+   gap 由 column_set 内联的 --universal-card-column-gap 提供。 */
+@container universal-card (max-width: 320px) {
+  .universal-card-column-set--flow,
+  .universal-card-column-set--stretch,
+  .universal-card-column-set--bisect,
+  .universal-card-column-set--trisect { flex-wrap: wrap; }
+
+  .universal-card-column-set--stretch > .universal-card-column {
+    width: 100% !important;
+    flex-grow: 0 !important;
+    flex-basis: auto !important;
+    flex-shrink: 1 !important;
+  }
+  .universal-card-column-set--bisect > .universal-card-column {
+    width: calc(50% - var(--universal-card-column-gap, 8px) / 2) !important;
+    flex-grow: 0 !important;
+    flex-basis: auto !important;
+  }
+  .universal-card-column-set--trisect > .universal-card-column {
+    width: calc(33.33% - var(--universal-card-column-gap, 8px) * 2 / 3) !important;
+    flex-grow: 0 !important;
+    flex-basis: auto !important;
+  }
+  .universal-card-column-set--flow > .universal-card-column {
+    width: auto !important;
+    flex-grow: 0 !important;
+    flex-basis: auto !important;
+  }
 }

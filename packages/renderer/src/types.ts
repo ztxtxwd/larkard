@@ -484,8 +484,11 @@ export interface RenderContext {
    */
   textMetrics?: { fontSize: number; lineHeight: number };
   /**
-   * column_set 注入给子 column 的分栏模式（#17/D7）：flexMode 为 stretch/bisect/trisect 时，
-   * 子列无视自身 weight，按客户端同款 calc 宽度（用实际 columnGap）。
+   * column_set 注入给子 column 的分栏模式（#17/D7）。真机只在窄屏（卡片容器 ≤320px，
+   * 即客户端 isWide 为 false）才用它覆盖列宽：stretch → 每列 100% 堆叠、
+   * bisect / trisect → calc 等分、flow → 内容宽；宽屏时 flexMode 等同 none，列宽照常。
+   * 内置 column 的覆盖已改由 CSS 类 + @container 完成（见 styles.css），
+   * 这里保留模式信息供自定义组件使用。
    */
   columnSet?: { flexMode?: string; gap: number };
   /**

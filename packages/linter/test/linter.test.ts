@@ -151,3 +151,44 @@ test('builder empty body is reported on dsl body', () => {
   }`);
   assert.ok(ds.some((d) => d.rule === 'empty-body'));
 });
+
+test('column 宽度 px 越界时告警（客户端忽略并退回 auto）', () => {
+  const ds = lint(
+    `{ "schema": "2.0", "body": { "elements": [
+       { "tag": "column_set", "columns": [
+         { "tag": "column", "width": "10px", "elements": [] },
+         { "tag": "column", "width": "800px", "elements": [] }
+       ] }
+     ] } }`,
+  );
+  const hits = ds.filter((d) => d.rule === 'column-width-range');
+  assert.equal(hits.length, 2);
+  assert.match(hits[0].message, /\[16,600\]/);
+});
+
+test('column 宽度 px 在 16–600 内不告警', () => {
+  const ds = lint(
+    `{ "schema": "2.0", "body": { "elements": [
+       { "tag": "column_set", "columns": [
+         { "tag": "column", "width": "16px", "elements": [] },
+         { "tag": "column", "width": "600px", "elements": [] },
+         { "tag": "column", "width": "auto", "elements": [] },
+         { "tag": "column", "width": "weighted", "weight": 5, "elements": [] }
+       ] }
+     ] } }`,
+  );
+  assert.equal(ds.filter((d) => d.rule === 'column-width-range').length, 0);
+  assert.equal(ds.filter((d) => d.rule === 'column-weight-range').length, 0);
+});
+
+test('column weight 越界（非 1–5 整数）时告警', () => {
+  const ds = lint(
+    `{ "schema": "2.0", "body": { "elements": [
+       { "tag": "column_set", "columns": [
+         { "tag": "column", "width": "weighted", "weight": 10, "elements": [] },
+         { "tag": "column", "width": "weighted", "weight": 1.5, "elements": [] }
+       ] }
+     ] } }`,
+  );
+  assert.equal(ds.filter((d) => d.rule === 'column-weight-range').length, 2);
+});

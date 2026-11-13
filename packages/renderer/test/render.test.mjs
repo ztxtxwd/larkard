@@ -1755,10 +1755,68 @@ function rawColumnStyle(property) {
   return m[1];
 }
 
-test('RAW column: widthValue.pixels → width:Npx + flex-shrink:0', () => {
+test('RAW column: widthValue.pixels → width:Npx，且允许被整行压缩', () => {
   const style = rawColumnStyle({ widthValue: { type: 'pixels', value: 120 } });
   assert.match(style, /width:120px/);
-  assert.match(style, /flex-shrink:0/);
+  // 真机整行超宽时按 px 比例压缩（600px 行在 576px 内容区里缩到 576），
+  // flex-shrink:0 会定死宽度并溢出卡片。
+  assert.match(style, /flex-shrink:1/);
+});
+
+test('RAW column: 越界 px（<16 / >600）按 auto 渲染（真机忽略该值）', () => {
+  assert.match(rawColumnStyle({ widthValue: { type: 'pixels', value: 10 } }), /width:auto/);
+  assert.match(rawColumnStyle({ widthValue: { type: 'pixels', value: 800 } }), /width:auto/);
+  assert.match(rawColumnStyle({ widthValue: { type: 'pixels', value: 16 } }), /width:16px/);
+  assert.match(rawColumnStyle({ widthValue: { type: 'pixels', value: 600 } }), /width:600px/);
+});
+
+test('column_set stretch：挂模式类，窄屏由容器查询堆叠（宽屏列宽照常）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'column_set',
+      flex_mode: 'stretch',
+      columns: [
+        { tag: 'column', width: 'weighted', weight: 1, elements: [{ tag: 'markdown', content: 'a' }] },
+        { tag: 'column', width: '16px', elements: [{ tag: 'markdown', content: 'b' }] },
+      ],
+    }] },
+  });
+  // 真机 isWide（容器 > 320px）时 flexMode 当 none，所以内联样式必须保留列自己的宽度。
+  assert.match(html, /universal-card-column-set universal-card-column-set--stretch/);
+  const styles = [...html.matchAll(/class="universal-card-column(?!-)[^"]*" style="([^"]*)"/g)].map(
+    (m) => m[1],
+  );
+  assert.equal(styles.length, 2);
+  assert.match(styles[0], /flex-basis:0/);
+  assert.match(styles[1], /width:16px/);
+  // 窄屏覆盖在样式表里，不能再用 flex-shrink:0（否则 100% 列把兄弟压成 0）。
+  assert.match(ALL_CSS, /@container universal-card \(max-width: 320px\)/);
+  assert.match(ALL_CSS, /universal-card-column-set--stretch > \.universal-card-column/);
+  assert.match(ALL_CSS, /flex-wrap: wrap/);
+});
+
+test('column_set flow：挂 --flow 类；窄屏才变 auto，宽屏保留 px / weighted', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'column_set',
+      flex_mode: 'flow',
+      columns: [
+        { tag: 'column', width: '120px', elements: [{ tag: 'markdown', content: '120' }] },
+        { tag: 'column', width: 'weighted', weight: 3, elements: [{ tag: 'markdown', content: 'w3' }] },
+      ],
+    }] },
+  });
+  assert.match(html, /universal-card-column-set--flow/);
+  const styles = [...html.matchAll(/class="universal-card-column(?!-)[^"]*" style="([^"]*)"/g)].map(
+    (m) => m[1],
+  );
+  assert.equal(styles.length, 2);
+  assert.match(styles[0], /width:120px/);
+  assert.match(styles[1], /flex-grow:3/);
+  assert.match(ALL_CSS, /universal-card-column-set--flow > \.universal-card-column/);
+  assert.match(ALL_CSS, /width: auto !important/);
 });
 
 test('RAW column: widthValue.column_width_weighted → flex-grow 用 value', () => {

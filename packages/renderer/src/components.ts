@@ -705,11 +705,19 @@ registerComponent('column_set', (el, ctx) => {
   // 官方《分栏》文档的 column_set 字段表同样没有 vertical_align。别再"补"上它。
   const style: Record<string, string> = {
     display: 'flex',
-    flexWrap: flexMode === 'flow' || flexMode === 'wrap' ? 'wrap' : 'nowrap',
     rowGap: '8px',
     alignItems: 'stretch',
     columnGap: gap + 'px',
+    // 供 styles.css 的窄屏 calc() 用（bisect / trisect 要减掉列间距）。
+    '--universal-card-column-gap': gap + 'px',
   };
+  // flex_mode 只挂类名（真机同款 ai({[flexMode]: true})）：宽度覆盖、换行都在
+  // styles.css 的 @container (max-width:320px) 里，对应客户端 isWide 时才置 none。
+  const fm = typeof flexMode === 'string' ? flexMode.toLowerCase() : '';
+  const modeClass =
+    fm === 'flow' || fm === 'wrap' || fm === 'stretch' || fm === 'bisect' || fm === 'trisect'
+      ? ` ${CLS}-column-set--${fm === 'wrap' ? 'flow' : fm}`
+      : '';
   if (hAlign) {
     style.justifyContent = H_ALIGN_MAP[hAlign] || 'flex-start';
   }
@@ -722,7 +730,7 @@ registerComponent('column_set', (el, ctx) => {
   if (bg) style.background = bg;
   const pad = boxToStyle(p.padding);
   if (pad) style.padding = pad;
-  const cls = `${CLS}-column-set` + (bg ? ` ${CLS}-column-set--bg` : '');
+  const cls = `${CLS}-column-set` + (bg ? ` ${CLS}-column-set--bg` : '') + modeClass;
   if (isStateHost(el)) {
     style.position = 'absolute';
     style.width = '0';
@@ -731,8 +739,8 @@ registerComponent('column_set', (el, ctx) => {
     style.margin = '0';
     style.padding = '0';
   }
-  // #17/D7：把 flexMode + 实际 columnGap 下发给子 column，使其按
-  // stretch/bisect/trisect 输出客户端同款宽度 calc。
+  // #17/D7：把 flexMode + 实际 columnGap 下发给子 column（公开 RenderContext 的一部分，
+  // 自定义组件可用）。内置 column 的宽度覆盖已改由 CSS 类 + 容器查询完成，见上。
   const childCtx: RenderContext = { ...ctx, columnSet: { flexMode, gap } };
   return h('div', { className: cls, style }, renderElements(p.columns, childCtx));
 });
@@ -757,7 +765,7 @@ registerComponent('column', (el, ctx) => {
     flexDirection: 'column',
   };
   // 宽度：与真机 Kn() 完全同构。RAW 有四种子形态，DSL 用 width 字符串。
-  //   widthValue.pixels                 → width:Npx，且 flexShrink:0（定宽列不被压）
+  //   widthValue.pixels                 → width:Npx（只认 [16,600]，越界客户端按 auto）
   //   widthValue.column_width_weighted  → flexBasis:0 + flexGrow:N
   //   width / widthValue = auto         → width:auto（贴内容宽）
   //   width = weighted                  → flexBasis:0 + flexGrow:weight
@@ -768,8 +776,12 @@ registerComponent('column', (el, ctx) => {
   const w = p.width;
   const weighted = wv && wv.type === 'column_width_weighted' && typeof wv.value === 'number';
   if (wv && wv.type === 'pixels' && typeof wv.value === 'number') {
-    style.width = wv.value + 'px';
-    style.flexShrink = 0; // 定宽列不被压缩，保证图片按列宽显示
+    // 真机（V7.4+）只认 [16,600] 的 px：10px / 800px 既不报错也不夹取，
+    // 直接按 auto（内容宽）渲染。预览照抄，避免「预览定宽、真机变 auto」。
+    // 注意不要写 flexShrink:0：真机整行超宽时会把各列按 px 比例压缩
+    // （600px 行放进 576px 内容区 → 等比缩到 576），定死不缩会溢出卡片。
+    if (wv.value >= 16 && wv.value <= 600) style.width = wv.value + 'px';
+    else style.width = 'auto';
   } else if (weighted) {
     style.flexBasis = 0;
     style.flexGrow = String(wv!.value);
@@ -784,26 +796,12 @@ registerComponent('column', (el, ctx) => {
     // 认不出的写法（"80%"、历史脏值）：按权重兜底，别让列塔成 0
     style.flexGrow = String(p.weight || 1);
   }
-  // #17/D7：父 column_set 为 stretch/bisect/trisect 时，强制按客户端 calc 宽度
-  // （无视自身 weight）。gap 用父级实际 columnGap。
-  const cs = ctx.columnSet;
-  if (cs && cs.flexMode) {
-    const fm = String(cs.flexMode).toLowerCase();
-    const g = cs.gap || 0;
-    if (fm === 'stretch') {
-      style.width = '100%';
-      style.flexGrow = '0';
-      style.flexBasis = 'auto';
-    } else if (fm === 'bisect') {
-      style.width = `calc(50% - ${g / 2}px)`;
-      style.flexGrow = '0';
-      style.flexBasis = 'auto';
-    } else if (fm === 'trisect') {
-      style.width = `calc(33.33% - ${(2 * g) / 3}px)`;
-      style.flexGrow = '0';
-      style.flexBasis = 'auto';
-    }
-  }
+  // flex_mode 的窄屏覆盖不在内联样式里做：真机 isWide（卡片容器 > 320px）时
+  // 客户端直接把 flexMode 当 none（ni() 里 `isWide && (flexMode = None)`），只有
+  // 窄屏才按 ei() 改写列宽。SSR 端不知道容器宽度，所以改由 column_set 的模式类名
+  // + styles.css 里的 @container（max-width: 320px）规则覆盖，见
+  // `.universal-card-column-set--stretch / --bisect / --trisect / --flow`。
+  // 这样宽卡预览里 width 照常生效，窄卡片里才变成堆叠/等分/内容宽。
   // 对齐：与真机 qr() 同一套映射。
   //   direction=vertical（缺省）→ 主轴纵向：vertical_align→justify-content，horizontal_align→align-items
   //   direction=horizontal      → 主轴横向：horizontal_align→justify-content，vertical_align→align-items

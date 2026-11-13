@@ -273,6 +273,48 @@ function lintMissingSchema(root: JsonObjectNode, ctx: Ctx): void {
   }
 }
 
+function lintColumnWidth(node: JsonNode, ctx: Ctx): void {
+  if (node.type === 'array') {
+    for (const item of node.items) lintColumnWidth(item, ctx);
+    return;
+  }
+  if (node.type !== 'object') return;
+  const tag = getProp(node, 'tag');
+  if (tag?.type === 'string' && tag.value === 'column') {
+    const width = getProp(node, 'width');
+    const widthText = width?.type === 'string' ? width.value.trim() : '';
+    const pxMatch = /^(\d+(?:\.\d+)?)px$/.exec(widthText);
+    if (pxMatch && width) {
+      const px = Number(pxMatch[1]);
+      if (!(px >= 16 && px <= 600)) {
+        ctx.diagnostics.push({
+          rule: 'column-width-range',
+          message:
+            `列宽 ${widthText} 超出客户端支持的 [16,600]px：飞书既不报错也不夹取，` +
+            '会直接按 auto（内容宽）渲染，固定列宽的意图会丢失',
+          severity: 'warning',
+          range: width.range,
+        });
+      }
+    }
+    const weight = getProp(node, 'weight');
+    if (widthText === 'weighted' && weight?.type === 'number') {
+      const value = weight.value;
+      if (!Number.isInteger(value) || value < 1 || value > 5) {
+        ctx.diagnostics.push({
+          rule: 'column-weight-range',
+          message:
+            `列权重 ${value} 不是 1–5 的整数：飞书会把这一列降级成 auto（内容宽），` +
+            '同一行其它 weighted 列会分掉剩余宽度',
+          severity: 'warning',
+          range: weight.range,
+        });
+      }
+    }
+  }
+  for (const p of node.properties) lintColumnWidth(p.value, ctx);
+}
+
 /** 对已解析 AST 执行全部 lint 规则（自动解包搭建工具文档） */
 export function lintAst(ast: JsonObjectNode | undefined, options: LintOptions = {}): LintDiagnostic[] {
   if (!ast) return [];
@@ -290,6 +332,7 @@ export function lintAst(ast: JsonObjectNode | undefined, options: LintOptions = 
   lintMissingSchema(cardAst, ctx);
   lintLongText(cardAst, ctx);
   lintInputMaxLength(cardAst, ctx);
+  lintColumnWidth(cardAst, ctx);
   lintMarkdownBoldSpace(cardAst, ctx);
   return ctx.diagnostics;
 }
