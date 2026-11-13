@@ -1,6 +1,14 @@
 import { z } from 'zod';
 
-import { ColorSchema, ElementIdSchema, TextSizeSchema, TextTagColorSchema } from './enums.js';
+import {
+  ColorSchema,
+  ElementIdSchema,
+  I18nStringMapSchema,
+  SpacingValueSchema,
+  TextSizeSchema,
+  TextTagColorSchema,
+} from './enums.js';
+import { IconSchema } from './icon.js';
 
 /**
  * 纯文本对象（plain_text）。
@@ -35,16 +43,41 @@ export const TextObjectSchema = z
 export type TextObject = z.infer<typeof TextObjectSchema>;
 
 /**
- * 折叠面板标题等场景支持的 markdown 文本对象。
+ * 折叠面板标题文本对象。
+ * 官方 `CollapsiblePanelHeaderTitle` 是 LarkMd / Markdown 组件 / PlainText 三者的
+ * 联合，故 tag 同时接受 plain_text / lark_md / markdown，并保留这三种形态各自
+ * 文档化的排版字段（text_align / text_size / text_color / lines / margin / icon 等）。
+ * 不保留这些可选字段会让 `parse()` 静默丢字段。
  */
 export const MarkdownTextObjectSchema = z
   .object({
     tag: z
-      .enum(['plain_text', 'markdown'])
-      .describe('文本类型：plain_text 或 markdown'),
+      .enum(['plain_text', 'lark_md', 'markdown'])
+      .describe('文本类型：plain_text / lark_md / markdown'),
     content: z.string().optional().describe('文本内容'),
+    element_id: ElementIdSchema.optional().describe('元素唯一标识'),
+    icon: IconSchema.optional().describe('标题文案的前置图标'),
+    i18n: I18nStringMapSchema.optional().describe('多语言文案映射'),
+    enable_streaming: z
+      .boolean()
+      .optional()
+      .describe('是否开启流式更新（逐字输出）'),
+    text_align: z
+      .enum(['left', 'center', 'right'])
+      .optional()
+      .describe('文本对齐方式，默认 left'),
+    text_size: TextSizeSchema.optional().describe('字号，默认 normal'),
+    text_color: ColorSchema.optional().describe('文本颜色，默认 default'),
+    text_lines: z.number().int().optional().describe('文本最大行数'),
+    lines: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe('最大显示行数，超出省略'),
+    margin: SpacingValueSchema.optional().describe('文本外边距'),
   })
-  .describe('折叠面板等场景的标题文本对象');
+  .describe('折叠面板等场景的标题文本对象（plain_text / lark_md / markdown）');
 
 export type MarkdownTextObject = z.infer<typeof MarkdownTextObjectSchema>;
 

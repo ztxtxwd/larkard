@@ -681,6 +681,11 @@ registerComponent('div', (el, ctx) => {
 
 // ---- 布局 ----
 
+/** 对齐枚举 → flex 值。真机 qr() 里的 Wr / Hr 两张表，column / column_set /
+ *  interactive_container 共用。 */
+const H_ALIGN_MAP: Record<string, string> = { left: 'flex-start', center: 'center', right: 'flex-end' };
+const V_ALIGN_MAP: Record<string, string> = { top: 'flex-start', center: 'center', bottom: 'flex-end' };
+
 // column_set：横向分栏容器
 registerComponent('column_set', (el, ctx) => {
   const p = el.property || {};
@@ -694,6 +699,10 @@ registerComponent('column_set', (el, ctx) => {
   const gap = gapRaw != null ? horizontalSpacingToPx(gapRaw as number | string) : horizontalSpacingToPx('default');
   const flexMode = p.flexMode || p.flex_mode;
   const hAlign = p.horizontalAlign || p.horizontal_align;
+  // 注意：column_set 只吃 horizontal_align，vertical_align 真机根本没有实现——
+  // 飞书网页版引擎里 column_set 走 qr(element, { disableVerticalConfig: true })，
+  // 垂直对齐配置整段被跳过（列本身又被 stretch 成整行高，也没有可对齐的余量）。
+  // 官方《分栏》文档的 column_set 字段表同样没有 vertical_align。别再"补"上它。
   const style: Record<string, string> = {
     display: 'flex',
     flexWrap: flexMode === 'flow' || flexMode === 'wrap' ? 'wrap' : 'nowrap',
@@ -702,8 +711,7 @@ registerComponent('column_set', (el, ctx) => {
     columnGap: gap + 'px',
   };
   if (hAlign) {
-    style.justifyContent =
-      ({ left: 'flex-start', center: 'center', right: 'flex-end' } as Record<string, string>)[hAlign] || 'flex-start';
+    style.justifyContent = H_ALIGN_MAP[hAlign] || 'flex-start';
   }
   // margin：分栏容器自身的外边距（可为负，如 -8px 上移，紧贴上一块）；
   // 有水平外边距时用 calc 抵消 body 子项 width:100%，避免两侧被裁切。
@@ -744,7 +752,9 @@ function isStateHost(el: CardElement): boolean {
 registerComponent('column', (el, ctx) => {
   const p = el.property || {};
   const style: Record<string, string | number> = {
-    flexShrink: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column',
+    flexShrink: 1, overflow: 'hidden', display: 'flex',
+    // 缺省纵向排列；direction=horizontal 时改行，两个 align 落到哪个 flex 属性也随之交换
+    flexDirection: 'column',
   };
   // 宽度：RAW 优先 widthValue（{type:'pixels',value} 为定宽；其余按权重），回退 snake_case width
   const wv = p.widthValue;
@@ -781,11 +791,22 @@ registerComponent('column', (el, ctx) => {
       style.flexBasis = 'auto';
     }
   }
-  const vAlign = p.verticalAlign || p.vertical_align;
-  if (vAlign) {
-    style.justifyContent =
-      ({ top: 'flex-start', center: 'center', bottom: 'flex-end' } as Record<string, string>)[vAlign] || 'flex-start';
-  }
+  // 对齐：与真机 qr() 同一套映射。
+  //   direction=vertical（缺省）→ 主轴纵向：vertical_align→justify-content，horizontal_align→align-items
+  //   direction=horizontal      → 主轴横向：horizontal_align→justify-content，vertical_align→align-items
+  // 此前只读了 vertical_align 且写死给 justify-content，horizontal_align / direction 被整个忽略，
+  // 于是「列内水平对齐」在预览里怎么点都不动。未写这两个字段时不输出对应样式，沿用 CSS 默认。
+  const horizontalDir = p.direction === 'horizontal';
+  if (horizontalDir) style.flexDirection = 'row';
+  const hAlign = p.horizontal_align ?? p.horizontalAlign;
+  const vAlign = p.vertical_align ?? p.verticalAlign;
+  const justify = horizontalDir ? H_ALIGN_MAP[hAlign as string] : V_ALIGN_MAP[vAlign as string];
+  const align = horizontalDir ? V_ALIGN_MAP[vAlign as string] : H_ALIGN_MAP[hAlign as string];
+  if (justify) style.justifyContent = justify;
+  if (align) style.alignItems = align;
+  // 横向间距：只在显式给值时输出（真机没有 column 级默认 column-gap）。
+  const hGap = p.horizontalSpacingValue?.value ?? p.horizontal_spacing ?? p.horizontalSpacing;
+  if (hGap != null) style.columnGap = horizontalSpacingToPx(hGap as number | string) + 'px';
   // 纵向间距：列内元素唯一的间隔来源（flex row-gap）。缺省 8px（对齐飞书默认）。
   // 注意不要再叠加 CSS 的相邻兄弟 margin，否则间距翻倍——故 styles.css 里不给 column 子元素设 margin。
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
@@ -1219,10 +1240,8 @@ registerComponent('interactive_container', (el, ctx) => {
   if (horizontalDir) style.flexDirection = 'row';
   const hAlign = p.horizontal_align ?? (p as { horizontalAlign?: string }).horizontalAlign;
   const vAlign = p.vertical_align ?? (p as { verticalAlign?: string }).verticalAlign;
-  const H_ALIGN: Record<string, string> = { left: 'flex-start', center: 'center', right: 'flex-end' };
-  const V_ALIGN: Record<string, string> = { top: 'flex-start', center: 'center', bottom: 'flex-end' };
-  const justify = horizontalDir ? H_ALIGN[hAlign as string] : V_ALIGN[vAlign as string];
-  const align = horizontalDir ? V_ALIGN[vAlign as string] : H_ALIGN[hAlign as string];
+  const justify = horizontalDir ? H_ALIGN_MAP[hAlign as string] : V_ALIGN_MAP[vAlign as string];
+  const align = horizontalDir ? V_ALIGN_MAP[vAlign as string] : H_ALIGN_MAP[hAlign as string];
   if (justify) style.justifyContent = justify;
   if (align) style.alignItems = align;
 
@@ -1256,16 +1275,18 @@ registerComponent('interactive_container', (el, ctx) => {
 
 // collapsible_panel：折叠面板（可点击展开/收起）。
 // 用原生 <details>/<summary> 实现纯 CSS 交互——零 JS、SSR 字符串与浏览器 DOM 都能点，
-// 用户点击 <summary> 由浏览器切换 [open]，箭头旋转与内容显隐都由 CSS 的 details[open] 驱动，
-// 故 toggle 后状态始终自洽（无需 JS 同步）。
+// 用户点击 <summary> 由浏览器切换 [open]，箭头旋转、标题文案（title ↔ expanded_title）
+// 与内容显隐都由 CSS 的 details[open] 驱动，故 toggle 后状态始终自洽（无需 JS）。
 // 结构：<details>（外层容器 border/background/radius）→ <summary>（标题 + 可旋转箭头图标）
 // → content（子元素；折叠态由浏览器隐藏）。expanded 决定初始展开态（映射到 <details open>）。
-// header 里的字段（DSL 扁平对象，未经 convertEl）：title（文本叶子或 plain_text）、
-// icon（standard_icon）、icon_position（left/right/follow_text）、icon_expanded_angle、padding。
+// header 里的字段（DSL 扁平对象，未经 convertEl）：title / expanded_title（文本叶子或 plain_text）、
+// background_color、width（fill/auto/auto_when_fold）、vertical_align、position（top/bottom）、
+// icon（standard_icon）、icon_position、icon_expanded_angle、padding。
 registerComponent('collapsible_panel', (el, ctx) => {
   const p = el.property || {};
   const hdr = (p.header && typeof p.header === 'object' ? p.header : {}) as Record<string, unknown>;
-  const expanded = p.expanded !== false; // 缺省视为展开
+  // 真机 useState(!!e.expanded)：expanded 缺省即收起（官方字段默认 false）。
+  const expanded = p.expanded === true;
 
   // 外层容器样式：background_color（bg-white/命名色/登记色→customBackgroundStyle）+ 可选 border。
   const style: Record<string, string> = { width: '100%' };
@@ -1285,6 +1306,13 @@ registerComponent('collapsible_panel', (el, ctx) => {
   } else {
     style.borderRadius = '8px';
   }
+  // header.position=bottom：标题落在内容下方。<summary> 必须是 <details> 的首个子节点才能
+  // 充当开关键，所以 DOM 顺序不动，用 flex order 调换视觉顺序（details 变成纵向 flex 容器）。
+  const headerBottom = String(hdr.position ?? 'top') === 'bottom';
+  if (headerBottom) {
+    style.display = 'flex';
+    style.flexDirection = 'column';
+  }
   applyOuterMargin(style, p.margin);
 
   // header（<summary>）：标题 + 箭头图标。icon_position：
@@ -1294,8 +1322,36 @@ registerComponent('collapsible_panel', (el, ctx) => {
     ? hdr.padding
     : boxToStyle(hdr.padding as never); // DSL 常是 "8px 12px 8px 12px"；RAW 可能是 box 对象
   if (hpad) headerStyle.padding = hpad;
-  const title = extractPlainText(hdr.title) || extractText(hdr.title as never);
-  const titleVNode = h('div', { className: `${CLS}-collapsible-panel__title` }, title);
+  // header.background_color：命名色 / #hex / 色阶 token。
+  const hbg = resolveColor(hdr.background_color ?? hdr.backgroundColor);
+  if (hbg) headerStyle.background = hbg;
+  if (headerBottom) headerStyle.order = '2';
+
+  // 标题支持 plain_text / lark_md / markdown（官方 CollapsiblePanelHeaderTitle 是三者联合）。
+  // DSL 标题是扁平的 `{ tag, content }`；编辑器直出的 RAW 可能再包一层 property，两种都归一。
+  const titleLeaf = (raw: unknown, className: string): VNode | null => {
+    if (!raw || typeof raw !== 'object') return null;
+    const t = raw as Record<string, unknown>;
+    if (typeof t.tag !== 'string') return null;
+    const property = (t.property && typeof t.property === 'object'
+      ? t.property
+      : t) as Record<string, unknown>;
+    const node = renderHeaderTextLeaf({ tag: t.tag, property } as CardElement, ctx, className);
+    if (node) return node;
+    // 兼容历史畸形形态：抽不到结构化内容时退回纯文本。
+    const text = extractPlainText(raw) || extractText(raw as never);
+    return text ? h('div', { className }, text) : null;
+  };
+  const primaryTitle = titleLeaf(hdr.title, `${CLS}-collapsible-panel__title-text`);
+  const expandedTitleRaw = hdr.expanded_title ?? hdr.expandedTitle;
+  const expandedTitle = titleLeaf(
+    expandedTitleRaw,
+    `${CLS}-collapsible-panel__title-text ${CLS}-collapsible-panel__title-text--expanded`,
+  );
+  // 有 expanded_title 时才挂 --has-expanded：折叠展示 title、展开展示 expanded_title（纯 CSS）。
+  const titleCls = `${CLS}-collapsible-panel__title`
+    + (expandedTitle ? ` ${CLS}-collapsible-panel__title--has-expanded` : '');
+  const titleVNode = h('div', { className: titleCls }, [primaryTitle, expandedTitle].filter(Boolean) as VNode[]);
 
   // 箭头图标：复用 renderIcon（standard_icon）。旋转不再由内联 transform 定死，而是把展开角度
   // 写进 CSS 变量 --panel-icon-angle：details[open] 时 CSS 用它旋转，收起时归 0——这样用户
@@ -1320,8 +1376,16 @@ registerComponent('collapsible_panel', (el, ctx) => {
   const headerChildren = iconLeft ? [iconVNode, titleVNode] : [titleVNode, iconVNode];
   // 展开角写在 <summary> 上（作用域含箭头子节点）；--panel-icon-angle 供 CSS details[open] 取用。
   const summaryStyle = { ...headerStyle, '--panel-icon-angle': `${openAngle}deg` };
+  // header.width：fill（默认撑满）/ auto（自适应内容宽）/ auto_when_fold（折叠自适应、展开撑满）。
+  const headerWidth = String(hdr.width ?? hdr.headerWidth ?? 'fill');
+  // header.vertical_align：top / center（默认）/ bottom。
+  const headerVAlign = String(hdr.vertical_align ?? hdr.verticalAlign ?? 'center');
   const headerCls = `${CLS}-collapsible-panel__header`
-    + (iconFollow ? ` ${CLS}-collapsible-panel__header--icon-follow` : '');
+    + (iconFollow ? ` ${CLS}-collapsible-panel__header--icon-follow` : '')
+    + (headerWidth === 'auto' ? ` ${CLS}-collapsible-panel__header--w-auto` : '')
+    + (headerWidth === 'auto_when_fold' ? ` ${CLS}-collapsible-panel__header--w-auto-when-fold` : '')
+    + (headerVAlign === 'top' ? ` ${CLS}-collapsible-panel__header--valign-top` : '')
+    + (headerVAlign === 'bottom' ? ` ${CLS}-collapsible-panel__header--valign-bottom` : '');
   const summary = h('summary', { className: headerCls, style: summaryStyle }, headerChildren);
 
   // 内容始终渲染：折叠态由 <details>（无 open 属性）交给浏览器隐藏，展开由用户点击控制。
@@ -1332,6 +1396,36 @@ registerComponent('collapsible_panel', (el, ctx) => {
       ? p.padding
       : boxToStyle(p.padding as never);
   if (cpad) contentStyle.padding = cpad;
+  if (headerBottom) contentStyle.order = '1';
+  // 面板内布局四件套：direction / horizontal_spacing / vertical_spacing / horizontal_align / vertical_align。
+  // 仅在显式给出时才切 flex（保持未配置卡片原有的块级堆叠行为）。
+  const direction = String(p.direction ?? 'vertical');
+  const isRow = direction === 'horizontal';
+  const hSpacing = p.horizontal_spacing ?? (p as { horizontalSpacing?: unknown }).horizontalSpacing;
+  const vSpacing = p.vertical_spacing ?? (p as { verticalSpacing?: unknown }).verticalSpacing;
+  const hAlign = (p.horizontal_align ?? (p as { horizontalAlign?: unknown }).horizontalAlign) as string | undefined;
+  const vAlign = (p.vertical_align ?? (p as { verticalAlign?: unknown }).verticalAlign) as string | undefined;
+  if (isRow || hSpacing != null || vSpacing != null || hAlign != null || vAlign != null) {
+    contentStyle.display = 'flex';
+    contentStyle.flexDirection = isRow ? 'row' : 'column';
+    // 横排时默认 8px 列间距（对齐 column_set 默认水平间距），否则不给默认间距。
+    const gapX = hSpacing != null ? horizontalSpacingToPx(hSpacing as number | string)
+      : (isRow ? 8 : 0);
+    const gapY = vSpacing != null ? verticalSpacingToPx(vSpacing as number | string) : 0;
+    if (gapX) contentStyle.columnGap = gapX + 'px';
+    if (gapY) contentStyle.rowGap = gapY + 'px';
+    // 主轴/交叉轴随方向互换：横排时 horizontal_align 走 justify-content，纵排时走 align-items。
+    const hVal = hAlign ? H_ALIGN_MAP[hAlign] : undefined;
+    const vVal = vAlign ? V_ALIGN_MAP[vAlign] : undefined;
+    if (hVal) {
+      if (isRow) contentStyle.justifyContent = hVal;
+      else contentStyle.alignItems = hVal;
+    }
+    if (vVal) {
+      if (isRow) contentStyle.alignItems = vVal;
+      else contentStyle.justifyContent = vVal;
+    }
+  }
   const content = h(
     'div',
     { className: `${CLS}-collapsible-panel__content`, style: contentStyle },

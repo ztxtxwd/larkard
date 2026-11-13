@@ -1619,3 +1619,121 @@ test('img_combination: 数值型 cornerRadiusValue 也转为圆角', () => {
   }, { imageBaseURL: 'https://img.example/' });
   assert.match(html, /border-radius:6px/);
 });
+
+// ---- collapsible_panel ----
+
+test('collapsible_panel: 折叠态默认收起（expanded 缺省），展开才带 open', () => {
+  const closed = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'collapsible_panel', header: { title: { tag: 'plain_text', content: '详情' } }, elements: [] }] },
+  });
+  assert.doesNotMatch(closed, /<details[^>]*\sopen/);
+  const opened = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'collapsible_panel', expanded: true, header: { title: { tag: 'plain_text', content: '详情' } }, elements: [] }] },
+  });
+  assert.match(opened, /<details[^>]*\sopen/);
+});
+
+test('collapsible_panel: expanded_title 与 title 同时渲染，靠 details[open] 切换', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'collapsible_panel',
+      expanded: false,
+      header: {
+        title: { tag: 'plain_text', content: '展开详情' },
+        expanded_title: { tag: 'plain_text', content: '收起详情' },
+      },
+      elements: [{ tag: 'markdown', content: '内容' }],
+    }] },
+  });
+  assert.match(html, /collapsible-panel__title--has-expanded/);
+  assert.match(html, /collapsible-panel__title-text--expanded/);
+  assert.match(html, /展开详情/);
+  assert.match(html, /收起详情/);
+  // 没有 expanded_title 时不挂 --has-expanded，避免展开后标题消失
+  const plain = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'collapsible_panel', header: { title: { tag: 'plain_text', content: '只有标题' } }, elements: [] }] },
+  });
+  assert.doesNotMatch(plain, /title--has-expanded/);
+  assert.match(plain, /只有标题/);
+});
+
+test('collapsible_panel: header.background_color / width / vertical_align 落到 summary', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'collapsible_panel',
+      header: {
+        title: { tag: 'plain_text', content: '标题' },
+        background_color: 'grey-100',
+        width: 'auto_when_fold',
+        vertical_align: 'top',
+      },
+      elements: [],
+    }] },
+  });
+  assert.match(html, /--w-auto-when-fold/);
+  assert.match(html, /--valign-top/);
+  // grey-100 = #f2f3f5
+  assert.match(html, /background:#f2f3f5/);
+});
+
+test('collapsible_panel: header.position=bottom 标题落到内容下方（flex order）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'collapsible_panel',
+      expanded: true,
+      header: { title: { tag: 'plain_text', content: '标题' }, position: 'bottom' },
+      elements: [{ tag: 'markdown', content: '内容' }],
+    }] },
+  });
+  assert.match(html, /flex-direction:column/);
+  assert.match(html, /order:2/); // summary 在下
+  assert.match(html, /order:1/); // 内容在上
+});
+
+test('collapsible_panel: direction / spacing / align 落到内容区', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'collapsible_panel',
+      expanded: true,
+      direction: 'horizontal',
+      horizontal_spacing: '12px',
+      vertical_spacing: '4px',
+      horizontal_align: 'center',
+      vertical_align: 'top',
+      header: { title: { tag: 'plain_text', content: '标题' } },
+      elements: [{ tag: 'markdown', content: 'a' }, { tag: 'markdown', content: 'b' }],
+    }] },
+  });
+  assert.match(html, /collapsible-panel__content[^"]*"[^>]*style="[^"]*display:flex/);
+  assert.match(html, /flex-direction:row/);
+  assert.match(html, /column-gap:12px/);
+  assert.match(html, /row-gap:4px/);
+  assert.match(html, /justify-content:center/);
+  assert.match(html, /align-items:flex-start/);
+});
+
+test('collapsible_panel: 兼容 RAW 里 header.title 包一层 property 的形态', () => {
+  const html = renderCardToString({
+    json_card: {
+      schema: '2.0',
+      body: { tag: 'body', property: { elements: [{
+        tag: 'collapsible_panel',
+        property: {
+          expanded: true,
+          header: {
+            title: { tag: 'plain_text', property: { content: '包裹形态' } },
+          },
+          elements: [{ tag: 'markdown', property: { content: 'x' } }],
+        },
+      }] } },
+    },
+  });
+  assert.match(html, /包裹形态/);
+});

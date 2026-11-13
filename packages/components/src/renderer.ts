@@ -324,7 +324,6 @@ function renderHost(node: VNode, inherited?: InheritedAction): FeishuElement {
         flex_mode: props.flexMode,
         horizontal_spacing: props.horizontalSpacing,
         horizontal_align: props.horizontalAlign,
-        vertical_align: props.verticalAlign,
         background_style: props.backgroundStyle,
         ...withElementId(props),
         columns,

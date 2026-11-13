@@ -7,3 +7,19 @@ dist
 .pnpm-store
 feishu-web-dump
 /feishu-card-extract/
+# 本地调试产物（真卡导出 / 截图 / 临时 HTML），不入库
+/om_*.card
+/om_*.html
+/om_*.palettes/
+/card.json
+/card.png
+/card-crop-list*.png
+/om_footer_*.png
+/raw.json
+/raw
+/强化对齐与安全工作.html
+/cursor_card_schema_and_validation_files.md
+
+# 本地 agent / MCP 配置
+/.mcp.json
+/.omc/

@@ -1114,6 +1114,73 @@ test('interactive_container: 未写 align 时不输出 justify/align（交给 CS
   assert.equal(/row-gap/.test(style), false);
 });
 
+/* ---- column 布局字段（direction / align / spacing）----
+  真机把 column / column_set / interactive_container 的对齐都交给同一个 qr()：
+  isRow = direction==='horizontal'，horizontal_align 走主轴侧、vertical_align 走交叉轴侧。
+  此前 column 写死 flex-direction:column，只把 vertical_align 塞给 justify-content，
+  horizontal_align 与 direction 完全没人读 → 列内水平对齐在预览里点也不动。 */
+
+function columnStyle(col) {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'column_set', columns: [{ tag: 'column', elements: [{ tag: 'markdown', content: 'x' }], ...col }] }] },
+  });
+  const m = html.match(/class="universal-card-column"[^>]*style="([^"]*)"/);
+  assert.ok(m, 'column 应输出内联 style');
+  return m[1];
+}
+
+test('column: 缺省纵向——vertical_align→justify、horizontal_align→align', () => {
+  const style = columnStyle({ vertical_align: 'center', horizontal_align: 'right' });
+  assert.match(style, /flex-direction:column/);
+  assert.match(style, /justify-content:center/);
+  assert.match(style, /align-items:flex-end/);
+});
+
+test('column: horizontal_align 不再被忽略（真机 g=vertical 时是 align-items）', () => {
+  assert.match(columnStyle({ horizontal_align: 'left' }), /align-items:flex-start/);
+  assert.match(columnStyle({ horizontal_align: 'center' }), /align-items:center/);
+  assert.match(columnStyle({ horizontal_align: 'right' }), /align-items:flex-end/);
+});
+
+test('column: direction=horizontal 时 flex-direction:row 且两个 align 换轴', () => {
+  const style = columnStyle({ direction: 'horizontal', horizontal_align: 'right', vertical_align: 'center' });
+  assert.match(style, /flex-direction:row/);
+  assert.match(style, /justify-content:flex-end/);
+  assert.match(style, /align-items:center/);
+});
+
+test('column: RAW camelCase align 字段同样生效', () => {
+  const style = columnStyle({ horizontalAlign: 'center', verticalAlign: 'bottom' });
+  assert.match(style, /align-items:center/);
+  assert.match(style, /justify-content:flex-end/);
+});
+
+test('column: horizontal_spacing→column-gap（只在显式给值时输出）', () => {
+  assert.match(columnStyle({ horizontal_spacing: '12px' }), /column-gap:12px/);
+  assert.equal(/column-gap/.test(columnStyle({})), false);
+});
+
+test('column: 未写 align 时不输出 justify/align（交给 CSS 默认）', () => {
+  const style = columnStyle({});
+  assert.equal(/justify-content/.test(style), false);
+  assert.equal(/align-items/.test(style), false);
+});
+
+test('column_set: vertical_align 被忽略（真机 disableVerticalConfig）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'column_set', vertical_align: 'center',
+      columns: [{ tag: 'column', elements: [{ tag: 'markdown', content: 'x' }] }],
+    }] },
+  });
+  const m = html.match(/class="universal-card-column-set"[^>]*style="([^"]*)"/);
+  assert.ok(m, 'column_set 应输出内联 style');
+  assert.equal(/align-items:center/.test(m[1]), false);
+  assert.match(m[1], /align-items:stretch/);
+});
+
 /* ---- overflow 折叠按钮组 ---- */
 
 test('overflow: 不再被静默丢弃，输出「…」触发器', () => {

@@ -117,11 +117,13 @@ export interface ColumnProps extends CommonProps {
   children?: VNodeChild;
 }
 
+/** 分栏（column_set）。注意：真机 column_set 没有垂直对齐（网页版引擎里走
+ *  disableVerticalConfig），所以这里也不提供 verticalAlign——列内容垂直居中请写到
+ *  每个 Column 的 verticalAlign 上。 */
 export interface ColumnSetProps extends CommonProps {
   flexMode?: 'none' | 'stretch' | 'flow' | 'bisect' | 'trisect';
   horizontalSpacing?: string;
   horizontalAlign?: 'left' | 'center' | 'right';
-  verticalAlign?: 'top' | 'center' | 'bottom';
   backgroundStyle?: string;
   children?: VNodeChild;
 }
@@ -322,6 +324,12 @@ export interface CollapsiblePanelProps extends CommonProps {
   iconExpandedAngle?: -180 | -90 | 90 | 180;
   backgroundColor?: string;
   headerBackgroundColor?: string;
+  /** 标题区宽度（header.width）：fill / auto / auto_when_fold */
+  headerWidth?: 'fill' | 'auto' | 'auto_when_fold';
+  /** 标题区内垂直对齐（header.vertical_align） */
+  headerVerticalAlign?: 'top' | 'center' | 'bottom';
+  /** 标题区位置（header.position）：top 在内容上方（默认）/ bottom 在内容下方 */
+  headerPosition?: 'top' | 'bottom';
   borderColor?: string;
   cornerRadius?: string;
   /** 面板内边距（collapsible_panel.padding） */
@@ -329,6 +337,14 @@ export interface CollapsiblePanelProps extends CommonProps {
   /** 标题区内边距（header.padding），与面板 padding 是不同字段 */
   headerPadding?: string;
   direction?: 'vertical' | 'horizontal';
+  /** 面板内水平对齐（collapsible_panel.horizontal_align） */
+  horizontalAlign?: 'left' | 'center' | 'right';
+  /** 面板内垂直对齐（collapsible_panel.vertical_align） */
+  verticalAlign?: 'top' | 'center' | 'bottom';
+  /** 面板内水平间距（collapsible_panel.horizontal_spacing） */
+  horizontalSpacing?: string;
+  /** 面板内垂直间距（collapsible_panel.vertical_spacing） */
+  verticalSpacing?: string;
   children?: VNodeChild;
 }
 

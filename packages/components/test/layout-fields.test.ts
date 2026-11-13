@@ -102,27 +102,32 @@ test('column: 透传 horizontal_align / horizontal_spacing', () => {
   assert.equal(col.direction, 'vertical');
 });
 
-test('column_set: 透传 vertical_align', () => {
+test('column_set: 不透传 vertical_align（真机 column_set 无垂直对齐）', () => {
   const card = renderToCard(
     jsx(Card, {
       children: [
         jsx(ColumnSet, {
           flexMode: 'stretch',
           horizontalAlign: 'left',
-          verticalAlign: 'top',
           horizontalSpacing: '8px',
           backgroundStyle: 'default',
-          children: [jsx(Column, { children: jsx(Markdown, { content: 'x' }) })],
+          children: [
+            jsx(Column, { verticalAlign: 'center', children: jsx(Markdown, { content: 'x' }) }),
+          ],
         }),
       ],
     }),
   );
 
   const el = firstElement(card) as unknown as Record<string, unknown>;
-  assert.equal(el.vertical_align, 'top');
+  const columns = el.columns as Array<Record<string, unknown>>;
+  // 飞书网页版引擎对 column_set 走 disableVerticalConfig，垂直对齐写在这一级不生效；
+  // 正确写法是落到列上。
+  assert.equal('vertical_align' in el, false);
   assert.equal(el.horizontal_align, 'left');
   assert.equal(el.flex_mode, 'stretch');
   assert.equal(el.horizontal_spacing, '8px');
+  assert.equal(columns[0]!.vertical_align, 'center');
 });
 
 test('icon: size 必须透传（标准图标与自定义图标）', () => {
@@ -185,6 +190,43 @@ test('collapsible_panel: 不写 expandedTitle 时不输出 expanded_title', () =
   );
   const header = (firstElement(card) as unknown as Record<string, unknown>).header as Record<string, unknown>;
   assert.equal('expanded_title' in header, false);
+});
+
+test('collapsible_panel: header.width / vertical_align / position 落在 header 内，布局四件套在顶层', () => {
+  const card = renderToCard(
+    jsx(Card, {
+      children: [
+        jsx(CollapsiblePanel, {
+          title: '标题',
+          expanded: true,
+          headerWidth: 'auto_when_fold',
+          headerVerticalAlign: 'top',
+          headerPosition: 'bottom',
+          direction: 'horizontal',
+          horizontalAlign: 'center',
+          verticalAlign: 'bottom',
+          horizontalSpacing: '8px',
+          verticalSpacing: '4px',
+          children: jsx(Markdown, { content: 'z' }),
+        }),
+      ],
+    }),
+  );
+
+  const el = firstElement(card) as unknown as Record<string, unknown>;
+  const header = el.header as Record<string, unknown>;
+  // header 内字段放错层级会被当作未知属性丢掉，真机上宽度/位置/垂直对齐就失效了
+  assert.equal(header.width, 'auto_when_fold');
+  assert.equal(header.vertical_align, 'top');
+  assert.equal(header.position, 'bottom');
+  assert.equal('width' in el, false);
+  assert.equal('position' in el, false);
+  // 面板级布局四件套
+  assert.equal(el.direction, 'horizontal');
+  assert.equal(el.horizontal_align, 'center');
+  assert.equal(el.vertical_align, 'bottom');
+  assert.equal(el.horizontal_spacing, '8px');
+  assert.equal(el.vertical_spacing, '4px');
 });
 
 test('select_static: 透传组件 type 与选项 icon', () => {

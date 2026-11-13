@@ -105,11 +105,13 @@ export const ColumnSetSchema = z
     element_id: ElementIdSchema.optional().describe('组件唯一标识'),
     margin: SpacingValueSchema.optional().describe('组件外边距'),
     horizontal_spacing: SpacingTokenSchema.optional().describe('列间距'),
+    /**
+     * 只有 horizontal_align：真机 column_set 走 qr(element, { disableVerticalConfig: true })，
+     * 垂直对齐配置整段被跳过；官方《分栏》文档的 column_set 字段表也没有 vertical_align。
+     * 需要列内容垂直居中就写到每一列的 column.vertical_align 上。
+     */
     horizontal_align: HorizontalAlignSchema.optional().describe(
       '分栏内列的水平对齐',
-    ),
-    vertical_align: VerticalAlignSchema.optional().describe(
-      '分栏内列的垂直对齐',
     ),
     flex_mode: z
       .enum(['none', 'stretch', 'flow', 'bisect', 'trisect'])
@@ -121,7 +123,7 @@ export const ColumnSetSchema = z
     action: ColumnActionSchema.optional().describe('分栏点击跳转配置'),
   })
   .describe(
-    '分栏组件（column_set）。并排信息等宽排列；图标行用 auto+weighted 两列且 vertical_align=center',
+    '分栏组件（column_set）。并排信息等宽排列；图标行用 auto+weighted 两列，垂直居中写在每列上（column.vertical_align=center），column_set 自身没有垂直对齐',
   );
 
 export type ColumnSet = z.infer<typeof ColumnSetSchema>;
@@ -229,13 +231,20 @@ export type InteractiveContainer = z.infer<typeof InteractiveContainerSchema>;
 
 const CollapsiblePanelHeaderSchema = z
   .object({
-    title: MarkdownTextObjectSchema.optional().describe('面板标题'),
+    title: MarkdownTextObjectSchema.optional().describe(
+      '折叠态标题（收起时展示）',
+    ),
+    expanded_title: MarkdownTextObjectSchema.optional().describe(
+      '展开态标题（展开后替换 title）；不写则展开后仍用 title',
+    ),
     background_color: ColorSchema.optional().describe('标题区背景色'),
     /** fill / auto / auto_when_fold */
     width: z
-      .string()
+      .enum(['fill', 'auto', 'auto_when_fold'])
       .optional()
-      .describe('标题区宽度：fill / auto / auto_when_fold'),
+      .describe(
+        '标题区宽度：fill（填满）/ auto（自适应）/ auto_when_fold（折叠时自适应、展开时填满）',
+      ),
     vertical_align: VerticalAlignSchema.optional().describe(
       '标题区内垂直对齐',
     ),
@@ -256,11 +265,11 @@ const CollapsiblePanelHeaderSchema = z
       ])
       .optional()
       .describe('展开状态下图标旋转角度；推荐 -180'),
-    /** JSON 示例中出现，字段表未正式列出 */
+    /** 官方 CollapsiblePanelHeader.position */
     position: z
-      .string()
+      .enum(['top', 'bottom'])
       .optional()
-      .describe('标题位置（示例字段，字段表未正式列出）'),
+      .describe('标题区位置：top（内容上方）/ bottom（内容下方）'),
   })
   .describe(
     '折叠面板标题区；推荐 icon=down-bold_outlined、icon_position=right、icon_expanded_angle=-180',

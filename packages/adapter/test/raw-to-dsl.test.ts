@@ -1589,3 +1589,99 @@ describe("select_img projection", () => {
     expect(el.element_id).toBeUndefined();
   });
 });
+
+describe("collapsible_panel header projection", () => {
+  // 官方 CollapsiblePanelHeader 的字段全集（additionalProperties: false）：
+  // title / expanded_title / background_color / padding / width / vertical_align /
+  // position / icon / icon_position / icon_expanded_angle。
+  // 这些都是公开 DSL 字段，RAW→DSL 一个都不能丢，否则往返有损。
+  it("keeps every documented header field (width / position / vertical_align)", () => {
+    const raw = {
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [{
+            tag: "collapsible_panel",
+            property: {
+              expanded: false,
+              header: {
+                title: { tag: "plain_text", content: "展开详情" },
+                expanded_title: { tag: "plain_text", content: "收起详情" },
+                background_color: "blue-50",
+                padding: "8px 12px 8px 12px",
+                width: "auto_when_fold",
+                vertical_align: "top",
+                position: "bottom",
+                icon: { tag: "standard_icon", token: "down_outlined" },
+                icon_position: "follow_text",
+                icon_expanded_angle: 180,
+              },
+              elements: [{ tag: "markdown", property: { content: "x" } }],
+            },
+          }],
+        },
+      },
+    };
+    const dsl = rawToDsl(raw as never) as AnyDsl;
+    const el = findElements(dsl, (e) => e.tag === "collapsible_panel")[0]!;
+    expect(el.header).toMatchObject({
+      title: { tag: "plain_text", content: "展开详情" },
+      expanded_title: { tag: "plain_text", content: "收起详情" },
+      background_color: "blue-50",
+      padding: "8px 12px 8px 12px",
+      width: "auto_when_fold",
+      vertical_align: "top",
+      position: "bottom",
+      icon_position: "follow_text",
+      icon_expanded_angle: 180,
+    });
+  });
+
+  it("round-trips header layout fields DSL → RAW → DSL", () => {
+    const dsl = {
+      schema: "2.0",
+      body: {
+        elements: [{
+          tag: "collapsible_panel",
+          expanded: true,
+          direction: "horizontal",
+          horizontal_spacing: "8px",
+          vertical_spacing: "4px",
+          horizontal_align: "center",
+          vertical_align: "bottom",
+          header: {
+            title: { tag: "lark_md", content: "**展开**" },
+            expanded_title: { tag: "lark_md", content: "**收起**" },
+            width: "auto",
+            vertical_align: "top",
+            position: "bottom",
+            background_color: "grey-100",
+            icon_position: "left",
+            icon_expanded_angle: -90,
+          },
+          elements: [{ tag: "markdown", content: "x" }],
+        }],
+      },
+    };
+    const back = rawToDsl(dslToRaw(dsl as never) as never) as AnyDsl;
+    const el = findElements(back, (e) => e.tag === "collapsible_panel")[0]!;
+    expect(el).toMatchObject({
+      expanded: true,
+      direction: "horizontal",
+      horizontal_spacing: "8px",
+      vertical_spacing: "4px",
+      horizontal_align: "center",
+      vertical_align: "bottom",
+    });
+    expect(el.header).toMatchObject({
+      expanded_title: { tag: "lark_md", content: "**收起**" },
+      width: "auto",
+      vertical_align: "top",
+      position: "bottom",
+      background_color: "grey-100",
+      icon_position: "left",
+      icon_expanded_angle: -90,
+    });
+  });
+});

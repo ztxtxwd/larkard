@@ -707,10 +707,32 @@
 }
 .universal-card-collapsible-panel__header::-webkit-details-marker { display: none; }
 .universal-card-collapsible-panel__header::marker { content: ''; }
+/* header.vertical_align：center（默认）/ top / bottom */
+.universal-card-collapsible-panel__header--valign-top { align-items: flex-start; }
+.universal-card-collapsible-panel__header--valign-bottom { align-items: flex-end; }
+/* header.width：fill（默认，撑满整行）/ auto（自适应内容宽）/
+   auto_when_fold（折叠自适应、展开撑满——真机语义） */
+.universal-card-collapsible-panel__header--w-auto,
+.universal-card-collapsible-panel__header--w-auto-when-fold {
+  width: max-content; max-width: 100%;
+}
+.universal-card-collapsible-panel[open] > .universal-card-collapsible-panel__header--w-auto-when-fold {
+  width: 100%;
+}
 .universal-card-collapsible-panel__title {
   flex: 1; min-width: 0; font-size: 14px; line-height: 22px;
   word-break: break-word;
 }
+/* title ↔ expanded_title：有 expanded_title 时，折叠展示 title、展开展示 expanded_title
+   （真机语义）。纯 CSS 由 details[open] 驱动，不学要 JS 同步。 */
+.universal-card-collapsible-panel__title-text { display: block; }
+.universal-card-collapsible-panel__title--has-expanded
+  .universal-card-collapsible-panel__title-text--expanded { display: none; }
+.universal-card-collapsible-panel[open]
+  .universal-card-collapsible-panel__title--has-expanded .universal-card-collapsible-panel__title-text { display: none; }
+.universal-card-collapsible-panel[open]
+  .universal-card-collapsible-panel__title--has-expanded
+  .universal-card-collapsible-panel__title-text--expanded { display: block; }
 /* follow_text：箭头紧贴文字（真机 __header-content--icon-follow），不拉满整行 */
 .universal-card-collapsible-panel__header--icon-follow {
   gap: 4px;

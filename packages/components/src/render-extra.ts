@@ -268,7 +268,12 @@ function renderPanel(
     expanded: props.expanded,
     background_color: props.backgroundColor,
     padding: props.padding,
+    // 布局四件套：漏掉会让面板内子组件退化成「左上贴边、无间距」
     direction: props.direction,
+    horizontal_align: props.horizontalAlign,
+    vertical_align: props.verticalAlign,
+    horizontal_spacing: props.horizontalSpacing,
+    vertical_spacing: props.verticalSpacing,
     border:
       props.borderColor || props.cornerRadius
         ? compact({ color: props.borderColor, corner_radius: props.cornerRadius })
@@ -285,6 +290,11 @@ function renderPanel(
           ? { tag: props.titleMarkdown ? 'markdown' : 'plain_text', content: props.expandedTitle }
           : undefined,
       background_color: props.headerBackgroundColor,
+      // headerWidth / headerVerticalAlign / headerPosition 都是 header 内字段，
+      // 放到顶层会被当作未知属性丢掉。
+      width: props.headerWidth,
+      vertical_align: props.headerVerticalAlign,
+      position: props.headerPosition,
       // header.padding 与面板级 padding 是两个不同字段，不能混用
       padding: props.headerPadding,
       icon: icon(props.icon),

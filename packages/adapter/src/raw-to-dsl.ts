@@ -246,10 +246,6 @@ const AUDIO_PUBLIC_FIELDS = new Set<string>([
  * whereas a missing field that the archived snapshot expected would break
  * downstream comparisons or surprise a model that authored against the
  * complete shape.
- *
- * collapsible_panel.header carries raw editor-only layout fields (position,
- * width, vertical_align) the archived public DSL never writes; those are
- * dropped under their explicit owner tag below.
  */
 const TAG_DEFAULT_DROPS: Record<string, Record<string, unknown>> = {
   column: {
@@ -1258,14 +1254,14 @@ function convertField(
     return ["icon", { tag: "standard_icon", token }];
   }
 
-  // collapsible_panel.header is a plain bag (not tag/property wrapped). Its
-  // raw shape carries layout fields the public DSL never reads — drop them.
+  // collapsible_panel.header is a plain bag (not tag/property wrapped). Every
+  // field the editor writes there is part of the public DSL as well
+  // (CollapsiblePanelHeader: title / expanded_title / background_color /
+  // padding / width / vertical_align / position / icon*), so pass them all
+  // through — dropping any of them breaks RAW ↔ DSL losslessness.
   if (ownerTag === "collapsible_panel" && key === "header" && isRecord(rawValue)) {
     const cleaned: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(rawValue)) {
-      const sk = snake(k);
-      // editor-only layout residue inside a collapsible_panel header.
-      if (sk === "position" || sk === "width" || sk === "vertical_align") continue;
       const sub = convertField(k, v, "collapsible_panel_header", ctx, siblings);
       if (sub === DROP) continue;
       const [subKey, subVal] = sub;
