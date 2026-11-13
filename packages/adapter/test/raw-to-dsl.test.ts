@@ -104,6 +104,68 @@ describe("padding / margin projection", () => {
   });
 });
 
+describe("column width projection (widthValue is authoritative)", () => {
+  function columnFrom(col: Record<string, unknown>): Record<string, unknown> {
+    const dsl = rawToDsl({
+      schema: "2.0",
+      body: {
+        tag: "body",
+        property: {
+          elements: [{
+            tag: "column_set",
+            property: { flex_mode: "stretch", columns: [{ tag: "column", property: col }] },
+          }],
+        },
+      },
+    }) as AnyDsl;
+    const set = ((dsl.body as { elements: Record<string, unknown>[] }).elements[0])!;
+    return (set.columns as Record<string, unknown>[])[0]!;
+  }
+
+  it("projects column_width_weighted.value onto width + weight (keeps the device ratio)", () => {
+    // Regression: RAW { width:'weighted', weight:1, widthValue.value:2 } used to
+    // drop the echo and keep the stale weight, so the preview rendered 1:1 while
+    // the device (which reads widthValue first, see client ao()) rendered 1:2.
+    expect(columnFrom({
+      width: "weighted",
+      weight: 1,
+      widthValue: { type: "column_width_weighted", value: 2 },
+      elements: [],
+    })).toMatchObject({ width: "weighted", weight: 2 });
+  });
+
+  it("recovers width:'weighted' when the raw only carries the widthValue echo", () => {
+    const col = columnFrom({
+      widthValue: { type: "column_width_weighted", value: 3 },
+      elements: [],
+    });
+    expect(col).toMatchObject({ width: "weighted", weight: 3 });
+    expect(col).not.toHaveProperty("width_value");
+  });
+
+  it("builtin_column_width auto wins over a stale width enum", () => {
+    expect(columnFrom({
+      width: "weighted",
+      weight: 2,
+      widthValue: { type: "builtin_column_width", value: "auto" },
+      elements: [],
+    })).toMatchObject({ width: "auto" });
+  });
+
+  it("pixels echo wins over a stale enum", () => {
+    expect(columnFrom({
+      width: "auto",
+      widthValue: { type: "pixels", value: 120 },
+      elements: [],
+    })).toMatchObject({ width: "120px" });
+  });
+
+  it("keeps the legacy width + weight shape when there is no widthValue", () => {
+    expect(columnFrom({ width: "weighted", weight: 2, elements: [] }))
+      .toMatchObject({ width: "weighted", weight: 2 });
+  });
+});
+
 describe("img projection", () => {
   it("resolves imageID into img_key via the attachment table", () => {
     const dsl = rawCardToDsl(loadFixture("grid-images.raw.json")) as AnyDsl;

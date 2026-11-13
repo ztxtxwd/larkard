@@ -1078,6 +1078,29 @@ function convertProperty(
     const echoType = typeof echoVal.type === "string" ? echoVal.type : "";
     const echoValue = echoVal.value;
 
+    // column: widthValue is the client's source of truth. The web engine's
+    // column renderer (ao()) reads widthValue first and only falls back to
+    // `width` + `weight` when the echo is absent, so the echo must win here
+    // too. column_width_weighted *carries the real weight* in its value:
+    // dropping the echo (the old behavior) left whatever stale `weight` the
+    // RAW happened to have — usually 1 — and the preview rendered weighted
+    // columns 1:1 while the device showed e.g. 1:2.
+    if (ownerTag === "column") {
+      if (echoType === "column_width_weighted" && typeof echoValue === "number") {
+        out.width = "weighted";
+        out.weight = echoValue;
+        continue;
+      }
+      if (echoType === "builtin_column_width" && typeof echoValue === "string") {
+        out.width = echoValue;
+        continue;
+      }
+      if (echoType === "pixels" && typeof echoValue === "number") {
+        out.width = `${echoValue}px`;
+        continue;
+      }
+    }
+
     // Pixel echo: project as "Npx" when the enum slot is missing or coarse.
     if (echoType.includes("pixels") && typeof echoValue === "number") {
       if (
@@ -1124,8 +1147,6 @@ function convertProperty(
       if (enumVal === undefined) out[enumKey] = echoValue;
       continue;
     }
-
-    // column_width_weighted echoes are redundant with width:'weighted' / weight, drop.
   }
 
   // Drop per-tag editor defaults.
