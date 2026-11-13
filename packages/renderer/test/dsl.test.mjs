@@ -1167,6 +1167,28 @@ test('column: 未写 align 时不输出 justify/align（交给 CSS 默认）', (
   assert.equal(/align-items/.test(style), false);
 });
 
+/* ---- column 宽度四种子形态（真机 Kn()）---- */
+
+test('column: 未写 width 时不输出宽度（真机默认 auto 贴内容宽，不是等分满行）', () => {
+  const style = columnStyle({});
+  assert.equal(/width:/.test(style), false);
+  assert.equal(/flex-grow/.test(style), false);
+  assert.equal(/flex-basis/.test(style), false);
+});
+
+test('column: width="weighted" → flex-basis:0 + flex-grow:weight', () => {
+  const style = columnStyle({ width: 'weighted', weight: 2 });
+  assert.match(style, /flex-basis:0/);
+  assert.match(style, /flex-grow:2/);
+});
+
+test('column: width="auto" → width:auto，不参与分配空间', () => {
+  const style = columnStyle({ width: 'auto' });
+  assert.match(style, /width:auto/);
+  assert.equal(/flex-grow/.test(style), false);
+  assert.equal(/flex-basis/.test(style), false);
+});
+
 test('column_set: vertical_align 被忽略（真机 disableVerticalConfig）', () => {
   const html = renderDslToString({
     schema: '2.0',

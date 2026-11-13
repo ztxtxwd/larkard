@@ -756,19 +756,32 @@ registerComponent('column', (el, ctx) => {
     // 缺省纵向排列；direction=horizontal 时改行，两个 align 落到哪个 flex 属性也随之交换
     flexDirection: 'column',
   };
-  // 宽度：RAW 优先 widthValue（{type:'pixels',value} 为定宽；其余按权重），回退 snake_case width
+  // 宽度：与真机 Kn() 完全同构。RAW 有四种子形态，DSL 用 width 字符串。
+  //   widthValue.pixels                 → width:Npx，且 flexShrink:0（定宽列不被压）
+  //   widthValue.column_width_weighted  → flexBasis:0 + flexGrow:N
+  //   width / widthValue = auto         → width:auto（贴内容宽）
+  //   width = weighted                  → flexBasis:0 + flexGrow:weight
+  // 宽度完全缺失时什么都不写：真机 Kn() 在 width 缺省时返回 {}，即 CSS 默认
+  // flex-grow:0 + width:auto（官方文档 column.width 默认 auto）。
+  // 之前把缺失当成 weighted（等分撑满），忘了写 width 的卡片预览里会被拉成等宽列。
   const wv = p.widthValue;
   const w = p.width;
+  const weighted = wv && wv.type === 'column_width_weighted' && typeof wv.value === 'number';
   if (wv && wv.type === 'pixels' && typeof wv.value === 'number') {
     style.width = wv.value + 'px';
     style.flexShrink = 0; // 定宽列不被压缩，保证图片按列宽显示
+  } else if (weighted) {
+    style.flexBasis = 0;
+    style.flexGrow = String(wv!.value);
   } else if (w === 'auto' || wv?.value === 'auto') {
     style.width = 'auto';
-  } else if (w === 'weighted' || w == null) {
-    style.flexBasis = 0; style.flexGrow = String(p.weight || 1);
+  } else if (w === 'weighted' || wv?.value === 'weighted') {
+    style.flexBasis = 0;
+    style.flexGrow = String(p.weight || 1);
   } else if (typeof w === 'number') {
     style.width = w + 'px';
-  } else {
+  } else if (typeof w === 'string' && w) {
+    // 认不出的写法（"80%"、历史脏值）：按权重兜底，别让列塔成 0
     style.flexGrow = String(p.weight || 1);
   }
   // #17/D7：父 column_set 为 stretch/bisect/trisect 时，强制按客户端 calc 宽度

@@ -1737,3 +1737,44 @@ test('collapsible_panel: 兼容 RAW 里 header.title 包一层 property 的形�
   });
   assert.match(html, /包裹形态/);
 });
+
+/* ---- RAW: column.widthValue 三种 echo（对齐真机 Kn()）---- */
+
+function rawColumnStyle(property) {
+  const html = renderCardToString({
+    json_card: {
+      schema: '2.0',
+      body: { tag: 'body', property: { elements: [{
+        tag: 'column_set',
+        property: { columns: [{ tag: 'column', property }] },
+      }] } },
+    },
+  });
+  const m = html.match(/class="universal-card-column"[^>]*style="([^"]*)"/);
+  assert.ok(m, 'column 应输出内联 style');
+  return m[1];
+}
+
+test('RAW column: widthValue.pixels → width:Npx + flex-shrink:0', () => {
+  const style = rawColumnStyle({ widthValue: { type: 'pixels', value: 120 } });
+  assert.match(style, /width:120px/);
+  assert.match(style, /flex-shrink:0/);
+});
+
+test('RAW column: widthValue.column_width_weighted → flex-grow 用 value', () => {
+  const style = rawColumnStyle({ widthValue: { type: 'column_width_weighted', value: 3 } });
+  assert.match(style, /flex-basis:0/);
+  assert.match(style, /flex-grow:3/);
+});
+
+test('RAW column: widthValue.builtin_column_width=auto → width:auto', () => {
+  const style = rawColumnStyle({ widthValue: { type: 'builtin_column_width', value: 'auto' } });
+  assert.match(style, /width:auto/);
+  assert.equal(/flex-grow/.test(style), false);
+});
+
+test('RAW column: 无任何 width 时不输出宽度（默认贴内容宽）', () => {
+  const style = rawColumnStyle({ elements: [] });
+  assert.equal(/width:/.test(style), false);
+  assert.equal(/flex-grow/.test(style), false);
+});
