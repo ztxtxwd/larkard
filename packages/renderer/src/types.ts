@@ -90,8 +90,15 @@ export interface ElementProperty {
   padding?: BoxSpacing;
   margin?: BoxSpacing;
 
-  // ---- interactive_container ----
+  // ---- 悬浮提示（button / checker / interactive_container / select_img / video）----
+  /** DSL 公开字段；RAW 通常已归一为 hoverTips */
+  hover_tips?: CardElement;
   hoverTips?: CardElement;
+  /** 禁用时的悬浮提示 */
+  disabled_tips?: CardElement;
+  disabledTips?: CardElement;
+
+  // ---- interactive_container ----
   hasBorder?: boolean;
 
   // ---- img ----

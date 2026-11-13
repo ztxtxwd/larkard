@@ -28,7 +28,7 @@ import {
   getChildElements, propertyBackgroundColor, resolveCornerRadius,
   lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
-  resolveColor, resolveDimensionPx, resolveImageSize, resolveImageSrc, resolveMediaSrc,
+  resolveColor, resolveDimensionPx, resolveHoverTips, resolveImageSize, resolveImageSrc, resolveMediaSrc,
   resolveTextSizeKey, resolveURL, resolveVideoCoverSrc, sizeToPx,
   horizontalMarginPx, horizontalSpacingToPx, verticalSpacingToPx,
   textStyleToModifiers, textStyleToStyle,
@@ -1008,10 +1008,7 @@ registerComponent('select_img', (el, ctx) => {
     const value = typeof option.value === 'string' ? option.value : undefined;
     const isSelected = value !== undefined && selected.includes(value);
     const disabled = disabledAll || option.disabled === true;
-    // 真机：禁用时优先 disabled_tips，否则 disabledTips；可用时取 hover_tips。
-    const tip = disabled
-      ? extractText((option.disabled_tips ?? option.disabledTips) as never)
-      : extractText((option.hover_tips ?? option.hoverTips) as never);
+    const tip = resolveHoverTips(option, disabled);
     const src = resolveImageSrc(option as ElementProperty, ctx);
     const wrapperClass = `${CLS}-select-img__item-wrapper`
       + (isSelected ? ` ${CLS}-select-img__item-wrapper--selected` : '')
@@ -1221,7 +1218,6 @@ registerComponent('interactive_container', (el, ctx) => {
   const url = resolveURL(act?.action?.url);
   const hasActions = Array.isArray(p.actions) && p.actions.length > 0;
   const clickable = !disabled && (Boolean(url) || hasActions);
-  const tip = extractText(p.hoverTips as never);
   // border_color / customBorderColor：命名色/色阶/自定义色 → hex。
   const borderNamed = (p.border_color ?? (p as { borderColor?: string }).borderColor) as string | undefined;
   const borderCustom = resolveCustomBorderLight(p);
@@ -1280,9 +1276,8 @@ registerComponent('interactive_container', (el, ctx) => {
   applyOuterMargin(style, p.margin);
   const props: Record<string, unknown> = { className: cls };
   if (Object.keys(style).length) props.style = style;
-  // disabled 时不挂跳转与 hover 提示，避免仍可点/仍出 tip
+  // disabled 时不挂跳转；hover_tips / disabled_tips 由 renderElement 统一附加为 title。
   if (url && !disabled) props['data-url'] = url;
-  if (tip && !disabled) props.title = tip;
   return h('div', props, renderElements(p.elements, ctx));
 });
 
@@ -1838,9 +1833,6 @@ registerComponent('checker', (el, ctx) => {
 
   // hover 阴影：overall_checkable 或 on_hover 按钮区时启用（对齐引擎 P = h || buttons+OnHover）
   const hoverable = overall || (buttons.length > 0 && autoHide);
-  const tip = disabled
-    ? extractText((p.disabled_tips ?? (p as { disabledTips?: unknown }).disabledTips) as never)
-    : extractText((p.hover_tips ?? p.hoverTips) as never);
 
   const style: Record<string, string> = {
     [`--${CLS}-checker-line-height`]: lineHeight + 'px',
@@ -1857,7 +1849,6 @@ registerComponent('checker', (el, ctx) => {
     + (disabled ? ` ${CLS}-checker--disabled` : '');
 
   const props: Record<string, unknown> = { className: cls, style };
-  if (tip) props.title = tip;
 
   // overall_checkable：整行包进 <label>，点文字也能切换；否则外层 div，仅 checkbox 可点
   const Tag = overall && !disabled ? 'label' : 'div';

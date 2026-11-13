@@ -25,7 +25,7 @@ export function getComponent(tag: string): ComponentFn | null {
   return registry[tag] || null;
 }
 
-/** 渲染单个元素 {tag,id,property} -> VNode */
+/** 渲染单个元素 {tag,id,property} -> VNode（统一附加 hover_tips / disabled_tips） */
 export function renderElement(el: CardElement | null | undefined, ctx: RenderContext): VNode | null {
   if (!el || !el.tag) return null;
   const comp = getComponent(el.tag);
@@ -36,7 +36,20 @@ export function renderElement(el: CardElement | null | undefined, ctx: RenderCon
     }
     return null;
   }
-  return comp(el, ctx);
+  return withHoverTip(el, comp(el, ctx));
+}
+
+/**
+ * 给组件的根节点挂原生 title，作为悬浮提示。
+ * 组件自己已给出 title（如人员姓名）时保留原值，不覆盖。
+ */
+function withHoverTip(el: CardElement, vnode: VNode | null): VNode | null {
+  if (!vnode) return null;
+  const tip = resolveHoverTips(el.property);
+  if (!tip) return vnode;
+  const props = vnode.props || {};
+  if (props.title != null && props.title !== '') return vnode;
+  return { ...vnode, props: { ...props, title: tip } };
 }
 
 /** 渲染元素数组 */
@@ -162,6 +175,28 @@ export function extractText(node: CardElement | string | undefined | null): stri
   const direct = (node as { content?: unknown }).content;
   if (direct != null) return String(direct);
   return '';
+}
+
+/**
+ * 悬浮提示文案。
+ * - 可用态：hover_tips（DSL）/ hoverTips（RAW）
+ * - 禁用态：disabled_tips / disabledTips
+ * - 文本叶子兼容 RAW 的 { tag, property:{ content } } 与 DSL 的 { tag, content }
+ *
+ * 禁用时不回退到 hover_tips：与飞书一致，禁用组件只展示 disabled_tips。
+ * 第二个参数供 select_img 这类「组件级 disabled 会连带禁用选项」的场景覆写禁用态。
+ */
+export function resolveHoverTips(
+  property: ElementProperty | Record<string, unknown> | null | undefined,
+  disabled?: boolean,
+): string {
+  if (!property) return '';
+  const p = property as Record<string, unknown>;
+  const isDisabled = disabled ?? p.disabled === true;
+  const raw = isDisabled
+    ? (p.disabled_tips ?? p.disabledTips)
+    : (p.hover_tips ?? p.hoverTips);
+  return extractText(raw as never);
 }
 
 /**
