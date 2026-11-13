@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/linter",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "飞书卡片静态规则检查：嵌套深度、可读性、废弃属性等最佳实践",
   "type": "module",
   "main": "./dist/index.cjs",

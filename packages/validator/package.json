@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/validator",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "对比 AST 与 Schema 2.0，输出精确定位到源码字符级的诊断信息",
   "type": "module",
   "main": "./dist/index.cjs",
