@@ -135,5 +135,10 @@ jobs:
       - name: Publish to npm
         run: pnpm exec changeset publish
 
+      # changeset publish 内部的打 tag 逻辑不一定可靠（实测会跳过刚发布的包），
+      # 所以单独跑一遍 git-tag：幂等，已存在的 tag 会跳过。
+      - name: Create release tags
+        run: pnpm exec changeset git-tag
+
       - name: Push release tags
         run: git push --tags
