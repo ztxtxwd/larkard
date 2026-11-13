@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.21
+
+- `img.title` 图片标题按真机 BaseText 渲染（支持 `plain_text` / `lark_md`，字号 / 颜色 / 对齐 / 行数截断生效，此前完全忽略）
+- 分栏 `flex_mode` 改为只在窄屏（卡片容器 ≤320px）覆盖列宽，对齐真机 `isWide`：宽屏下 `width` / `weighted` 照常生效；`stretch` 窄屏改为每列独占一行堆叠（此前把列强行改成 100% 却不换行，1:2 的 weighted 列会被压成 1:1）
+- `column` 宽度对齐真机：未写 `width` 时按内容宽（auto）；px 只认 16–600，越界按 auto；整行超宽时按 px 比例等比压缩
+- RAW→DSL 保留 `column.widthValue` 的真实权重，`weighted` 1:2 的列在预览里不再变成 1:1
+- `flow` 窄屏列宽回落 auto；新增 linter 提示 `column-width-range` / `column-weight-range`
+- 各组件补齐 `hover_tips` / `disabled_tips`：`button`、`video`、`interactive_container`、`checker`、`select_img`
+- Bundles schema 0.3.1、adapter 0.4.2、renderer 0.5.4、components 0.4.0
+
 ## 0.2.20
 
 - 折叠面板（`collapsible_panel`）补齐 header 字段：`expanded_title`（展开 / 收起切换标题）、`width`、`vertical_align`、`position`、`background_color`；面板级 `direction` / `horizontal_spacing` / `vertical_spacing` / `horizontal_align` / `vertical_align` 生效；`expanded` 缺省改为收起（对齐真机）
