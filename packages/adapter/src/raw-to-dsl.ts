@@ -1244,6 +1244,37 @@ function convertField(
     if (headerText) return [key, headerText];
   }
 
+  // img.title: public BaseText (plain_text | lark_md) 比 header 文本多一组扁平
+  // text_* 字段（text_size / text_color / text_align / lines），服务端会把它们
+  // 归一进 raw textStyle。反向投影回去，保证带样式的图片标题 RAW ↔ DSL 不丢字段。
+  if (ownerTag === "img" && key === "title" && isRecord(rawValue)) {
+    const imgTitle = convertHeaderText(rawValue, ctx);
+    if (imgTitle) {
+      const p = isRecord(rawValue.property) ? rawValue.property : rawValue;
+      const text: Record<string, unknown> = { ...imgTitle };
+      // 已经是扁平 DSL 形态（幂等重跑）时先保留原字段
+      for (const flatKey of ["text_size", "text_color", "text_align", "lines", "text_lines"]) {
+        if (p[flatKey] !== undefined && text[flatKey] === undefined) text[flatKey] = p[flatKey];
+      }
+      const ts = isRecord(p.textStyle) ? p.textStyle : {};
+      if (text.text_size === undefined && typeof ts.size === "string" && ts.size) {
+        text.text_size = ts.size;
+      }
+      const color = typeof ts.color === "string" ? ts.color : undefined;
+      if (text.text_color === undefined && color && color !== "default") text.text_color = color;
+      const lines = typeof p.lines === "number" ? p.lines : undefined;
+      if (text.lines === undefined && lines !== undefined && lines > 0) text.lines = lines;
+      // 对齐只影响 markdown 渲染（真机 plain_text 组件不消费 textAlign）
+      const align = typeof p.textAlign === "string"
+        ? p.textAlign
+        : typeof p.text_align === "string" ? p.text_align : undefined;
+      if (imgTitle.tag === "lark_md" && text.text_align === undefined && align && align !== "left") {
+        text.text_align = align;
+      }
+      return [key, text];
+    }
+  }
+
   // header.udIcon → header.icon (rebuilt as standard_icon). The udIcon
   // wrapper in raw is { id, tag:'ud_icon', property:{ imageID, token, style } };
   // in public DSL this lives at header.icon as { tag:'standard_icon', token }.

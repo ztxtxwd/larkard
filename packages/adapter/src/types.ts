@@ -61,6 +61,7 @@ export interface ElementProperty {
 
   // ---- card_header ----
   template?: HeaderTemplate;
+  /** 标题（header.title / img.title）：文本元素；RAW 形如 {tag, property:{content}} */
   title?: CardElement;
   subtitle?: CardElement;
   /** 标题右侧的彩色标签（每项 text_tag 元素）。DSL 用 snake_case，兼容 camelCase */

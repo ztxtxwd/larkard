@@ -835,6 +835,55 @@ registerComponent('column', (el, ctx) => {
 
 // ---- 内容 / 交互 ----
 
+/**
+ * img 标题（property.title）：真机把它当文本组件渲染在图片上方，
+ * 外层 .universal-card-image__title 负责 8px 间距（见 styles.css）。
+ * 官方 schema 的 BaseText 允许 plain_text 与 lark_md：
+ *  - RAW：{tag, property:{content | elements, textStyle, lines}}
+ *  - DSL：文本叶子 {tag, content, text_size, text_color, lines} 与裸字符串
+ * 对齐只对 markdown 生效（真机 plain_text 组件不消费 textAlign）。
+ */
+function renderImageTitle(raw: unknown, ctx: RenderContext): VNode | null {
+  if (typeof raw === 'string') {
+    return raw ? h('span', { className: `${CLS}-text` }, raw) : null;
+  }
+  if (!isRecord(raw) || typeof raw.tag !== 'string') return null;
+  const property: Record<string, unknown> = isRecord(raw.property)
+    ? { ...raw.property }
+    : { content: typeof raw.content === 'string' ? raw.content : '' };
+
+  // DSL 扁平文本叶子字段（text_size / text_color）→ 真机 RAW 的 textStyle；
+  // 服务端会把 DSL 扁平字段归一进 textStyle，这里做同样的折叠。
+  // 两种载体都认：DSL 原样（字段在叶子上）与转成 RAW 后（字段在 property 里）。
+  const flat = (key: string): unknown => raw[key] ?? property[key];
+  const flatSize = flat('text_size') ?? flat('textSize');
+  const flatColor = flat('text_color') ?? flat('textColor');
+  if (typeof flatSize === 'string' || typeof flatColor === 'string') {
+    const ts = isRecord(property.textStyle) ? property.textStyle : {};
+    property.textStyle = {
+      ...ts,
+      ...(typeof flatSize === 'string' && ts.size == null ? { size: flatSize } : {}),
+      ...(typeof flatColor === 'string' && ts.color == null ? { color: flatColor } : {}),
+    };
+  }
+  // 两边 schema 都有 lines / text_lines（最大行数截断）
+  const lines = flat('lines') ?? flat('text_lines') ?? flat('textLines');
+  if (property.lines == null && typeof lines === 'number') property.lines = lines;
+
+  // DSL 可能直接给 {tag:'lark_md', content}：按 markdown 子树渲染（含对齐/字号）。
+  const tag = raw.tag === 'lark_md' ? 'markdown' : raw.tag;
+  if (tag === 'markdown' && !Array.isArray(property.elements)) {
+    const content = typeof property.content === 'string' ? property.content : '';
+    if (!content) return null;
+    property.elements = parseMarkdown(content);
+  }
+
+  const node = { tag, property } as unknown as CardElement;
+  // 空标题不占位（否则多出 8px 空白）
+  if (tag === 'plain_text' && !extractText(node)) return null;
+  return renderElement(node, ctx);
+}
+
 // img：图片
 registerComponent('img', (el, ctx) => {
   const p = el.property || {};
@@ -866,12 +915,20 @@ registerComponent('img', (el, ctx) => {
     imgStyle.width = '100%';
     imgStyle.height = 'auto';
   }
-  // 外边距（如正文图 margin:8px 20px）；水平 margin 时 width 改为 calc 抵消 body>*{width:100%}
-  applyOuterMargin(wrapStyle, p.margin);
-  return h('div', { className: `${CLS}-image__wrapper`, style: wrapStyle },
+  // 外边距（如正文图 margin:8px 20px）挂在外壳上，让标题与图片作为一个整体参与布局；
+  // 水平 margin 时 width 改为 calc 抵消 body>*{width:100%}
+  const rootStyle: Record<string, string> = {};
+  applyOuterMargin(rootStyle, p.margin);
+  // 标题：真机在图片上方渲染 title 文本，外层 margin-bottom:8px
+  const titleVNode = renderImageTitle(p.title, ctx);
+  const imageVNode = h('div', { className: `${CLS}-image__wrapper`, style: wrapStyle },
     src
       ? h('img', { className: `${CLS}-image__host`, src, alt: altText, style: imgStyle })
       : h('div', { className: `${CLS}-image__placeholder`, style: imgStyle }, altText || '[图片]')
+  );
+  return h('div', { className: `${CLS}-image`, style: rootStyle },
+    titleVNode ? h('div', { className: `${CLS}-image__title` }, titleVNode) : null,
+    imageVNode,
   );
 });
 

@@ -457,7 +457,7 @@ function renameKey(k: string): string {
   return KEY_RENAME[k] || k;
 }
 
-/** 文本叶子 → { tag:'plain_text', property:{content, textAlign?, text_size?, text_color?} } */
+/** 文本叶子 → { tag:'plain_text', property:{content, textAlign?, text_size?, text_color?, lines?} } */
 function wrapTextLeaf(v: unknown): CardElement {
   if (typeof v === 'string') return { tag: 'plain_text', property: { content: v } };
   if (isRecord(v)) {
@@ -466,6 +466,9 @@ function wrapTextLeaf(v: unknown): CardElement {
     // checker 等组件的 text 叶子会带 text_size / text_color（DSL snake_case）
     if (typeof v.text_size === 'string') property.text_size = v.text_size;
     if (typeof v.text_color === 'string') property.text_color = v.text_color;
+    // img.title 等 BaseText 叶子带 lines / text_lines（最大行数截断）
+    const lines = v.lines ?? v.text_lines;
+    if (typeof lines === 'number') property.lines = lines;
     return { tag: typeof v.tag === 'string' ? v.tag : 'plain_text', property };
   }
   return { tag: 'plain_text', property: { content: '' } };

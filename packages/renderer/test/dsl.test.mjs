@@ -261,8 +261,41 @@ test('img: margin 水平边距 → wrapper calc width', () => {
     preview: true,
     corner_radius: '8px',
   }] } });
-  assert.match(html, /universal-card-image__wrapper[^>]*margin:8px 20px 0px 20px/);
-  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
+  assert.match(html, /class="universal-card-image"[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /class="universal-card-image"[^>]*width:calc\(100% - 40px\)/);
+});
+
+// 真机 img title：DSL 文本叶子在图片上方渲染标题（property.title 不做文本叶子转换就会漏掉）
+test('img: DSL title → 图片上方标题', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'img',
+    img_key: 'img_v3_title',
+    scale_type: 'fit_horizontal',
+    title: { tag: 'plain_text', content: '封面标题' },
+  }] } }, { imageBaseURL: 'https://cdn.example.com/' });
+  assert.match(html, /class="universal-card-image__title"[^>]*><span class="universal-card-text">封面标题<\/span>/);
+});
+
+// 官方 schema 的 img.title 是 BaseText（plain_text | lark_md），带 text_size / text_color / lines。
+// 真机由服务端把扁平字段归一进 textStyle，plain_text 按 size 定字号、lark_md 走 markdown。
+test('img: DSL title 支持 text_size / text_color / lines / lark_md', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'img',
+    img_key: 'img_v3_title_plain',
+    scale_type: 'fit_horizontal',
+    title: { tag: 'plain_text', content: '小字标题', text_size: 'notation', text_color: 'grey', lines: 1 },
+  }, {
+    tag: 'img',
+    img_key: 'img_v3_title_md',
+    scale_type: 'fit_horizontal',
+    title: { tag: 'lark_md', content: '**粗体** 标题', text_align: 'center', text_size: 'heading' },
+  }] } }, { imageBaseURL: 'https://cdn.example.com/' });
+
+  assert.match(html, /universal-card-text universal-card-text--grey" style="[^"]*font-size:12px/); // notation
+  assert.match(html, /-webkit-line-clamp:1/);
+  // lark_md：走 markdown 子树，对齐/字号由 markdown 容器生效
+  assert.match(html, /universal-card-markdown" style="text-align:center;font-size:16px;line-height:24px/);
+  assert.match(html, /universal-card-text--bold">粗体/);
 });
 
 // 对齐真机：video / fill 按钮 margin 左右 20px，不能贴卡片边

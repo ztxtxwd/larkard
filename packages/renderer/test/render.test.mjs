@@ -724,8 +724,54 @@ test('RAW: img fit_horizontal + horizontal margin → calc width', () => {
       alt: { tag: 'plain_text', property: { content: '' } },
     },
   }] } } } });
-  assert.match(html, /universal-card-image__wrapper[^>]*margin:8px 20px 0px 20px/);
-  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% - 40px\)/);
+  assert.match(html, /class="universal-card-image"[^>]*margin:8px 20px 0px 20px/);
+  assert.match(html, /class="universal-card-image"[^>]*width:calc\(100% - 40px\)/);
+});
+
+// 真机 img 标题：title 文本元素渲染在图片上方（.universal-card-image__title，CSS 给 8px 间距）。
+// 历史实现只把 alt 写进 <img alt>，title 完全不渲染，真机上图文标题就丢了。
+test('RAW: img title → 图片上方的标题文本', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img',
+    property: {
+      src: 'https://cdn.example.com/pic.png',
+      scaleType: 'fit_horizontal',
+      alt: { tag: 'plain_text', property: { content: '配图' } },
+      title: { tag: 'plain_text', property: { content: '图片标题文案' } },
+    },
+  }] } } } });
+  assert.match(html, /class="universal-card-image__title"[^>]*><span class="universal-card-text">图片标题文案<\/span>/);
+  // 标题在图片之前（真机标题在上方）
+  assert.ok(html.indexOf('图片标题文案') < html.indexOf('universal-card-image__host'), html);
+});
+
+test('RAW: img 无 title 时不渲染标题壳（不留空白）', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img', property: { src: 'https://cdn.example.com/pic.png', alt: { tag: 'plain_text', property: { content: '' } } },
+  }] } } } });
+  assert.doesNotMatch(html, /universal-card-image__title/);
+  assert.match(html, /class="universal-card-image"[^>]*><div class="universal-card-image__wrapper"/);
+});
+
+// RAW 标题的样式走 textStyle（真机形态）：plain_text 按 size 出字号/修饰类，markdown 子树自带对齐。
+test('RAW: img title 的 textStyle / lines 落到标题文本', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'img',
+    property: {
+      src: 'https://cdn.example.com/pic.png',
+      alt: { tag: 'plain_text', property: { content: '' } },
+      title: {
+        tag: 'plain_text',
+        property: {
+          content: '灰色小字标题',
+          textStyle: { size: 'notation', color: 'grey' },
+          lines: 1,
+        },
+      },
+    },
+  }] } } } });
+  assert.match(html, /universal-card-text universal-card-text--grey" style="[^"]*font-size:12px/);
+  assert.match(html, /-webkit-line-clamp:1/);
 });
 
 // 负水平外边距＝出血（顶层大图 margin:-20px 顶到卡片边）。真机那个盒子 width:auto，
@@ -746,9 +792,9 @@ test('RAW: img 负水平外边距 → 出血到容器两边（calc(100% + 40px) 
       alt: { tag: 'plain_text', property: { content: '' } },
     },
   }] } } } });
-  assert.match(html, /universal-card-image__wrapper[^>]*margin:-20px -20px 0px -20px/);
-  assert.match(html, /universal-card-image__wrapper[^>]*width:calc\(100% \+ 40px\)/);
-  assert.match(html, /universal-card-image__wrapper[^>]*max-width:none/);
+  assert.match(html, /class="universal-card-image"[^>]*margin:-20px -20px 0px -20px/);
+  assert.match(html, /class="universal-card-image"[^>]*width:calc\(100% \+ 40px\)/);
+  assert.match(html, /class="universal-card-image"[^>]*max-width:none/);
 });
 
 // 真机网页版 .universal-card-image__host{border-radius:0}：不写 corner_radius 就是直角，
@@ -780,6 +826,16 @@ test('img 圆角：未声明 corner_radius 时不加圆角（对齐真机 border
     }] },
   });
   assert.match(rounded, /universal-card-image__(?:host|placeholder)[^>]*border-radius:8px/);
+});
+
+// 图片标题与盒子规则对齐真机 dump：
+//   .universal-card-image__title{margin-bottom:8px}（标题在图片上方）
+//   .universal-card-image__wrapper{...;overflow:hidden} / __host{width:100%;border-radius:0}
+test('img 样式对齐真机：标题 8px 间距 + wrapper/host 规则', () => {
+  assert.match(ALL_CSS, /\.universal-card-image__title\s*\{[^}]*margin-bottom:\s*8px/);
+  assert.match(ALL_CSS, /\.universal-card-image__wrapper\s*\{[^}]*overflow:\s*hidden/);
+  assert.match(ALL_CSS, /\.universal-card-image__wrapper\s*\{[^}]*align-items:\s*center/);
+  assert.match(ALL_CSS, /\.universal-card-image__host\s*\{[^}]*width:\s*100%/);
 });
 
 // 真机 video / fill 按钮常带左右 20px；原先未 applyOuterMargin，左右贴边。

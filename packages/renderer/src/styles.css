@@ -368,11 +368,25 @@
    这里不再给相邻子元素设 margin-top——否则与 row-gap 叠加，间距翻倍。 */
 
 /* ---- 图片 ---- */
+/* 真机图片外层是 .universal-card-element-shell.universal-card-image（width:100%），
+   内部再放标题 + 图片容器；标题在图片上方，靠 margin-bottom 拉开 8px。 */
+.universal-card-image { width: 100%; box-sizing: border-box; }
+.universal-card-image__title { margin-bottom: 8px; }
+
 /* 真机网页版 .universal-card-image__host{border-radius:0}：图片默认直角，
    圆角只由 DSL/RAW 的 corner_radius 内联给出（见 img 组件）。
    之前这里写死 4px，导致没写 corner_radius 的图在渲染器里四角被圆掉，与真机不符。 */
-.universal-card-image__wrapper { display: flex; max-width: 100%; }
-.universal-card-image__host { max-width: 100%; height: auto; object-fit: cover; border-radius: 0; }
+/* 真机 .universal-card-image__wrapper{position:relative;display:flex;flex-direction:row;
+   align-items:center;flex:0 1 auto;width:100%;max-width:100%;overflow:hidden} */
+.universal-card-image__wrapper {
+  position: relative; display: flex; flex-direction: row; align-items: center;
+  flex: 0 1 auto; width: 100%; max-width: 100%; overflow: hidden;
+}
+/* 真机 .universal-card-image__host{object-fit:cover;width:100%;border-radius:0;font-size:0;position:static} */
+.universal-card-image__host {
+  width: 100%; max-width: 100%; height: auto; object-fit: cover;
+  border-radius: 0; font-size: 0; position: static;
+}
 .universal-card-image__placeholder {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 80px; min-height: 48px; padding: 8px 12px;

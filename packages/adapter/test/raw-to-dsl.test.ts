@@ -1685,3 +1685,40 @@ describe("collapsible_panel header projection", () => {
     });
   });
 });
+
+describe("img.title", () => {
+  it("RAW 文本元素 ↔ 公开 BaseText（plain_text / lark_md）保留样式字段", () => {
+    const dsl = {
+      schema: "2.0",
+      body: {
+        elements: [
+          {
+            tag: "img",
+            img_key: "img_v3_a",
+            title: {
+              tag: "plain_text",
+              content: "标题",
+              text_size: "notation",
+              text_color: "grey",
+              lines: 2,
+            },
+          },
+          {
+            tag: "img",
+            img_key: "img_v3_b",
+            title: { tag: "lark_md", content: "**粗体**", text_align: "center" },
+          },
+        ],
+      },
+    };
+    const raw = dslToRaw(dsl as never) as Record<string, unknown>;
+    const back = rawToDsl(raw as never) as AnyDsl;
+    const titles = findElements(back, (e) => e.tag === "img").map((e) => e.title);
+    expect(titles).toEqual([
+      { tag: "plain_text", content: "标题", text_size: "notation", text_color: "grey", lines: 2 },
+      { tag: "lark_md", content: "**粗体**", text_align: "center" },
+    ]);
+    // 幂等：rawToDsl 对自己的输出再跑一遍不产生 diff
+    expect(rawToDsl(back as never)).toEqual(back);
+  });
+});
