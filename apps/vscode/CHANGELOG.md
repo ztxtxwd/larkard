@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.22
+
+预览样式对齐真机（feishu-web-dump 对账），四处肉眼可见的差异：
+
+- 折叠面板描边：`border.color=grey` 走 `collapsible_panel.border_color` token 表 → `var(--line-border-component)`（N350 `#d0d3d6`），不再是正文灰 N600（此前边框深一整档）；`interactive_container` 的 `border_color` 同表
+- 折叠面板间距/圆角：新增 `--fat`（有描边/底色）——header `4px 8px`、content `8px`、圆角 `6px`（显式 `corner_radius` 优先）；内容区恒为 flex 容器并带 8px 行距，多元素面板不再贴死
+- markdown 行高：改用引擎行高表 + 消息卡片桌面端 `+2`（`de(12)+2=22`、`de(14)+2=24`，此前用「字号 + 8」漏了 +2，带 `text_size` 的段落/列表行距少 2px，列表逐行累积差半行）
+- 列表：改为 `ul/ol + li[data-marker]`，项目符号由 `li::before` 画（•/◦/▪ 或序号）、`padding-left:22px`、符号右对齐到距正文 20px、颜色 `var(--colorful-blue)`
+- 面板底色 `--bg-float-overlay` 改客户端那套中性 4% 叠色（`rgba(30,30,30,.04)` → 叠白 `#f6f6f6`，与真机实测 (246,246,246) 逐通道一致；此前是 `#f5f6f7` 偏蓝一阶）
+- Bundles schema 0.3.1、adapter 0.4.2、renderer 0.5.6、components 0.4.0
+
 ## 0.2.21
 
 - `img.title` 图片标题按真机 BaseText 渲染（支持 `plain_text` / `lark_md`，字号 / 颜色 / 对齐 / 行数截断生效，此前完全忽略）
