@@ -194,8 +194,12 @@
   --Y800: #573601;
   --Y900: #382201;
   /* END PALETTE VARS */
-  /* 真机 light：--bg-float-overlay: var(--N50)。column_set background_style=grey 走此 token */
-  --bg-float-overlay: var(--N50);
+  /* 真机 light：`--bg-float-overlay` 是 N900 的 4% 叠色（客户端 token），叠在卡片白底上
+     得中性灰 #f6f6f6 —— 真机背景式面板实测就是 (246,246,246)。
+     这里用中性化的 N900（30,30,30）而不是 N900-raw(31,35,41)：8bit alpha 量化后
+     N900-raw 会让蓝通道多 1 阶（压成 (246,246,247)），而真机三通道相等。
+     半透明也让它能叠在彩色底（column_set / interactive_container 的 grey）上自然融合。 */
+  --bg-float-overlay: rgba(30, 30, 30, 0.04);
   /* 语义色 token（对齐飞书 :root light）：容器描边/caption 文案/列表符号等
      走语义名而不是直接挑色阶，避免「同一个 grey 在正文是 N600、作描边却是 N350」被抹平。 */
   --line-border-component: var(--N350); /* 组件描边（collapsible_panel / interactive_container） */
@@ -1285,6 +1289,8 @@
   color: #ebebeb;
   background-color: #1a1a1a;
   border-color: #2e2e30;
+  /* 暗色下 --bg-float-overlay 反向叠白（对齐客户端 dark token #373737 落在 #1a1a1a 上的观感） */
+  --bg-float-overlay: rgba(255, 255, 255, 0.12);
 }
 .universal-card-root.theme-dark .universal-card-markdown { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-hr { background-color: #2e2e30; }

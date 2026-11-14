@@ -170,7 +170,7 @@ test('padding: 两值简写 = 上下/左右', () => {
 
 /* ---- column 定宽 width → widthValue ---- */
 
-test('column_set: background_style=grey → var(--bg-float-overlay)（真机 light alias N50）', () => {
+test('column_set: background_style=grey → var(--bg-float-overlay)（真机 light = 4% N900 叠色）', () => {
   const html = renderDslToString({
     schema: '2.0',
     body: { elements: [
@@ -182,7 +182,10 @@ test('column_set: background_style=grey → var(--bg-float-overlay)（真机 lig
   assert.match(html, /universal-card-column-set--bg/);
   assert.match(html, /background:var\(--bg-float-overlay\)/);
   assert.doesNotMatch(html, /background:#646a73/); // 不是正文色 grey→N600
-  assert.match(ALL_CSS, /--bg-float-overlay:\s*var\(--N50\)/); // light 落到 N50=#f5f6f7
+  // 客户端 token 是中性灰的 4% 叠色（中性化后 rgba(30,30,30,.04)）：叠在卡片白底上 = #f6f6f6，
+  // 与真机实测的 (246,246,246) 逐通道一致。网页版主题表给的 N50 #f5f6f7 偏蓝 1 阶，已改成跟客户端一致。
+  assert.match(ALL_CSS, /--bg-float-overlay:\s*rgba\(30,\s*30,\s*30,\s*0?\.04\)/);
+  assert.match(ALL_CSS, /\.universal-card-root\.theme-dark\s*\{[^}]*--bg-float-overlay:[^;]*rgba\(255,\s*255,\s*255/);
   // 真机 .universal-card-column-set--bg { padding:4px; border-radius:6px }
   assert.match(ALL_CSS, /\.universal-card-column-set--bg[^}]*padding:\s*4px/);
   assert.match(ALL_CSS, /\.universal-card-column-set--bg[^}]*border-radius:\s*6px/);
