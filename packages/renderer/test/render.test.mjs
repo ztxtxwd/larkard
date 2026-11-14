@@ -409,7 +409,8 @@ test('RAW markdown textStyle.size=notation → 12px', () => {
   });
   assert.match(html, /还差 18,800 步即可达成本周目标，加油！/);
   assert.match(html, /font-size:12px/);
-  assert.match(html, /line-height:20px/);
+  // 真机 Markdown：lineHeight = de(12) + 消息卡片桌面端 2 = 20 + 2 = 22
+  assert.match(html, /line-height:22px/);
 });
 
 test('DSL text_size=notation 与 RAW textStyle.size 字号一致', () => {
@@ -1677,6 +1678,54 @@ test('img_combination: 数值型 cornerRadiusValue 也转为圆角', () => {
 });
 
 // ---- collapsible_panel ----
+
+// 真机 fallbackStyle：collapsible_panel.border_color.grey → line-border-component（N350 #d0d3d6）。
+// 直接用 resolveColor('grey') 会给出正文灰 N600 #646a73，描边深一整档。
+test('collapsible_panel: border.color=grey 走 line-border-component token（N350 而非 N600）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'collapsible_panel',
+      border: { color: 'grey' },
+      header: { title: { tag: 'plain_text', content: '详情' } },
+      elements: [{ tag: 'markdown', content: 'x' }],
+    }] },
+  });
+  assert.match(html, /border:1px solid var\(--line-border-component\)/);
+  assert.doesNotMatch(html, /border:1px solid #646a73/);
+  // 带描边即 --fat：默认圆角 6px（对齐 .universal-card-collapsible-panel--fat）
+  assert.match(html, /universal-card-collapsible-panel--fat/);
+  assert.match(html, /border-radius:6px/);
+});
+
+test('collapsible_panel: border 显式 corner_radius 覆盖 --fat 的 6px', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'collapsible_panel',
+      border: { color: 'grey', corner_radius: 8 },
+      header: { title: { tag: 'plain_text', content: '详情' } },
+      elements: [],
+    }] },
+  });
+  assert.match(html, /border-radius:8px/);
+});
+
+// 真机 header/content padding 全部来自 CSS（--fat：4px 8px / 8px），组件不再内联写死
+// 之前的 8px 12px + 0 12px 12px 让标题行左右多 4px、正文顶部少 8px。
+test('collapsible_panel: 默认不内联 header padding（交给 CSS 的 --fat 规则）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'collapsible_panel',
+      background_color: 'grey',
+      header: { title: { tag: 'plain_text', content: '详情' } },
+      elements: [{ tag: 'markdown', content: 'x' }],
+    }] },
+  });
+  const summary = html.match(/<summary[^>]*>/)?.[0] || '';
+  assert.doesNotMatch(summary, /padding:/);
+});
 
 test('collapsible_panel: 折叠态默认收起（expanded 缺省），展开才带 open', () => {
   const closed = renderDslToString({

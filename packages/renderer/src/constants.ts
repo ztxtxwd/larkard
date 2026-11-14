@@ -8,12 +8,41 @@ import type { HeaderTemplate, NamedColor } from './types';
 export const BASE_FONT_SIZE = 14;
 /** 默认行高（飞书引擎 const Z=1.6） */
 export const BASE_LINE_HEIGHT = 1.6;
+
+/**
+ * 字号 -> 行高表（网页版飞书引擎 `ce` 表，见 feishu-web-dump 320657bc.js）：
+ * `de(size) = ce[size] ?? size * 1.6`。不要再用「字号 + 8」——两者在
+ * 12/14/16 恰好重合，但 18 以上开始分叉（18→28 而非 26，20→30 而非 28）。
+ */
+export const LINE_HEIGHT_BY_FONT_SIZE: Record<number, number> = {
+  8: 12, 9: 16, 10: 16, 11: 18, 12: 20, 13: 20, 14: 22, 15: 22, 16: 24, 17: 24,
+  18: 28, 19: 28, 20: 30, 21: 32, 22: 32, 23: 34, 24: 36, 25: 38, 26: 40, 27: 42,
+  28: 44, 29: 44, 30: 46, 31: 46, 32: 48, 33: 50, 34: 52,
+};
+
+/**
+ * 消息卡片（桌面端）行高补偿。真机 Markdown 组件：
+ * `lineHeight = de(fontSize) + (_isFromMessageCard && !isMobile ? 2 : 0)`。
+ * 本渲染器的用途就是「消息里那张卡片 + 桌面端」，故恒为 2。
+ * 只有显式给了 text_size 时才写死行高；没给就继续走 CSS 的 line-height:1.6。
+ */
+export const MESSAGE_CARD_LINE_HEIGHT_DELTA = 2;
+
+/** 字号 -> 行高（引擎 `de()`）：查表，表外按 1.6 倍字号 */
+export function lineHeightForFontSize(fontSize: number): number {
+  return LINE_HEIGHT_BY_FONT_SIZE[fontSize] ?? fontSize * BASE_LINE_HEIGHT;
+}
+
+/** 消息卡片正文行高（含桌面端 +2 补偿） */
+export function textLineHeight(fontSize: number): number {
+  return lineHeightForFontSize(fontSize) + MESSAGE_CARD_LINE_HEIGHT_DELTA;
+}
 /** className 前缀（飞书引擎 const J="universal-card"） */
 export const CLS = 'universal-card';
 
 /**
  * markdown 组件 text_size 枚举 -> 字号 px（逆向自网页版飞书正文分级）。
- * 行高统一取「字号 + 8」（经真机验证：12→20 / 14→22 / 16→24）。
+ * 行高不按「字号 + 8」写死，走 {@link lineHeightForFontSize} 的引擎行高表。
  * 缺省/未知按 normal（14px）处理。带 heading-N / *-large 别名一并覆盖。
  */
 export const TEXT_SIZE_MAP: Record<string, number> = {

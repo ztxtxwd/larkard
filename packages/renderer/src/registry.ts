@@ -88,6 +88,31 @@ export function resolveColor(raw: unknown): string | undefined {
 }
 
 /**
+ * 容器**描边**色的 token 表（网页版 fallbackStyle，见 feishu-web-dump）：
+ *   collapsible_panel.border_color     = { grey: 'line-border-component' }
+ *   interactive_container.border_color = { 'bg-white': 'bg-body', grey: 'line-border-component', white: 'static-white' }
+ * 要点：同一个 `grey` 作正文色是 N600、作描边色是 N350（--line-border-component）。
+ * 之前直接走 resolveColor 把灰描边渲染成 N600（深灰），比真机明显重一档。
+ * 带档位的色名（grey-300）/ 自定义色 / 其它命名色仍按 default_color_tokens 解析。
+ */
+const BORDER_COLOR_TOKENS: Record<string, string> = {
+  grey: 'line-border-component',
+  gray: 'line-border-component',
+  'bg-white': 'bg-body',
+  white: 'static-white',
+};
+
+export function resolveBorderColor(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const v = raw.trim();
+  if (!v || v === 'default') return undefined;
+  if (/^(#|rgb|hsl)/i.test(v)) return v;
+  const token = BORDER_COLOR_TOKENS[v];
+  if (token) return `var(--${token})`;
+  return paletteColor(v);
+}
+
+/**
  * 正文色名 → 色阶 token（orange→O400 等，见 TEXT_FONT_COLOR_TOKEN）。
  * 自定义 #hex/rgb 返回 undefined（调用方走直通）。
  */

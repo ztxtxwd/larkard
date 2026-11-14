@@ -73,6 +73,22 @@ test('markdown: 标题/列表/引用 块级构造', () => {
   assert.match(html, /blockquote/);
 });
 
+// 列表结构对齐网页版：每个 item 一个 <ul>/<ol> + <li data-marker>，
+// 项目符号和 22px 缩进由 CSS（li::before + padding-left）画，不拼 marker span。
+test('markdown: 列表用 ul/li[data-marker]（符号交给 li::before）', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'markdown',
+    content: '- 无序一\n- 无序二\n\n1. 有序一',
+  }] } });
+  assert.match(html, /<ul class="universal-card-markdown-list__ul" style="margin-left:0px"><li data-marker="0">/);
+  // 两个无序项各自一个 <ul>，层级 0 → data-marker="0"（•）；有序项回显序号
+  assert.equal((html.match(/<li data-marker="0">/g) || []).length, 2);
+  assert.match(html, /<ol class="universal-card-markdown-list__ol"[^>]*><li data-marker="1\.">/);
+  assert.match(html, /universal-card-markdown-list__li-content/);
+  // 不再输出旧的 marker span
+  assert.doesNotMatch(html, /markdown-list__marker/);
+});
+
 test('hr 渲染', () => {
   const html = renderDslToString(dsl);
   assert.match(html, /universal-card-hr/);
@@ -294,7 +310,8 @@ test('img: DSL title 支持 text_size / text_color / lines / lark_md', () => {
   assert.match(html, /universal-card-text universal-card-text--grey" style="[^"]*font-size:12px/); // notation
   assert.match(html, /-webkit-line-clamp:1/);
   // lark_md：走 markdown 子树，对齐/字号由 markdown 容器生效
-  assert.match(html, /universal-card-markdown" style="text-align:center;font-size:16px;line-height:24px/);
+  // heading=16px → 引擎行高表 de(16)=24，再加消息卡片桌面端 +2 = 26
+  assert.match(html, /universal-card-markdown" style="text-align:center;font-size:16px;line-height:26px/);
   assert.match(html, /universal-card-text--bold">粗体/);
 });
 
@@ -1288,7 +1305,13 @@ function icBorder(ic) {
 }
 
 test('interactive_container: has_border=true 时 border_color 生效', () => {
-  assert.match(icBorder({ has_border: true, border_color: 'grey' }), /border:1px solid #646a73/);
+  // grey 作为描边色走 interactive_container.border_color token 表 → N350（--line-border-component），
+  // 不是正文灰 N600（resolveColor('grey') 会给出 #646a73，描边深一档）
+  assert.match(icBorder({ has_border: true, border_color: 'grey' }), /border:1px solid var\(--line-border-component\)/);
+});
+
+test('interactive_container: border_color 带档位时仍走色阶（grey-350 → N350）', () => {
+  assert.match(icBorder({ has_border: true, border_color: 'grey-350' }), /border:1px solid #d0d3d6/);
 });
 
 test('interactive_container: has_border=false 时 border_color 不生效', () => {

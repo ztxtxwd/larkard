@@ -16,6 +16,10 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 14px;
   line-height: 1.6;
+  /* 飞书网页版在 html 上设了 font-smoothing: antialiased，卡片文字继承同一套平滑设置，
+   * macOS/Safari 上字重观感更细，与客户端一致。 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: #1f2329;
   background-color: #fff;
   position: relative;
@@ -192,6 +196,14 @@
   /* END PALETTE VARS */
   /* 真机 light：--bg-float-overlay: var(--N50)。column_set background_style=grey 走此 token */
   --bg-float-overlay: var(--N50);
+  /* 语义色 token（对齐飞书 :root light）：容器描边/caption 文案/列表符号等
+     走语义名而不是直接挑色阶，避免「同一个 grey 在正文是 N600、作描边却是 N350」被抹平。 */
+  --line-border-component: var(--N350); /* 组件描边（collapsible_panel / interactive_container） */
+  --line-border-card: var(--N300);
+  --text-caption: var(--N600);
+  --colorful-blue: var(--B500); /* markdown 列表符号 */
+  --bg-body: var(--N00);
+  --static-white: var(--N00);
 }
 .universal-card-root *,
 .universal-card-root *::before,
@@ -697,7 +709,7 @@
 .universal-card-interactive-container--action:not(.universal-card-interactive-container--disabled):hover {
   background-color: rgba(31, 35, 41, 0.05);
 }
-.universal-card-interactive-container--bordered { border: 1px solid #dee0e3; }
+.universal-card-interactive-container--bordered { border: 1px solid var(--line-border-component); }
 /* disabled：去掉手型指针与 hover 灰底，外观退回普通块 */
 .universal-card-interactive-container--disabled {
   cursor: default; transition: none;
@@ -711,13 +723,18 @@
 /* header（<summary>）：可点击整行；去掉浏览器默认三角标记。
    真机 color:var(--text-caption) → N600；标题/箭头继承此色。
    默认 title flex:1 把箭头推到右侧（icon_position=right）；
-   icon_position=left 时靠 DOM 顺序在左。 */
+   icon_position=left 时靠 DOM 顺序在左。
+   内边距只在 --fat（有描边/底色）时由 CSS 给 4px 8px，纯无样式面板不加内边距；
+   header.padding 显式给了就由内联 style 覆盖。 */
 .universal-card-collapsible-panel__header {
   display: flex; align-items: center; gap: 8px;
-  padding: 8px 12px;
+  padding: 0;
   cursor: pointer; box-sizing: border-box;
   list-style: none; user-select: none;
   color: var(--N600);
+}
+.universal-card-collapsible-panel--fat .universal-card-collapsible-panel__header {
+  padding: 4px 8px;
 }
 .universal-card-collapsible-panel__header::-webkit-details-marker { display: none; }
 .universal-card-collapsible-panel__header::marker { content: ''; }
@@ -751,6 +768,11 @@
 .universal-card-collapsible-panel__header--icon-follow {
   gap: 4px;
 }
+/* icon_position=left：图标与 header-content 是同级子项，真机 header 的 column-gap 是 4px
+   （right 时图标在 header-content 里，间距是 8px） */
+.universal-card-collapsible-panel__header--icon-left {
+  gap: 4px;
+}
 .universal-card-collapsible-panel__header--icon-follow .universal-card-collapsible-panel__title {
   flex: 0 1 auto;
   width: auto;
@@ -759,15 +781,23 @@
    由用户点击 <summary> 切换 [open]，箭头方向随之自动更新，无需 JS。颜色继承 header caption。 */
 .universal-card-collapsible-panel__icon {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
-  transition: transform .2s; transform: rotate(0deg);
+  transition: transform .1s linear; transform: rotate(0deg);
 }
 .universal-card-collapsible-panel[open] .universal-card-collapsible-panel__icon {
   transform: rotate(var(--panel-icon-angle, -180deg));
 }
-/* 内容区：展开时显示（折叠态由 <details> 交给浏览器隐藏）。左右/底部内边距对齐 header
-   （真机内容 margin 0 12px 12px），顶部紧贴 header 不留空。 */
+/* 内容区：展开时显示（折叠态由 <details> 交给浏览器隐藏）。
+   对齐真机：内容区是 flex 容器（element-shell__container），默认纵向 + 8px 行列间距；
+   内边距基础只有 padding-top:8px，--fat 面板改成四边 8px。
+   （之前写死 0 12px 12px：标题行左边距比真机多 4px，正文顶部少 8px，
+   多个子元素之间也缺了真机的 8px 间距。） */
 .universal-card-collapsible-panel__content {
-  box-sizing: border-box; padding: 0 12px 12px;
+  box-sizing: border-box; padding: 8px 0 0;
+  display: flex; flex-direction: column;
+  row-gap: 8px; column-gap: 8px;
+}
+.universal-card-collapsible-panel--fat .universal-card-collapsible-panel__content {
+  padding: 8px;
 }
 
 /* ---- 人员 person_v1 / person_list（对齐网页版 universal-card-person*）---- */
@@ -894,10 +924,40 @@
   content: " "; position: absolute; left: 0; top: 0; height: 100%; width: 2px;
   background-color: #dee0e3;
 }
+/* 列表：结构对齐网页版——每个 item 一个 <ul>/<ol> + 一个 <li data-marker>，
+   缩进落在 ul/ol 的 margin-left（内联 24*level），项目符号用 li::before 画。
+   网页版符号是「右对齐到距正文 20px」的绝对定位盒（width:0 + margin:auto 20px auto -20px），
+   不是行内 marker + gap：那样符号会紧贴文字，且字宽算进了缩进。 */
 .universal-card-markdown-list { text-align: left; }
-.universal-card-markdown-list__item { align-items: flex-start; }
-.universal-card-markdown-list__marker { color: #1456f0; line-height: 1.6; }
-.universal-card-markdown-list__li-content { display: inline-block; }
+.universal-card-markdown-list__ul,
+.universal-card-markdown-list__ol { padding: 0; margin: 0; }
+.universal-card-markdown-list__ul > li,
+.universal-card-markdown-list__ol > li {
+  position: relative; list-style-position: outside; list-style-type: none;
+}
+.universal-card-markdown-list__ul > li { padding-left: 22px; }
+.universal-card-markdown-list__ul > li::before,
+.universal-card-markdown-list__ol > li::before {
+  display: inline-block; color: var(--colorful-blue); content: "";
+  box-sizing: border-box; border-radius: 2px; padding: 0 2px;
+  min-width: 18px; position: absolute;
+}
+/* 无序：• ◦ ▪ 按层级轮替（data-marker = level % 3）；字号固定 14px，不跟正文缩放 */
+.universal-card-markdown-list__ul > li::before {
+  content: "\2022"; font-size: 14px; font-family: "PingFang SC", "PingFangSC-Regular", sans-serif;
+  width: 0; min-width: auto; top: 0; bottom: 0;
+  margin: auto 20px auto -20px; text-align: right; line-height: inherit;
+}
+.universal-card-markdown-list__ul > li[data-marker="1"]::before { content: "\25E6"; font-weight: 700; }
+.universal-card-markdown-list__ul > li[data-marker="2"]::before { content: "\25AA"; }
+/* 有序：序号跟着正文基线排（inline-flex 首个子项），与真机一致 */
+.universal-card-markdown-list__ol > li { display: inline-flex; }
+.universal-card-markdown-list__ol > li::before {
+  position: relative; margin-right: 2px; line-height: inherit;
+  content: attr(data-marker); text-align: left; min-width: 1em; white-space: nowrap;
+  font-family: "Helvetica Neue", Consolas, monospace; flex-shrink: 0;
+}
+.universal-card-markdown-list__li-content { display: inline-block; vertical-align: top; }
 .universal-card-code-span {
   border-radius: 4px; border: 1px solid #dee0e3; padding: 0 4px;
   background-color: #f5f6f7; font-family: Menlo, Consolas, monospace; font-size: 13px;

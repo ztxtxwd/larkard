@@ -14,7 +14,7 @@ import {
   PERSON_LIST_COMMA, PERSON_LIST_SIZE, PERSON_SINGLE_SIZE,
   PERSON_UNKNOWN_AVATAR, PERSON_UNKNOWN_NAME,
   TABLE_HEAD_BG, TABLE_ROW_HEIGHT, TAG_COLOR,
-  TEXT_SIZE_MAP, paletteColor,
+  TEXT_SIZE_MAP, lineHeightForFontSize, paletteColor, textLineHeight,
 } from './constants';
 import { CHART_SPEC_ATTR } from './chart-hydrate';
 import { HEADER_BG_LIGHT } from './assets';
@@ -25,7 +25,7 @@ import { parseMarkdown } from './md-parse';
 import { h } from './vnode';
 import {
   alignToStyle, applyOuterMargin, bgStyleToColor, boxToStyle, extractPlainText, extractText,
-  getChildElements, propertyBackgroundColor, resolveCornerRadius,
+  getChildElements, propertyBackgroundColor, resolveBorderColor, resolveCornerRadius,
   lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
   resolveColor, resolveDimensionPx, resolveHoverTips, resolveImageSize, resolveImageSrc, resolveMediaSrc,
@@ -542,12 +542,15 @@ function MarkdownComponent(el: CardElement, ctx: RenderContext) {
   applyOuterMargin(style, p.margin);
   const sizeKey = resolveTextSizeKey(p);
   // 有显式字号才写死字号/行高；缺省走 CSS（14px / line-height:1.6）
-  // 行高取引擎 ce 表：字号≤16 时 = 字号+8（12→20 / 14→22 / 16→24）
+  // 行高走引擎表 lineHeightForFontSize + 消息卡片桌面端 +2：
+  //   12→20+2=22 / 14→22+2=24 / 16→24+2=26
+  // （此前用「字号 + 8」，12/14/16 恰好对上字号表，但漏了 +2，
+  //   带 text_size 的段落行距比真机小 2px——列表逐行累积后很明显。）
   let fontSize = BASE_FONT_SIZE;
-  let lineHeight = BASE_FONT_SIZE + 8;
+  let lineHeight = Math.round(BASE_FONT_SIZE * BASE_LINE_HEIGHT);
   if (sizeKey != null && TEXT_SIZE_MAP[String(sizeKey)] != null) {
     fontSize = TEXT_SIZE_MAP[String(sizeKey)];
-    lineHeight = fontSize + 8;
+    lineHeight = textLineHeight(fontSize);
     style.fontSize = fontSize + 'px';
     style.lineHeight = lineHeight + 'px';
   }
@@ -1273,14 +1276,15 @@ registerComponent('interactive_container', (el, ctx) => {
   const url = resolveURL(act?.action?.url);
   const hasActions = Array.isArray(p.actions) && p.actions.length > 0;
   const clickable = !disabled && (Boolean(url) || hasActions);
-  // border_color / customBorderColor：命名色/色阶/自定义色 → hex。
+  // border_color / customBorderColor：命名色 /色阶 / 自定义色 → CSS 值。
+  // 描边色走 interactive_container.border_color token 表：grey → --line-border-component（N350），
+  // 不是正文灰 N600（resolveColor('grey') 会给出后者，描边明显偏深）。
   const borderNamed = (p.border_color ?? (p as { borderColor?: string }).borderColor) as string | undefined;
   const borderCustom = resolveCustomBorderLight(p);
-  // 优先 customBorderColor（dslToRaw 已展开登记色）；命名色走色板。cus-/mm_* 别名本身解析不出。
-  const borderColorResolved = (borderCustom ? resolveColor(borderCustom) : undefined)
-    ?? resolveColor(borderNamed);
-  // 官方语义：border_color 仅在 has_border 为 true 时生效。
-  // 只写 border_color 而不开 has_border 不应画出边框（此前会，导致「没开边框却有线」）。
+  // 优先 customBorderColor（dslToRaw 已展开登记色）；命名色走 border token 表。
+  const borderColorResolved = (borderCustom ? resolveBorderColor(borderCustom) : undefined)
+    ?? resolveBorderColor(borderNamed);
+  // 官方语义：has_border 为 true 时 border_color 才生效（只写 border_color 不描边）。
   const hasBorder = p.hasBorder === true || p.has_border === true;
   const borderColor = hasBorder ? borderColorResolved : undefined;
   const cls = `${CLS}-interactive-container`
@@ -1356,19 +1360,32 @@ registerComponent('collapsible_panel', (el, ctx) => {
   const bgRaw = (p.background_color ?? (p as { backgroundColor?: string }).backgroundColor) as string | undefined;
   // 优先 customBackgroundStyle（dslToRaw 已展开登记色）；再 bg-white / 命名色。
   const bgCustom = propertyBackgroundColor(p);
-  if (bgCustom) style.background = bgCustom;
-  else if (bgRaw === 'bg-white') style.background = '#fff';
-  else { const bg = bgStyleToColor(bgRaw); if (bg) style.background = bg; }
-  // 仅当 DSL/RAW 显式给了 border 对象才描边——真机未指定时无边框，只有底色圆角条。
+  let hasBg = false;
+  if (bgCustom) { style.background = bgCustom; hasBg = true; }
+  else if (bgRaw === 'bg-white') { style.background = '#fff'; hasBg = true; }
+  else { const bg = bgStyleToColor(bgRaw); if (bg) { style.background = bg; hasBg = true; } }
+  // header.background_color：命名色 / #hex / 色阶 token。
+  const hbg = resolveColor(hdr.background_color ?? hdr.backgroundColor);
+
+  // 描边：真机 border.color 走 collapsible_panel.border_color token 表——
+  //   grey → var(--line-border-component)（N350 #d0d3d6）
+  // 缺省也是 grey（borderColorDefaultToken: b.Grey）。
+  // 之前直接 resolveColor('grey') → N600 #646a73，同一张卡片描边深了一整档。
   const borderRaw = p.border;
+  let hasBorder = false;
+  let borderRadiusRaw: number | string | undefined;
   if (borderRaw && typeof borderRaw === 'object') {
     const border = borderRaw as { color?: string; corner_radius?: number | string };
-    const borderColor = resolveColor(border.color) || '#dee0e3';
+    const borderColor = resolveBorderColor(border.color) ?? 'var(--line-border-component)';
     style.border = `1px solid ${borderColor}`;
-    style.borderRadius = border.corner_radius != null ? sizeToPx(border.corner_radius) : '8px';
-  } else {
-    style.borderRadius = '8px';
+    hasBorder = true;
+    borderRadiusRaw = border.corner_radius;
   }
+  // 真机 --fat：有描边 / 面板底色 / header 底色 任一条成立 → border-radius:6px。
+  // （只有纯无样式面板才是直角；DSL 显式的 corner_radius 覆盖本默认值。）
+  const isFat = hasBorder || hasBg || !!hbg;
+  if (borderRadiusRaw != null) style.borderRadius = sizeToPx(borderRadiusRaw);
+  else if (isFat) style.borderRadius = '6px';
   // header.position=bottom：标题落在内容下方。<summary> 必须是 <details> 的首个子节点才能
   // 充当开关键，所以 DOM 顺序不动，用 flex order 调换视觉顺序（details 变成纵向 flex 容器）。
   const headerBottom = String(hdr.position ?? 'top') === 'bottom';
@@ -1385,8 +1402,7 @@ registerComponent('collapsible_panel', (el, ctx) => {
     ? hdr.padding
     : boxToStyle(hdr.padding as never); // DSL 常是 "8px 12px 8px 12px"；RAW 可能是 box 对象
   if (hpad) headerStyle.padding = hpad;
-  // header.background_color：命名色 / #hex / 色阶 token。
-  const hbg = resolveColor(hdr.background_color ?? hdr.backgroundColor);
+  // header.background_color 已在上方解析（hbg），同时决定 --fat。
   if (hbg) headerStyle.background = hbg;
   if (headerBottom) headerStyle.order = '2';
 
@@ -1445,6 +1461,7 @@ registerComponent('collapsible_panel', (el, ctx) => {
   const headerVAlign = String(hdr.vertical_align ?? hdr.verticalAlign ?? 'center');
   const headerCls = `${CLS}-collapsible-panel__header`
     + (iconFollow ? ` ${CLS}-collapsible-panel__header--icon-follow` : '')
+    + (iconLeft ? ` ${CLS}-collapsible-panel__header--icon-left` : '')
     + (headerWidth === 'auto' ? ` ${CLS}-collapsible-panel__header--w-auto` : '')
     + (headerWidth === 'auto_when_fold' ? ` ${CLS}-collapsible-panel__header--w-auto-when-fold` : '')
     + (headerVAlign === 'top' ? ` ${CLS}-collapsible-panel__header--valign-top` : '')
@@ -1452,7 +1469,8 @@ registerComponent('collapsible_panel', (el, ctx) => {
   const summary = h('summary', { className: headerCls, style: summaryStyle }, headerChildren);
 
   // 内容始终渲染：折叠态由 <details>（无 open 属性）交给浏览器隐藏，展开由用户点击控制。
-  // 面板 padding 落到内容区（header 用 hdr.padding）；缺省走 CSS 的 0 12px 12px。
+  // 面板 padding 落到内容区（header 用 hdr.padding）；缺省走 CSS：
+  //   --fat 时 8px，否则只有 padding-top:8px（对齐网页版 __content 规则）。
   const contentStyle: Record<string, string> = {};
   const cpad =
     typeof p.padding === 'string'
@@ -1461,33 +1479,30 @@ registerComponent('collapsible_panel', (el, ctx) => {
   if (cpad) contentStyle.padding = cpad;
   if (headerBottom) contentStyle.order = '1';
   // 面板内布局四件套：direction / horizontal_spacing / vertical_spacing / horizontal_align / vertical_align。
-  // 仅在显式给出时才切 flex（保持未配置卡片原有的块级堆叠行为）。
+  // 真机内容区永远是 flex 容器（element-shell__container）：
+  //   默认纵向、row-gap/column-gap 都是 8px（CSS 给的底），只有显式写了 spacing 才覆盖。
+  // 多元素面板（如列表 markdown + 说明 markdown 各一个元素）就靠这 8px 拉开，
+  // 之前只在“显式配了 spacing/align”时才切 flex、否则块级堆叠，块间距就少了 8px。
   const direction = String(p.direction ?? 'vertical');
   const isRow = direction === 'horizontal';
   const hSpacing = p.horizontal_spacing ?? (p as { horizontalSpacing?: unknown }).horizontalSpacing;
   const vSpacing = p.vertical_spacing ?? (p as { verticalSpacing?: unknown }).verticalSpacing;
   const hAlign = (p.horizontal_align ?? (p as { horizontalAlign?: unknown }).horizontalAlign) as string | undefined;
   const vAlign = (p.vertical_align ?? (p as { verticalAlign?: unknown }).verticalAlign) as string | undefined;
-  if (isRow || hSpacing != null || vSpacing != null || hAlign != null || vAlign != null) {
-    contentStyle.display = 'flex';
-    contentStyle.flexDirection = isRow ? 'row' : 'column';
-    // 横排时默认 8px 列间距（对齐 column_set 默认水平间距），否则不给默认间距。
-    const gapX = hSpacing != null ? horizontalSpacingToPx(hSpacing as number | string)
-      : (isRow ? 8 : 0);
-    const gapY = vSpacing != null ? verticalSpacingToPx(vSpacing as number | string) : 0;
-    if (gapX) contentStyle.columnGap = gapX + 'px';
-    if (gapY) contentStyle.rowGap = gapY + 'px';
-    // 主轴/交叉轴随方向互换：横排时 horizontal_align 走 justify-content，纵排时走 align-items。
-    const hVal = hAlign ? H_ALIGN_MAP[hAlign] : undefined;
-    const vVal = vAlign ? V_ALIGN_MAP[vAlign] : undefined;
-    if (hVal) {
-      if (isRow) contentStyle.justifyContent = hVal;
-      else contentStyle.alignItems = hVal;
-    }
-    if (vVal) {
-      if (isRow) contentStyle.alignItems = vVal;
-      else contentStyle.justifyContent = vVal;
-    }
+  contentStyle.display = 'flex';
+  contentStyle.flexDirection = isRow ? 'row' : 'column';
+  if (hSpacing != null) contentStyle.columnGap = horizontalSpacingToPx(hSpacing as number | string) + 'px';
+  if (vSpacing != null) contentStyle.rowGap = verticalSpacingToPx(vSpacing as number | string) + 'px';
+  // 主轴/交叉轴随方向互换：横排时 horizontal_align 走 justify-content，纵排时走 align-items。
+  const hVal = hAlign ? H_ALIGN_MAP[hAlign] : undefined;
+  const vVal = vAlign ? V_ALIGN_MAP[vAlign] : undefined;
+  if (hVal) {
+    if (isRow) contentStyle.justifyContent = hVal;
+    else contentStyle.alignItems = hVal;
+  }
+  if (vVal) {
+    if (isRow) contentStyle.alignItems = vVal;
+    else contentStyle.justifyContent = vVal;
   }
   const content = h(
     'div',
@@ -1495,7 +1510,9 @@ registerComponent('collapsible_panel', (el, ctx) => {
     renderElements(p.elements, ctx),
   );
 
-  const cls = `${CLS}-collapsible-panel${expanded ? ` ${CLS}-collapsible-panel--expanded` : ''}`;
+  const cls = `${CLS}-collapsible-panel`
+    + (expanded ? ` ${CLS}-collapsible-panel--expanded` : '')
+    + (isFat ? ` ${CLS}-collapsible-panel--fat` : '');
   const props: Record<string, unknown> = { className: cls, style };
   if (expanded) props.open = ''; // 原生 <details open>：初始展开
   return h('details', props, summary, content);
@@ -1828,7 +1845,8 @@ registerComponent('checker', (el, ctx) => {
   const textProp = (textEl && typeof textEl === 'object' ? textEl.property : undefined) || {};
   const textSizeKey = resolveTextSizeKey(textProp);
   const fontSize = (textSizeKey && TEXT_SIZE_MAP[textSizeKey]) || TEXT_SIZE_MAP.normal;
-  const lineHeight = fontSize + 8;
+  // 真机 Checker：lineHeight = de(fontSize)（不叠加消息卡片 +2）
+  const lineHeight = lineHeightForFontSize(fontSize);
   const textColorRaw = (textProp.text_color ?? (textProp as { textColor?: string }).textColor) as string | undefined;
   const textColor = resolveColor(textColorRaw) || (textColorRaw && textColorRaw !== 'default' ? NAMED_TEXT_COLOR[textColorRaw as never] : undefined);
   const textAlign = (textProp.textAlign ?? (textProp as { text_align?: string }).text_align) as string | undefined;
@@ -2299,7 +2317,13 @@ registerComponent('blockquote', (el, ctx) =>
   h('div', { className: `${CLS}-blockquote` }, renderElements(el.property?.elements, ctx))
 );
 
-// list：有序/无序列表
+// list：有序/无序列表。
+// 结构对齐网页版（feishu-web-dump 320657bc.js 的 List 组件）：每个 item 自己是一个
+// `<ul class="...__ul">` / `<ol class="...__ol">`，里面一个 `<li data-marker>`：
+//   - 层级缩进落在 ul/ol 的 margin-left:24*level；
+//   - 无序项目符号由 li::before 画（•/◦/▪ 轮替），li 左侧留 22px，
+//     符号右对齐到距正文 20px 处——不能自己拼一个 marker span + gap，
+//     那样符号会紧贴文字（真机的符号离文字更远，且字号固定 14px）。
 registerComponent('list', (el, ctx) => {
   const p = el.property || {};
   const items = p.items || [];
@@ -2307,17 +2331,22 @@ registerComponent('list', (el, ctx) => {
     items.map((item, i) => {
       const ordered = (item.type || '').toLowerCase() === 'ol' || item.ordered === true;
       const level = item.level || 0;
+      // data-marker：无序为 0/1/2（对应 •/◦/▪）；有序为带序号的字符串（CSS attr 回显）。
       let marker: string;
       if (ordered) {
         const fn = ORDER_STYLES[level % ORDER_STYLES.length];
         marker = fn(item.order != null ? item.order : i + 1) + '.';
       } else {
-        marker = ['•', '◦', '▪'][level % 3];
+        marker = String(level % 3);
       }
-      const liStyle = { marginLeft: 24 * level + 'px', display: 'flex', gap: '6px' };
-      return h('div', { className: `${CLS}-markdown-list__item`, style: liStyle },
-        h('span', { className: `${CLS}-markdown-list__marker`, style: { flexShrink: 0 } }, marker),
-        h('div', { className: `${CLS}-markdown-list__li-content` }, renderElements(item.elements, ctx))
+      const tag = ordered ? 'ol' : 'ul';
+      return h(tag, {
+        className: `${CLS}-markdown-list__${tag}`,
+        style: { marginLeft: 24 * level + 'px' },
+      },
+        h('li', { 'data-marker': marker },
+          h('div', { className: `${CLS}-markdown-list__li-content` }, renderElements(item.elements, ctx))
+        )
       );
     })
   );
