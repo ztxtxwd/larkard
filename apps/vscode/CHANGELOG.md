@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.26
+
+- 表格分页：预览里 `page_size` 按真机缺省 5 行/页，支持翻页；单页不显示翻页器（对齐 antd small pagination 的「当前/总页数 + 上下页」）
+- Bundles schema 0.3.2、adapter 0.4.3、renderer 0.7.0、components 0.4.0
+
 ## 0.2.25
 
 - Audio 组件补齐真机属性：`style`（normal/flat/speak 图标）、`time_display` × `time_position`（单/双时间槽，≥1h 自动 `HH:MM:SS`）、`border`、`margin` / `padding`、`background_style` / `fill_color`、`width`、`disabled` 半透明蒙层、`fallback`
