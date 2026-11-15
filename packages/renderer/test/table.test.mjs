@@ -201,3 +201,15 @@ test('table pager: 每页最后一行去掉底边，分割线不会叠成 2px', 
   assert.match(rows[6], /page-last/);
   assert.match(CSS, /\.universal-card-table__row--page-last \.universal-card-table__td \{ border-bottom: none; \}/);
 });
+
+test('table: 宽表横向滚动条默认透明，hover 才显形（对齐真机）', () => {
+  const scrollRule = /\.universal-card-table__scroll \{([\s\S]*?)\}/.exec(CSS)?.[1] || '';
+  assert.match(scrollRule, /overflow-x: auto/);
+  assert.match(scrollRule, /overflow-y: hidden/);
+  const thumbRule = /\.universal-card-table__scroll::-webkit-scrollbar-thumb \{([\s\S]*?)\}/.exec(CSS)?.[1] || '';
+  assert.match(thumbRule, /background: transparent/);
+  assert.match(CSS, /\.universal-card-table__scroll:hover::-webkit-scrollbar-thumb \{[\s\S]*?background: var\(--N900-30/);
+  assert.match(CSS, /::-webkit-scrollbar-button \{ display: none/);
+  // Firefox 标准属性走 @supports，避免覆盖 WebKit 的细滚动条样式
+  assert.match(CSS, /@supports \(-moz-appearance: none\)[\s\S]*?scrollbar-color: transparent transparent/);
+});
