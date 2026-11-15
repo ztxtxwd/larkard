@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.24
+
+- 表格列线（`th`/`td` 右边线）改用 `--line-divider-default`（`rgba(31,35,41,.15)`）：半透明中性黑叠在单元格底色上，表头列线叠 `#f2f3f5` → `(211,211,214)`（真机取色 `#d4d4d7`），表体列线叠白 → `(222,222,223)`。此前用 `--bg-filler` 实色 `#eff0f1`，比真机浅两档且偏蓝，表头看起来像一条发白的蓝灰线
+- Bundles schema 0.3.2、adapter 0.4.2、renderer 0.5.8、components 0.4.0
+
 ## 0.2.23
 
 配色对齐客户端 light token 表（feishu-web-dump 对账），修掉「整体比真机偏蓝」的几处来源：
