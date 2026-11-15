@@ -494,6 +494,14 @@ export const CHART_PALETTE: string[] = [
 ];
 
 /**
+ * 图表（chart）默认内边距：真机给 VChart 的 light/dark 主题里 `padding` 是
+ * `{top:12,right:12,left:12,bottom:0}`（逆向自 electron main-window/627/729f5c7242.js 模块 658511）。
+ * VChart 自带 light 主题缺省是 `padding: 20`（四边 20），不覆盖会每边多出 8~20px —— 之前
+ * 渲染器看起来「内边距加多了」就是这个原因。
+ */
+export const CHART_DEFAULT_PADDING = { top: 12, right: 12, left: 12, bottom: 0 };
+
+/**
  * 图表容器尺寸常量（逆向自网页版飞书 chart 组件）。
  * - 缺省宽高比 PC 为 16:9（文档；客户端同样默认 "16:9"）
  * - 走宽高比时 minHeight=150 / minWidth=200；走像素 height 时下限降为 1

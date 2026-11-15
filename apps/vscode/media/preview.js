@@ -6,13 +6,15 @@
   let lastLocation = {};
 
   // Mirrors open-feishu-card's feishuChartHydrateJs / hydrateFeishuCharts
-  // (palette + attribute names + mount selector kept in sync with the library).
+  // (palette + default padding + attribute names + mount selector kept in sync with the library).
   const CHART_SPEC_ATTR = 'data-feishu-chart-spec';
   const CHART_HYDRATED_ATTR = 'data-feishu-chart-hydrated';
   const CHART_PALETTE = [
     '#1664FF', '#1AC6FF', '#FF8A00', '#3CC780', '#7442D4',
     '#FFC400', '#304D77', '#B48DEB', '#009488', '#FF7DDA',
   ];
+  // 真机 VChart 主题内边距（VChart 缺省 20 偏大）。
+  const CHART_PADDING = { top: 12, right: 12, left: 12, bottom: 0 };
 
   source.addEventListener('click', () => vscode.postMessage({ type: 'showSource', ...lastLocation }));
   refresh.addEventListener('click', () => vscode.postMessage({ type: 'refresh' }));
@@ -98,6 +100,7 @@
       if (!spec || typeof spec !== 'object') continue;
       if (spec.color == null) spec.color = CHART_PALETTE.slice();
       if (spec.background == null) spec.background = 'transparent';
+      if (spec.padding == null) spec.padding = { ...CHART_PADDING };
 
       const mount = container.querySelector('.universal-card-chart__vchart') || container;
       try {

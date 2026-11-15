@@ -13,14 +13,29 @@
  *     加载完成自动扫描并画图（依赖全局 window.VChart）。
  *
  * chart_spec 本身就是合法的 VChart spec（type/data/xField/yField/seriesField/stack/legends…），
- * 原样透传给 VChart 构造即可；本模块只在缺省时补默认色板、并把容器测量/renderSync 串起来。
+ * 原样透传给 VChart 构造即可；本模块只在缺省时补真机默认值（色板、透明背景、主题内边距），
+ * 并把容器测量/renderSync 串起来。
  */
-import { CHART_PALETTE } from './constants';
+import { CHART_PALETTE, CHART_DEFAULT_PADDING } from './constants';
 
 /** 挂载容器上承载 spec 的属性名 */
 export const CHART_SPEC_ATTR = 'data-feishu-chart-spec';
 /** 已水合标记属性（避免重复 render） */
 export const CHART_HYDRATED_ATTR = 'data-feishu-chart-hydrated';
+
+/**
+ * 归一 chart_spec：只补缺省值，显式写了就尊重（对齐客户端「spec > theme」）。
+ * - color：真机 VChart light 主题 brand 序列（首色 #4e83fd）
+ * - background：透明，跟随卡片底色
+ * - padding：真机主题内边距 12/12/12/0（VChart 缺省 20 会偏大）
+ */
+export function normalizeFeishuChartSpec(spec: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...spec };
+  if (out.color == null) out.color = CHART_PALETTE.slice();
+  if (out.background == null) out.background = 'transparent';
+  if (out.padding == null) out.padding = { ...CHART_DEFAULT_PADDING };
+  return out;
+}
 
 /**
  * 归一 VChart 构造器：既接受裸构造器（`import { VChart }`），也接受 UMD 命名空间对象
@@ -46,11 +61,8 @@ function resolveVChartCtor(
 export function renderFeishuChart(mount: Element, spec: Record<string, unknown>, VChart: unknown): unknown {
   const Ctor = resolveVChartCtor(VChart);
   if (!mount || !spec || !Ctor) return null;
-  // 缺省补默认色板，贴近网页版飞书观感（spec 已显式给 color 则尊重之）。
-  const finalSpec: Record<string, unknown> = { ...spec };
-  if (finalSpec.color == null) finalSpec.color = CHART_PALETTE.slice();
-  // background 透明，跟随卡片底色。
-  if (finalSpec.background == null) finalSpec.background = 'transparent';
+  // 缺省补真机默认值（色板 / 透明背景 / 主题内边距 12/12/12/0），显式给了则尊重。
+  const finalSpec = normalizeFeishuChartSpec(spec);
   try {
     // 清掉「图表加载中…」占位，避免与 canvas 叠加。
     if (typeof (mount as HTMLElement).innerHTML === 'string') (mount as HTMLElement).innerHTML = '';
@@ -117,7 +129,7 @@ export function feishuChartHydrateJs(vchartGlobal = 'VChart'): string {
   // 纯运行期字符串：等 DOM ready 且 VChart 就绪后，遍历所有容器 renderSync。
   // VChart 可能通过 async/defer CDN 晚于本脚本就绪——未就绪时按退避重试若干次（最多 ~10s）。
   return `(function(){
-  var SPEC='${CHART_SPEC_ATTR}',DONE='${CHART_HYDRATED_ATTR}',PALETTE=${JSON.stringify(CHART_PALETTE)},tries=0;
+  var SPEC='${CHART_SPEC_ATTR}',DONE='${CHART_HYDRATED_ATTR}',PALETTE=${JSON.stringify(CHART_PALETTE)},PAD=${JSON.stringify(CHART_DEFAULT_PADDING)},tries=0;
   function draw(){
     var G=window['${vchartGlobal}'];
     var V=G&&(typeof G==='function'?G:G.VChart);
@@ -130,6 +142,7 @@ export function feishuChartHydrateJs(vchartGlobal = 'VChart'): string {
       var spec;try{spec=JSON.parse(raw);}catch(e){continue;}
       if(spec.color==null)spec.color=PALETTE.slice();
       if(spec.background==null)spec.background='transparent';
+      if(spec.padding==null)spec.padding={top:PAD.top,right:PAD.right,left:PAD.left,bottom:PAD.bottom};
       var m=c.querySelector('.universal-card-chart__vchart')||c;
       try{m.innerHTML='';var inst=new V(spec,{dom:m});inst.renderSync();c.setAttribute(DONE,'1');}
       catch(e){m.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#8f959e;font-size:12px">[图表渲染失败]</div>';if(window.console)console.warn('[FeishuCard] chart 渲染失败',e);}

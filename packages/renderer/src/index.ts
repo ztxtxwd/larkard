@@ -124,7 +124,7 @@ export { ALL_CSS, feishuCardStyleTag } from './all-css';
 // 图表水合：chart 组件只输出挂载容器，真正画图交给运行期 VChart。
 // 浏览器：hydrateFeishuCharts(root, VChart)；SSR：feishuChartHydrateScript() 连同 VChart CDN 一起塞页面。
 export {
-  hydrateFeishuCharts, renderFeishuChart,
+  hydrateFeishuCharts, renderFeishuChart, normalizeFeishuChartSpec,
   feishuChartHydrateScript, feishuChartHydrateJs,
   CHART_SPEC_ATTR, CHART_HYDRATED_ATTR,
 } from './chart-hydrate';

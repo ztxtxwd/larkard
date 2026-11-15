@@ -658,6 +658,8 @@ test('chart: hydrate 脚本/正文可用且含默认色板', () => {
   const js = feishuChartHydrateJs();
   assert.match(js, /renderSync/);
   assert.match(js, /#4e83fd/);           // 默认色板（VChart light 主题首色）
+  assert.match(js, /"top":12/);         // 真机主题内边距（不是 VChart 缺省 20）
+  assert.match(js, /"bottom":0/);
   assert.match(js, new RegExp(CHART_SPEC_ATTR));
   assert.match(js, /setTimeout\(draw,250\)/); // async/defer CDN 未就绪时的退避重试
 });
@@ -673,6 +675,18 @@ test('chart: renderFeishuChart 接受 UMD 命名空间（.VChart 挂构造器）
   assert.equal(mount.__done, true);       // renderSync 被调用
   assert.equal(mount.innerHTML, '');      // 成功时清掉 loading 占位
   assert.equal(seen.spec.color[0], '#4e83fd'); // 注入默认色板（VChart light 主题首色）
+  assert.deepEqual(seen.spec.padding, { top: 12, right: 12, left: 12, bottom: 0 }); // 真机主题内边距
+});
+
+test('chart: 显式 padding 不被覆盖（0 也算显式）', () => {
+  let seen = null;
+  function Ctor(spec, opts) { seen = { spec, dom: opts.dom }; }
+  Ctor.prototype.renderSync = function () {};
+  const mount = { innerHTML: 'loading' };
+  renderFeishuChart(mount, { type: 'bar', data: [], padding: 0 }, Ctor);
+  assert.equal(seen.spec.padding, 0);
+  renderFeishuChart(mount, { type: 'bar', data: [], padding: { top: 4 } }, Ctor);
+  assert.deepEqual(seen.spec.padding, { top: 4 });
 });
 
 /* ---- table 表格：语义 table + 列宽/对齐 + options 标签 + number 精度 ---- */
