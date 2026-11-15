@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.25
+
+- Audio 组件补齐真机属性：`style`（normal/flat/speak 图标）、`time_display` × `time_position`（单/双时间槽，≥1h 自动 `HH:MM:SS`）、`border`、`margin` / `padding`、`background_style` / `fill_color`、`width`、`disabled` 半透明蒙层、`fallback`
+- Bundles schema 0.3.2、adapter 0.4.3、renderer 0.6.0、components 0.4.0
+
 ## 0.2.24
 
 - 表格列线（`th`/`td` 右边线）改用 `--line-divider-default`（`rgba(31,35,41,.15)`）：半透明中性黑叠在单元格底色上，表头列线叠 `#f2f3f5` → `(211,211,214)`（真机取色 `#d4d4d7`），表体列线叠白 → `(222,222,223)`。此前用 `--bg-filler` 实色 `#eff0f1`，比真机浅两档且偏蓝，表头看起来像一条发白的蓝灰线
