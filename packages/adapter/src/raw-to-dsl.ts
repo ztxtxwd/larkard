@@ -1517,7 +1517,9 @@ function renderInlineAudio(prop: Record<string, unknown>): string {
   // Markdown-embedded audio defaults show_time to false (unlike top-level audio).
   if (prop.showTime === true || prop.show_time === true) attrs.push("show_time=true");
 
-  const style = typeof prop.style === "string" ? prop.style : undefined;
+  const style = typeof prop.style === "string" ? prop.style
+    : typeof prop.audioStyle === "string" ? prop.audioStyle
+    : undefined;
   if (style) attrs.push(`style='${style}'`);
 
   const bg = typeof prop.backgroundColor === "string" ? prop.backgroundColor

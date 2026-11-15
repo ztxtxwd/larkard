@@ -264,6 +264,112 @@ test('markdown_audio: inline 胶囊样式，且不误用降级 url', () => {
   assert.match(html, /--universal-card-audio-time-font-size:12px/);
 });
 
+test('audio: style=flat / speak 图标变体，both_sides 双时间槽', () => {
+  const opts = { resolveMedia: (p) => (p.fileID ? `https://example.com/${p.fileID}` : null) };
+  const flat = renderDslToString({
+    schema: '2.0',
+    body: { tag: 'body', elements: [{
+      tag: 'audio', file_key: 'f_flat', style: 'flat', show_time: true, show_progress_bar: false,
+    }] },
+  }, opts);
+  assert.match(flat, /data-icon="PlayFilled"/);
+  assert.match(flat, /data-icon="PauseFilled"/);
+  assert.doesNotMatch(flat, /PlayRoundFilled/);
+
+  const speak = renderDslToString({
+    schema: '2.0',
+    body: { tag: 'body', elements: [{
+      tag: 'audio', file_key: 'f_speak', style: 'speak', show_time: true, show_progress_bar: true,
+      time_display: 'both', time_position: 'both_sides',
+    }] },
+  }, opts);
+  assert.match(speak, /data-icon="SpeakingOutlined"/);
+  assert.doesNotMatch(speak, /PlayRoundFilled|PlayFilled|PauseFilled|PauseRoundFilled/);
+  assert.equal((speak.match(/class="universal-card-audio__time"/g) || []).length, 2);
+  assert.match(speak, /data-audio-time="current"/);
+  assert.match(speak, /data-audio-time="total"/);
+  assert.doesNotMatch(speak, /universal-card-audio__time--both/);
+});
+
+test('audio: time_display=both + end 单槽加 --both；default + start 左槽', () => {
+  const opts = { resolveMedia: () => 'https://example.com/a.opus' };
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { tag: 'body', elements: [
+      { tag: 'audio', file_key: 'f_end', show_time: true, show_progress_bar: false,
+        time_display: 'both', time_position: 'end' },
+      { tag: 'audio', file_key: 'f_start', show_time: true, show_progress_bar: false,
+        time_position: 'start' },
+    ] },
+  }, opts);
+  assert.match(html, /universal-card-audio__time universal-card-audio__time--both" data-audio-time="current"/);
+  assert.match(html, /class="universal-card-audio__time" data-audio-time="auto"/);
+  assert.equal((html.match(/universal-card-audio__time--both/g) || []).length, 1);
+});
+
+test('audio: border/margin/padding/background/fill/width/disabled 全属性落地', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { tag: 'body', elements: [{
+      tag: 'audio', file_key: 'f_all', show_time: true, show_progress_bar: true,
+      border: { color: 'blue', corner_radius: '16px' },
+      margin: '8px 12px', padding: '4px 10px',
+      background_style: 'grey-200', fill_color: 'blue-800',
+      width: 'fill', disabled: true, disabled_tips: '暂不可用',
+    }] },
+  }, { resolveMedia: () => 'https://example.com/all.opus' });
+  assert.match(html, /border:1px solid #1456f0/);
+  assert.match(html, /border-radius:16px/);
+  assert.match(html, /padding:4px 10px 4px 10px/);
+  assert.match(html, /margin:8px 12px 8px 12px/);
+  assert.match(html, /width:calc\(100% - 24px\)/);
+  assert.match(html, /--universal-card-audio-bg:#eff0f1/);
+  assert.match(html, /--universal-card-audio-fill-color:#002f9e/);
+  assert.match(html, /universal-card-audio__wrapper--disabled/);
+  assert.match(html, /class="universal-card-audio__mask"/);
+  assert.match(html, /title="暂不可用"/);
+  assert.match(html, /universal-card-audio__control--fill/);
+  assert.doesNotMatch(html, /<audio/); // disabled 不输出原生 audio
+});
+
+test('audio: fallback=drop / fallback_text（无媒体时）', () => {
+  const drop = renderDslToString({
+    schema: '2.0',
+    body: { tag: 'body', elements: [{ tag: 'audio', file_key: 'f_missing', fallback: 'drop' }] },
+  });
+  assert.doesNotMatch(drop, /universal-card-audio__wrapper/);
+
+  const text = renderDslToString({
+    schema: '2.0',
+    body: { tag: 'body', elements: [{
+      tag: 'audio', file_key: 'f_missing',
+      fallback: { tag: 'fallback_text', text: { tag: 'plain_text', content: '客户端不支持音频' } },
+    }] },
+  });
+  assert.match(text, /universal-card-fallback-text/);
+  assert.match(text, /客户端不支持音频/);
+});
+
+test('markdown_audio: <audio style=speak> 走声波图标（md-parse 存在 audioStyle）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { tag: 'body', elements: [{
+      tag: 'markdown',
+      content: "<audio file_key='f_inline_speak' style='speak' show_time=true></audio>",
+    }] },
+  }, { resolveMedia: () => 'https://example.com/speak.opus' });
+  assert.match(html, /universal-card-audio__wrapper--inline/);
+  assert.match(html, /data-icon="SpeakingOutlined"/);
+  assert.doesNotMatch(html, /PlayFilled|PauseFilled/);
+});
+
+test('feishuAudioHydrateJs: 支持多时间槽与小时格式', () => {
+  const js = feishuAudioHydrateJs();
+  assert.match(js, /data-audio-time/);
+  assert.match(js, /time--long/);
+  assert.match(js, /3600/);
+});
+
 test('video: DSL cover.img_key → poster / 封面图', () => {
   const dsl = {
     schema: '2.0',

@@ -1086,19 +1086,29 @@
   background: var(--universal-card-audio-bg, #f5f6f7);
   cursor: pointer;
   transition: background-color 0.3s ease;
-  border: 1px solid #dee0e3;
+  border: 1px solid var(--line-border-card, #dee0e3);
   border-radius: 8px;
   padding: 12px;
   box-sizing: border-box;
   max-width: 100%;
 }
 .universal-card-audio__wrapper--disabled {
-  background: #eff0f1;
+  background: var(--universal-card-audio-disabled-bg, #eff0f1);
   cursor: default;
-  opacity: 0.7;
 }
 .universal-card-audio__wrapper:hover:not(.universal-card-audio__wrapper--disabled) {
   background: var(--universal-card-audio-hover-bg, var(--universal-card-audio-bg, #eff0f1));
+}
+/* 禁用蒙层：真机用白色半透明遮罩盖住内容（含内边距），而非整体 opacity */
+.universal-card-audio__mask {
+  position: absolute;
+  top: calc(0px - var(--universal-card-audio-border-width, 0px));
+  right: calc(0px - var(--universal-card-audio-border-width, 0px));
+  bottom: calc(0px - var(--universal-card-audio-border-width, 0px));
+  left: calc(0px - var(--universal-card-audio-border-width, 0px));
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: inherit;
 }
 /* markdown 内嵌：行内容胶囊（真机 --inline） */
 .universal-card-audio__wrapper--inline {
@@ -1222,8 +1232,15 @@
   font-weight: 500;
   text-align: center;
 }
+/* 时长 ≥1h：HH:MM:SS 需要更宽（对齐真机 --long / --both / both+long） */
+.universal-card-audio__time--long { width: 52px; }
+.universal-card-audio__time--both { width: 84px; }
+.universal-card-audio__time--both.universal-card-audio__time--long { width: 116px; }
 .universal-card-audio__wrapper--inline .universal-card-audio__time {
   width: calc(var(--universal-card-audio-time-font-size, 12px) * 3);
+}
+.universal-card-audio__wrapper--inline .universal-card-audio__time--long {
+  width: calc(var(--universal-card-audio-time-font-size, 12px) * 4.8);
 }
 
 /* ---- chart 图表 ---- */

@@ -36,6 +36,15 @@ export const AUDIO_PAUSE_FLAT_ICON_SVG =
   + '</svg>';
 
 /**
+ * 对齐真机 SpeakingOutlined（audio style=speak）：声波图标，播放/暂停都用它，不做双图标切换。
+ * 路径取自飞书网页版 icon 模块 593659。
+ */
+export const AUDIO_SPEAK_ICON_SVG =
+  '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-icon="SpeakingOutlined">'
+  + '<path d="M14.625.166c6.233 6.645 6.233 17.025 0 23.67a.527.527 0 0 1-.758.006l-1.524-1.527a.558.558 0 0 1-.007-.772c4.973-5.377 4.973-13.707 0-19.084a.559.559 0 0 1 .007-.772L13.868.16a.527.527 0 0 1 .756.007Zm-4.578 4.586c3.714 4.109 3.714 10.39 0 14.497a.516.516 0 0 1-.705.052l-.047-.042L7.77 17.73a.573.573 0 0 1-.013-.778 7.578 7.578 0 0 0 0-9.905.577.577 0 0 1-.032-.726l.045-.051 1.525-1.528a.518.518 0 0 1 .752.01ZM5.459 9.35a4.332 4.332 0 0 1 0 5.302c-.182.235-.527.234-.738.023l-1.904-1.91a1.083 1.083 0 0 1 0-1.528l1.904-1.91c.21-.211.555-.213.738.023Z" fill="currentColor"></path>'
+  + '</svg>';
+
+/**
  * 真机 cn(parentFontSize)：按父级 markdown 字号缩放 inline 音频图标/时间字号与垂直偏移。
  * notation(12) → icon/time 12px；正文 14 → icon 14 / time 12。
  */
@@ -54,11 +63,22 @@ export function audioInlineMetrics(parentFontSize: number): {
   return { iconSize, fontSize, top };
 }
 
-function fmtTime(s: number): string {
+/**
+ * 时长格式化，对齐真机 B(s, isLong)：
+ * - 不足 1 小时 → MM:SS；≥1 小时（或 isLong）→ HH:MM:SS；小时上限 99。
+ */
+function fmtTime(s: number, long = false): string {
   if (!Number.isFinite(s) || s < 0) return '--:--';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+  let h = Math.floor(s / 3600);
+  let m = Math.floor((s % 3600) / 60);
+  let sec = Math.floor(s % 60);
+  if (sec === 60) { m += 1; sec = 0; }
+  if (m === 60) { h += 1; m = 0; }
+  if (h > 99) { h = 99; m = 59; sec = 59; }
+  const mm = String(m).padStart(2, '0');
+  const ss = String(sec).padStart(2, '0');
+  if (long || h > 0) return String(h).padStart(2, '0') + ':' + mm + ':' + ss;
+  return mm + ':' + ss;
 }
 
 /** 切换播放态：靠 wrapper 上的 --playing 类 + CSS 显隐双图标（不改 innerHTML，避免 SVG 被吞） */
@@ -86,16 +106,25 @@ export function hydrateFeishuAudios(root?: ParentNode | null): number {
     const process = wrap.querySelector('.universal-card-audio__process') as HTMLElement | null;
     const strip = wrap.querySelector('.universal-card-audio__slider-strip') as HTMLElement | null;
     const slider = wrap.querySelector('.universal-card-audio__slider') as HTMLElement | null;
-    const timeEl = wrap.querySelector('.universal-card-audio__time') as HTMLElement | null;
+    const timeEls = wrap.querySelectorAll('.universal-card-audio__time');
     const ctrl = wrap.querySelector('.universal-card-audio__ctrl') as HTMLElement | null;
 
     const paint = (): void => {
       const d = audio.duration || 0;
       const c = audio.currentTime || 0;
       const pct = d ? (c / d) * 100 : 0;
+      const long = d >= 3600;
       if (process) process.style.width = pct + '%';
       if (strip) strip.style.left = pct + '%';
-      if (timeEl) timeEl.textContent = audio.paused && c === 0 ? fmtTime(d) : fmtTime(c);
+      // time_display/time_position 决定有几个时间槽：auto（未播放显示总时长）/
+      // current（只显示当前）/ total（只显示总时长）。
+      timeEls.forEach((node) => {
+        const el = node as HTMLElement;
+        const role = el.getAttribute('data-audio-time');
+        const seconds = role === 'total' ? d : role === 'current' ? c : (c || d);
+        el.textContent = fmtTime(seconds, long);
+        el.classList.toggle('universal-card-audio__time--long', long);
+      });
       setPlaying(wrap, !audio.paused);
     };
 
@@ -147,10 +176,13 @@ export function feishuAudioHydrateJs(): string {
   // 注意：循环内必须用 let / forEach 闭包，不能用 var——否则所有播放钮都绑到最后一个 audio。
   return `(function(){
   var DONE='${AUDIO_HYDRATED_ATTR}';
-  function fmt(s){
+  function fmt(s,long){
     if(!isFinite(s)||s<0)return '--:--';
-    var m=Math.floor(s/60),sec=Math.floor(s%60);
-    return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+    var h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=Math.floor(s%60);
+    if(sec===60){m+=1;sec=0}if(m===60){h+=1;m=0}if(h>99){h=99;m=59;sec=59}
+    var mm=String(m).padStart(2,'0'),ss=String(sec).padStart(2,'0');
+    if(long||h>0)return String(h).padStart(2,'0')+':'+mm+':'+ss;
+    return mm+':'+ss;
   }
   function bindOne(wrap){
     if(wrap.getAttribute(DONE)==='1')return;
@@ -160,14 +192,19 @@ export function feishuAudioHydrateJs(): string {
     var process=wrap.querySelector('.universal-card-audio__process');
     var strip=wrap.querySelector('.universal-card-audio__slider-strip');
     var slider=wrap.querySelector('.universal-card-audio__slider');
-    var timeEl=wrap.querySelector('.universal-card-audio__time');
+    var timeEls=wrap.querySelectorAll('.universal-card-audio__time');
     var ctrl=wrap.querySelector('.universal-card-audio__ctrl');
     var paint=function(){
       var d=audio.duration||0,c=audio.currentTime||0;
-      var pct=d?(c/d)*100:0;
+      var pct=d?(c/d)*100:0,long=d>=3600;
       if(process)process.style.width=pct+'%';
       if(strip)strip.style.left=pct+'%';
-      if(timeEl)timeEl.textContent=audio.paused&&c===0?fmt(d):fmt(c);
+      for(var i=0;i<timeEls.length;i++){
+        var el=timeEls[i],role=el.getAttribute('data-audio-time');
+        var seconds=role==='total'?d:role==='current'?c:(c||d);
+        el.textContent=fmt(seconds,long);
+        if(long)el.classList.add('universal-card-audio__time--long');else el.classList.remove('universal-card-audio__time--long');
+      }
       wrap.classList.toggle('universal-card-audio__wrapper--playing',!audio.paused);
     };
     if(ctrl)ctrl.addEventListener('click',function(e){

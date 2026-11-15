@@ -33,10 +33,11 @@ import {
   horizontalMarginPx, horizontalSpacingToPx, verticalSpacingToPx,
   textStyleToModifiers, textStyleToStyle,
 } from './registry';
-import { resolveCustomBorderLight } from '@open-feishu-card/adapter';
+import { resolveCustomBackgroundLight, resolveCustomBorderLight, readThemeColorLight } from '@open-feishu-card/adapter';
 import {
   AUDIO_PAUSE_FLAT_ICON_SVG, AUDIO_PAUSE_ICON_SVG,
   AUDIO_PLAY_FLAT_ICON_SVG, AUDIO_PLAY_ICON_SVG,
+  AUDIO_SPEAK_ICON_SVG,
   audioInlineMetrics,
 } from './audio-hydrate';
 
@@ -1179,8 +1180,13 @@ registerComponent('video', (el, ctx) => {
 // audio：音频播放器壳（播放钮 + 进度条 + 时长）。真机是自定义 UI，非原生 <audio controls>。
 // 有 resolveMedia 时内嵌隐藏 <audio>，外壳负责观感；完整交互需宿主页自行绑事件（或后续 hydrate）。
 //
-// markdown_audio：与顶层 audio 共用渲染函数 Ln，但 markdown 分发时注入 isInline=true →
+// markdown_audio：与顶层 audio 共用渲染函数，但 markdown 分发时按 inline 处理 →
 // 胶囊样式（--inline）、扁平图标、随父字号缩放；进度条仅显式 showProgressBar 时才画。
+//
+// 属性对齐飞书网页版 audio 组件（见 feishu-web-dump 的 vn/xn）：
+// style=normal|flat|speak 控制图标（圆底/扁平/声波）；time_display=default|both +
+// time_position=end|start|both_sides 控制时间槽；border{color,corner_radius}、
+// margin/padding/background_style/fill_color/width、disabled/disabled_tips、fallback。
 function renderAudio(el: CardElement, ctx: RenderContext) {
   const p = el.property || {};
   const isInline = el.tag === 'markdown_audio';
@@ -1192,8 +1198,24 @@ function renderAudio(el: CardElement, ctx: RenderContext) {
     ? (p.showProgressBar === true || p.show_progress_bar === true)
     : (p.showProgressBar !== false && p.show_progress_bar !== false);
   const showTime = p.showTime !== false && p.show_time !== false;
+
+  // 无媒体且显式声明了 fallback：drop 丢弃，fallback_text 出兜底文案。
+  const fallback = p.fallback as unknown;
+  if (!src && fallback != null) {
+    if (fallback === 'drop') return null;
+    if (isRecord(fallback) && fallback.tag === 'fallback_text') {
+      const textNode = fallback.text as unknown;
+      // 公开 DSL 的 text 是扁平 {tag, content}；RAW 可能是 {tag, property:{content}}。
+      const content = typeof textNode === 'string' ? textNode
+        : isRecord(textNode) && typeof textNode.content === 'string' ? textNode.content
+        : extractPlainText(textNode);
+      return content ? h('div', { className: `${CLS}-fallback-text` }, content) : null;
+    }
+  }
+
   const wv = p.widthValue as { type?: string; value?: string | number } | undefined;
   const widthTok = (p.width ?? wv?.value) as string | number | undefined;
+  const widthIsFill = widthTok === 'fill' || wv?.value === 'fill';
 
   const wrapCls = `${CLS}-audio__wrapper`
     + (isInline ? ` ${CLS}-audio__wrapper--inline` : '')
@@ -1201,68 +1223,138 @@ function renderAudio(el: CardElement, ctx: RenderContext) {
     + (disabled ? ` ${CLS}-audio__wrapper--disabled` : '');
   const style: Record<string, string> = {};
 
+  // 宽度：fill→100%；像素→Npx；default/auto→auto（进度条+时长时 minWidth 164px）。
+  const applyWidth = (): void => {
+    if (isInline) {
+      style.width = 'auto';
+    } else if (widthIsFill) {
+      style.width = '100%';
+    } else if (typeof widthTok === 'number') {
+      style.width = widthTok + 'px';
+    } else if (typeof widthTok === 'string' && /^\d+(\.\d+)?px$/.test(widthTok)) {
+      style.width = widthTok;
+    } else {
+      // 真机 Default：width:auto；进度条+时长时 minWidth:164px
+      style.width = 'auto';
+      if (showProgress && showTime) style.minWidth = '164px';
+    }
+  };
+  applyWidth();
+
   if (isInline) {
-    // 真机 inline：强制 width:auto；尺寸跟父 markdown 字号（ctx.textMetrics）
-    style.width = 'auto';
+    // 真机 inline：尺寸跟父 markdown 字号（ctx.textMetrics）
     const parentFs = ctx.textMetrics?.fontSize ?? BASE_FONT_SIZE;
     const { iconSize, fontSize, top } = audioInlineMetrics(parentFs);
     style['--universal-card-audio-icon-size'] = iconSize + 'px';
     style['--universal-card-audio-time-font-size'] = fontSize + 'px';
     style.verticalAlign = 'top';
     if (top) style.top = top + 'px';
-  } else if (widthTok === 'fill') {
-    style.width = '100%';
-  } else if (typeof widthTok === 'number') {
-    style.width = widthTok + 'px';
-  } else if (typeof widthTok === 'string' && /^\d+(\.\d+)?px$/.test(widthTok)) {
-    style.width = widthTok;
-  } else {
-    // 真机 Default：width:auto；进度条+时长时 minWidth:164px
-    style.width = 'auto';
-    if (showProgress && showTime) style.minWidth = '164px';
   }
 
-  const pad = boxToStyle(p.padding as never);
+  // padding：RAW 四向对象 / DSL CSS 简写字符串都支持。
+  const paddingRaw = p.padding as unknown;
+  const pad = typeof paddingRaw === 'string' ? paddingRaw.trim() : boxToStyle(paddingRaw as never);
   if (pad) style.padding = pad;
-  // markdown_audio 用 backgroundColor；顶层 audio 偶见 backgroundStyle——都写入 CSS 变量（对齐真机）
-  const bg = bgStyleToColor(
-    p.backgroundColor ?? p.background_color ?? p.background_style ?? p.backgroundStyle,
-  );
+
+  // margin：顶层 audio 外边距（真机 applyOuterMargin 等价物）。
+  if (p.margin != null) {
+    if (!style.width) style.width = '100%';
+    applyOuterMargin(style, p.margin);
+  }
+
+  // 边框：border{color|borderColor, corner_radius|cornerRadius} 或 RAW hasBorder/borderColor。
+  const borderObj = isRecord(p.border) ? p.border : undefined;
+  const hasBorder = p.hasBorder === true || p.has_border === true || !!borderObj;
+  if (hasBorder) {
+    const borderColor = readThemeColorLight(borderObj?.customBorderColor ?? borderObj?.custom_border_color)
+      ?? resolveCustomBorderLight(p)
+      ?? resolveBorderColor(borderObj?.color ?? borderObj?.borderColor ?? p.borderColor);
+    if (borderColor) style.border = `1px solid ${borderColor}`;
+  }
+  // mask 按 border-width 向外扩；真机 wrapper 恒定 1px 描边。
+  style['--universal-card-audio-border-width'] = '1px';
+  // corner_radius：DSL 字符串 / RAW {type:'pixels',value} / 裸数字都支持。
+  const radiusRaw = borderObj?.corner_radius ?? borderObj?.cornerRadius
+    ?? p.corner_radius ?? p.cornerRadius;
+  const radiusVal = isRecord(radiusRaw) ? radiusRaw.value : radiusRaw;
+  if (radiusVal != null && radiusVal !== '') {
+    style.borderRadius = typeof radiusVal === 'number' ? radiusVal + 'px' : String(radiusVal);
+  }
+
+  // 背景：customBackgroundStyle（主题自定义色）优先，其次 background_style / backgroundColor。
+  const bg = resolveCustomBackgroundLight(p)
+    ?? bgStyleToColor(p.backgroundColor ?? p.background_color ?? p.background_style ?? p.backgroundStyle);
   if (bg) style['--universal-card-audio-bg'] = bg;
-  if (typeof p.fill_color === 'string' || typeof p.fillColor === 'string') {
-    const fill = resolveColor((p.fill_color ?? p.fillColor) as string);
+
+  // 填充色（图标/进度/时间）：customFillColor 优先，其次 fill_color / fillColor。
+  const fillRaw = readThemeColorLight(p.customFillColor ?? p.custom_fill_color)
+    ?? p.fill_color ?? p.fillColor;
+  if (typeof fillRaw === 'string') {
+    const fill = resolveColor(fillRaw);
     if (fill) style['--universal-card-audio-fill-color'] = fill;
   }
 
-  const children: Array<ReturnType<typeof h> | null> = [];
-  // 可播放地址：藏原生 audio，宿主可用 querySelector 驱动；controls 不画，避免双 UI。
-  if (src && !disabled) {
-    children.push(h('audio', {
-      className: `${CLS}-audio__native`,
-      src,
-      preload: 'metadata',
-      'data-audio-id': p.audioID || p.audio_id || '',
-    }));
+  // ---- 时间槽（time_display × time_position，对齐真机 xn/V）----
+  const timeDisplay = (p.timeDisplay ?? p.time_display) === 'both' ? 'both' : 'default';
+  const posRaw = p.timePosition ?? p.time_position;
+  const timePosition = posRaw === 'start' || posRaw === 'both_sides' ? posRaw : 'end';
+  const timeCls = `${CLS}-audio__time`
+    + (timeDisplay === 'both' && timePosition !== 'both_sides' ? ` ${CLS}-audio__time--both` : '');
+
+  type TimeRole = 'auto' | 'current' | 'total';
+  const slot = (role: TimeRole) => h('div', {
+    className: timeCls,
+    'data-audio-time': role,
+  }, role === 'current' ? '00:00' : '--:--');
+
+  let leftTime: ReturnType<typeof h> | null = null;
+  let rightTime: ReturnType<typeof h> | null = null;
+  if (showTime) {
+    if (timeDisplay === 'both') {
+      if (timePosition === 'both_sides') {
+        leftTime = slot('current');
+        rightTime = slot('total');
+      } else if (timePosition === 'start') {
+        leftTime = slot('current');
+      } else {
+        rightTime = slot('current');
+      }
+    } else if (timePosition === 'start') {
+      leftTime = slot('auto');
+    } else {
+      // Default + end/both_sides：单槽在右侧（both_sides 只在 both 模式下拆两槽）。
+      rightTime = slot('auto');
+    }
   }
 
-  // inline → 扁平 PlayFilled/PauseFilled；块级 → RoundFilled
-  const playSvg = isInline ? AUDIO_PLAY_FLAT_ICON_SVG : AUDIO_PLAY_ICON_SVG;
-  const pauseSvg = isInline ? AUDIO_PAUSE_FLAT_ICON_SVG : AUDIO_PAUSE_ICON_SVG;
-
-  // 播放/暂停双图标同时输出，靠 .wrapper--playing CSS 显隐（避免 hydrate 改 innerHTML 丢 SVG）
-  const controlKids: Array<ReturnType<typeof h> | null> = [
-    h('div', { className: `${CLS}-audio__ctrl` },
-      h('span', { className: `${CLS}-audio__ctrl-icon` },
+  // ---- 图标（style）----
+  // normal + 块级 → RoundFilled；normal + inline → FlatFilled；flat → FlatFilled；
+  // speak → SpeakingOutlined（播放/暂停同图标，不做双图标切换）。
+  // markdown_audio 的 md-parse 为避免与图标 style 对象撞名，把 style 存成 audioStyle。
+  const styleRaw = p.style ?? p.audioStyle;
+  const audioStyle = styleRaw === 'flat' || styleRaw === 'speak' ? styleRaw : 'normal';
+  const useFlat = audioStyle === 'flat' || (audioStyle === 'normal' && isInline);
+  const iconNode = audioStyle === 'speak'
+    ? h('span', { className: `${CLS}-audio__ctrl-icon` },
+        h('span', {
+          className: `${CLS}-audio__icon ${CLS}-audio__icon--speak`,
+          dangerouslySetInnerHTML: { __html: AUDIO_SPEAK_ICON_SVG },
+        }),
+      )
+    : h('span', { className: `${CLS}-audio__ctrl-icon` },
         h('span', {
           className: `${CLS}-audio__icon ${CLS}-audio__icon--play`,
-          dangerouslySetInnerHTML: { __html: playSvg },
+          dangerouslySetInnerHTML: { __html: useFlat ? AUDIO_PLAY_FLAT_ICON_SVG : AUDIO_PLAY_ICON_SVG },
         }),
         h('span', {
           className: `${CLS}-audio__icon ${CLS}-audio__icon--pause`,
-          dangerouslySetInnerHTML: { __html: pauseSvg },
+          dangerouslySetInnerHTML: { __html: useFlat ? AUDIO_PAUSE_FLAT_ICON_SVG : AUDIO_PAUSE_ICON_SVG },
         }),
-      )
-    ),
+      );
+
+  const controlKids: Array<ReturnType<typeof h> | null> = [
+    h('div', { className: `${CLS}-audio__ctrl` }, iconNode),
+    leftTime,
   ];
   if (showProgress) {
     controlKids.push(
@@ -1274,13 +1366,24 @@ function renderAudio(el: CardElement, ctx: RenderContext) {
       )
     );
   }
-  if (showTime) {
-    controlKids.push(h('div', { className: `${CLS}-audio__time` }, '--:--'));
-  }
+  controlKids.push(rightTime);
 
+  const children: Array<ReturnType<typeof h> | null> = [];
+  // 可播放地址：藏原生 audio，宿主可用 querySelector 驱动；controls 不画，避免双 UI。
+  if (src && !disabled) {
+    children.push(h('audio', {
+      className: `${CLS}-audio__native`,
+      src,
+      preload: 'metadata',
+      'data-audio-id': p.audioID || p.audio_id || '',
+    }));
+  }
+  if (disabled) {
+    children.push(h('div', { className: `${CLS}-audio__mask` }));
+  }
   children.push(
     h('div', { className: `${CLS}-audio__component` },
-      h('div', { className: `${CLS}-audio__control${widthTok === 'fill' ? ` ${CLS}-audio__control--fill` : ''}` },
+      h('div', { className: `${CLS}-audio__control${widthIsFill ? ` ${CLS}-audio__control--fill` : ''}` },
         controlKids.filter(Boolean) as never
       )
     )
