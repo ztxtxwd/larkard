@@ -263,15 +263,19 @@ export interface ElementProperty {
 export interface TableColumn {
   /** 列 key，对应每行数据的字段名 */
   name: string;
-  /** 表头显示名（缺省用 name） */
+  /** 表头显示名（缺省/空时与真机一致展示 "--"） */
   display_name?: string;
-  /** 列宽："auto" / "120px" / 数字 */
+  /** 列宽："auto" / "120px" / "25%" / 数字 */
   width?: string | number;
-  /** 单元格数据类型：text / number / options / markdown / lark_md / persons / date… */
+  /** 单元格数据类型：text / number / options / markdown / lark_md / persons / date */
   data_type?: string;
   /** 单元格水平对齐 */
   horizontal_align?: 'left' | 'center' | 'right';
-  /** number 类型的格式（precision 小数位） */
+  /** 单元格垂直对齐（缺省 center） */
+  vertical_align?: 'top' | 'center' | 'bottom';
+  /** date 类型的展示格式（YYYY/MM/DD HH:mm 等占位符） */
+  date_format?: string;
+  /** number 类型的格式 */
   format?: { precision?: number; symbol?: string; separator?: boolean };
 }
 

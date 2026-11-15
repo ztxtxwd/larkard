@@ -960,6 +960,45 @@ describe("table projection", () => {
     expect(table.page_size).toBe(5);
   });
 
+  it("projects vertical_align / date_format / row_max_height / margin", () => {
+    const dsl = rawCardToDsl({
+      json_card: JSON.stringify({
+        body: {
+          tag: "body",
+          property: {
+            elements: [{
+              id: "t1",
+              tag: "table",
+              property: {
+                margin: { top: { type: "pixels", value: 8 }, right: { type: "pixels", value: 12 }, bottom: { type: "pixels", value: 8 }, left: { type: "pixels", value: 12 } },
+                pageSize: 5,
+                rowHeightValue: { type: "builtin_table_row_height_extension", value: "auto" },
+                rowMaxHeightValue: { type: "pixels", value: 200 },
+                freezeFirstColumn: true,
+                columns: [{
+                  name: "d",
+                  displayName: "日期",
+                  dataType: "date",
+                  dateFormat: "YYYY/MM/DD",
+                  verticalAlign: "top",
+                }],
+                rows: [{ d: { data: { type: "timestamp", value: 1606101072000, format: "YYYY/MM/DD" } } }],
+              },
+            }],
+          },
+        },
+      }),
+      card_schema: 2,
+    }) as AnyDsl;
+    const [table] = findElements(dsl, (el) => el.tag === "table");
+    expect(table.margin).toBe("8px 12px 8px 12px");
+    expect(table.row_max_height).toBe("200px");
+    expect(table.freeze_first_column).toBe(true);
+    const [col] = table.columns as Record<string, unknown>[];
+    expect(col.vertical_align).toBe("top");
+    expect(col.date_format).toBe("YYYY/MM/DD");
+  });
+
   it("no camelCase / {data} leaks anywhere under the projected table", () => {
     const dsl = rawCardToDsl(loadFixture("table.raw.json")) as AnyDsl;
     const [table] = findElements(dsl, (el) => el.tag === "table");

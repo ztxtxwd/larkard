@@ -9,7 +9,7 @@
  * 目标不是「飞书能接收的合法结构」，而是「本渲染器认得、能画出来的结构」——
  * 后者宽松得多，故这里只需覆盖飞书 markdown 的常用子集，手写一个小 tokenizer 即可，
  * 保持零依赖。支持：
- *   行内：加粗 ** **、斜体 * */ /* _、删除线 ~~、行内代码 ` `、链接 [t](u)、
+ *   行内：加粗 ** **、斜体 * */ /* _、删除线 ~~、行内代码 ` `、链接 [t](u)、图片 ![alt](u)、
  *         <font color='x'>、<at id=x>、<at id=all>、<text_tag color='x'>、
  *         <person id='x' show_name=true show_avatar=true style='normal'>、
  *         <audio file_key='…' audio_id='1' show_time=true …>
@@ -107,6 +107,22 @@ export function parseInline(text: string): CardElement[] {
         flush();
         out.push({ tag: 'code_span', property: { content: text.slice(i + 1, end) } });
         i = end + 1; continue;
+      }
+    }
+
+    // 图片 ![alt](url)（full markdown 单元格支持；img_v3_… 走 img_key，http/data 走 src）
+    if (c === '!' && text[i + 1] === '[') {
+      const img = matchLink(text, i + 1);
+      if (img) {
+        flush();
+        const property: Record<string, unknown> = { alt: img.text };
+        if (/^(?:https?:)?\/\//i.test(img.url) || img.url.startsWith('data:')) {
+          property.src = img.url;
+        } else {
+          property.img_key = img.url;
+        }
+        out.push({ tag: 'img', property: property as never });
+        i = img.end; continue;
       }
     }
 

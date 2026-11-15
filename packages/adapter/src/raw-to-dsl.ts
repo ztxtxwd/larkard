@@ -536,6 +536,12 @@ function unwrapInner(node: Record<string, unknown>, ctx: Ctx): unknown {
       const hAlign = typeof col.horizontalAlign === "string" ? col.horizontalAlign
         : typeof col.horizontal_align === "string" ? col.horizontal_align : undefined;
       if (hAlign !== undefined) c.horizontal_align = hAlign;
+      const vAlign = typeof col.verticalAlign === "string" ? col.verticalAlign
+        : typeof col.vertical_align === "string" ? col.vertical_align : undefined;
+      if (vAlign !== undefined) c.vertical_align = vAlign;
+      const dateFormat = typeof col.dateFormat === "string" ? col.dateFormat
+        : typeof col.date_format === "string" ? col.date_format : undefined;
+      if (dateFormat !== undefined) c.date_format = dateFormat;
       // width: pixels echo → "Npx"; builtin keyword (e.g. "auto") → verbatim.
       const wv = col.widthValue;
       if (isRecord(wv)) {
@@ -581,8 +587,23 @@ function unwrapInner(node: Record<string, unknown>, ctx: Ctx): unknown {
     }
 
     const rhv = property.rowHeightValue;
-    if (isRecord(rhv) && typeof rhv.value === "string") out.row_height = rhv.value;
-    else if (typeof property.rowHeight === "string") out.row_height = property.rowHeight;
+    if (isRecord(rhv)) {
+      if (rhv.type === "pixels" && typeof rhv.value === "number") out.row_height = `${rhv.value}px`;
+      else if (typeof rhv.value === "string") out.row_height = rhv.value;
+    } else if (typeof property.rowHeight === "string") {
+      out.row_height = property.rowHeight;
+    }
+
+    const rmhv = property.rowMaxHeightValue;
+    if (isRecord(rmhv)) {
+      if (rmhv.type === "pixels" && typeof rmhv.value === "number") out.row_max_height = `${rmhv.value}px`;
+      else if (typeof rmhv.value === "string") out.row_max_height = rmhv.value;
+    } else if (typeof property.rowMaxHeight === "string") {
+      out.row_max_height = property.rowMaxHeight;
+    }
+
+    if (isRecord(property.margin) && hasSide(property.margin)) out.margin = formatBox(property.margin);
+    else if (typeof property.margin === "string") out.margin = property.margin;
 
     if (typeof property.pageSize === "number") out.page_size = property.pageSize;
     if (typeof property.freezeFirstColumn === "boolean") out.freeze_first_column = property.freezeFirstColumn;

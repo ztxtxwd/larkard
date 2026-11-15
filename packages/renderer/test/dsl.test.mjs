@@ -729,7 +729,8 @@ test('table: header_style.text_color / text_size / lines 落到表头文本', ()
 
 test('table: 列宽 + 对齐落到 col/单元格', () => {
   const html = renderDslToString(dslTable);
-  assert.match(html, /width:60px/);
+  // 官方列宽下限 80px：60px 被夹到 80px
+  assert.match(html, /width:80px/);
   assert.match(html, /width:120px/);
   assert.match(html, /text-align:right/);   // sales 列右对齐
   assert.match(html, /text-align:center/);  // rank 列居中
@@ -885,15 +886,25 @@ test('table: page_size 分页（首页可见 + 其余行 hidden 留在 DOM）', 
   assert.match(html, /universal-card-table__pager-total">1\/4</);
 });
 
-test('table: page_size=0 / 负数 视为不限制（不清空全表）', () => {
+test('table: page_size 越界按官方 [1,10] 夹紧', () => {
   const rows = Array.from({ length: 4 }, (_, i) => ({ rank: String(i + 1) }));
   const mk = (ps) => renderDslToString({ body: { elements: [{
     tag: 'table', page_size: ps,
     columns: [{ name: 'rank', display_name: '排名', data_type: 'text' }],
     rows,
   }] } });
-  assert.equal((mk(0).match(/universal-card-table__row/g) || []).length, 4);
-  assert.equal((mk(-2).match(/universal-card-table__row/g) || []).length, 4);
+  // 0 / 负数 → 1（仍有 4 页，不再“视为不限制”）
+  assert.match(mk(0), /pager-total">1\/4</);
+  assert.equal((mk(0).match(/<tr class="universal-card-table__row"[^>]*hidden/g) || []).length, 3);
+  assert.match(mk(-2), /pager-total">1\/4</);
+  // 20 → 10
+  const many = Array.from({ length: 12 }, (_, i) => ({ rank: String(i + 1) }));
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'table', page_size: 20,
+    columns: [{ name: 'rank', display_name: '排名', data_type: 'text' }],
+    rows: many,
+  }] } });
+  assert.match(html, /pager-total">1\/2</);
 });
 
 test('table: number 精度越界不炸（夹紧 0..100）', () => {
@@ -949,7 +960,8 @@ test('table: 自定义像素行高按客户端阈值换算行数（<54:1 <88:2 <
   assert.equal(clampOf('87px'), 2);
   assert.equal(clampOf('88px'), 3);
   assert.equal(clampOf('120px'), 4);
-  assert.equal(clampOf('140px'), 5);
+  // 官方自定义行高上限 124px：140px 被夹到 124px（4 行）
+  assert.equal(clampOf('140px'), 4);
 });
 
 test('table: row_height=auto 不截断，内容最大 124px 且可滚动（row_max_height 可覆盖）', () => {

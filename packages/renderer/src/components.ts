@@ -2618,18 +2618,21 @@ registerComponent('code_span', (el) => {
     const p = el.property || {};
     // 列定义：DSL 用 snake_case（data_type/display_name/horizontal_align/width），
     // 真机 RAW 用 camelCase（dataType/displayName/horizontalAlign/widthValue）——归一成统一形态。
-    const columns = (Array.isArray(p.columns) ? p.columns : []).map(normalizeColumn);
+    // 官方限制最多 50 列，超出不展示。
+    const columns = (Array.isArray(p.columns) ? p.columns : []).slice(0, 50).map(normalizeColumn);
     const rows = (Array.isArray(p.rows) ? p.rows : []) as Array<Record<string, unknown>>;
     const hs = (p.header_style || p.headerStyle || {}) as TableHeaderStyle;
     // 行高 / 单元格文本行数（缺省 low → 32px / 1 行，与真机默认一致）。
     const metrics = resolveTableRowMetrics(p);
-    // page_size：缺省 5（客户端 Ql 的 pageSize 默认值）；0/负数/非数视为不分页（保持旧行为）。
+    // page_size：官方取值 [1,10] 整数，缺省 5。越界夹紧（旧实现把 0/负数当“不分页”）。
     const pageSizeRaw = typeof p.page_size === 'number' ? p.page_size : (typeof p.pageSize === 'number' ? p.pageSize : undefined);
-    const pageSize = pageSizeRaw == null
-      ? 5
-      : (pageSizeRaw > 0 ? Math.max(1, Math.floor(pageSizeRaw)) : Math.max(1, rows.length));
+    const pageSize = Number.isFinite(pageSizeRaw)
+      ? Math.min(10, Math.max(1, Math.floor(pageSizeRaw as number)))
+      : 5;
     const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
     if (totalPages > 1) ensureIconFontInjected(ctx);
+    // freeze_first_column：真机 antd 列定义 fixed:'left'，滚动时首列 sticky。
+    const freezeFirst = (p.freeze_first_column ?? p.freezeFirstColumn) === true;
 
     // 表头样式：DSL background_style/text_align/text_color/text_size/lines；RAW 对应 camelCase。
     // 真机把表头单元格当 PlainText 渲染（textStyle: bold/size/color/customColor，见
@@ -2675,14 +2678,17 @@ registerComponent('code_span', (el) => {
     // thead
     const headCells = columns.map((c) => {
       const align = headAlign ?? defaultColumnAlign(c);
+      const thStyle: Record<string, string> = { textAlign: align };
+      // none/default 不写内联底色：留白让 sticky 首列/表格底色（--bg-float）透上来。
+      if (headBg !== 'transparent') thStyle.backgroundColor = headBg;
       return h('th', {
         className: `${CLS}-table__th`,
-        style: { textAlign: align, backgroundColor: headBg },
+        style: thStyle,
       },
         h('span', {
           className: `${CLS}-table__th-text${headBold ? ` ${CLS}-table__th-text--bold` : ''}${headLines === 1 ? ` ${CLS}-table__line-1` : ''}`,
           style: headTextStyle,
-        }, String(c.display_name ?? c.name ?? ''))
+        }, c.display_name || '--')
       );
     });
 
@@ -2698,6 +2704,7 @@ registerComponent('code_span', (el) => {
           // 表体：列 horizontal_align 优先，缺省按 data_type 兜底（number → right）。
           const align = c.horizontal_align ?? defaultColumnAlign(c);
           const tdStyle: Record<string, string> = { textAlign: align };
+          if (c.vertical_align) tdStyle.verticalAlign = c.vertical_align;
           if (metrics.heightPx != null) tdStyle.height = `${metrics.heightPx}px`;
           return h('td', {
             className: `${CLS}-table__td`,
@@ -2727,9 +2734,15 @@ registerComponent('code_span', (el) => {
       tablePagerButton(1, '下一页', false)
     ) : null;
 
+    const rootStyle: Record<string, string> = {};
+    if (tableWidth) rootStyle.width = tableWidth;
+    // margin：JSON 2.0 组件外边距（默认 0），与其它组件同一套解析。
+    applyOuterMargin(rootStyle, p.margin);
+    const rootClass = `${CLS}-table${freezeFirst ? ` ${CLS}-table--fixed-first` : ''}`;
+
     return h('div', {
-      className: `${CLS}-table`,
-      style: tableWidth ? { width: tableWidth } : undefined,
+      className: rootClass,
+      style: Object.keys(rootStyle).length ? rootStyle : undefined,
     },
       h('div', { className: `${CLS}-table__scroll` },
         h('table', {
@@ -2761,7 +2774,8 @@ function tablePagerButton(dir: -1 | 1, label: string, disabled: boolean): VNode 
   },
     h('i', {
       className: `${CLS}-icon ud-icon_${dir < 0 ? 'left_outlined' : 'right_outlined'}`,
-      style: { fontSize: '12px', lineHeight: '1' },
+      // 真机 .ud__pagination-item-link{transform:rotate(90deg)}：左右箭头转成上/下。
+      style: { fontSize: '12px', lineHeight: '1', transform: 'rotate(90deg)' },
     })
   );
 }
@@ -2792,6 +2806,8 @@ function normalizeColumn(raw: unknown): TableColumn {
     display_name: (c.display_name ?? c.displayName) as string | undefined,
     data_type: (c.data_type ?? c.dataType) as string | undefined,
     horizontal_align: (c.horizontal_align ?? c.horizontalAlign) as TableColumn['horizontal_align'],
+    vertical_align: (c.vertical_align ?? c.verticalAlign) as TableColumn['vertical_align'],
+    date_format: (c.date_format ?? c.dateFormat) as string | undefined,
     width,
     format: (c.format ?? c.formatValue) as TableColumn['format'],
   };
@@ -2820,21 +2836,35 @@ interface ColumnWidthSpec {
 }
 
 /**
- * 列宽归一：数字 / "120px" / "120" → px；"30%" → percent；
+ * 列宽归一：数字 / "120px" / "120" → px（官方 [80,600] 夹紧）；"30%" → percent（[1,100]）；
  * "auto" / 空 / 未知单位 → auto（不写宽，由 fixed 布局均分剩余空间）。
  * 真机把 pixels 列的宽度写进 <col>，percent 列按表格宽百分比算，auto 列取剩余均分。
  */
 function parseColumnWidth(w: TableColumn['width']): ColumnWidthSpec {
   if (typeof w === 'number') {
-    return Number.isFinite(w) && w > 0 ? { kind: 'px', css: `${w}px`, px: w } : { kind: 'auto', css: '' };
+    return Number.isFinite(w) && w > 0
+      ? { kind: 'px', css: `${clampNumber(w, 80, 600)}px`, px: clampNumber(w, 80, 600) }
+      : { kind: 'auto', css: '' };
   }
   const s = String(w ?? '').trim();
   if (!s || s.toLowerCase() === 'auto') return { kind: 'auto', css: '' };
   const pct = /^(\d+(?:\.\d+)?)%$/.exec(s);
-  if (pct) return { kind: 'percent', css: `${pct[1]}%`, pct: Number(pct[1]) };
+  if (pct) {
+    const n = clampNumber(Number(pct[1]), 1, 100);
+    return { kind: 'percent', css: `${n}%`, pct: n };
+  }
   const px = /^(\d+(?:\.\d+)?)(?:px)?$/i.exec(s);
-  if (px) return { kind: 'px', css: `${px[1]}px`, px: Number(px[1]) };
+  if (px) {
+    const n = clampNumber(Number(px[1]), 80, 600);
+    return { kind: 'px', css: `${n}px`, px: n };
+  }
   return { kind: 'auto', css: '' };
+}
+
+/** 数值夹紧（NaN 回退 min） */
+function clampNumber(n: number, min: number, max: number): number {
+  if (!Number.isFinite(n)) return min;
+  return Math.min(max, Math.max(min, n));
 }
 
 /** 表格行高度量（对齐客户端 Vl()/al()：行高同时决定 td 高度与单元格文本行数） */
@@ -2882,7 +2912,8 @@ function resolveTableRowMetrics(p: ElementProperty): TableRowMetrics {
     if (m) px = Number(m[1]);
   }
   if (px != null && Number.isFinite(px) && px > 0) {
-    const h = Math.round(px);
+    // 官方自定义行高 [32,124]px，越界夹紧。
+    const h = Math.round(clampNumber(px, 32, 124));
     return { heightPx: h, maxHeightPx: h, lines: tableLinesForRowHeightPx(h), auto: false };
   }
 
@@ -2907,7 +2938,8 @@ function resolveTableRowMaxHeight(p: ElementProperty): number | undefined {
   const css = resolveDimensionPx(direct, valueObj);
   if (!css) return undefined;
   const n = Number.parseFloat(css);
-  return Number.isFinite(n) && n > 0 ? Math.round(n) : undefined;
+  // 官方 row_max_height 范围 [32,999]px，越界夹紧。
+  return Number.isFinite(n) && n > 0 ? Math.round(clampNumber(n, 32, 999)) : undefined;
 }
 
 /**
@@ -3035,7 +3067,7 @@ function renderCell(value: unknown, col: TableColumn, ctx: RenderContext, lines?
           style: tableColor ? tableTagStyle(c.bg, c.text) : textTagStyle(c.bg, c.text),
         }, opt.text);
       });
-    if (!chips.length) return '';
+    if (!chips.length) return tablePlaceholder(lines);
     return clampTableCell(h('span', { className: `${CLS}-table__tags` }, chips), lines);
   }
 
@@ -3048,21 +3080,25 @@ function renderCell(value: unknown, col: TableColumn, ctx: RenderContext, lines?
       }
       return undefined;
     });
-    if (!ids.length) return '';
+    if (!ids.length) return tablePlaceholder(lines);
     const chips = ids.map((id) => renderPersonChip(id, {
       showAvatar: true, showName: true, size: 'extra_small',
     }, ctx));
     return clampTableCell(h('div', { className: `${CLS}-person-list ${CLS}-person-list--table` }, chips), lines);
   }
 
-  if (type === 'number' && value != null && value !== '' && Number.isFinite(Number(value))) {
-    const precision = col.format?.precision;
-    const num = Number(value);
-    // toFixed 仅接受 0..100，DSL 传入越界会抛 RangeError 拖垮整卡渲染——夹紧。
-    const text = typeof precision === 'number'
-      ? num.toFixed(Math.max(0, Math.min(100, Math.trunc(precision))))
-      : String(num);
-    return clampTableCell(text, lines);
+  // number：format.symbol / precision / separator（官方 precision [0,10]）。
+  // 真机 RAW 里的数字可能已被服务端格式化成字符串，能 parse 才格式化，否则原样展示。
+  if (type === 'number' && value != null && value !== '') {
+    const text = formatTableNumber(value, col.format);
+    return clampTableCell(text === '' ? '--' : text, lines);
+  }
+
+  // date：值为 Unix 毫秒时间戳（DSL），或 RAW 的 { type:'timestamp'|'date_str', value, format }。
+  // 真机 TableDate 用 moment 按本地时区格式化；缺省格式走 RFC 3339。
+  if (type === 'date' && value != null) {
+    const text = formatTableDate(value, col.date_format);
+    return clampTableCell(text === '' ? '--' : text, lines);
   }
 
   // markdown / lark_md：飞书表格里两者等价（DSL 常用 lark_md，真机 RAW 也是 dataType:lark_md）。
@@ -3086,9 +3122,95 @@ function renderCell(value: unknown, col: TableColumn, ctx: RenderContext, lines?
       const vnode = ctx.kernel.renderElement(withLines, ctx);
       if (vnode) return vnode;
     }
+    return tablePlaceholder(lines);
   }
 
-  // 兜底：对象（未识别的复杂单元格）不走 String() → "[object Object]"
-  if (value != null && typeof value === 'object') return '';
-  return clampTableCell(value == null ? '' : String(value), lines);
+  // 兜底：对象先尝试抽出文本（plain_text / {content} 直出），抽不出再按真机展示 "--"；
+  // 空值/空字符串同样展示 "--"。
+  if (value == null || value === '') return tablePlaceholder(lines);
+  if (typeof value === 'object') {
+    const extracted = optionText(value);
+    return extracted ? clampTableCell(extracted, lines) : tablePlaceholder(lines);
+  }
+  return clampTableCell(String(value), lines);
+}
+
+/** 空单元格占位：真机 PlainText 缺省内容为 "--" */
+function tablePlaceholder(lines?: number): string | VNode {
+  return clampTableCell('--', lines);
+}
+
+/**
+ * number 列格式化，对齐官方 format 字段：
+ *   { symbol:'¥', precision:2, separator:true } → "¥1,234.57"
+ * - precision 只取 [0,10] 整数；未给时保持原值（不补小数）
+ * - separator 只作用于整数部分（千分位）
+ * - symbol 原样拼在前（官方限 1 个字符，这里不做截断）
+ * 非数字字符串（真机 RAW 已格式化）原样返回。
+ */
+function formatTableNumber(value: unknown, format: TableColumn['format']): string {
+  const raw = typeof value === 'string' ? value.trim() : value;
+  const num = typeof raw === 'number' ? raw : Number(raw);
+  if (typeof raw === 'string' && raw === '') return '';
+  if (!Number.isFinite(num)) return String(value ?? '');
+  const precisionRaw = format?.precision;
+  const precision = typeof precisionRaw === 'number' && Number.isFinite(precisionRaw)
+    ? Math.min(10, Math.max(0, Math.trunc(precisionRaw)))
+    : undefined;
+  let text = precision != null ? num.toFixed(precision) : String(num);
+  if (format?.separator === true) {
+    const negative = text.startsWith('-');
+    const body = negative ? text.slice(1) : text;
+    const [intPart, frac] = body.split('.');
+    const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    text = (negative ? '-' : '') + grouped + (frac != null ? `.${frac}` : '');
+  }
+  const symbol = format?.symbol;
+  return symbol ? `${symbol}${text}` : text;
+}
+
+/**
+ * date 列格式化。
+ * 值支持：Unix 毫秒时间戳（DSL / 官方文档）、数字字符串、可被 Date 解析的字符串，
+ * 以及 RAW 的 { type:'timestamp'|'date_str', value, format } 包装。
+ * 占位符按官方文档：YYYY / MM / DD / HH / mm / ss，可任意组合分隔符；
+ * 未给格式时按 RFC 3339（moment 默认 YYYY-MM-DDTHH:mm:ssZ，本地时区）。
+ */
+function formatTableDate(value: unknown, columnFormat?: string): string {
+  let format = columnFormat;
+  let raw: unknown = value;
+  if (isRecord(value) && ('value' in value || 'type' in value)) {
+    const wrapped = value as { type?: unknown; value?: unknown; format?: unknown };
+    raw = wrapped.value;
+    if (typeof wrapped.format === 'string' && wrapped.format) format = wrapped.format;
+  }
+  let date: Date | null = null;
+  if (typeof raw === 'number' && Number.isFinite(raw)) date = new Date(raw);
+  else if (typeof raw === 'string' && raw.trim() !== '') {
+    date = /^-?\d+$/.test(raw.trim()) ? new Date(Number(raw)) : new Date(raw);
+  }
+  if (!date || Number.isNaN(date.getTime())) return raw == null ? '' : String(raw);
+  if (!format) return formatLocalIso(date);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return format.replace(/YYYY|MM|DD|HH|mm|ss/g, (token) => {
+    switch (token) {
+      case 'YYYY': return String(date!.getFullYear());
+      case 'MM': return pad(date!.getMonth() + 1);
+      case 'DD': return pad(date!.getDate());
+      case 'HH': return pad(date!.getHours());
+      case 'mm': return pad(date!.getMinutes());
+      case 'ss': return pad(date!.getSeconds());
+      default: return token;
+    }
+  });
+}
+
+/** 本地时区 RFC 3339（对齐 moment 默认格式 YYYY-MM-DDTHH:mm:ssZ） */
+function formatLocalIso(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const offset = -date.getTimezoneOffset();
+  const sign = offset >= 0 ? '+' : '-';
+  const oh = pad(Math.floor(Math.abs(offset) / 60));
+  const om = pad(Math.abs(offset) % 60);
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}${sign}${oh}:${om}`;
 }

@@ -54,12 +54,16 @@ test('table: 翻页器只出「总数 + 上一页 + 下一页」，首页时上�
   assert.equal(html.includes('pager-item'), false);
 });
 
-test('table: page_size 非正数 / 大于行数 → 不分页', () => {
-  for (const ps of [0, -3, 99]) {
+test('table: page_size 按官方 [1,10] 夹紧', () => {
+  // 0 / 负数 → 1 行/页（4 页）
+  for (const ps of [0, -3]) {
     const html = renderDslToString(mkTable(4, { page_size: ps }));
-    assert.equal(html.includes('universal-card-table__pager'), false, `page_size=${ps}`);
-    assert.equal(rowTags(html).filter((t) => t.includes('hidden')).length, 0);
+    assert.match(html, /pager-total">1\/4</, `page_size=${ps}`);
+    assert.equal(rowTags(html).filter((t) => t.includes('hidden')).length, 3);
   }
+  // 99 → 10 行/页（4 行仍然单页）
+  const big = renderDslToString(mkTable(4, { page_size: 99 }));
+  assert.equal(big.includes('universal-card-table__pager'), false);
 });
 
 test('table: RAW camelCase pageSize 同样驱动分页', () => {

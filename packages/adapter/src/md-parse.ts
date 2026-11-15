@@ -110,6 +110,22 @@ export function parseInline(text: string): CardElement[] {
       }
     }
 
+    // 图片 ![alt](url)（full markdown：img_v3_… 走 img_key，http/data 走 src）
+    if (c === '!' && text[i + 1] === '[') {
+      const img = matchLink(text, i + 1);
+      if (img) {
+        flush();
+        const property: Record<string, unknown> = { alt: img.text };
+        if (/^(?:https?:)?\/\//i.test(img.url) || img.url.startsWith('data:')) {
+          property.src = img.url;
+        } else {
+          property.img_key = img.url;
+        }
+        out.push({ tag: 'img', property: property as never });
+        i = img.end; continue;
+      }
+    }
+
     // 链接 [text](url)
     if (c === '[') {
       const link = matchLink(text, i);
