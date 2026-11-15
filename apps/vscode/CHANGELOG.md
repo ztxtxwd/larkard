@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.28
+
+- 修复表格翻页时「表格/分页器」之间分割线变成 2px 粗线：每页末行去掉底边，避免与翻页器 `border-top` 叠加
+- Bundles schema 0.3.2、adapter 0.4.4、renderer 0.8.1、components 0.4.0
+
 ## 0.2.27
 
 - 表格参数按官方 JSON 2.0 文档补全：`date` 日期列（含 `date_format`）、`freeze_first_column` 冻结首列、`vertical_align`、`number` 的 `symbol`/`separator`/`precision`、`markdown` 图片、空单元格 `--`、列宽/行高/page_size 范围夹紧
