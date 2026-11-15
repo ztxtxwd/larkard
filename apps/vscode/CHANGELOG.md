@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.27
+
+- 表格参数按官方 JSON 2.0 文档补全：`date` 日期列（含 `date_format`）、`freeze_first_column` 冻结首列、`vertical_align`、`number` 的 `symbol`/`separator`/`precision`、`markdown` 图片、空单元格 `--`、列宽/行高/page_size 范围夹紧
+- 翻页器对齐真机：翻页区位于表格同一道边框内，按钮无描边/底色（仅 hover），箭头为上/下
+- Bundles schema 0.3.2、adapter 0.4.4、renderer 0.8.0、components 0.4.0
+
 ## 0.2.26
 
 - 表格分页：预览里 `page_size` 按真机缺省 5 行/页，支持翻页；单页不显示翻页器（对齐 antd small pagination 的「当前/总页数 + 上下页」）
