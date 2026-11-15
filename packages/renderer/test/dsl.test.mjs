@@ -735,6 +735,52 @@ test('table: 列宽 + 对齐落到 col/单元格', () => {
   assert.match(html, /text-align:center/);  // rank 列居中
 });
 
+test('table: header_style.text_align 不被列的 horizontal_align 覆盖', () => {
+  // 真机：表头单元格是 headerStyle.textAlign 的 PlainText；列的 horizontalAlign 只作用于表体。
+  // 之前表头写成 `column.horizontal_align || header_style.text_align`，
+  // 每列都带 horizontal_align 的卡片（生成器默认形态）里 text_align 换值毫无效果。
+  const mk = (align) => ({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'table',
+      header_style: { text_align: align },
+      columns: [
+        { name: 'a', display_name: 'AAA', horizontal_align: 'right' },
+        { name: 'b', display_name: 'BBB', horizontal_align: 'left' },
+      ],
+      rows: [{ a: 'x', b: 'y' }],
+    }] },
+  });
+  const thAligns = (align) =>
+    (renderDslToString(mk(align)).match(/<th[^>]*text-align:(\w+)/g) || []).map((m) => m.split(':')[1]);
+  assert.deepEqual(thAligns('left'), ['left', 'left']);
+  assert.deepEqual(thAligns('center'), ['center', 'center']);
+  assert.deepEqual(thAligns('right'), ['right', 'right']);
+  // 表体仍按列 horizontal_align 走（不被 header_style 带跑）
+  const html = renderDslToString(mk('center'));
+  assert.match(html, /<td class="universal-card-table__td" style="text-align:right/);
+  assert.match(html, /<td class="universal-card-table__td" style="text-align:left/);
+});
+
+test('table: 未给对齐时按 data_type 兜底（number→right，其余 left），表头同规则', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'table',
+      columns: [
+        { name: 'a', display_name: 'AAA', data_type: 'text' },
+        { name: 'n', display_name: 'NNN', data_type: 'number' },
+      ],
+      rows: [{ a: 'x', n: 1 }],
+    }] },
+  });
+  const aligns = (re) => (html.match(re) || []);
+  const th = aligns(/<th[^>]*text-align:(\w+)/g).map((m) => m.split(':')[1]);
+  const td = aligns(/<td[^>]*text-align:(\w+)/g).map((m) => m.split(':')[1]);
+  assert.deepEqual(th, ['left', 'right']);
+  assert.deepEqual(td, ['left', 'right']);
+});
+
 test('table: number 精度 + 行数据', () => {
   const html = renderDslToString(dslTable);
   assert.match(html, /195\.8/);

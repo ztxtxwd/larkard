@@ -2526,7 +2526,12 @@ registerComponent('code_span', (el) => {
     // feishu-web-dump/debugger/1dac9008…js 的 nl()）——text_color 走正文色名解析
     // （grey → N600 #646a73），不是表格专用色；之前整个忽略，表头永远写死 #1f2329（偏蓝黑）。
     const headBg = TABLE_HEAD_BG[String(hs.background_style ?? (hs as { backgroundStyle?: string }).backgroundStyle ?? 'none')] ?? 'transparent';
-    const headAlign = hs.text_align ?? (hs as { textAlign?: string }).textAlign ?? 'left';
+    // 表头对齐只看 header_style.text_align；缺省时按列 data_type 兜底（number → right，其余 left）。
+    // 真机 antd 列定义里 `align = headerStyle.textAlign || (dataType==='number' ? right : left)`，
+    // 列的 horizontalAlign 只影响表体单元格（`row-item` 自己的 align），不参与表头。
+    // 之前写成 `column.horizontal_align || headAlign`，导致列一旦写了 horizontal_align，
+    // header_style.text_align 就整列失效（常见卡片每列都带 horizontal_align → 换值无任何变化）。
+    const headAlign = (hs.text_align ?? (hs as { textAlign?: string }).textAlign) as string | undefined;
     const headBold = hs.bold !== false; // 默认加粗
     const headSizeKey = String(hs.text_size ?? (hs as { textSize?: string }).textSize ?? 'normal');
     const headFontSize = TEXT_SIZE_MAP[headSizeKey] ?? TEXT_SIZE_MAP.normal;
@@ -2546,7 +2551,7 @@ registerComponent('code_span', (el) => {
 
     // thead
     const headCells = columns.map((c) => {
-      const align = c.horizontal_align || headAlign;
+      const align = headAlign ?? defaultColumnAlign(c);
       return h('th', {
         className: `${CLS}-table__th`,
         style: { textAlign: align, backgroundColor: headBg },
@@ -2562,7 +2567,8 @@ registerComponent('code_span', (el) => {
     const bodyRows = shownRows.map((row) =>
       h('tr', { className: `${CLS}-table__row` },
         columns.map((c) => {
-          const align = c.horizontal_align || 'left';
+          // 表体：列 horizontal_align 优先，缺省按 data_type 兜底（number → right）。
+          const align = c.horizontal_align ?? defaultColumnAlign(c);
           return h('td', {
             className: `${CLS}-table__td`,
             style: { textAlign: align, height: rowHeight + 'px' },
@@ -2632,6 +2638,11 @@ function colWidth(w: TableColumn['width']): string {
   const s = String(w).trim();
   if (!s || s === 'auto') return '';
   return s;
+}
+
+/** 列的默认对齐（真机：number 列靠右，其余靠左）——表头与表体的兜底都用它 */
+function defaultColumnAlign(c: TableColumn): string {
+  return c.data_type === 'number' ? 'right' : 'left';
 }
 
 /** 水平对齐 → flex 主轴（单元格内容用 flex 排布，才能让标签也跟对齐走） */
