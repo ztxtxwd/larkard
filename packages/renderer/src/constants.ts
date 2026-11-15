@@ -414,11 +414,14 @@ export const TABLE_ROW_HEIGHT: Record<string, number> = {
 
 /**
  * 表头背景（header_style.background_style）-> CSS 底色。
- * 网页版用 --udtoken-table-bg-* token，这里取 light 主题近似 hex。
- * 缺省/未知走 none（无底色，继承表格底色）。
+ * 取值来自客户端的 fallbackStyle 表：
+ *   table.background_color.grey → token `udtoken-table-bg-head`（light = #f2f3f5 = N100，
+ *   见 feishu-web-dump/debugger/043fcf54…js 的 token 模块与 19ecdc88…js 的 light 主题表）。
+ * 注意不是 `udtoken-table-bg-grey`（那个才是 N50 #f5f6f7）——之前写成 #f5f6f7 比真机偏浅。
+ * 缺省/unknown 走 none（无底色，继承表格底色 --bg-float = 白）。
  */
 export const TABLE_HEAD_BG: Record<string, string> = {
-  grey: '#f5f6f7',
+  grey: '#f2f3f5',
   none: 'transparent',
   default: 'transparent',
 };

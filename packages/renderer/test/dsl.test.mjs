@@ -170,7 +170,7 @@ test('padding: 两值简写 = 上下/左右', () => {
 
 /* ---- column 定宽 width → widthValue ---- */
 
-test('column_set: background_style=grey → var(--bg-float-overlay)（真机 light = 4% N900 叠色）', () => {
+test('column_set: background_style=grey → var(--bg-float-overlay)（客户端 light 实色 #f5f6f7）', () => {
   const html = renderDslToString({
     schema: '2.0',
     body: { elements: [
@@ -182,10 +182,11 @@ test('column_set: background_style=grey → var(--bg-float-overlay)（真机 lig
   assert.match(html, /universal-card-column-set--bg/);
   assert.match(html, /background:var\(--bg-float-overlay\)/);
   assert.doesNotMatch(html, /background:#646a73/); // 不是正文色 grey→N600
-  // 客户端 token 是中性灰的 4% 叠色（中性化后 rgba(30,30,30,.04)）：叠在卡片白底上 = #f6f6f6，
-  // 与真机实测的 (246,246,246) 逐通道一致。网页版主题表给的 N50 #f5f6f7 偏蓝 1 阶，已改成跟客户端一致。
-  assert.match(ALL_CSS, /--bg-float-overlay:\s*rgba\(30,\s*30,\s*30,\s*0?\.04\)/);
-  assert.match(ALL_CSS, /\.universal-card-root\.theme-dark\s*\{[^}]*--bg-float-overlay:[^;]*rgba\(255,\s*255,\s*255/);
+  // 客户端 light token 表（feishu-web-dump/debugger/19ecdc88…js）：bg-float-overlay = rgb(245,246,247)
+  // = #f5f6f7 实色（与 grey-50 同值）。早先按 JPEG 截图量到 (246,246,246) 改成中性叠色是误判：
+  // 色度子采样把 #f5f6f7 压成了中性 246，真机实际仍是 N50。
+  assert.match(ALL_CSS, /--bg-float-overlay:\s*#f5f6f7/);
+  assert.match(ALL_CSS, /\.universal-card-root\.theme-dark\s*\{[^}]*--bg-float-overlay:\s*#373737/);
   // 真机 .universal-card-column-set--bg { padding:4px; border-radius:6px }
   assert.match(ALL_CSS, /\.universal-card-column-set--bg[^}]*padding:\s*4px/);
   assert.match(ALL_CSS, /\.universal-card-column-set--bg[^}]*border-radius:\s*6px/);
@@ -705,7 +706,25 @@ test('table: 语义 table + 表头显示名 + 加粗背景', () => {
   assert.match(html, /排名/);
   assert.match(html, /厂商名称/);
   assert.match(html, /th-text--bold/);            // header_style.bold
-  assert.match(html, /background-color:#f5f6f7/);  // grey 表头底
+  // grey 表头底 = token udtoken-table-bg-head（客户端 light #f2f3f5 = N100），不是 N50
+  assert.match(html, /background-color:#f2f3f5/);
+});
+
+test('table: header_style.text_color / text_size / lines 落到表头文本', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'table',
+      header_style: { text_color: 'grey', text_size: 'heading', lines: 2 },
+      columns: [{ name: 'a', display_name: '列A', data_type: 'text' }],
+      rows: [{ a: 'x' }],
+    }] },
+  });
+  const thText = html.match(/<span class="universal-card-table__th-text[^"]*" style="([^"]*)"/)?.[1] || '';
+  // 真机把表头单元格当 PlainText：text_color=grey → N600，text_size=heading → 16px
+  assert.match(thText, /color:#646a73/);
+  assert.match(thText, /font-size:16px/);
+  assert.match(thText, /-webkit-line-clamp:2/);
 });
 
 test('table: 列宽 + 对齐落到 col/单元格', () => {

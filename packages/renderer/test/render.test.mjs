@@ -1727,6 +1727,41 @@ test('collapsible_panel: 默认不内联 header padding（交给 CSS 的 --fat �
   assert.doesNotMatch(summary, /padding:/);
 });
 
+// 默认内边距的唯一真相在 CSS（网页版 dump：.universal-card-collapsible-panel__header
+// 无 padding 声明；--fat 下 header 4px 8px；content 基础 padding-top:8px、--fat 8px）。
+test('styles: collapsible_panel 默认内边距（无样式 header 0 / --fat 4px 8px）', () => {
+  // 非 --fat：标题区无内边距，内容区只有 padding-top 8px
+  assert.match(ALL_CSS, /\.universal-card-collapsible-panel__header\s*\{[^}]*padding:\s*0/);
+  assert.match(ALL_CSS, /\.universal-card-collapsible-panel__content\s*\{[^}]*padding:\s*8px 0 0/);
+  // --fat（有描边 / 面板底色 / 标题底色）：标题区 4px 8px，内容区四边 8px
+  assert.match(
+    ALL_CSS,
+    /\.universal-card-collapsible-panel--fat \.universal-card-collapsible-panel__header\s*\{[^}]*padding:\s*4px 8px/,
+  );
+  assert.match(
+    ALL_CSS,
+    /\.universal-card-collapsible-panel--fat \.universal-card-collapsible-panel__content\s*\{[^}]*padding:\s*8px/,
+  );
+});
+
+// 语义色 token 必须与客户端 light token 表一致（feishu-web-dump/debugger/19ecdc88…js）：
+// bg-float-overlay = rgb(245,246,247)（实色，不是叠色）；line-divider-default = rgba(31,35,41,.15)。
+test('styles: 语义色 token 对齐客户端 light 主题表', () => {
+  assert.match(ALL_CSS, /--bg-float-overlay:\s*#f5f6f7/);
+  assert.match(ALL_CSS, /--line-divider-default:\s*rgba\(31,\s*35,\s*41,\s*0?\.15\)/);
+  assert.match(ALL_CSS, /--line-border-card:\s*var\(--N300\)/);
+  assert.match(ALL_CSS, /--line-border-component:\s*var\(--N350\)/);
+});
+
+// 分割线/表格行线走 line-divider-default（中性黑叠色），不再写死 #dee0e3
+// —— 实色 N300 比真机多 3~4 阶蓝，表头下方那条线最明显。
+test('styles: 分割线 / 表格行线用 line-divider-default token', () => {
+  assert.match(ALL_CSS, /\.universal-card-hr\s*\{[^}]*background-color:\s*var\(--line-divider-default/);
+  assert.match(ALL_CSS, /\.universal-card-collapse-divider\s*\{[^}]*background-color:\s*var\(--line-divider-default/);
+  assert.match(ALL_CSS, /\.universal-card-table__th,[^}]*\.universal-card-table__td\s*\{[^}]*border-bottom:\s*1px solid var\(--line-divider-default/);
+  assert.match(ALL_CSS, /\.universal-card-table__th,[^}]*\.universal-card-table__td\s*\{[^}]*border-right:\s*1px solid var\(--bg-filler/);
+});
+
 test('collapsible_panel: 折叠态默认收起（expanded 缺省），展开才带 open', () => {
   const closed = renderDslToString({
     schema: '2.0',

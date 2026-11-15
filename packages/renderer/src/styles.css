@@ -194,16 +194,24 @@
   --Y800: #573601;
   --Y900: #382201;
   /* END PALETTE VARS */
-  /* 真机 light：`--bg-float-overlay` 是 N900 的 4% 叠色（客户端 token），叠在卡片白底上
-     得中性灰 #f6f6f6 —— 真机背景式面板实测就是 (246,246,246)。
-     这里用中性化的 N900（30,30,30）而不是 N900-raw(31,35,41)：8bit alpha 量化后
-     N900-raw 会让蓝通道多 1 阶（压成 (246,246,247)），而真机三通道相等。
-     半透明也让它能叠在彩色底（column_set / interactive_container 的 grey）上自然融合。 */
-  --bg-float-overlay: rgba(30, 30, 30, 0.04);
-  /* 语义色 token（对齐飞书 :root light）：容器描边/caption 文案/列表符号等
+  /* 真机 light：`--bg-float-overlay` 是实色 token（不是叠色）。
+     值取自客户端 light 主题 token 表（feishu-web-dump/debugger/19ecdc88…js 的
+     name→export→值映射）：bg-float-overlay / bg-body-overlay = rgb(245,246,247)。
+     早先按「真机截图」量到 (246,246,246) 改成了 rgba(30,30,30,.04)，但那份真机图是
+     JPEG（色度子采样把 #f5f6f7 压成中性 246），照抄反而让背景式面板比真机少一阶蓝。
+     #f5f6f7 与 grey-50 实为同值：grey → bg-float-overlay，grey-50 → N50。 */
+  --bg-float-overlay: #f5f6f7;
+  --bg-float-base: #f2f3f5;
+  --bg-filler: #eff0f1;
+  --bg-content-base: #f8f9fa;
+  /* 语义色 token（对齐客户端 light token 表）：容器描边/caption 文案/分割线/列表符号等
      走语义名而不是直接挑色阶，避免「同一个 grey 在正文是 N600、作描边却是 N350」被抹平。 */
   --line-border-component: var(--N350); /* 组件描边（collapsible_panel / interactive_container） */
   --line-border-card: var(--N300);
+  /* 分割线/表格行线：真机是中性黑叠色，不是 N300 实色——之前用 #dee0e3 会让所有
+     横线比真机多 3~4 阶蓝（表格表头下方那条线最明显）。 */
+  --line-divider-default: rgba(31, 35, 41, 0.15);
+  --fill-hover: rgba(31, 35, 41, 0.08);
   --text-caption: var(--N600);
   --colorful-blue: var(--B500); /* markdown 列表符号 */
   --bg-body: var(--N00);
@@ -326,10 +334,12 @@
 }
 
 /* ---- hr 分割线 ---- */
+/* 真机 block_hr / md_hr：backgroundColorToken = line-divider-default
+   （客户端 light = rgba(31,35,41,.15) → 叠白 (221,222,223)，比 #dee0e3 中性）。 */
 .universal-card-hr {
   width: 100%;
   height: 1px;
-  background-color: #dee0e3;
+  background-color: var(--line-divider-default, #dee0e3);
   border: none;
   margin: 8px 0;
 }
@@ -337,7 +347,7 @@
 .universal-card-collapse-divider {
   width: 100%;
   height: 1px;
-  background-color: #dee0e3;
+  background-color: var(--line-divider-default, #dee0e3);
   border: none;
   margin: 8px 0;
 }
@@ -728,8 +738,11 @@
    真机 color:var(--text-caption) → N600；标题/箭头继承此色。
    默认 title flex:1 把箭头推到右侧（icon_position=right）；
    icon_position=left 时靠 DOM 顺序在左。
-   内边距只在 --fat（有描边/底色）时由 CSS 给 4px 8px，纯无样式面板不加内边距；
-   header.padding 显式给了就由内联 style 覆盖。 */
+   内边距只在 --fat 时由 CSS 给 4px 8px，纯无样式面板不加内边距；
+   --fat 的判定 = 面板有描边 / 面板底色 / 标题区底色（组件里 isFat）；
+   header.padding 显式给了就由内联 style 覆盖。
+   来源：网页版 .universal-card-collapsible-panel__header（无 padding 声明）
+   + .universal-card-collapsible-panel--fat ....__header{padding:4px 8px}。 */
 .universal-card-collapsible-panel__header {
   display: flex; align-items: center; gap: 8px;
   padding: 0;
@@ -926,7 +939,7 @@
 }
 .universal-card-blockquote::before {
   content: " "; position: absolute; left: 0; top: 0; height: 100%; width: 2px;
-  background-color: #dee0e3;
+  background-color: var(--line-divider-default, #dee0e3);
 }
 /* 列表：结构对齐网页版——每个 item 一个 <ul>/<ol> + 一个 <li data-marker>，
    缩进落在 ul/ol 的 margin-left（内联 24*level），项目符号用 li::before 画。
@@ -963,13 +976,20 @@
 }
 .universal-card-markdown-list__li-content { display: inline-block; vertical-align: top; }
 .universal-card-code-span {
-  border-radius: 4px; border: 1px solid #dee0e3; padding: 0 4px;
-  background-color: #f5f6f7; font-family: Menlo, Consolas, monospace; font-size: 13px;
+  /* 真机 .universal-card-code-span：border 1px line-divider-default、bg --bg-base(#f2f3f5)、padding 0 2px */
+  border-radius: 4px;
+  border: 1px solid var(--line-divider-default, #dee0e3);
+  padding: 0 2px;
+  background-color: var(--bg-float-base, #f2f3f5);
+  font-family: Menlo, Consolas, monospace; font-size: 13px;
 }
 .universal-card-markdown-code-block {
+  /* 真机：border 1px line-border-card、bg --bg-body-overlay(#f5f6f7) */
   text-align: left; padding: 12px; min-width: 210px; margin: 4px 0;
   font-size: 13px; font-weight: 400; line-height: 1.5;
-  background-color: #f5f6f7; border-radius: 6px; overflow-x: auto;
+  background-color: var(--bg-body-overlay, #f5f6f7);
+  border: 1px solid var(--line-border-card, #dee0e3);
+  border-radius: 6px; overflow-x: auto;
   font-family: Menlo, Consolas, monospace; white-space: pre;
 }
 .universal-card-emoji { display: inline; }
@@ -1232,10 +1252,12 @@
 }
 
 /* ---- table 表格 ---- */
+/* 表头背景：header_style.background_style=grey → 真机 token udtoken-table-bg-head
+   （客户端 light = #f2f3f5 = N100），不是 N50 —— 之前写 #f5f6f7 偏浅。 */
 .universal-card-table {
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #dee0e3;
+  border: 1px solid var(--line-border-card, #dee0e3);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -1247,17 +1269,20 @@
   font-size: 14px;
   color: #1f2329;
 }
+/* 行线/列线：真机行线走 line-divider-default（中性黑叠色），列线用 bg-filler。
+   之前写死 #dee0e3 / #eff0f1（蓝色阶实色），整张表比真机偏蓝。 */
 .universal-card-table__th,
 .universal-card-table__td {
   padding: 8px 12px;
-  border-bottom: 1px solid #dee0e3;
-  border-right: 1px solid #eff0f1;
+  border-bottom: 1px solid var(--line-divider-default, #dee0e3);
+  border-right: 1px solid var(--bg-filler, #eff0f1);
   vertical-align: middle;
   box-sizing: border-box;
 }
 .universal-card-table__th:last-child,
 .universal-card-table__td:last-child { border-right: none; }
 .universal-card-table__tbody tr:last-child .universal-card-table__td { border-bottom: none; }
+/* 默认表头：text-title（N900）。header_style.text_color 由内联 style 覆盖。 */
 .universal-card-table__th {
   font-size: 14px;
   line-height: 22px;
@@ -1273,10 +1298,10 @@
 }
 .universal-card-table__tags { display: inline-flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 
-/* 暗色主题下的表格/图表占位 */
+/* 暗色主题下的表格/图表占位（分割线/描边 token 同步换成 dark 值） */
 .universal-card-root.theme-dark .universal-card-table { border-color: #2e2e30; }
 .universal-card-root.theme-dark .universal-card-table__th,
-.universal-card-root.theme-dark .universal-card-table__td { border-color: #2e2e30; color: #d6d6d6; }
+.universal-card-root.theme-dark .universal-card-table__td { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-table__th { color: #ebebeb; }
 .universal-card-root.theme-dark .universal-card-chart__loading,
 .universal-card-root.theme-dark .universal-card-chart__placeholder {
@@ -1289,8 +1314,9 @@
   color: #ebebeb;
   background-color: #1a1a1a;
   border-color: #2e2e30;
-  /* 暗色下 --bg-float-overlay 反向叠白（对齐客户端 dark token #373737 落在 #1a1a1a 上的观感） */
-  --bg-float-overlay: rgba(255, 255, 255, 0.12);
+  /* 暗色 token：bg-float-overlay → N200 #373737；分割线反向叠白 15% */
+  --bg-float-overlay: #373737;
+  --line-divider-default: rgba(207, 207, 207, 0.15);
 }
 .universal-card-root.theme-dark .universal-card-markdown { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-hr { background-color: #2e2e30; }

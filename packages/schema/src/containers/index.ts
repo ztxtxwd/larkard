@@ -250,7 +250,9 @@ const CollapsiblePanelHeaderSchema = z
     vertical_align: VerticalAlignSchema.optional().describe(
       '标题区内垂直对齐',
     ),
-    padding: SpacingValueSchema.optional().describe('标题区内边距'),
+    padding: SpacingValueSchema.optional().describe(
+      '标题区内边距；不写有默认值——面板带描边或底色（border / background_color / header.background_color 任一）时 4px 8px，纯无框无色面板为 0；显式给出时四边整体覆盖',
+    ),
     icon: IconSchema.optional().describe(
       '展开/折叠图标；推荐 down-bold_outlined，置右',
     ),
@@ -305,7 +307,9 @@ export const CollapsiblePanelSchema = z
     vertical_align: VerticalAlignSchema.optional().describe(
       '面板内子组件垂直对齐',
     ),
-    padding: SpacingValueSchema.optional().describe('面板内边距'),
+    padding: SpacingValueSchema.optional().describe(
+      '面板内边距，只作用于内容区（elements），不改变标题区内边距；不写有默认值——内容区 padding-top 8px，带描边或底色时四边 8px',
+    ),
     background_color: ColorSchema.optional().describe(
       '面板背景色；推荐 bg-white / white',
     ),

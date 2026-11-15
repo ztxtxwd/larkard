@@ -1401,6 +1401,8 @@ registerComponent('collapsible_panel', (el, ctx) => {
   const hpad = typeof hdr.padding === 'string'
     ? hdr.padding
     : boxToStyle(hdr.padding as never); // DSL 常是 "8px 12px 8px 12px"；RAW 可能是 box 对象
+  // header.padding 缺省时不写内联 padding：真机标题区额外内边距唯一来源是 CSS
+  // （--fat → 4px 8px，否则 0，见 styles.css 注释），官方 schema 文档未标注该默认值。
   if (hpad) headerStyle.padding = hpad;
   // header.background_color 已在上方解析（hbg），同时决定 --fat。
   if (hbg) headerStyle.background = hbg;
@@ -2422,10 +2424,22 @@ registerComponent('code_span', (el) => {
     const pageSize = typeof pageSizeRaw === 'number' && pageSizeRaw > 0 ? pageSizeRaw : undefined;
     const shownRows = pageSize != null ? rows.slice(0, pageSize) : rows;
 
-    // 表头样式：DSL background_style/text_align；RAW backgroundStyle/textAlign（dual-read）。
+    // 表头样式：DSL background_style/text_align/text_color/text_size/lines；RAW 对应 camelCase。
+    // 真机把表头单元格当 PlainText 渲染（textStyle: bold/size/color/customColor，见
+    // feishu-web-dump/debugger/1dac9008…js 的 nl()）——text_color 走正文色名解析
+    // （grey → N600 #646a73），不是表格专用色；之前整个忽略，表头永远写死 #1f2329（偏蓝黑）。
     const headBg = TABLE_HEAD_BG[String(hs.background_style ?? (hs as { backgroundStyle?: string }).backgroundStyle ?? 'none')] ?? 'transparent';
     const headAlign = hs.text_align ?? (hs as { textAlign?: string }).textAlign ?? 'left';
     const headBold = hs.bold !== false; // 默认加粗
+    const headSizeKey = String(hs.text_size ?? (hs as { textSize?: string }).textSize ?? 'normal');
+    const headFontSize = TEXT_SIZE_MAP[headSizeKey] ?? TEXT_SIZE_MAP.normal;
+    const headColorRaw = (hs.text_color ?? (hs as { textColor?: string }).textColor) as string | undefined;
+    const headColor = headColorRaw && headColorRaw !== 'default'
+      ? (resolveColor(headColorRaw) || NAMED_TEXT_COLOR[headColorRaw as never])
+      : undefined;
+    const headTextStyle: Record<string, string> = { fontSize: `${headFontSize}px` };
+    if (headColor) headTextStyle.color = headColor;
+    Object.assign(headTextStyle, lineClampStyle(hs.lines));
 
     // colgroup：把列宽落到 <col>。"auto"/空 不设宽（自适应），"120px"/数字 定宽。
     const cols = columns.map((c) => {
@@ -2442,6 +2456,7 @@ registerComponent('code_span', (el) => {
       },
         h('span', {
           className: `${CLS}-table__th-text${headBold ? ` ${CLS}-table__th-text--bold` : ''}`,
+          style: headTextStyle,
         }, String(c.display_name ?? c.name ?? ''))
       );
     });
