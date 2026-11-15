@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.30
+
+- 图表对齐真机：预览水合时补齐 VChart 主题内边距 `12/12/12/0`（此前落回缺省 `padding: 20`，四边都偏大）；`chart_spec` 显式写了 `padding` 仍以调用方为准
+- Bundles schema 0.3.2、adapter 0.4.4、renderer 0.8.3、components 0.4.0
+
 ## 0.2.29
 
 - 宽表格横向滚动条对齐真机：默认隐藏，鼠标移入表格才显示；8px 细条、无两端箭头
