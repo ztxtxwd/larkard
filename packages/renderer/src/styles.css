@@ -1277,11 +1277,16 @@
      否则在 flex 父级里会变成 min-content = 列宽总和，把整张卡撑出屏幕。 */
   min-width: 0;
   box-sizing: border-box;
+}
+/* 边框/圆角只在表格本体上：真机 pagination 是表格容器外的兄弟节点，
+   翻页器不能包进 1px 边框里（之前整块 border 挂在外层，一加翻页器就露馅）。 */
+.universal-card-table__scroll {
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
   border: 1px solid var(--line-border-card, #dee0e3);
   border-radius: 6px;
-  overflow: hidden;
 }
-.universal-card-table__scroll { width: 100%; overflow-x: auto; }
 /* 列宽固定（真机每列都有算出来的像素宽，等价于 table-layout:fixed）：
    文本超长时在单元格内截断，而不是把列撑宽 / 让行变高。
    自适应列由组件按 128px 下限算出 min-width，空间不够就横向滚动。 */
@@ -1354,11 +1359,69 @@
   word-break: break-word;
 }
 .universal-card-table__tags { display: inline; }
+/* 翻页后的行不参与布局（hidden 属性在 tr 上个别浏览器会被 display 覆盖，写死兜底） */
+.universal-card-table__row[hidden] { display: none; }
+/* 翻页器：对齐真机 antd `.ud__table-pagination`（margin:16px 0、右对齐）+ mini 尺寸。
+   卡片 CSS 隐藏数字页码（.ud__pagination-item{display:none}），只剩 showTotal「1/2」+ 上下页。 */
+.universal-card-table__pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 24px;
+  color: #1f2329;
+}
+.universal-card-table__pager-total {
+  display: inline-block;
+  height: 24px;
+  margin-right: 12px;
+  line-height: 24px;
+}
+/* mini pagination 的 prev/next：24×24、1px 描边、6px 圆角；两个都带 8px 右间距 */
+.universal-card-table__pager-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-right: 8px;
+  font-size: 12px;
+  line-height: 24px;
+  color: var(--icon-n2, #646a73);
+  background: var(--udtoken-component-outlined-bg, #fff);
+  border: 1px solid var(--line-border-component, #dee0e3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.universal-card-table__pager-btn:hover:not(:disabled) {
+  color: var(--primary-content-default, #3370ff);
+  border-color: var(--primary-content-default, #3370ff);
+  background: var(--udtoken-btn-se-bg-pri-hover, #f0f4ff);
+}
+.universal-card-table__pager-btn:active:not(:disabled) {
+  color: var(--primary-content-pressed, #245bdb);
+  border-color: var(--primary-content-pressed, #245bdb);
+}
+.universal-card-table__pager-btn:disabled {
+  color: var(--icon-disabled, #bbbfc4);
+  background: var(--udtoken-component-outlined-bg, #fff);
+  border-color: var(--line-border-component, #dee0e3);
+  cursor: not-allowed;
+}
 /* 单行行高下人员羹袋不换行（真机 PersonList lines=1），否则换行后会被 max-height 从中间剪开 */
 .universal-card-table__line-1 .universal-card-person-list { flex-wrap: nowrap; }
 
 /* 暗色主题下的表格/图表占位（分割线/描边 token 同步换成 dark 值） */
-.universal-card-root.theme-dark .universal-card-table { border-color: #2e2e30; }
+.universal-card-root.theme-dark .universal-card-table__scroll { border-color: #2e2e30; }
+.universal-card-root.theme-dark .universal-card-table__pager { color: #ebebeb; }
+.universal-card-root.theme-dark .universal-card-table__pager-btn {
+  color: #d6d6d6; background: #232323; border-color: #2e2e30;
+}
+.universal-card-root.theme-dark .universal-card-table__pager-btn:disabled { color: #6b6b6b; }
 .universal-card-root.theme-dark .universal-card-table__th,
 .universal-card-root.theme-dark .universal-card-table__td { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-table__th { color: #ebebeb; }

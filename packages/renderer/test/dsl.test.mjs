@@ -871,16 +871,18 @@ test('table: options 渲染成彩色标签', () => {
   assert.match(html, /混动/);
 });
 
-test('table: page_size 截断行数', () => {
+test('table: page_size 分页（首页可见 + 其余行 hidden 留在 DOM）', () => {
   const rows = Array.from({ length: 10 }, (_, i) => ({ rank: String(i + 1) }));
   const html = renderDslToString({ body: { elements: [{
     tag: 'table', page_size: 3,
     columns: [{ name: 'rank', display_name: '排名', data_type: 'text' }],
     rows,
   }] } });
-  // 只画前 3 行：出现 1/2/3，不出现 4
-  const bodyRows = (html.match(/universal-card-table__row/g) || []).length;
-  assert.equal(bodyRows, 3);
+  // 10 行都在 DOM（供运行期翻页），其中 7 行 hidden；翻页器给 1/4
+  const tags = html.match(/<tr class="universal-card-table__row"[^>]*>/g) || [];
+  assert.equal(tags.length, 10);
+  assert.equal(tags.filter((t) => t.includes('hidden')).length, 7);
+  assert.match(html, /universal-card-table__pager-total">1\/4</);
 });
 
 test('table: page_size=0 / 负数 视为不限制（不清空全表）', () => {

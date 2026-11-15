@@ -18,6 +18,7 @@ import {
   TEXT_SIZE_MAP, lineHeightForFontSize, paletteColor, tableLinesForRowHeightPx, textLineHeight,
 } from './constants';
 import { CHART_SPEC_ATTR } from './chart-hydrate';
+import { TABLE_PAGE_ATTR, TABLE_PAGER_ATTR } from './table-pager';
 import { HEADER_BG_LIGHT } from './assets';
 import { BASE_STYLES_CSS } from './base-styles';
 import { ICON_FONT_CSS } from './icon-font';
@@ -2610,7 +2611,9 @@ registerComponent('code_span', (el) => {
   //      文本不换行撑高行，超出用省略号截断；row_height=auto 则不截断、内容可滚动。
   //   2) 列宽固定（table-layout:fixed）+ 未写宽度的列最小 128px，空间不够横向滚动。
   //   3) td/th 自身不加内边距，内边距在内容层（表体 0 8px / 表头 6px 8px）。
-  // page_size：预览只「显示前 N 行」，不做真实分页控件。
+  // page_size：真机 antd Table 的分页（缺省 5 行/页，单页时不画翻页器）。
+  // 渲染期把全部行写进 DOM，第 2 页起的行带 hidden；翻页器只输出「当前/总页数 + 上下页」，
+  // 切换由 table-pager.ts 在运行期水合（浏览器 renderCard 自动接，SSR 注入 hydrate 脚本）。
   registerComponent('table', (el, ctx) => {
     const p = el.property || {};
     // 列定义：DSL 用 snake_case（data_type/display_name/horizontal_align/width），
@@ -2620,10 +2623,13 @@ registerComponent('code_span', (el) => {
     const hs = (p.header_style || p.headerStyle || {}) as TableHeaderStyle;
     // 行高 / 单元格文本行数（缺省 low → 32px / 1 行，与真机默认一致）。
     const metrics = resolveTableRowMetrics(p);
-    // page_size 只作正整数「显示前 N 行」；0/负数/非数视为不限制（避免 slice(0,0) 清空全表）。
+    // page_size：缺省 5（客户端 Ql 的 pageSize 默认值）；0/负数/非数视为不分页（保持旧行为）。
     const pageSizeRaw = typeof p.page_size === 'number' ? p.page_size : (typeof p.pageSize === 'number' ? p.pageSize : undefined);
-    const pageSize = typeof pageSizeRaw === 'number' && pageSizeRaw > 0 ? pageSizeRaw : undefined;
-    const shownRows = pageSize != null ? rows.slice(0, pageSize) : rows;
+    const pageSize = pageSizeRaw == null
+      ? 5
+      : (pageSizeRaw > 0 ? Math.max(1, Math.floor(pageSizeRaw)) : Math.max(1, rows.length));
+    const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+    if (totalPages > 1) ensureIconFontInjected(ctx);
 
     // 表头样式：DSL background_style/text_align/text_color/text_size/lines；RAW 对应 camelCase。
     // 真机把表头单元格当 PlainText 渲染（textStyle: bold/size/color/customColor，见
@@ -2680,9 +2686,14 @@ registerComponent('code_span', (el) => {
       );
     });
 
-    // tbody
-    const bodyRows = shownRows.map((row) =>
-      h('tr', { className: `${CLS}-table__row` },
+    // tbody：全部行都输出，非当前页带 hidden（静态渲染等价于只显示第 1 页）。
+    const bodyRows = rows.map((row, rowIndex) => {
+      const page = Math.floor(rowIndex / pageSize);
+      return h('tr', {
+        className: `${CLS}-table__row`,
+        [TABLE_PAGE_ATTR]: String(page),
+        ...(page > 0 ? { hidden: '' } : {}),
+      },
         columns.map((c) => {
           // 表体：列 horizontal_align 优先，缺省按 data_type 兜底（number → right）。
           const align = c.horizontal_align ?? defaultColumnAlign(c);
@@ -2698,8 +2709,23 @@ registerComponent('code_span', (el) => {
             }, renderCell(unwrapCellValue(row[c.name]), c, ctx, metrics.lines))
           );
         })
-      )
-    );
+      );
+    });
+
+    // 翻页器（对齐真机 antd small pagination）：showTotal 在前 → 上一页 → 下一页；
+    // 数字页码在卡片里被隐藏（.ud__pagination-item{display:none}），只留「1/2 + 箭头」。
+    // hideOnSinglePage：只有一页时整块不渲染。
+    const pager = totalPages > 1 ? h('div', {
+      className: `${CLS}-table__pager`,
+      [TABLE_PAGER_ATTR]: '',
+      'data-page-size': String(pageSize),
+      'data-total-pages': String(totalPages),
+      'data-page': '0',
+    },
+      h('span', { className: `${CLS}-table__pager-total` }, `1/${totalPages}`),
+      tablePagerButton(-1, '上一页', true),
+      tablePagerButton(1, '下一页', false)
+    ) : null;
 
     return h('div', {
       className: `${CLS}-table`,
@@ -2715,9 +2741,29 @@ registerComponent('code_span', (el) => {
             h('tr', {}, headCells)),
           h('tbody', { className: `${CLS}-table__tbody` }, bodyRows)
         )
-      )
+      ),
+      pager
     );
   });
+}
+
+/**
+ * 翻页器箭头按钮。真机是 antd mini pagination 的 24×24 方钮 + LeftOutlined/RightOutlined，
+ * 图标走 ud 图标字体（token 见 ICON_CODEPOINTS）。
+ */
+function tablePagerButton(dir: -1 | 1, label: string, disabled: boolean): VNode {
+  return h('button', {
+    type: 'button',
+    className: `${CLS}-table__pager-btn`,
+    'data-feishu-table-dir': String(dir),
+    'aria-label': label,
+    ...(disabled ? { disabled: '' } : {}),
+  },
+    h('i', {
+      className: `${CLS}-icon ud-icon_${dir < 0 ? 'left_outlined' : 'right_outlined'}`,
+      style: { fontSize: '12px', lineHeight: '1' },
+    })
+  );
 }
 
 /**

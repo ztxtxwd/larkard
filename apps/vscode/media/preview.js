@@ -26,6 +26,7 @@
       stage.innerHTML = `<section class="device"><div class="card-mount">${data.html}</div></section>`;
       syncCardTheme();
       hydrateCharts(stage);
+      hydrateTablePagers(stage);
     } else if (data.type === 'error') {
       lastLocation = { line: data.line, column: data.column };
       stage.classList.add('has-error');
@@ -109,6 +110,57 @@
           '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#8f959e;font-size:12px">[图表渲染失败]</div>';
         if (window.console) console.warn('[LarkCardPreview] chart hydrate failed', err);
       }
+    }
+  }
+
+  /**
+   * Hydrate table pagination under root (idempotent).
+   * Mirrors open-feishu-card's hydrateFeishuTablePagers: rows carry
+   * data-feishu-table-page; the pager flips the hidden attribute and 1/N label.
+   * @param {ParentNode|null} root
+   */
+  function hydrateTablePagers(root) {
+    if (!root || typeof root.querySelectorAll !== 'function') return;
+    const tables = root.querySelectorAll('.universal-card-table');
+    for (let i = 0; i < tables.length; i++) {
+      const table = tables[i];
+      const pager = table.querySelector('[data-feishu-table-pager]');
+      if (!pager || pager.getAttribute('data-feishu-table-pager-hydrated') === '1') continue;
+      pager.setAttribute('data-feishu-table-pager-hydrated', '1');
+
+      const paint = (page) => {
+        const total = Math.max(1, Number(pager.getAttribute('data-total-pages')) || 1);
+        pager.setAttribute('data-page', String(page));
+        const rows = table.querySelectorAll('[data-feishu-table-page]');
+        for (let j = 0; j < rows.length; j++) {
+          const row = rows[j];
+          row.hidden = (Number(row.getAttribute('data-feishu-table-page')) || 0) !== page;
+        }
+        const totalText = pager.querySelector('.universal-card-table__pager-total');
+        if (totalText) totalText.textContent = (page + 1) + '/' + total;
+        const buttons = pager.querySelectorAll('[data-feishu-table-dir]');
+        for (let j = 0; j < buttons.length; j++) {
+          const btn = buttons[j];
+          const dir = Number(btn.getAttribute('data-feishu-table-dir')) || 0;
+          const disabled = dir < 0 ? page <= 0 : page >= total - 1;
+          if (disabled) btn.setAttribute('disabled', '');
+          else btn.removeAttribute('disabled');
+        }
+      };
+
+      pager.addEventListener('click', (ev) => {
+        const btn = ev.target && ev.target.closest ? ev.target.closest('[data-feishu-table-dir]') : null;
+        if (!btn || btn.hasAttribute('disabled')) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        const total = Math.max(1, Number(pager.getAttribute('data-total-pages')) || 1);
+        const current = Math.min(Math.max(0, Number(pager.getAttribute('data-page')) || 0), total - 1);
+        const next = current + (Number(btn.getAttribute('data-feishu-table-dir')) || 0);
+        if (next >= 0 && next < total) paint(next);
+      });
+
+      paint(Math.min(Math.max(0, Number(pager.getAttribute('data-page')) || 0),
+        Math.max(1, Number(pager.getAttribute('data-total-pages')) || 1) - 1));
     }
   }
 

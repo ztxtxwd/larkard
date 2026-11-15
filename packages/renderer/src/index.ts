@@ -13,6 +13,7 @@ import {
 } from './registry';
 import { registerBuiltins, ensureBaseStylesInjected } from './components';
 import { hydrateFeishuAudios } from './audio-hydrate';
+import { hydrateFeishuTablePagers } from './table-pager';
 import { dslToRaw } from '@open-feishu-card/adapter';
 
 // 模块加载时注册全部内置组件（显式调用，避免被 tree-shake）
@@ -88,6 +89,8 @@ export function renderCard(card: CardInput, options: RenderOptions = {}): Node {
   // 音频交互（播放/暂停图标切换、进度条）在浏览器端自动接线
   if (dom instanceof Element || typeof (dom as ParentNode).querySelectorAll === 'function') {
     hydrateFeishuAudios(dom as ParentNode);
+    // 表格翻页（只切 hidden，不改 DOM 结构）同上；SSR 可用 feishuTablePagerHydrateScript()
+    hydrateFeishuTablePagers(dom as ParentNode);
   }
   return dom;
 }
@@ -130,6 +133,12 @@ export {
   feishuAudioHydrateScript, feishuAudioHydrateJs,
   AUDIO_HYDRATED_ATTR, AUDIO_PLAY_ICON_SVG, AUDIO_PAUSE_ICON_SVG,
 } from './audio-hydrate';
+// 表格翻页：渲染期输出首页 + 隐藏其余行，浏览器 renderCard 自动接线；SSR 注入 hydrate 脚本。
+export {
+  hydrateFeishuTablePagers,
+  feishuTablePagerHydrateScript, feishuTablePagerHydrateJs,
+  TABLE_PAGER_ATTR, TABLE_PAGE_ATTR, TABLE_PAGER_HYDRATED_ATTR,
+} from './table-pager';
 export { CHART_PALETTE } from './constants';
 // Toast 宿主：对齐客户端 kernel.toast，action 响应里的 toast 提示在预览页弹出。
 export { createToastHost, renderToastHTML } from './toast';
