@@ -1269,13 +1269,15 @@
   font-size: 14px;
   color: #1f2329;
 }
-/* 行线/列线：真机行线走 line-divider-default（中性黑叠色），列线用 bg-filler。
-   之前写死 #dee0e3 / #eff0f1（蓝色阶实色），整张表比真机偏蓝。 */
+/* 行线/列线都走 line-divider-default（中性黑叠色 rgba(31,35,41,.15)）。
+   列线是半透明的，会叠在单元格底色上：表头列线叠 #f2f3f5 → (211,211,214)≈#d4d4d7，
+   表体列线叠白 → (222,222,223)——与真机取色一致。
+   之前列线写死 --bg-filler(#eff0f1)：实色浅灰，比真机浅两档且偏蓝。 */
 .universal-card-table__th,
 .universal-card-table__td {
   padding: 8px 12px;
   border-bottom: 1px solid var(--line-divider-default, #dee0e3);
-  border-right: 1px solid var(--bg-filler, #eff0f1);
+  border-right: 1px solid var(--line-divider-default, #dee0e3);
   vertical-align: middle;
   box-sizing: border-box;
 }

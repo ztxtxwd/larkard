@@ -1759,7 +1759,7 @@ test('styles: 分割线 / 表格行线用 line-divider-default token', () => {
   assert.match(ALL_CSS, /\.universal-card-hr\s*\{[^}]*background-color:\s*var\(--line-divider-default/);
   assert.match(ALL_CSS, /\.universal-card-collapse-divider\s*\{[^}]*background-color:\s*var\(--line-divider-default/);
   assert.match(ALL_CSS, /\.universal-card-table__th,[^}]*\.universal-card-table__td\s*\{[^}]*border-bottom:\s*1px solid var\(--line-divider-default/);
-  assert.match(ALL_CSS, /\.universal-card-table__th,[^}]*\.universal-card-table__td\s*\{[^}]*border-right:\s*1px solid var\(--bg-filler/);
+  assert.match(ALL_CSS, /\.universal-card-table__th,[^}]*\.universal-card-table__td\s*\{[^}]*border-right:\s*1px solid var\(--line-divider-default/);
 });
 
 test('collapsible_panel: 折叠态默认收起（expanded 缺省），展开才带 open', () => {
