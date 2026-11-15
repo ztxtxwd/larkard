@@ -1878,6 +1878,42 @@ test('collapsible_panel: 兼容 RAW 里 header.title 包一层 property 的形�
   assert.match(html, /包裹形态/);
 });
 
+test('collapsible_panel: 箭头尺寸跟标题字号（真机 j()）；像素 size 优先', () => {
+  const iconHtml = (title, icon) => renderCardToString({
+    json_card: {
+      schema: '2.0',
+      body: { tag: 'body', property: { elements: [{
+        tag: 'collapsible_panel',
+        property: { expanded: true, header: { title, icon }, elements: [] },
+      }] } },
+    },
+  });
+  const styleOf = (html) => html.match(/collapsible-panel__icon"><i[^>]*style="([^"]*)"/)?.[1] || '';
+  const icon = { tag: 'standard_icon', property: { token: 'down_outlined', color: 'grey' } };
+  // 标题 notation(12px) → j(12)=14；之前固定 16px 比真机大一档
+  assert.match(styleOf(iconHtml({ tag: 'plain_text', property: { content: 't', text_size: 'notation' } }, icon)), /font-size:14px/);
+  // 标题 heading(16px) → j(16)=18
+  assert.match(styleOf(iconHtml({ tag: 'plain_text', property: { content: 't', text_size: 'heading' } }, icon)), /font-size:18px/);
+  // 显式像素 size 仍然优先
+  const pxIcon = { tag: 'standard_icon', property: { token: 'down_outlined', size: '10px 10px' } };
+  assert.match(styleOf(iconHtml({ tag: 'plain_text', property: { content: 't', text_size: 'notation' } }, pxIcon)), /font-size:10px/);
+});
+
+test('icon: RAW widthValue/heightValue 像素尺寸被采用（此前只看 size 枚举）', () => {
+  const html = renderCardToString({
+    json_card: { body: { tag: 'body', property: { elements: [
+      { tag: 'standard_icon', property: {
+        token: 'down_outlined',
+        widthValue: { type: 'pixels', value: 10 },
+        heightValue: { type: 'pixels', value: 12 },
+      } },
+    ] } } },
+  });
+  assert.match(html, /font-size:10px/); // min(width,height)
+  assert.match(html, /width:10px/);
+  assert.match(html, /height:12px/);
+});
+
 /* ---- RAW: column.widthValue 三种 echo（对齐真机 Kn()）---- */
 
 function rawColumnStyle(property) {

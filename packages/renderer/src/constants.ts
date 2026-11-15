@@ -242,6 +242,30 @@ export const TAG_COLOR: Record<string, { bg: string; text: string }> = {
 };
 
 /**
+ * 表格 options 列（选项标签）专用色板。
+ *
+ * 客户端 table → TextTag 时带 `tagStyle: 'table'`，查表键是 `<color>_table`，
+ * 不是正文 text_tag 的半透明色：
+ *   font_color = text-title（light N900 #1f2329）——统一深色字，不跟色系走
+ *   bg_color   = <C>100 实心浅色（neutral 用 N200）
+ * 且只登记了 11 个色：violet / indigo **没有** _table 变体（真机会回退成
+ * 普通蓝色 text_tag）。来源：fallbackStyle.text_tag.color / 官方表格文档示例图。
+ */
+export const TABLE_TAG_COLOR: Record<string, { bg: string; text: string }> = {
+  red:       { bg: PALETTE.R100, text: PALETTE.N900 },
+  orange:    { bg: PALETTE.O100, text: PALETTE.N900 },
+  yellow:    { bg: PALETTE.Y100, text: PALETTE.N900 },
+  lime:      { bg: PALETTE.L100, text: PALETTE.N900 },
+  green:     { bg: PALETTE.G100, text: PALETTE.N900 },
+  turquoise: { bg: PALETTE.T100, text: PALETTE.N900 },
+  wathet:    { bg: PALETTE.W100, text: PALETTE.N900 },
+  blue:      { bg: PALETTE.B100, text: PALETTE.N900 },
+  carmine:   { bg: PALETTE.C100, text: PALETTE.N900 },
+  purple:    { bg: PALETTE.P100, text: PALETTE.N900 },
+  neutral:   { bg: PALETTE.N200, text: PALETTE.N900 },
+};
+
+/**
  * 容器浅色背景（column/interactive_container 的 backgroundStyle="<color>-50"）。
  * 对应飞书 --<C>50 token（比 header 的 -100 更浅），用作彩色提示块底色。
  */

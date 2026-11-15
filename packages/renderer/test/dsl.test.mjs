@@ -1018,6 +1018,53 @@ test('table: options 单对象（非数组）也渲染成标签', () => {
   assert.doesNotMatch(html, /\[object Object\]/);
 });
 
+test('table: options 用表格专用色板（X100 实心底 + text-title 深色字 + 胶囊）', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'table',
+    columns: [{ name: 's', display_name: 'S', data_type: 'options' }],
+    rows: [{ s: [{ text: '在售', color: 'green' }] }],
+  }] } });
+  // fallbackStyle.text_tag.color.green_table = { bg_color: G100, font_color: text-title(N900) }
+  assert.match(html, /background-color:#d0f5ce;color:#1f2329/);
+  assert.match(html, /height:20px/);       // Tag size-small 骨架
+  // .universal-card-text-tag__tag--table 覆盖成 14px/600
+  assert.match(html, /font-size:14px/);
+  assert.match(html, /font-weight:600/);
+  assert.match(html, /padding:0 6px/);
+  assert.match(html, /border-radius:999px/); // shape=round
+  // 不应再落回正文 text_tag 的半透明绿 + 绿字
+  assert.doesNotMatch(html, /rgba\(53, 189, 75, 0\.2\)/);
+});
+
+test('table: options 省略 color 默认 blue；violet/indigo 无 _table 变体回退普通蓝', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'table',
+    columns: [{ name: 's', display_name: 'S', data_type: 'options' }],
+    rows: [
+      { s: { text: '默认' } },
+      { s: { text: '紫', color: 'violet' } },
+    ],
+  }] } });
+  // 默认 blue 走 blue_table：B100 实心底 + N900 字
+  assert.match(html, /background-color:#e0e9ff;color:#1f2329[^>]*>默认/);
+  // violet_table 在客户端 fallbackStyle 里不存在 → 回退普通蓝色 text_tag
+  assert.match(html, /background-color:rgba\(20, 86, 240, 0\.2\);color:#1456f0[^>]*>紫/);
+});
+
+test('table: options 单个字符串 / 文本节点（编辑器直出）也能出标签文案', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'table',
+    columns: [{ name: 's', display_name: 'S', data_type: 'options' }],
+    rows: [
+      { s: '单个标签' },
+      { s: [{ text: { tag: 'plain_text', property: { content: '节点文案' } }, color: 'red' }] },
+    ],
+  }] } });
+  assert.match(html, /universal-card-table__tags[^>]*><span[^>]*>单个标签</);
+  assert.match(html, />节点文案</);
+  assert.doesNotMatch(html, /\[object Object\]/);
+});
+
 test('table: lark_md 列解析 <font>/** 加粗（DSL 字符串）', () => {
   const html = renderDslToString({ body: { elements: [{
     tag: 'table',

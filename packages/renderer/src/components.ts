@@ -13,7 +13,7 @@ import {
   PERSON_FALLBACK_AVATAR, PERSON_FALLBACK_NAME, PERSON_FOLLOW_FONT,
   PERSON_LIST_COMMA, PERSON_LIST_SIZE, PERSON_SINGLE_SIZE,
   PERSON_UNKNOWN_AVATAR, PERSON_UNKNOWN_NAME,
-  TABLE_HEAD_BG, TABLE_ROW_HEIGHT, TAG_COLOR,
+  TABLE_HEAD_BG, TABLE_ROW_HEIGHT, TABLE_TAG_COLOR, TAG_COLOR,
   TEXT_SIZE_MAP, lineHeightForFontSize, paletteColor, textLineHeight,
 } from './constants';
 import { CHART_SPEC_ATTR } from './chart-hydrate';
@@ -47,6 +47,11 @@ const VIDEO_PLAY_ICON_SVG =
 
 let registered = false;
 
+/** 是否为普通对象（components 内多处共用；必须放在模块顶层，registerBuiltins 外的 helper 也要用） */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 // text_tag 默认尺寸：对齐设计系统 Tag `extra-small`
 // （_pp-tag__size-extra-small：height:16px; padding:0 4px; font-size:10px；
 //  或 font-size:12px + zoom:.833 ≈ 10px 视觉效果）。
@@ -63,6 +68,30 @@ function textTagStyle(bg: string, text: string): Record<string, string> {
     alignItems: 'center',
     lineHeight: '16px',
     height: '16px',
+  };
+}
+
+// 表格 options 列标签：design system Tag `small` + `shape=round`。
+// 尺寸骨架来自 _pp-tag__size-small（height:20px; line-height:20px），
+// 但卡片样式表 .universal-card-text-tag__tag--table 把内容字号/字重覆盖成
+// 14px/600、padding 0 6px；圆角是 round 形态的胶囊。
+// 与正文 text_tag 的 extra-small（16px/10px/半透明底）是两套皮肤，不能复用。
+function tableTagStyle(bg: string, text: string): Record<string, string> {
+  return {
+    backgroundColor: bg,
+    color: text,
+    padding: '0 6px',
+    borderRadius: '999px',
+    fontSize: '14px',
+    fontWeight: '600',
+    display: 'inline-flex',
+    alignItems: 'center',
+    lineHeight: '20px',
+    height: '20px',
+    maxWidth: '100%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   };
 }
 
@@ -1349,6 +1378,20 @@ registerComponent('interactive_container', (el, ctx) => {
 // header 里的字段（DSL 扁平对象，未经 convertEl）：title / expanded_title（文本叶子或 plain_text）、
 // background_color、width（fill/auto/auto_when_fold）、vertical_align、position（top/bottom）、
 // icon（standard_icon）、icon_position、icon_expanded_angle、padding。
+
+/**
+ * 折叠面板箭头默认尺寸：真机用 j(cr(header.title.textStyle))。
+ * title 没声明字号（textStyle/size 缺失）时返回 undefined，交给 renderIcon 走 size 枚举/16px。
+ * 注意这里不能默认成 normal：真机 cr() 拿不到 textStyle 就不会注入 defaultSize。
+ */
+function collapsibleIconDefaultSize(title: unknown): number | undefined {
+  if (!isRecord(title)) return undefined;
+  const property = isRecord(title.property) ? title.property : title;
+  const sizeKey = resolveTextSizeKey(property as never);
+  const fontPx = sizeKey ? TEXT_SIZE_MAP[sizeKey] : undefined;
+  return typeof fontPx === 'number' && fontPx > 0 ? iconDefaultSize(fontPx) : undefined;
+}
+
 registerComponent('collapsible_panel', (el, ctx) => {
   const p = el.property || {};
   const hdr = (p.header && typeof p.header === 'object' ? p.header : {}) as Record<string, unknown>;
@@ -1439,6 +1482,8 @@ registerComponent('collapsible_panel', (el, ctx) => {
   // 点击 toggle 后箭头方向自动跟随，无需 JS。默认展开角 -180。
   // header 是未经 convertEl 的原始 DSL 对象，故 icon 的字段（token/color/size）是扁平的、
   // 未包进 property——renderIcon 读 property，这里归一：无 property 时把元素自身当 property。
+  // 图标默认尺寸跟标题字号（真机 j(cr(title.textStyle))）：标题 12px 时箭头 14px，
+  // 而不是固定 16px；显式 widthValue/heightValue/像素 size 仍然优先。
   let iconVNode: VNode | null = null;
   const iconRaw = hdr.icon as CardElement | undefined;
   const openAngle = Number(hdr.icon_expanded_angle ?? hdr.iconExpandedAngle ?? -180);
@@ -1446,7 +1491,7 @@ registerComponent('collapsible_panel', (el, ctx) => {
     const iconEl: CardElement = iconRaw.property
       ? iconRaw
       : { tag: iconRaw.tag, property: iconRaw as never };
-    const inner = renderIcon(iconEl, ctx);
+    const inner = renderIcon(iconEl, ctx, collapsibleIconDefaultSize(hdr.title));
     if (inner) {
       iconVNode = h('div', { className: `${CLS}-collapsible-panel__icon` }, inner);
     }
@@ -1611,10 +1656,6 @@ registerComponent('button', (el, ctx) => {
   const cls = `${base} ${CLS}-button--static` + (p.disabled ? ` ${CLS}-button--disabled` : '');
   return h('span', { className: cls, ...styleProp }, children);
 });
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
 
 /**
  * 按钮 / 下拉的回传对象。DSL 写在 value 上，RAW 写在 actions[].action.value。
@@ -2089,7 +2130,42 @@ registerComponent('emoji', (el, ctx) => {
 // 或直接 #/rgb 直值；缺/未知 color 不输出，继承父级文字色（currentColor）。
 // _colorful 结尾的彩色图标字体自带色，不覆盖 color。
 // 两种形态：standard_icon 的 color/size 直接挂 property；ud_icon 把它们嵌在 property.style 里。
-function renderIcon(el: CardElement, ctx: RenderContext) {
+
+/** RAW 图标尺寸（widthValue/heightValue，或 "12px"/12）→ px */
+function iconPixelSize(v: unknown): number | undefined {
+  if (typeof v === 'number') return v > 0 ? v : undefined;
+  if (typeof v === 'string') {
+    const m = /^(\d+(?:\.\d+)?)(?:px)?/.exec(v.trim());
+    return m ? Number(m[1]) : undefined;
+  }
+  if (isRecord(v)) {
+    if (typeof v.value === 'number') return v.value > 0 ? v.value : undefined;
+    if (typeof v.value === 'string') return iconPixelSize(v.value);
+  }
+  return undefined;
+}
+
+/**
+ * 父级字号 → 图标默认尺寸（真机引擎 j()，见 be8b738f）。
+ * 折叠面板 / markdown 的前置图标在没有显式像素尺寸时会用它，而不是死回 16px：
+ *   ≤16 → 字号 +2（12→14、14→16、16→18）
+ *   >16 → 1.15 倍后向上取偶数（18→22、20→24、24→28）
+ * 之前固定 16px，标题字号小于 14 的面板（notation / small）箭头比真机大一圈。
+ */
+function iconDefaultSize(fontSize: number): number {
+  if (!Number.isFinite(fontSize) || fontSize <= 0) return 16;
+  if (fontSize <= 16) return fontSize + 2;
+  const scaled = Math.round(fontSize * 1.15);
+  return scaled % 2 === 0 ? scaled : scaled + 1;
+}
+
+/**
+ * @param defaultSize 父级给出的图标默认尺寸（真机 extraProperty.defaultSize）。
+ *   优先级对齐真机 icon 组件：RAW widthValue/heightValue > 像素串 size >
+ *   defaultSize > size 枚举 > 16。注意 defaultSize 存在时 size 枚举会被忽略——
+ *   真机就是如此（`else if (widthValue || heightValue || !defaultSize)`）。
+ */
+function renderIcon(el: CardElement, ctx: RenderContext, defaultSize?: number) {
   const p = el.property || {};
   // token 字段名：RAW 用 token；个别形态用 key（与 emoji 同字段名兼容取值）
   const token = String(p.token || p.key || '').trim();
@@ -2101,10 +2177,31 @@ function renderIcon(el: CardElement, ctx: RenderContext) {
   const colorRaw = typeof p.color === 'string' ? p.color
     : (typeof inner.color === 'string' ? inner.color : '');
   const style: Record<string, string> = {};
-  // 尺寸：优先枚举（small/large1..4），否则解析像素串（"10px" / "10px 10px" 取首个数字），
-  // 都不认时回退 16。折叠面板的箭头图标常直接给像素尺寸（如 "10px 10px"）。
-  const sizePx = ICON_SIZE_MAP[sizeKey] ?? (/^\d/.test(sizeKey) ? Number(/^(\d+(?:\.\d+)?)/.exec(sizeKey)![1]) : 16);
-  style.fontSize = sizePx + 'px';
+  // RAW 里精确尺寸在 widthValue/heightValue（{type:'pixels',value:N}），
+  // 编辑器直出/DSL 则是 "10px 10px" 像素串。两种都认。
+  const widthPx = iconPixelSize(p.widthValue);
+  const heightPx = iconPixelSize(p.heightValue);
+  const pixelStringPx = /^\d/.test(sizeKey)
+    ? Number(/^(\d+(?:\.\d+)?)/.exec(sizeKey)![1])
+    : undefined;
+  const enumPx = ICON_SIZE_MAP[sizeKey];
+  let boxW: number;
+  let boxH: number;
+  if (widthPx != null || heightPx != null) {
+    // 只给单边时另一边回退 size 枚举/16（真机行为），字号取两边较小值
+    const fallback = enumPx ?? 16;
+    boxW = widthPx ?? fallback;
+    boxH = heightPx ?? fallback;
+  } else if (pixelStringPx != null) {
+    boxW = boxH = pixelStringPx;
+  } else if (defaultSize != null) {
+    boxW = boxH = defaultSize;
+  } else {
+    boxW = boxH = enumPx ?? 16;
+  }
+  style.fontSize = Math.min(boxW, boxH) + 'px';
+  style.width = boxW + 'px';
+  style.height = boxH + 'px';
   if (!token.endsWith('_colorful')) {
     // 命名色：ICON_COLOR_MAP（含 indigo/wathet 等）→ paletteColor（indigo-500）→ #/rgb 直值
     const c = ICON_COLOR_MAP[colorRaw]
@@ -2542,9 +2639,59 @@ function alignToFlex(align: string): string {
   return ({ left: 'flex-start', center: 'center', right: 'flex-end' } as Record<string, string>)[align] || 'flex-start';
 }
 
+/** 从任意文本节点/字符串里抽纯文字（只用于 table options 的标签文案） */
+function optionText(value: unknown): string {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (Array.isArray(value)) return value.map(optionText).join('');
+  if (!isRecord(value)) return '';
+  // 驼峰/扁平 DSL：{ tag:'plain_text', content } / { content }
+  if (typeof value.content === 'string' || typeof value.content === 'number') {
+    return String(value.content);
+  }
+  // RAW 文本叶子：{ tag, property:{ content } }
+  const prop = isRecord(value.property) ? value.property : undefined;
+  if (prop) {
+    if (typeof prop.content === 'string' || typeof prop.content === 'number') {
+      return String(prop.content);
+    }
+    if (prop.text != null) return optionText(prop.text);
+    if (Array.isArray(prop.elements)) return optionText(prop.elements);
+  }
+  if (value.text != null) return optionText(value.text);
+  return '';
+}
+
+/**
+ * options 单元格里的单项 → { text, color }。
+ * 真机 table 把每项包成 PlainText({content: e.text}) 后交给 TextTag，所以正常形态是
+ * {text:'S2',color:'blue'}；但历史的编辑器直出/模型生成卡片会把 text 写成文本节点、
+ * 或整项写成 text_tag 元素（{tag:'text_tag',property:{text,color}}），之前直接
+ * String(opt.text) 会得到空串或 "[object Object]"，标签内容就丢了。
+ */
+function normalizeTableOption(opt: unknown): { text: string; color?: string } {
+  if (typeof opt === 'string' || typeof opt === 'number' || typeof opt === 'boolean') {
+    return { text: String(opt) };
+  }
+  if (!isRecord(opt)) return { text: '' };
+  const prop = isRecord(opt.property) ? opt.property : undefined;
+  const color = typeof opt.color === 'string' ? opt.color
+    : typeof opt.tagStyle === 'string' ? opt.tagStyle
+      : typeof prop?.color === 'string' ? prop.color
+        : undefined;
+  const candidates = [opt.text, opt.content, opt.label, opt.name, prop?.text, prop?.content];
+  for (const c of candidates) {
+    const text = optionText(c);
+    if (text !== '') return { text, color };
+  }
+  return { text: '', color };
+}
+
 /**
  * 单元格内容：按列 data_type 渲染。
- * - options：值为 [{text,color}]，每项渲染成彩色 text_tag（复用 text_tag 组件的色板）。
+ * - options：值形如 [{text,color}]（也兼容官方文档里的单个字符串 / 单个对象），
+ *   每项渲染成表格专用的彩色标签。
  * - persons：值为 open_id 字符串数组（或 {id}），每人一颗人员胶囊（无人员表时走 PERSON_FALLBACK_*）。
  * - number：按 format.precision 定小数位。
  * - markdown / lark_md：字符串走 parseMarkdown；RAW 已是 markdown 元素树则直接渲。
@@ -2553,19 +2700,31 @@ function alignToFlex(align: string): string {
 function renderCell(value: unknown, col: TableColumn, ctx: RenderContext): ReturnType<typeof h> | string {
   const type = col.data_type || 'text';
 
-  // options：值可能是数组，也可能是单个 {text,color}（归一成数组统一处理）。
-  if (type === 'options' && value != null && (Array.isArray(value) || typeof value === 'object')) {
-    const opts = (Array.isArray(value) ? value : [value]) as Array<{ text?: string; color?: string }>;
-    const chips = opts.map((opt) => {
-      const rawColor = (opt.color || 'neutral') as string;
-      // 与 text_tag 同色板：非法色（如 grey）回退 blue
-      const colorName = TAG_COLOR[rawColor] ? rawColor : 'blue';
-      const c = TAG_COLOR[colorName];
-      return h('span', {
-        className: `${CLS}-text-tag ${CLS}-text-tag--${colorName}`,
-        style: textTagStyle(c.bg, c.text),
-      }, String(opt.text ?? ''));
-    });
+  // options：官方文档允许三种写法——
+  //   "name": "option"                          单个默认样式标签
+  //   "name": { "text": "S2", "color": "blue" } 单个自定义标签
+  //   "name": [{ "text": "S2", "color": "blue" }] 多个标签
+  // 真机 RAW 还会把整个值包成 { data: … }（unwrapCellValue 已在上游剥掉）。
+  // text 在编辑器直出/部分 RAW 里可能是 plain_text 节点而不是字符串——之前直接
+  // String(opt.text) 会得到空串/[object Object]，标签就只剩一个空壳；颜色也错用了
+  // 正文 text_tag 的半透明色板（表格应是 X100 实心底 + text-title 深色字）。
+  if (type === 'options' && value != null) {
+    const opts = Array.isArray(value) ? value : [value];
+    const chips = opts
+      .map((opt) => normalizeTableOption(opt))
+      .filter((opt) => opt.text !== '')
+      .map((opt) => {
+        // 真机 table 标签查 `<color>_table`；只登记了 11 色，其余（含 grey/indigo/
+        // violet）与缺省一样回退成普通蓝色 text_tag。
+        const colorName = opt.color ? String(opt.color) : 'blue';
+        const tableColor = TABLE_TAG_COLOR[colorName];
+        const c = tableColor ?? TAG_COLOR.blue;
+        return h('span', {
+          className: `${CLS}-text-tag ${CLS}-text-tag--table ${CLS}-text-tag--${tableColor ? colorName : 'blue'}`,
+          style: tableColor ? tableTagStyle(c.bg, c.text) : textTagStyle(c.bg, c.text),
+        }, opt.text);
+      });
+    if (!chips.length) return '';
     return h('span', { className: `${CLS}-table__tags` }, chips);
   }
 
