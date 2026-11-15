@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.23
+
+配色对齐客户端 light token 表（feishu-web-dump 对账），修掉「整体比真机偏蓝」的几处来源：
+
+- 面板底色 `--bg-float-overlay` 回实色 `#f5f6f7`（客户端 token `rgb(245,246,247)`，与 `grey-50` 同值）。0.2.22 按 JPEG 真机截图量到 (246,246,246) 改成的中性 4% 叠色是误判：JPEG 色度子采样会把 `#f5f6f7` 压成中性 246；无损真机 PNG 实测仍是 (245,246,247)
+- 分割线 / 表格行线改走 `--line-divider-default`（`rgba(31,35,41,.15)`，叠白 `(222,222,223)`）：`hr`、`collapse_divider`、引用块竖线、表格 `th/td` 底边不再写死 `#dee0e3`（蓝通道多 4 阶）；表格列线改用 `--bg-filler`（`#eff0f1`）
+- 表格表头：`header_style.background_style=grey` 由 `#f5f6f7` 改为 `#f2f3f5`（真机 token `udtoken-table-bg-head` = N100）；支持 `header_style.text_color` / `text_size` / `lines`（`text_color=grey` → `#646a73`，此前一律写死 `#1f2329` 深蓝黑）
+- 行内代码 / 代码块的底色与边框按真机 token；暗色主题 `--bg-float-overlay` `#373737`、`--line-divider-default` `rgba(207,207,207,.15)`
+- 折叠面板默认内边距写进 schema 字段说明（标题区 `--fat` 4px 8px、否则 0；内容区 `padding-top:8px`、`--fat` 8px）
+- Bundles schema 0.3.2、adapter 0.4.2、renderer 0.5.7、components 0.4.0
+
 ## 0.2.22
 
 预览样式对齐真机（feishu-web-dump 对账），四处肉眼可见的差异：
