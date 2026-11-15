@@ -1318,6 +1318,9 @@
 .universal-card-table__th:last-child,
 .universal-card-table__td:last-child { border-right: none; }
 .universal-card-table__tbody tr:last-child .universal-card-table__td { border-bottom: none; }
+/* 翻页时可见的最后一行不是 DOM 的 last-child（后面还有 hidden 行），
+   它的底边会和 .__pager 的 border-top 叠成 2px 粗线 —— 每页最后一行单独去边。 */
+.universal-card-table__row--page-last .universal-card-table__td { border-bottom: none; }
 /* 默认表头：text-title（N900）。header_style.text_color 由内联 style 覆盖。
    真机表头单元格是 PlainText：padding 6px 8px（row-title），默认 1 行、超出省略号。
    这里不能写死 white-space:nowrap——header_style.lines>1 时要能换行做多行截断。 */

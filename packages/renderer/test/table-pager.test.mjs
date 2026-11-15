@@ -23,7 +23,7 @@ const mkTable = (rowCount, extra = {}) => ({
   }] },
 });
 
-const rowTags = (html) => html.match(/<tr class="universal-card-table__row"[^>]*>/g) || [];
+const rowTags = (html) => html.match(/<tr class="universal-card-table__row[^"]*"[^>]*>/g) || [];
 
 test('table: 未写 page_size 按真机缺省 5 行/页', () => {
   const html = renderDslToString(mkTable(6));

@@ -2693,10 +2693,12 @@ registerComponent('code_span', (el) => {
     });
 
     // tbody：全部行都输出，非当前页带 hidden（静态渲染等价于只显示第 1 页）。
+    // 每页最后一行加 --page-last：去掉该行底边，避免与翻页器 border-top 叠成 2px。
     const bodyRows = rows.map((row, rowIndex) => {
       const page = Math.floor(rowIndex / pageSize);
+      const pageLast = rowIndex === rows.length - 1 || (rowIndex + 1) % pageSize === 0;
       return h('tr', {
-        className: `${CLS}-table__row`,
+        className: `${CLS}-table__row${pageLast ? ` ${CLS}-table__row--page-last` : ''}`,
         [TABLE_PAGE_ATTR]: String(page),
         ...(page > 0 ? { hidden: '' } : {}),
       },

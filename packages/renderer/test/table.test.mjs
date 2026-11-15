@@ -188,3 +188,16 @@ test('table pager: 按钮无边框/底色，只有 hover 背景；箭头旋转 9
   assert.match(html, /ud-icon_left_outlined[^>]*transform:rotate\(90deg\)/);
   assert.match(html, /ud-icon_right_outlined[^>]*transform:rotate\(90deg\)/);
 });
+
+test('table pager: 每页最后一行去掉底边，分割线不会叠成 2px', () => {
+  const html = renderDslToString(table(
+    [{ name: 'x', display_name: 'X' }],
+    Array.from({ length: 7 }, (_, i) => ({ x: String(i) })),
+  ));
+  const rows = html.match(/<tr class="universal-card-table__row[^"]*"[^>]*>/g) || [];
+  // pageSize=5：第 5 行（索引 4）与第 7 行（数据集最后一行）是页尾
+  assert.equal(rows.filter((r) => r.includes('--page-last')).length, 2);
+  assert.match(rows[4], /page-last/);
+  assert.match(rows[6], /page-last/);
+  assert.match(CSS, /\.universal-card-table__row--page-last \.universal-card-table__td \{ border-bottom: none; \}/);
+});

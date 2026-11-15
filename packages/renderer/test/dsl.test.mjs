@@ -880,7 +880,7 @@ test('table: page_size 分页（首页可见 + 其余行 hidden 留在 DOM）', 
     rows,
   }] } });
   // 10 行都在 DOM（供运行期翻页），其中 7 行 hidden；翻页器给 1/4
-  const tags = html.match(/<tr class="universal-card-table__row"[^>]*>/g) || [];
+  const tags = html.match(/<tr class="universal-card-table__row[^"]*"[^>]*>/g) || [];
   assert.equal(tags.length, 10);
   assert.equal(tags.filter((t) => t.includes('hidden')).length, 7);
   assert.match(html, /universal-card-table__pager-total">1\/4</);
@@ -895,7 +895,7 @@ test('table: page_size 越界按官方 [1,10] 夹紧', () => {
   }] } });
   // 0 / 负数 → 1（仍有 4 页，不再“视为不限制”）
   assert.match(mk(0), /pager-total">1\/4</);
-  assert.equal((mk(0).match(/<tr class="universal-card-table__row"[^>]*hidden/g) || []).length, 3);
+  assert.equal((mk(0).match(/<tr class="universal-card-table__row[^"]*"[^>]*hidden/g) || []).length, 3);
   assert.match(mk(-2), /pager-total">1\/4</);
   // 20 → 10
   const many = Array.from({ length: 12 }, (_, i) => ({ rank: String(i + 1) }));
