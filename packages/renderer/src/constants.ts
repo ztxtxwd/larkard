@@ -427,14 +427,44 @@ export const HEADING_LEVELS: Record<number, {
 };
 
 /**
- * 表格（table）行高枚举 -> px（逆向自网页版 --universal-card-table-row-height）。
- * 缺省/未知按 middle 处理。
+ * 表格（table）行高枚举 -> px。取自客户端 fallbackStyle.table.row_height_map
+ * （feishu-web-dump/debugger/1dac9008…js：`row_height_map:{low:32,middle:54,high:88}`）。
+ * 缺省/未知按 low 处理——客户端组件默认 rowHeightValue = {builtin_table_row_height, low}。
+ * 注意：低/高两档之前写成 40/68（按「行高 = 文本高 + 内边距」猜的），与真机不符。
  */
 export const TABLE_ROW_HEIGHT: Record<string, number> = {
-  low: 40,
+  low: 32,
   middle: 54,
-  high: 68,
+  high: 88,
 };
+
+/**
+ * 表格行高枚举 -> 单元格文本最大行数。客户端 `Wi={low:1,middle:2,high:3}`（al()）：
+ * 单元格文本不会自动换行撑高行，而是按行高裁到 N 行、超出用省略号收尾。
+ */
+export const TABLE_ROW_HEIGHT_LINES: Record<string, number> = {
+  low: 1,
+  middle: 2,
+  high: 3,
+};
+
+/** 自动行高（row_height=auto / builtin_table_row_height_extension）默认最大高度：fallbackStyle.table.max_row_height */
+export const TABLE_ROW_MAX_HEIGHT = 124;
+
+/** 自适应列（未写 width）的最小列宽：客户端 columnDefaultWidth 下限 128px，空间不够时表格横向滚动 */
+export const TABLE_COLUMN_MIN_WIDTH = 128;
+
+/**
+ * 自定义像素行高 -> 文本行数。客户端 al() 的阈值（不是等分）：
+ * `<54 → 1 行，<88 → 2 行，<110 → 3 行，<132 → 4 行，其余 5 行`。
+ */
+export function tableLinesForRowHeightPx(px: number): number {
+  if (px < 54) return 1;
+  if (px < 88) return 2;
+  if (px < 110) return 3;
+  if (px < 132) return 4;
+  return 5;
+}
 
 /**
  * 表头背景（header_style.background_style）-> CSS 底色。

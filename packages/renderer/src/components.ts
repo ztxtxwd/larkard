@@ -13,8 +13,9 @@ import {
   PERSON_FALLBACK_AVATAR, PERSON_FALLBACK_NAME, PERSON_FOLLOW_FONT,
   PERSON_LIST_COMMA, PERSON_LIST_SIZE, PERSON_SINGLE_SIZE,
   PERSON_UNKNOWN_AVATAR, PERSON_UNKNOWN_NAME,
-  TABLE_HEAD_BG, TABLE_ROW_HEIGHT, TABLE_TAG_COLOR, TAG_COLOR,
-  TEXT_SIZE_MAP, lineHeightForFontSize, paletteColor, textLineHeight,
+  TABLE_COLUMN_MIN_WIDTH, TABLE_HEAD_BG, TABLE_ROW_HEIGHT, TABLE_ROW_HEIGHT_LINES,
+  TABLE_ROW_MAX_HEIGHT, TABLE_TAG_COLOR, TAG_COLOR,
+  TEXT_SIZE_MAP, lineHeightForFontSize, paletteColor, tableLinesForRowHeightPx, textLineHeight,
 } from './constants';
 import { CHART_SPEC_ATTR } from './chart-hydrate';
 import { HEADER_BG_LIGHT } from './assets';
@@ -2604,7 +2605,12 @@ registerComponent('code_span', (el) => {
   // 单元格按列 data_type 渲染：text/number（format.precision 定小数位）走纯文本；
   // options（值为 [{text,color}]）渲染成彩色 text_tag 标签；
   // markdown / lark_md（字符串或已解析的 markdown 元素树）走 markdown 渲染。
-  // row_height 控行高（含省略）。page_size：预览只「显示前 N 行」，不做真实分页控件。
+  // 关键对齐点（逆向自网页版客户端 Ol()/Rl()/al()）：
+  //   1) 行高决定单元格文本最大行数（low 1 / middle 2 / high 3，像素行高按阈值），
+  //      文本不换行撑高行，超出用省略号截断；row_height=auto 则不截断、内容可滚动。
+  //   2) 列宽固定（table-layout:fixed）+ 未写宽度的列最小 128px，空间不够横向滚动。
+  //   3) td/th 自身不加内边距，内边距在内容层（表体 0 8px / 表头 6px 8px）。
+  // page_size：预览只「显示前 N 行」，不做真实分页控件。
   registerComponent('table', (el, ctx) => {
     const p = el.property || {};
     // 列定义：DSL 用 snake_case（data_type/display_name/horizontal_align/width），
@@ -2612,13 +2618,8 @@ registerComponent('code_span', (el) => {
     const columns = (Array.isArray(p.columns) ? p.columns : []).map(normalizeColumn);
     const rows = (Array.isArray(p.rows) ? p.rows : []) as Array<Record<string, unknown>>;
     const hs = (p.header_style || p.headerStyle || {}) as TableHeaderStyle;
-    // 行高：DSL row_height 字符串枚举；RAW rowHeightValue:{value:'middle'}。
-    const rhKey = String(
-      p.row_height ?? p.rowHeight
-      ?? (p.rowHeightValue as { value?: string } | undefined)?.value
-      ?? 'middle'
-    );
-    const rowHeight = TABLE_ROW_HEIGHT[rhKey] ?? TABLE_ROW_HEIGHT.middle;
+    // 行高 / 单元格文本行数（缺省 low → 32px / 1 行，与真机默认一致）。
+    const metrics = resolveTableRowMetrics(p);
     // page_size 只作正整数「显示前 N 行」；0/负数/非数视为不限制（避免 slice(0,0) 清空全表）。
     const pageSizeRaw = typeof p.page_size === 'number' ? p.page_size : (typeof p.pageSize === 'number' ? p.pageSize : undefined);
     const pageSize = typeof pageSizeRaw === 'number' && pageSizeRaw > 0 ? pageSizeRaw : undefined;
@@ -2642,15 +2643,28 @@ registerComponent('code_span', (el) => {
     const headColor = headColorRaw && headColorRaw !== 'default'
       ? (resolveColor(headColorRaw) || NAMED_TEXT_COLOR[headColorRaw as never])
       : undefined;
+    // 表头最大行数：缺省 1 行（真机 headerStyle.linesValue 缺省 int_number 1），超出省略号。
+    const headLines = resolveHeaderLines(hs);
     const headTextStyle: Record<string, string> = { fontSize: `${headFontSize}px` };
     if (headColor) headTextStyle.color = headColor;
-    Object.assign(headTextStyle, lineClampStyle(hs.lines));
+    if (headLines != null && headLines > 1) Object.assign(headTextStyle, lineClampStyle(headLines));
 
-    // colgroup：把列宽落到 <col>。"auto"/空 不设宽（自适应），"120px"/数字 定宽。
-    const cols = columns.map((c) => {
-      const w = colWidth(c.width);
-      return h('col', w ? { style: { width: w, minWidth: w } } : {});
-    });
+    // 列宽：显式 px / 百分比落到 <col>，未写宽度的列由 table-layout:fixed 均分。
+    // 真机给自适应列的下限是 128px：空间不够时表格横向撑开 + 滚动，而不是把列压窄。
+    const widthSpecs = columns.map((c) => parseColumnWidth(c.width));
+    const cols = widthSpecs.map((w) => (w.css ? h('col', { style: { width: w.css } }) : h('col', {})));
+    const autoCols = widthSpecs.filter((w) => w.kind === 'auto').length;
+    const fixedPx = widthSpecs.reduce((sum, w) => sum + (w.px || 0), 0);
+    const pctSum = widthSpecs.reduce((sum, w) => sum + (w.pct || 0), 0);
+    const minTableWidth = autoCols > 0 ? Math.round(fixedPx + autoCols * TABLE_COLUMN_MIN_WIDTH) : 0;
+    // 表宽（客户端 Fl()）：只要有自适应列就占满 100%；
+    // 列宽全写成 px/% 时，真机把表宽收紧到「列宽之和 + 每列 1px 边框」，超过容器才退化成 100%。
+    // 宽度落在最外层容器上（真机边框是贴着表格的，不是整卡宽），表格本身保持 100%；
+    // 固定列总宽超过容器时，fixed 布局的 MIN 规则会把表格撑宽 → 横向滚动条。
+    // 之前一律 width:100%，固定列多的表会被拉宽，文本截断位置比真机靠后很多。
+    const tableWidth = autoCols === 0 && columns.length > 0
+      ? `min(100%, calc(${Math.round(fixedPx)}px + ${Math.round(pctSum * 100) / 100}% + ${columns.length}px))`
+      : undefined;
 
     // thead
     const headCells = columns.map((c) => {
@@ -2660,7 +2674,7 @@ registerComponent('code_span', (el) => {
         style: { textAlign: align, backgroundColor: headBg },
       },
         h('span', {
-          className: `${CLS}-table__th-text${headBold ? ` ${CLS}-table__th-text--bold` : ''}`,
+          className: `${CLS}-table__th-text${headBold ? ` ${CLS}-table__th-text--bold` : ''}${headLines === 1 ? ` ${CLS}-table__line-1` : ''}`,
           style: headTextStyle,
         }, String(c.display_name ?? c.name ?? ''))
       );
@@ -2672,22 +2686,30 @@ registerComponent('code_span', (el) => {
         columns.map((c) => {
           // 表体：列 horizontal_align 优先，缺省按 data_type 兜底（number → right）。
           const align = c.horizontal_align ?? defaultColumnAlign(c);
+          const tdStyle: Record<string, string> = { textAlign: align };
+          if (metrics.heightPx != null) tdStyle.height = `${metrics.heightPx}px`;
           return h('td', {
             className: `${CLS}-table__td`,
-            style: { textAlign: align, height: rowHeight + 'px' },
+            style: tdStyle,
           },
             h('div', {
-              className: `${CLS}-table__cell`,
-              style: { justifyContent: alignToFlex(align) },
-            }, renderCell(unwrapCellValue(row[c.name]), c, ctx))
+              className: `${CLS}-table__cell${metrics.auto ? ` ${CLS}-table__cell--auto` : ''}`,
+              style: { justifyContent: alignToFlex(align), maxHeight: `${metrics.maxHeightPx}px` },
+            }, renderCell(unwrapCellValue(row[c.name]), c, ctx, metrics.lines))
           );
         })
       )
     );
 
-    return h('div', { className: `${CLS}-table` },
+    return h('div', {
+      className: `${CLS}-table`,
+      style: tableWidth ? { width: tableWidth } : undefined,
+    },
       h('div', { className: `${CLS}-table__scroll` },
-        h('table', { className: `${CLS}-table__table` },
+        h('table', {
+          className: `${CLS}-table__table`,
+          style: minTableWidth ? { minWidth: `${minTableWidth}px` } : undefined,
+        },
           h('colgroup', {}, cols),
           h('thead', { className: `${CLS}-table__thead` },
             h('tr', {}, headCells)),
@@ -2701,7 +2723,8 @@ registerComponent('code_span', (el) => {
 /**
  * 列定义归一：抹平 DSL（snake_case）与真机 RAW（camelCase）差异，产出统一的 TableColumn。
  * - data_type ← dataType；display_name ← displayName；horizontal_align ← horizontalAlign
- * - width ← widthValue（RAW 用 {type,value}：pixels 取 value 数字，builtin/auto 归为 'auto'）
+ * - width ← widthValue（RAW 用 {type,value}：pixels 取 value 数字，percent 转 "N%"，
+ *   builtin_table_column_width:auto / 未知归为 'auto'）
  */
 function normalizeColumn(raw: unknown): TableColumn {
   const c = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
@@ -2710,8 +2733,13 @@ function normalizeColumn(raw: unknown): TableColumn {
   if (c.width != null) {
     width = c.width as TableColumn['width'];
   } else if (wv && typeof wv === 'object') {
-    // pixels → 数字定宽；其余（builtin_table_column_width:'auto' / 权重）→ 自适应
-    width = wv.type === 'pixels' && typeof wv.value === 'number' ? wv.value : 'auto';
+    // pixels → 数字定宽；percent → "N%"（客户端按百分比算列宽）；
+    // 其余（builtin_table_column_width:'auto' / 权重）→ 自适应
+    width = wv.type === 'pixels' && typeof wv.value === 'number'
+      ? wv.value
+      : wv.type === 'percent' && typeof wv.value === 'number'
+        ? `${wv.value}%`
+        : 'auto';
   }
   return {
     name: String(c.name ?? ''),
@@ -2734,13 +2762,133 @@ function unwrapCellValue(v: unknown): unknown {
   return v;
 }
 
-/** 列宽：数字 → "Npx"；"120px" 原样；"auto"/空 → 空串（自适应，不设宽） */
-function colWidth(w: TableColumn['width']): string {
-  if (w == null) return '';
-  if (typeof w === 'number') return w + 'px';
-  const s = String(w).trim();
-  if (!s || s === 'auto') return '';
-  return s;
+/** 列宽规格：px 列参与 min-width / 表宽累加，percent 交给 CSS，auto 由 table-layout:fixed 均分 */
+interface ColumnWidthSpec {
+  kind: 'auto' | 'px' | 'percent';
+  /** <col> 的 width 值；auto 为空串（不写宽度） */
+  css: string;
+  /** px 列的数值（min-width / 表宽累加用） */
+  px?: number;
+  /** percent 列的百分比数值（表宽累加用） */
+  pct?: number;
+}
+
+/**
+ * 列宽归一：数字 / "120px" / "120" → px；"30%" → percent；
+ * "auto" / 空 / 未知单位 → auto（不写宽，由 fixed 布局均分剩余空间）。
+ * 真机把 pixels 列的宽度写进 <col>，percent 列按表格宽百分比算，auto 列取剩余均分。
+ */
+function parseColumnWidth(w: TableColumn['width']): ColumnWidthSpec {
+  if (typeof w === 'number') {
+    return Number.isFinite(w) && w > 0 ? { kind: 'px', css: `${w}px`, px: w } : { kind: 'auto', css: '' };
+  }
+  const s = String(w ?? '').trim();
+  if (!s || s.toLowerCase() === 'auto') return { kind: 'auto', css: '' };
+  const pct = /^(\d+(?:\.\d+)?)%$/.exec(s);
+  if (pct) return { kind: 'percent', css: `${pct[1]}%`, pct: Number(pct[1]) };
+  const px = /^(\d+(?:\.\d+)?)(?:px)?$/i.exec(s);
+  if (px) return { kind: 'px', css: `${px[1]}px`, px: Number(px[1]) };
+  return { kind: 'auto', css: '' };
+}
+
+/** 表格行高度量（对齐客户端 Vl()/al()：行高同时决定 td 高度与单元格文本行数） */
+interface TableRowMetrics {
+  /** td 的 CSS height；自动行高（row_height=auto）时为 null（不设高度） */
+  heightPx: number | null;
+  /** 单元格内容最大高度（真机 row-item-wrapper 的 max-height） */
+  maxHeightPx: number;
+  /** 单元格文本最大行数；undefined = 不截断 */
+  lines?: number;
+  /** 自动行高：内容保留滚动，不截断 */
+  auto: boolean;
+}
+
+/**
+ * 解析表格行高 → { td 高度, 内容最大高度, 文本行数 }。
+ * - RAW `rowHeightValue:{type:'builtin_table_row_height',value:'low'|'middle'|'high'}` → 32/54/88px，1/2/3 行
+ * - RAW `rowHeightValue:{type:'pixels',value:N}` / DSL `row_height:'48px'` → N px，行数按阈值
+ * - RAW `rowHeightValue:{type:'builtin_table_row_height_extension'}` / DSL `row_height:'auto'`
+ *   → 不设 td 高度、内容最大 124px（row_max_height 可覆盖）、文本不截断
+ * - 缺省 → low（客户端默认 rowHeightValue = {builtin_table_row_height, low}）
+ */
+function resolveTableRowMetrics(p: ElementProperty): TableRowMetrics {
+  const rhv = isRecord(p.rowHeightValue) ? (p.rowHeightValue as { type?: string; value?: number | string }) : undefined;
+  const rawType = String(rhv?.type ?? '').toLowerCase();
+  const rawValue = rhv?.value;
+  const direct = p.row_height ?? p.rowHeight;
+  const directKey = typeof direct === 'string' ? direct.trim().toLowerCase() : '';
+
+  // 自动行高：内容铺开，超过 max-height 滚动（真机 --auto 样式）
+  if (
+    rawType === 'builtin_table_row_height_extension'
+    || String(rawValue ?? '').toLowerCase() === 'auto'
+    || directKey === 'auto'
+  ) {
+    return { heightPx: null, maxHeightPx: resolveTableRowMaxHeight(p) ?? TABLE_ROW_MAX_HEIGHT, auto: true };
+  }
+
+  // 自定义像素行高：RAW {type:'pixels',value:N} / DSL '48px'、'48'、48
+  let px: number | undefined;
+  if (rawType === 'pixels') px = Number(rawValue);
+  else if (typeof direct === 'number') px = direct;
+  else if (directKey) {
+    const m = /^(\d+(?:\.\d+)?)(?:px)?$/.exec(directKey);
+    if (m) px = Number(m[1]);
+  }
+  if (px != null && Number.isFinite(px) && px > 0) {
+    const h = Math.round(px);
+    return { heightPx: h, maxHeightPx: h, lines: tableLinesForRowHeightPx(h), auto: false };
+  }
+
+  // 内建枚举：缺省/未知都落 low（不落 middle——真机默认就是 low，单行 + 省略号）
+  const rawKey = String(rawValue ?? direct ?? '').trim().toLowerCase();
+  const key = TABLE_ROW_HEIGHT[rawKey] != null ? rawKey : 'low';
+  const heightPx = TABLE_ROW_HEIGHT[key];
+  return {
+    heightPx,
+    maxHeightPx: heightPx,
+    lines: TABLE_ROW_HEIGHT_LINES[key] ?? 1,
+    auto: false,
+  };
+}
+
+/** row_max_height：DSL 直接值 / RAW rowMaxHeightValue:{type,value} → px */
+function resolveTableRowMaxHeight(p: ElementProperty): number | undefined {
+  const direct = p.row_max_height ?? p.rowMaxHeight;
+  const valueObj = isRecord(p.rowMaxHeightValue)
+    ? (p.rowMaxHeightValue as { type?: string; value?: number | string })
+    : undefined;
+  const css = resolveDimensionPx(direct, valueObj);
+  if (!css) return undefined;
+  const n = Number.parseFloat(css);
+  return Number.isFinite(n) && n > 0 ? Math.round(n) : undefined;
+}
+
+/**
+ * 表头最大行数。真机 HeaderStyle.linesValue：缺省 int_number 1；
+ * `full_displayed`（builtin_table_header_lines）表示不限行数 → undefined。
+ */
+function resolveHeaderLines(hs: TableHeaderStyle): number | undefined {
+  const raw = (hs as Record<string, unknown>).lines ?? (hs as Record<string, unknown>).linesValue;
+  const v = isRecord(raw) ? (raw as { value?: unknown }).value : raw;
+  if (v == null) return 1;
+  const n = Number(v);
+  if (Number.isFinite(n) && n > 0) return Math.floor(n);
+  return undefined;
+}
+
+/**
+ * 单元格文本截断（真机 PlainText 的 `universal-card-text--line-1` / `--line-N`）：
+ * lines=1 → 单行 nowrap + 省略号；lines>1 → -webkit-line-clamp；undefined（自动行高）→ 不截断。
+ * 行为要点：文本不会换行把行撑高，超出部分一律「…」收尾。
+ */
+function clampTableCell(content: string | VNode, lines?: number): string | VNode {
+  if (content === '' || lines == null) return content;
+  const n = Math.max(1, Math.floor(lines));
+  return h('div', {
+    className: n === 1 ? `${CLS}-table__line-1` : `${CLS}-table__lines`,
+    style: n === 1 ? undefined : { WebkitLineClamp: String(n) },
+  }, content);
 }
 
 /** 列的默认对齐（真机：number 列靠右，其余靠左）——表头与表体的兜底都用它 */
@@ -2810,8 +2958,11 @@ function normalizeTableOption(opt: unknown): { text: string; color?: string } {
  * - number：按 format.precision 定小数位。
  * - markdown / lark_md：字符串走 parseMarkdown；RAW 已是 markdown 元素树则直接渲。
  * - 其余（text/…）：转成字符串纯文本。
+ *
+ * lines 是行高换算出的单元格文本最大行数（见 resolveTableRowMetrics）：
+ * 真机只把 1/N 行写进文本组件做截断，不靠外层裁切。自动行高（undefined）不截断。
  */
-function renderCell(value: unknown, col: TableColumn, ctx: RenderContext): ReturnType<typeof h> | string {
+function renderCell(value: unknown, col: TableColumn, ctx: RenderContext, lines?: number): ReturnType<typeof h> | string {
   const type = col.data_type || 'text';
 
   // options：官方文档允许三种写法——
@@ -2839,7 +2990,7 @@ function renderCell(value: unknown, col: TableColumn, ctx: RenderContext): Retur
         }, opt.text);
       });
     if (!chips.length) return '';
-    return h('span', { className: `${CLS}-table__tags` }, chips);
+    return clampTableCell(h('span', { className: `${CLS}-table__tags` }, chips), lines);
   }
 
   // persons：open_id[] 或 [{id}] → 人员胶囊列表（与 person_list 同款降级）
@@ -2855,21 +3006,25 @@ function renderCell(value: unknown, col: TableColumn, ctx: RenderContext): Retur
     const chips = ids.map((id) => renderPersonChip(id, {
       showAvatar: true, showName: true, size: 'extra_small',
     }, ctx));
-    return h('div', { className: `${CLS}-person-list ${CLS}-person-list--table` }, chips);
+    return clampTableCell(h('div', { className: `${CLS}-person-list ${CLS}-person-list--table` }, chips), lines);
   }
 
   if (type === 'number' && value != null && value !== '' && Number.isFinite(Number(value))) {
     const precision = col.format?.precision;
     const num = Number(value);
     // toFixed 仅接受 0..100，DSL 传入越界会抛 RangeError 拖垮整卡渲染——夹紧。
-    return typeof precision === 'number'
+    const text = typeof precision === 'number'
       ? num.toFixed(Math.max(0, Math.min(100, Math.trunc(precision))))
       : String(num);
+    return clampTableCell(text, lines);
   }
 
   // markdown / lark_md：飞书表格里两者等价（DSL 常用 lark_md，真机 RAW 也是 dataType:lark_md）。
   // - RAW：单元格已是 { tag:'markdown', property:{elements} }（unwrap 后）
   // - DSL：仍是 "<font>…</font>" 字符串 → 现场 parseMarkdown 再渲
+  // 截断：真机只对 lark_md 把行高换算的 lines 写回 markdown.property.lines（由 children_wrapper
+  // 做 -webkit-line-clamp）；dataType=markdown 不写 lines（避免把图表/图片类单元格截断），
+  // 这里保持一致，不额外包 clamp。
   if ((type === 'markdown' || type === 'lark_md') && value != null) {
     let mdEl: CardElement | null = null;
     if (typeof value === 'object' && (value as CardElement).tag) {
@@ -2878,12 +3033,16 @@ function renderCell(value: unknown, col: TableColumn, ctx: RenderContext): Retur
       mdEl = { tag: 'markdown', property: { elements: parseMarkdown(value) } };
     }
     if (mdEl) {
-      const vnode = ctx.kernel.renderElement(mdEl, ctx);
+      // 不改原卡片对象：拷贝一层 property 再写 lines
+      const withLines: CardElement = type === 'lark_md' && lines != null
+        ? { ...mdEl, property: { ...(mdEl.property || {}), lines } }
+        : mdEl;
+      const vnode = ctx.kernel.renderElement(withLines, ctx);
       if (vnode) return vnode;
     }
   }
 
   // 兜底：对象（未识别的复杂单元格）不走 String() → "[object Object]"
   if (value != null && typeof value === 'object') return '';
-  return value == null ? '' : String(value);
+  return clampTableCell(value == null ? '' : String(value), lines);
 }

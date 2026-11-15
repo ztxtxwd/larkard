@@ -906,6 +906,138 @@ test('table: number 精度越界不炸（夹紧 0..100）', () => {
   assert.match(mk(2), /3\.14/);         // 正常精度仍生效
 });
 
+/* ---- table 文本截断：真机按行高裁行 + 省略号，列宽固定（不再靠换行/撑列） ---- */
+
+const mkTable = (extra = {}, cols, rows) => renderDslToString({
+  schema: '2.0',
+  body: { elements: [{
+    tag: 'table',
+    columns: cols || [{ name: 'a', display_name: 'A', data_type: 'text' }],
+    rows: rows || [{ a: '一段很长很长很长很长很长很长的文本' }],
+    ...extra,
+  }] },
+});
+
+test('table: 缺省行高 = low（td 32px / 内容 max-height 32px / 单行省略）', () => {
+  // 客户端组件默认 rowHeightValue = {builtin_table_row_height, low}，
+  // 行高换算 1 行 → 单元格文本 nowrap + ellipsis（之前缺省是 middle、且完全不截断）。
+  const html = mkTable();
+  assert.match(html, /<td class="universal-card-table__td" style="text-align:left;height:32px"/);
+  assert.match(html, /max-height:32px/);
+  assert.match(html, /class="universal-card-table__line-1"/);
+});
+
+test('table: row_height=middle/high → 2/3 行 -webkit-line-clamp', () => {
+  const middle = mkTable({ row_height: 'middle' });
+  assert.match(middle, /height:54px/);
+  assert.match(middle, /class="universal-card-table__lines" style="-webkit-line-clamp:2"/);
+  const high = mkTable({ row_height: 'high' });
+  assert.match(high, /height:88px/);
+  assert.match(high, /class="universal-card-table__lines" style="-webkit-line-clamp:3"/);
+});
+
+test('table: 自定义像素行高按客户端阈值换算行数（<54:1 <88:2 <110:3 <132:4 else 5）', () => {
+  const clampOf = (rowHeight) => {
+    const html = mkTable({ row_height: rowHeight });
+    const m = html.match(/-webkit-line-clamp:(\d+)/);
+    return m ? Number(m[1]) : 1; // 1 行走 nowrap 类，无内联 line-clamp
+  };
+  assert.equal(clampOf('48px'), 1);
+  assert.equal(clampOf('54px'), 2);
+  assert.equal(clampOf('87px'), 2);
+  assert.equal(clampOf('88px'), 3);
+  assert.equal(clampOf('120px'), 4);
+  assert.equal(clampOf('140px'), 5);
+});
+
+test('table: row_height=auto 不截断，内容最大 124px 且可滚动（row_max_height 可覆盖）', () => {
+  const auto = mkTable({ row_height: 'auto' });
+  assert.match(auto, /universal-card-table__cell universal-card-table__cell--auto/);
+  assert.match(auto, /max-height:124px/);
+  // 表体不再包截断层（表头仍有自己的默认单行类，所以只看 max-height 之后的内容）
+  const bodyCell = auto.match(/max-height:124px">([\s\S]*?)<\/td>/)?.[1] || '';
+  assert.doesNotMatch(bodyCell, /universal-card-table__(line-1|lines)/);
+  assert.doesNotMatch(auto, /height:32px/);
+  assert.match(mkTable({ row_height: 'auto', row_max_height: '200px' }), /max-height:200px/);
+});
+
+test('table: 表头默认 1 行省略；header_style.lines 指定多行时多行截断', () => {
+  const dflt = mkTable({}, [{ name: 'a', display_name: '很长的表头标题', data_type: 'text' }]);
+  assert.match(dflt, /class="universal-card-table__th-text universal-card-table__th-text--bold universal-card-table__line-1"/);
+  const two = mkTable({ header_style: { lines: 2 } });
+  assert.match(two, /universal-card-table__th-text[^"]*" style="[^"]*-webkit-line-clamp:2/);
+});
+
+test('table: 列宽固定 + 自适应列最小 128px（不够时横向滚动）', () => {
+  // 无列宽（2 列 auto）→ table min-width = 2*128
+  const twoAuto = mkTable({}, [
+    { name: 'a', display_name: 'A', data_type: 'text' },
+    { name: 'b', display_name: 'B', data_type: 'text' },
+  ], [{ a: 'x', b: 'y' }]);
+  assert.match(twoAuto, /<table class="universal-card-table__table" style="min-width:256px"/);
+  // 1 列 120px + 1 列 auto → 120 + 128
+  const mixed = mkTable({}, [
+    { name: 'a', display_name: 'A', data_type: 'text', width: '120px' },
+    { name: 'b', display_name: 'B', data_type: 'text' },
+  ], [{ a: 'x', b: 'y' }]);
+  assert.match(mixed, /min-width:248px/);
+  assert.match(mixed, /<col style="width:120px"><\/col><col><\/col>/);
+});
+
+test('table: 列宽全是固定值时表宽收紧到「列宽之和 + 每列 1px」（不再拉满整卡）', () => {
+  const html = mkTable({}, [
+    { name: 'a', display_name: 'A', data_type: 'text', width: '120px' },
+    { name: 'b', display_name: 'B', data_type: 'text', width: '80px' },
+  ], [{ a: 'x', b: 'y' }]);
+  assert.match(html, /class="universal-card-table" style="width:min\(100%, calc\(200px \+ 0% \+ 2px\)\)"/);
+  // 有百分比列时百分比落进 calc
+  const pct = mkTable({}, [
+    { name: 'a', display_name: 'A', data_type: 'text', width: '120px' },
+    { name: 'b', display_name: 'B', data_type: 'text', width: '30%' },
+  ], [{ a: 'x', b: 'y' }]);
+  assert.match(pct, /calc\(120px \+ 30% \+ 2px\)/);
+});
+
+test('table: lark_md 单元格把行数写进 markdown.lines（markdown 不强制截断，不改原卡片）', () => {
+  const mk = (dataType) => ({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'table',
+      columns: [{ name: 'b', display_name: 'B', data_type: dataType }],
+      rows: [{ b: '**加粗** 很长的文本' }],
+    }] },
+  });
+  const lark = mk('lark_md');
+  const larkSnapshot = JSON.stringify(lark);
+  const html = renderDslToString(lark);
+  // markdown 的 children_wrapper 承担截断（真机：lark_md → property.lines = 行高行数）
+  assert.match(html, /universal-card-markdown__children" style="display:-webkit-box;-webkit-line-clamp:1/);
+  assert.equal(JSON.stringify(lark), larkSnapshot, '渲染不应回写 cells/markdown 属性');
+  // dataType=markdown 客户端不写 lines（图片/图表类单元格不能被裁掉）
+  const md = renderDslToString(mk('markdown'));
+  assert.doesNotMatch(md, /universal-card-markdown__children" style="[^"]*-webkit-line-clamp/);
+});
+
+test('table: RAW rowHeightValue(pixels/extension) 与 rowMaxHeightValue 生效', () => {
+  const px = renderDslToString({ body: { elements: [{
+    tag: 'table',
+    rowHeightValue: { type: 'pixels', value: 60 },
+    columns: [{ name: 'a', dataType: 'text', displayName: 'A' }],
+    rows: [{ a: { data: 'x' } }],
+  }] } });
+  assert.match(px, /height:60px/);
+  assert.match(px, /-webkit-line-clamp:2/);
+  const auto = renderDslToString({ body: { elements: [{
+    tag: 'table',
+    rowHeightValue: { type: 'builtin_table_row_height_extension', value: 'auto' },
+    rowMaxHeightValue: { type: 'pixels', value: 180 },
+    columns: [{ name: 'a', dataType: 'text', displayName: 'A' }],
+    rows: [{ a: { data: 'x' } }],
+  }] } });
+  assert.match(auto, /universal-card-table__cell--auto/);
+  assert.match(auto, /max-height:180px/);
+});
+
 /* ---- checker 勾选器 ---- */
 
 test('checker: 基础渲染（未勾选 + 文本 + overall hover）', () => {

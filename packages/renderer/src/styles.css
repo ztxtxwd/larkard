@@ -1273,26 +1273,34 @@
    （客户端 light = #f2f3f5 = N100），不是 N50 —— 之前写 #f5f6f7 偏浅。 */
 .universal-card-table {
   width: 100%;
+  /* 表格横向滚动靠内层 __scroll，外层不要被内容（列宽总和）顶宽：
+     否则在 flex 父级里会变成 min-content = 列宽总和，把整张卡撑出屏幕。 */
+  min-width: 0;
   box-sizing: border-box;
   border: 1px solid var(--line-border-card, #dee0e3);
   border-radius: 6px;
   overflow: hidden;
 }
 .universal-card-table__scroll { width: 100%; overflow-x: auto; }
+/* 列宽固定（真机每列都有算出来的像素宽，等价于 table-layout:fixed）：
+   文本超长时在单元格内截断，而不是把列撑宽 / 让行变高。
+   自适应列由组件按 128px 下限算出 min-width，空间不够就横向滚动。 */
 .universal-card-table__table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: auto;
+  table-layout: fixed;
   font-size: 14px;
   color: #1f2329;
 }
 /* 行线/列线都走 line-divider-default（中性黑叠色 rgba(31,35,41,.15)）。
    列线是半透明的，会叠在单元格底色上：表头列线叠 #f2f3f5 → (211,211,214)≈#d4d4d7，
    表体列线叠白 → (222,222,223)——与真机取色一致。
-   之前列线写死 --bg-filler(#eff0f1)：实色浅灰，比真机浅两档且偏蓝。 */
+   之前列线写死 --bg-filler(#eff0f1)：实色浅灰，比真机浅两档且偏蓝。
+   padding 同样是 0：真机 td 不设内边距，内边距在内容层（表体 0 8px、表头 6px 8px），
+   这样 td height 才是真机的 32/54/88，而不是被 8px 上下内边距顶高。 */
 .universal-card-table__th,
 .universal-card-table__td {
-  padding: 8px 12px;
+  padding: 0;
   border-bottom: 1px solid var(--line-divider-default, #dee0e3);
   border-right: 1px solid var(--line-divider-default, #dee0e3);
   vertical-align: middle;
@@ -1301,21 +1309,53 @@
 .universal-card-table__th:last-child,
 .universal-card-table__td:last-child { border-right: none; }
 .universal-card-table__tbody tr:last-child .universal-card-table__td { border-bottom: none; }
-/* 默认表头：text-title（N900）。header_style.text_color 由内联 style 覆盖。 */
+/* 默认表头：text-title（N900）。header_style.text_color 由内联 style 覆盖。
+   真机表头单元格是 PlainText：padding 6px 8px（row-title），默认 1 行、超出省略号。
+   这里不能写死 white-space:nowrap——header_style.lines>1 时要能换行做多行截断。 */
 .universal-card-table__th {
+  padding: 6px 8px;
   font-size: 14px;
   line-height: 22px;
-  white-space: nowrap;
   color: #1f2329;
 }
 .universal-card-table__th-text--bold { font-weight: 600; }
+/* 表体单元格：flex 是为了 options/persons 这类行内块内容也能跟随对齐；
+   max-height 由组件按行高内联给出（= 真机 row-item-wrapper 的 max-height）。 */
 .universal-card-table__cell {
   display: flex;
   align-items: center;
   gap: 4px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
   word-break: break-word;
 }
-.universal-card-table__tags { display: inline-flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+/* 自动行高（row_height=auto）：内容最多到 max-height，超出滚动（真机 --auto） */
+.universal-card-table__cell--auto { overflow: auto; padding: 4.8px 8px; }
+/* 单元格/表头文本截断（对齐真机 .universal-card-text--line-1 / --line-N）：
+   - 1 行：nowrap + ellipsis，中英文都不换行，末尾「…」；
+   - N 行：-webkit-line-clamp，第 N 行末尾「…」。
+   之前只有 word-break:break-word，长文本全部换行把行撑高，与真机完全不同。 */
+.universal-card-table__line-1 {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.universal-card-table__lines {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  word-break: break-word;
+}
+.universal-card-table__tags { display: inline; }
+/* 单行行高下人员羹袋不换行（真机 PersonList lines=1），否则换行后会被 max-height 从中间剪开 */
+.universal-card-table__line-1 .universal-card-person-list { flex-wrap: nowrap; }
 
 /* 暗色主题下的表格/图表占位（分割线/描边 token 同步换成 dark 值） */
 .universal-card-root.theme-dark .universal-card-table { border-color: #2e2e30; }

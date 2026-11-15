@@ -239,9 +239,16 @@ export interface ElementProperty {
   /** 表头样式 */
   header_style?: TableHeaderStyle;
   headerStyle?: TableHeaderStyle;
-  /** 行高枚举 low/middle/high */
+  /** 行高枚举 low/middle/high（对应 32/54/88px），或自定义像素值（'48px' / 48） */
   row_height?: string;
   rowHeight?: string;
+  /** 自动行高（row_height=auto）时的最大高度：'124px' / 124 */
+  row_max_height?: string;
+  rowMaxHeight?: string;
+  /** RAW 行高对象：{type:'builtin_table_row_height'|'builtin_table_row_height_extension'|'pixels', value} */
+  rowHeightValue?: { type?: string; value?: number | string };
+  /** RAW 自动行高上限：{type:'pixels', value} */
+  rowMaxHeightValue?: { type?: string; value?: number | string };
   /** 每页行数（预览里仅用于「显示前 N 行」，不做真实分页控件） */
   page_size?: number;
   pageSize?: number;
@@ -275,7 +282,10 @@ export interface TableHeaderStyle {
   background_style?: string;
   text_color?: string;
   bold?: boolean;
-  lines?: number;
+  /** 最大行数。缺省 1；'full_displayed' 表示不限行数 */
+  lines?: number | string;
+  /** RAW 形态：{type:'int_number',value:N} / {type:'builtin_table_header_lines',value:'full_displayed'} */
+  linesValue?: { type?: string; value?: number | string };
 }
 
 /** RAW 的内/外边距：四向 { type:'pixels', value } */
