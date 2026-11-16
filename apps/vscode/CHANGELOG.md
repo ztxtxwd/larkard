@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.31
+
+- 彩色图标（`*_colorful`）不再渲染成单色：`ud-icons` 字体是单色轮廓，预览里 `ai-common_colorful` 等 AI 图标此前继承 header 标题色（看起来是纯蓝）；现在按真机配色走渐变裁切（AI 系列 `#4752E6 → #CF5ECF`，暗色 `#7B83F7 → #B54AB5`）
+- 校验不再误报客户端内置图标：`ai-common_colorful`、`ai-search_colorful` 等 11 个 AI token 与 `approval_colorful` 已收录进图标枚举
+- Bundles schema 0.3.3、adapter 0.4.4、renderer 0.8.4、components 0.4.0
+
 ## 0.2.30
 
 - 图表对齐真机：预览水合时补齐 VChart 主题内边距 `12/12/12/0`（此前落回缺省 `padding: 20`，四边都偏大）；`chart_spec` 显式写了 `padding` 仍以调用方为准
