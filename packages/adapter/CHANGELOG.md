@@ -1,5 +1,11 @@
 # @open-feishu-card/adapter
 
+## 0.4.5
+
+### Patch Changes
+
+- 3f5e630: raw→dsl：不再把内部 `default` 间距投影成公开字段（飞书整卡 11310 拒绝），并修掉列的像素回显会覆盖 `width` 的问题
+
 ## 0.4.4
 
 ### Patch Changes

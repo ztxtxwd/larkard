@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/renderer",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "零框架依赖的飞书卡片渲染引擎：Web / DOM / SSR，输入 RAW 或公开 DSL，输出真实 DOM 或 HTML 字符串",
   "type": "module",
   "main": "./dist/index.cjs",

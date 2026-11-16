@@ -1,5 +1,11 @@
 # @open-feishu-card/language-server
 
+## 0.1.35
+
+### Patch Changes
+
+- @open-feishu-card/compiler@0.1.33
+
 ## 0.1.34
 
 ### Patch Changes
