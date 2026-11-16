@@ -1353,6 +1353,18 @@ test('div: leading icon (property.udIcon || icon) renders once with text', () =>
   assert.equal((html.match(/ud-icon_warning_outlined/g) || []).length, 1);
 });
 
+test('div: leading icon size follows text font size (j) and wrapper font-size', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'div', property: {
+      icon: { tag: 'standard_icon', property: { token: 'warning_outlined' } },
+      text: { tag: 'plain_text', property: { content: '风险提示', textStyle: { size: 'small' } } },
+    } },
+  ] } } } });
+  // small=12 → 图标 j(12)=14；wrapper 的 font-size 也跟正文（高度 1.6em 由 CSS 算）
+  assert.match(html, /div__icon_wrapper\" style=\"font-size:12px\"/);
+  assert.match(html, /ud-icon_warning_outlined\" style=\"font-size:14px/);
+});
+
 test('div: icon-less div still renders normally', () => {
   const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
     { tag: 'div', property: { text: { tag: 'markdown', property: { elements: [
@@ -1449,6 +1461,19 @@ test('person_list: combine 模式每人一组 avatar-name', () => {
   assert.match(html, /刘广宇/);
   assert.match(html, /徐明洋/);
   assert.equal((html.match(/person-list__avatar-name/g) || []).length, 2);
+});
+
+test('person_list: 前缀图标尺寸走 j(姓名字号)，wrapper 跟随头像高度', () => {
+  const html = renderCardToString(personCard([
+    { tag: 'person_list', property: {
+      showAvatar: true, showName: true, size: 'medium',
+      icon: { tag: 'standard_icon', property: { token: 'member_outlined' } },
+      persons: [ { id: 'ou_a' } ],
+    } },
+  ]));
+  // medium 姓名 16px → 图标 j(16)=18px；wrapper height=头像 32px
+  assert.match(html, /person-list__icon\" style=\"font-size:16px;height:32px\"/);
+  assert.match(html, /ud-icon_member_outlined\" style=\"font-size:18px/);
 });
 
 test('person_list: no person resolvable → avatar-name 降级为 赵天雄（忽略纯文本 fallback）', () => {

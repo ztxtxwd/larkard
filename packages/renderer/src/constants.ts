@@ -457,6 +457,20 @@ export const HEADING_LEVELS: Record<number, {
 };
 
 /**
+ * markdown 首元素是 heading 时，前缀图标的默认尺寸（引擎 `Aa(level)`）：
+ * 1→22、2→20、3→16、4/5/6→14。注意这不是 heading 字号本身——
+ * 引擎对 heading 前缀图标单独给了一套尺寸（比字号大一圈）。
+ */
+export const HEADING_ICON_SIZE: Record<number, number> = {
+  1: 22,
+  2: 20,
+  3: 16,
+  4: 14,
+  5: 14,
+  6: 14,
+};
+
+/**
  * 表格（table）行高枚举 -> px。取自客户端 fallbackStyle.table.row_height_map
  * （feishu-web-dump/debugger/1dac9008…js：`row_height_map:{low:32,middle:54,high:88}`）。
  * 缺省/未知按 low 处理——客户端组件默认 rowHeightValue = {builtin_table_row_height, low}。

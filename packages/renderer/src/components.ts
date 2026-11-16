@@ -8,7 +8,7 @@ import type { CardElement, ElementProperty, RenderContext, TableColumn, TableHea
 import {
   BASE_FONT_SIZE, BASE_LINE_HEIGHT,
   CHART_DEFAULT_ASPECT_RATIO, CHART_FIXED_MIN_SIZE, CHART_MIN_HEIGHT, CHART_MIN_WIDTH,
-  CLS, COLORFUL_ICON_GRADIENTS, HEADER_TEMPLATE, HEADING_LEVELS, ICON_COLOR_MAP, ICON_SIZE_MAP,
+  CLS, COLORFUL_ICON_GRADIENTS, HEADER_TEMPLATE, HEADING_ICON_SIZE, HEADING_LEVELS, ICON_COLOR_MAP, ICON_SIZE_MAP,
   NAMED_TEXT_COLOR, ORDER_STYLES, AT_FALLBACK_NAME,
   PERSON_FALLBACK_AVATAR, PERSON_FALLBACK_NAME, PERSON_FOLLOW_FONT,
   PERSON_LIST_COMMA, PERSON_LIST_SIZE, PERSON_SINGLE_SIZE,
@@ -596,8 +596,32 @@ function MarkdownComponent(el: CardElement, ctx: RenderContext) {
   // 用 -webkit-line-clamp 纯 CSS 截断。
   const linesStyle = lineClampStyle(p.lines ?? p.textLines);
   // 前缀图标：官方 markdown.icon 支持 standard_icon（token）与 custom_icon（img_key）。
-  // 此前只渲染 property.elements，icon 被整块丢弃，带图标的分区标题会缺图标。
-  const iconVNode = renderPrefixIcon(p.icon, ctx, fontSize);
+  // 真机尺寸/垂直对齐（引擎 Mn/T）：
+  //   - 普通段落：图标默认 j(字号)（14→16、12→14），wrapper 高 = 行高；
+  //   - 首元素是 heading：图标默认 Aa(level)（22/20/16/14），wrapper 高 = heading 行高、
+  //     margin-top = heading marginTop，这样图标与标题文字对齐而不是贴在段落顶部。
+  //   - 间距：真机 .universal-card-markdown__icon_wrapper 是 margin-right:8px。
+  const firstEl = Array.isArray(p.elements) ? p.elements[0] : undefined;
+  const firstHeadingLevel = isRecord(firstEl) && firstEl.tag === 'heading'
+    ? Number((firstEl.property as Record<string, unknown> | undefined)?.level)
+    : NaN;
+  const headingLv = Number.isFinite(firstHeadingLevel) ? HEADING_LEVELS[firstHeadingLevel] : undefined;
+  const iconWrapperStyle: Record<string, string> = {};
+  let iconSize = iconDefaultSize(fontSize);
+  if (headingLv) {
+    iconSize = HEADING_ICON_SIZE[firstHeadingLevel] ?? iconSize;
+    iconWrapperStyle.height = headingLv.lineHeight + 'px';
+    iconWrapperStyle.marginTop = headingLv.marginTop + 'px';
+  } else if (style.fontSize) {
+    // 显式字号时行高与正文一致（缺省仍走 CSS 的 1.6em）
+    iconWrapperStyle.height = lineHeight + 'px';
+  }
+  const iconVNode = renderPrefixIcon(
+    p.icon,
+    ctx,
+    iconSize,
+    Object.keys(iconWrapperStyle).length ? iconWrapperStyle : undefined,
+  );
   return h('div', { className: `${CLS}-markdown`, style },
     iconVNode,
     h('div', {
@@ -608,14 +632,16 @@ function MarkdownComponent(el: CardElement, ctx: RenderContext) {
 }
 
 /**
- * 文本前缀图标（markdown.icon / 同类字段）。
+ * 文本前缀图标（markdown.icon / div.icon 等）。
  * standard_icon 走图标字体；custom_icon 用 img_key 出 <img>。
- * 尺寸跟随文本字号：未显式给 size 时用 1em，与真机「图标随文字大小」一致。
+ * `defaultSize` 对应真机 icon 组件的 extraProperty.defaultSize（由父组件按字号算好）。
  */
 function renderPrefixIcon(
   raw: unknown,
   ctx: RenderContext,
-  fontSize: number,
+  defaultSize: number,
+  wrapperStyle?: Record<string, string>,
+  wrapperClass = `${CLS}-markdown__icon_wrapper`,
 ): VNode | null {
   if (!isRecord(raw)) return null;
   // 两种形态都要认：
@@ -626,6 +652,11 @@ function renderPrefixIcon(
   const sizeProp = typeof inner.size === 'string'
     ? inner.size
     : (typeof raw.size === 'string' ? raw.size : undefined);
+  const wrapper = (child: VNode) => h(
+    'div',
+    { className: wrapperClass, style: wrapperStyle },
+    child,
+  );
   if (tag === 'custom_icon') {
     const imgKey = typeof inner.img_key === 'string'
       ? inner.img_key
@@ -633,29 +664,42 @@ function renderPrefixIcon(
     if (!imgKey) return null;
     // img_key 走与 img 组件相同的解析（宿主可注入 resolveImage 换成本地资源）
     const src = resolveImageSrc({ img_key: imgKey } as never, ctx) ?? imgKey;
-    const sizePx = sizeProp && /^\d/.test(sizeProp)
-      ? Number(/^(\d+(?:\.\d+)?)/.exec(sizeProp)![1])
-      : fontSize;
-    return h('span', { className: `${CLS}-markdown__icon` },
-      h('img', {
-        src,
-        alt: '',
-        style: { width: sizePx + 'px', height: sizePx + 'px', objectFit: 'contain' },
-      }));
+    const box = iconBoxFromSizeProp(sizeProp, defaultSize);
+    return wrapper(h('img', {
+      src,
+      alt: '',
+      style: {
+        width: box.width + 'px',
+        height: box.height + 'px',
+        fontSize: Math.min(box.width, box.height) + 'px',
+        objectFit: 'contain',
+      },
+    }));
   }
   const token = typeof inner.token === 'string' ? inner.token : '';
   if (!token) return null;
   const iconNode = renderIcon({
     tag: 'standard_icon',
     property: {
+      ...inner,
       token,
       color: typeof inner.color === 'string' ? inner.color : undefined,
-      // 未显式给 size 时跟随文本字号，避免回落到固定 16px 与文字不搭
-      size: sizeProp ?? fontSize + 'px',
+      // 显式像素 size 优先；否则交给 defaultSize（真机 extraProperty.defaultSize）
+      size: sizeProp,
     },
-  } as CardElement, ctx);
+  } as CardElement, ctx, defaultSize);
   if (!iconNode) return null;
-  return h('span', { className: `${CLS}-markdown__icon` }, iconNode);
+  return wrapper(iconNode);
+}
+
+/** `size` 像素串（"10px" / "10px 10px"）→ 宽高；缺省走 defaultSize。 */
+function iconBoxFromSizeProp(sizeProp: string | undefined, defaultSize: number): { width: number; height: number } {
+  const numbers = sizeProp && /^\d/.test(sizeProp)
+    ? Array.from(sizeProp.matchAll(/(\d+(?:\.\d+)?)/g), (m) => Number(m[1]))
+    : [];
+  const width = numbers[0] ?? defaultSize;
+  const height = numbers[1] ?? width;
+  return { width, height };
 }
 registerComponent('markdown', MarkdownComponent);
 registerComponent('markdown_v1', MarkdownComponent);
@@ -705,13 +749,28 @@ registerComponent('div', (el, ctx) => {
   const content = Array.isArray(p.elements) && p.elements.length
     ? renderElements(p.elements, ctx)
     : (p.text ? renderElements([p.text as CardElement], ctx) : []);
-  // 前置图标：udIcon 优先（含 style.color），回退 icon
+  // 前置图标：udIcon 优先（含 style.color），回退 icon。
+  // 真机尺寸（引擎 Gn）：defaultSize = j(text 的字号)，wrapper 的 font-size 跟 text 字号，
+  // 所以小字号文本（text_size: small/notation）的图标是 14px 而不是固定 16px。
   const iconEl = (p.udIcon || p.icon) as CardElement | undefined;
   if (iconEl && iconEl.tag) {
-    const iconVNode = ctx.kernel.renderElement(iconEl, ctx);
+    const textEl = p.text as CardElement | undefined;
+    const textProperty = textEl && isRecord(textEl.property) ? textEl.property : textEl;
+    // 字号既可写在 text.text_size / text.textStyle，也可写在 div 自身的 text_size。
+    const textSizeKey = resolveTextSizeKey(textProperty as never) ?? resolveTextSizeKey(p);
+    const textFontSize = textSizeKey != null ? TEXT_SIZE_MAP[String(textSizeKey)] : undefined;
+    const wrapperStyle: Record<string, string> = {};
+    if (textFontSize != null) wrapperStyle.fontSize = textFontSize + 'px';
+    const iconVNode = renderPrefixIcon(
+      iconEl,
+      ctx,
+      iconDefaultSize(textFontSize ?? BASE_FONT_SIZE),
+      Object.keys(wrapperStyle).length ? wrapperStyle : undefined,
+      `${CLS}-div__icon_wrapper`,
+    );
     if (iconVNode) {
       return h('div', { className: `${CLS}-div ${CLS}-div--with-icon` },
-        h('div', { className: `${CLS}-div__icon_wrapper` }, iconVNode),
+        iconVNode,
         h('div', { className: `${CLS}-div__content` }, content)
       );
     }
@@ -2335,9 +2394,10 @@ function renderIcon(el: CardElement, ctx: RenderContext, defaultSize?: number) {
   // 编辑器直出/DSL 则是 "10px 10px" 像素串。两种都认。
   const widthPx = iconPixelSize(p.widthValue);
   const heightPx = iconPixelSize(p.heightValue);
-  const pixelStringPx = /^\d/.test(sizeKey)
-    ? Number(/^(\d+(?:\.\d+)?)/.exec(sizeKey)![1])
-    : undefined;
+  // DSL 的 size 像素串可能是单值（"20px"）或宽高两值（"10px 12px"）
+  const sizeNumbers = /^\d/.test(sizeKey)
+    ? Array.from(sizeKey.matchAll(/(\d+(?:\.\d+)?)/g), (m) => Number(m[1]))
+    : [];
   const enumPx = ICON_SIZE_MAP[sizeKey];
   let boxW: number;
   let boxH: number;
@@ -2346,8 +2406,9 @@ function renderIcon(el: CardElement, ctx: RenderContext, defaultSize?: number) {
     const fallback = enumPx ?? 16;
     boxW = widthPx ?? fallback;
     boxH = heightPx ?? fallback;
-  } else if (pixelStringPx != null) {
-    boxW = boxH = pixelStringPx;
+  } else if (sizeNumbers.length) {
+    boxW = sizeNumbers[0];
+    boxH = sizeNumbers[1] ?? boxW;
   } else if (defaultSize != null) {
     boxW = boxH = defaultSize;
   } else {
@@ -2463,13 +2524,18 @@ registerComponent('person_list', (el, ctx) => {
   const iconEl = (p.icon || p.udIcon) as CardElement | undefined;
   let iconNode: ReturnType<typeof h> | null = null;
   if (iconEl && typeof iconEl === 'object' && iconEl.tag) {
-    const rendered = renderElement(iconEl, ctx);
-    if (rendered) {
-      const iconStyle: Record<string, string> = { fontSize: fontSize + 'px' };
-      if (showAvatar) iconStyle.height = avatarPx + 'px';
-      if (nameOnly) iconStyle.lineHeight = lineHeight + 'px';
-      iconNode = h('div', { className: `${CLS}-person-list__icon`, style: iconStyle }, rendered);
-    }
+    // 真机（引擎 Si）：defaultSize = j(name_font_size)，wrapper 的 font-size 跟姓名字号、
+    // height 跟头像边长（有头像时）——小尺寸人员列表的图标不是固定 16px。
+    const iconStyle: Record<string, string> = { fontSize: fontSize + 'px' };
+    if (showAvatar) iconStyle.height = avatarPx + 'px';
+    if (nameOnly) iconStyle.lineHeight = lineHeight + 'px';
+    iconNode = renderPrefixIcon(
+      iconEl,
+      ctx,
+      iconDefaultSize(fontSize),
+      iconStyle,
+      `${CLS}-person-list__icon`,
+    );
   }
 
   const contentStyle: Record<string, string> = { fontSize: fontSize + 'px' };

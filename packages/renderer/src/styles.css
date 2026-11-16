@@ -337,12 +337,20 @@
   word-break: break-word;
   vertical-align: middle;
 }
-/* 前缀图标（markdown.icon）：与首行文字垂直居中，右侧留 4px。
+/* 前缀图标（markdown.icon）：对齐真机 .universal-card-markdown__icon_wrapper——
+   图标与首行文字垂直居中，右侧留 8px；行高由组件按 text_size/heading 内联给出，
+   缺省时退回 1.6em。
    容器是 flex row，图标作为首个 flex 子项参与排布。 */
+.universal-card-markdown__icon_wrapper {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-right: 8px;
+  height: 1.6em; overflow: hidden;
+}
+/* 兼容旧类名（历史版本输出 .universal-card-markdown__icon） */
 .universal-card-markdown__icon {
   display: inline-flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-right: 4px;
-  height: 1.6em;
+  flex-shrink: 0; margin-right: 8px;
+  height: 1.6em; overflow: hidden;
 }
 .universal-card-markdown__children {
   flex: 1;

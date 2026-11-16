@@ -1675,22 +1675,50 @@ test('markdown: 输出 standard_icon 前缀图标（此前整块丢弃）', () =
   assert.match(html, /color:#c25705/);
 });
 
-test('markdown: 图标未给 size 时跟随文本字号', () => {
-  for (const [size, px] of [['small', 12], ['normal', 14], ['heading', 16]]) {
+test('markdown: 图标默认尺寸走真机 j(字号)，不是 1:1 跟随字号', () => {
+  // 引擎 j()：≤16 → 字号+2；>16 → 1.15 倍取偶。14px 正文 → 16px 图标。
+  for (const [size, px] of [['small', 14], ['normal', 16], ['heading', 18]]) {
     const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined' }, { text_size: size });
     assert.match(html, new RegExp(`ud-icon_chat_outlined" style="font-size:${px}px`), `${size} 应为 ${px}px`);
   }
 });
 
-test('markdown: 显式 size 覆盖字号跟随', () => {
-  const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined', size: '20px' });
-  assert.match(html, /ud-icon_chat_outlined" style="font-size:20px/);
+test('markdown: 图标 wrapper 与正文行高一致，右侧间距 8px（对齐真机）', () => {
+  const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined' }, { text_size: 'normal' });
+  // text_size normal → lineHeight 22+2=24
+  assert.match(html, /universal-card-markdown__icon_wrapper" style="height:24px"/);
+  assert.match(ALL_CSS, /\.universal-card-markdown__icon_wrapper\s*\{[^}]*margin-right:\s*8px/);
 });
 
-test('markdown: custom_icon 用 img_key 出 <img>', () => {
+test('markdown: 首元素是 heading 时按 heading 档给图标尺寸并与标题对齐', () => {
+  // 引擎 Aa(level)：heading1 图标 22px；wrapper 高度/上边距取标题行高/marginTop。
+  const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined' }, {});
+  const withHeading = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'markdown',
+      content: '# 标题\n正文',
+      icon: { tag: 'standard_icon', token: 'chat_outlined' },
+    }] },
+  });
+  assert.match(withHeading, /universal-card-markdown__icon_wrapper" style="height:28px;margin-top:10px"/);
+  assert.match(withHeading, /ud-icon_chat_outlined" style="font-size:22px/);
+  // 无 heading 时仍是正文档
+  assert.match(html, /ud-icon_chat_outlined" style="font-size:16px/);
+});
+
+test('markdown: 显式 size 覆盖字号跟随（支持宽高两值）', () => {
+  const html = mdHtml({ tag: 'standard_icon', token: 'chat_outlined', size: '20px' });
+  assert.match(html, /ud-icon_chat_outlined" style="font-size:20px/);
+  const rect = mdHtml({ tag: 'standard_icon', token: 'chat_outlined', size: '10px 12px' });
+  assert.match(rect, /ud-icon_chat_outlined" style="font-size:10px;width:10px;height:12px/);
+});
+
+test('markdown: custom_icon 用 img_key 出 <img>，默认尺寸同 standard_icon', () => {
   const html = mdHtml({ tag: 'custom_icon', img_key: 'img_v2_abc' });
   assert.match(html, /universal-card-markdown__icon/);
   assert.match(html, /<img[^>]*src="img_v2_abc"/);
+  assert.match(html, /width:16px;height:16px/);
 });
 
 test('markdown: 无 icon 时不输出图标容器', () => {
