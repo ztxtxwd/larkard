@@ -1,5 +1,11 @@
 # @open-feishu-card/renderer
 
+## 0.8.10
+
+### Patch Changes
+
+- - `button` 的 `size` 之前只用来算前置图标像素，按钮盒子恒按 medium 渲染（32px / 14px）：`size:"large"` 比真机矮 8px、字小 2px（真机 40px / 16px），`small` / `tiny` 则偏高偏大。现补 `--tiny/--small/--medium/--large` 尺寸类，按真机 `ud__button` 的 xs/sm/md/lg 分档：盒子 24/28/32/40px、字号 12/12/14/16px。高度仍由 padding + line-height + 描边决定（对齐卡片外壳 `.universal-card-button .ud__button{height:auto}`）。
+
 ## 0.8.9
 
 ### Patch Changes
