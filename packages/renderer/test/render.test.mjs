@@ -1894,6 +1894,24 @@ test('styles: collapsible_panel 默认内边距（无样式 header 0 / --fat 4px
   );
 });
 
+// 子元素默认撑满 = 真机 .universal-card-element-shell{width:100%} 的等价规则。
+// 缺了它，带 horizontal_align:left（→ align-items:flex-start）的容器里，分栏 / 按钮行会缩成
+// 内容宽：真机整行撑满，预览里却窄一截（看着像「每个交互容器自带默认宽度」）。
+test('styles: 容器子元素默认撑满（element-shell 等价），按钮/横排/inline 语音条除外', () => {
+  const rule = ALL_CSS.split('}').find((r) => r.includes('.universal-card-column:not(.universal-card-column--row)'));
+  assert.ok(rule, '缺少「子元素默认撑满」规则');
+  assert.match(rule, /width:\s*100%/);
+  for (const sel of [
+    '.universal-card-body >',
+    '.universal-card-interactive-container:not(.universal-card-interactive-container--row)',
+    '.universal-card-collapsible-panel__content:not(.universal-card-collapsible-panel__content--row)',
+  ]) {
+    assert.ok(rule.includes(sel), `规则缺少 ${sel}`);
+  }
+  assert.ok(rule.includes(':not(.universal-card-button)'), '按钮必须排除（宽度走窄屏/宽屏分档）');
+  assert.ok(rule.includes(':not(.universal-card-audio__wrapper--inline)'), 'inline 语音条必须排除');
+});
+
 // 语义色 token 必须与客户端 light token 表一致（feishu-web-dump/debugger/19ecdc88…js）：
 // bg-float-overlay = rgb(245,246,247)（实色，不是叠色）；line-divider-default = rgba(31,35,41,.15)。
 test('styles: 语义色 token 对齐客户端 light 主题表', () => {

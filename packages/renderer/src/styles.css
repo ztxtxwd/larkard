@@ -303,9 +303,27 @@
   column-gap: 12px;
   align-items: flex-start;
 }
-/* 交互控件不参与「子元素撑满」：按钮的宽度由真机规则决定（见 .universal-card-button--auto），
-   若被这条 blanket 规则拉到 100%，窄屏/宽屏分档就失效了。 */
-.universal-card-body > *:not(.universal-card-button) { width: 100%; box-sizing: border-box; }
+/* ---- 子元素默认撑满（等价真机的 element-shell） ---- */
+/* 真机给每个元素外面都套了一层 .universal-card-element-shell{width:100%}，
+   所以块级子元素永远占满容器宽度；容器上的 horizontal_align（→ align-items）
+   只对自适应宽度的元素生效。
+   渲染器没有这层壳，用「子选择器 + 排除自适应元素」还原同一套语义：
+   漏了这条，带 horizontal_align:left 的容器（align-items:flex-start）里，
+   分栏 / 按钮行会缩成内容宽——真机整行撑满，预览里却窄一截，
+   看着像「每个交互容器自带一个默认宽度」。
+   排除项：
+   - 按钮：宽度由真机规则决定（见 .universal-card-button--auto），
+     被 blanket 规则拉到 100% 会让窄屏/宽屏分档失效。
+   - inline 语音条（markdown_audio）：里面是行内播放器，要贴内容宽。
+   - 横排容器（--row）：横排要按内容宽排布，撑满会把一行挤成一列。 */
+:where(.universal-card-body > *:not(.universal-card-button):not(.universal-card-audio__wrapper--inline)),
+:where(.universal-card-column:not(.universal-card-column--row) > *:not(.universal-card-button):not(.universal-card-audio__wrapper--inline)),
+:where(.universal-card-interactive-container:not(.universal-card-interactive-container--row) > *:not(.universal-card-button):not(.universal-card-audio__wrapper--inline)),
+:where(.universal-card-collapsible-panel__content:not(.universal-card-collapsible-panel__content--row) > *:not(.universal-card-button):not(.universal-card-audio__wrapper--inline)) {
+  /* :where() 把特异性归零：组件自己声明的 width（如 .universal-card-input--text 的
+     width:auto、.universal-card-note 的行内项）仍然优先，这条只做兜底。 */
+  width: 100%; box-sizing: border-box;
+}
 
 /* ---- markdown 段落 ---- */
 /* 对齐网页版：line-height 默认 1.6；具体字号/行高由组件内联 style 按 text_size 给出 */

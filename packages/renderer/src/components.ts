@@ -869,7 +869,10 @@ registerComponent('column', (el, ctx) => {
   if (pad) style.padding = pad;
   const mg = boxToStyle(p.margin);
   if (mg) style.margin = mg;
-  const cls = `${CLS}-column` + (bg ? ` ${CLS}-column--bg` : '');
+  // --row：横向列。styles.css 的「子元素默认撑满」会跳过横排容器（横排按内容宽排布）。
+  const cls = `${CLS}-column`
+    + (bg ? ` ${CLS}-column--bg` : '')
+    + (horizontalDir ? ` ${CLS}-column--row` : '');
   return h('div', { className: cls, style }, renderElements(p.elements, ctx));
 });
 
@@ -1404,6 +1407,41 @@ function renderAudio(el: CardElement, ctx: RenderContext) {
 registerComponent('audio', renderAudio);
 registerComponent('markdown_audio', renderAudio);
 
+/**
+ * interactive_container 的宽度：对齐真机 useSize()（网页版 hooks/useSize）。
+ * widthValue 是唯一真值来源，缺省按「撑满」处理：
+ *   builtin_interactive_container_width:auto  → width:auto（贴内容宽；胶囊标签靠它）
+ *                                     :fill  → width:100%
+ *                                       其它  → width:100%（真机 default() 分支同样落到 100%）
+ *   pixels                                    → width:Npx（定宽图标框）
+ * 真机每个元素外面还有一层 .universal-card-element-shell{width:100%}，所以交互容器默认就撑满；
+ * 这里不写宽度的话，父级 horizontal_align（→ align-items:flex-start）会把它缩成内容宽，
+ * 预览里整行分栏/按钮行就比真机窄一截。
+ */
+function resolveInteractiveContainerWidth(p: Record<string, unknown>): string {
+  const wv = p.widthValue as { type?: unknown; value?: unknown } | undefined;
+  const type = String(wv?.type ?? '').toLowerCase();
+  const value = wv?.value;
+  if (type === 'pixels') {
+    const n = Number(value);
+    if (Number.isFinite(n)) return `${n}px`;
+  }
+  if (type.startsWith('builtin_interactive_container_width')) {
+    return value === 'auto' ? 'auto' : '100%';
+  }
+  // DSL 扁平写法（跳过 dslToRaw 直接渲染 DSL 树时）：width: "fill" | "auto" | "48px"
+  const direct = p.width;
+  if (direct === 'auto' || direct === 'default') return 'auto';
+  if (typeof direct === 'number' && Number.isFinite(direct)) return `${direct}px`;
+  if (typeof direct === 'string') {
+    const s = direct.trim();
+    if (s === 'auto' || s === 'default') return 'auto';
+    const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/i.exec(s);
+    if (m) return `${m[1]}px`;
+  }
+  return '100%';
+}
+
 // interactive_container：可点击的交互容器（整块可点，带 hover 提示/背景）
 // 注意：容器内常含 link 等 <a>，故外层必须用 <div> 而非 <a>——嵌套 <a> 是非法 HTML，
 // 浏览器会把外层锚点提前闭合，导致结构错乱。点击交给内部链接，URL 存到 data-url。
@@ -1426,10 +1464,13 @@ registerComponent('interactive_container', (el, ctx) => {
   // 官方语义：has_border 为 true 时 border_color 才生效（只写 border_color 不描边）。
   const hasBorder = p.hasBorder === true || p.has_border === true;
   const borderColor = hasBorder ? borderColorResolved : undefined;
+  // direction 先定：横向容器的子元素要豁免 styles.css 的「子元素默认撑满」规则（--row）。
+  const horizontalDir = p.direction === 'horizontal';
   const cls = `${CLS}-interactive-container`
     + (clickable ? ` ${CLS}-interactive-container--action` : '')
     + (hasBorder && !borderColor ? ` ${CLS}-interactive-container--bordered` : '')
-    + (disabled ? ` ${CLS}-interactive-container--disabled` : '');
+    + (disabled ? ` ${CLS}-interactive-container--disabled` : '')
+    + (horizontalDir ? ` ${CLS}-interactive-container--row` : '');
   const style: Record<string, string> = {};
   const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
@@ -1443,7 +1484,6 @@ registerComponent('interactive_container', (el, ctx) => {
   //   direction=vertical  → 主轴纵向：vertical_align→justify-content，horizontal_align→align-items
   //   direction=horizontal→ 主轴横向：horizontal_align→justify-content，vertical_align→align-items
   // 漏读这几个字段会让容器内子组件退化成「左上贴边、固定 4px 行距」，与真机对不上。
-  const horizontalDir = p.direction === 'horizontal';
   if (horizontalDir) style.flexDirection = 'row';
   const hAlign = p.horizontal_align ?? (p as { horizontalAlign?: string }).horizontalAlign;
   const vAlign = p.vertical_align ?? (p as { verticalAlign?: string }).verticalAlign;
@@ -1459,12 +1499,11 @@ registerComponent('interactive_container', (el, ctx) => {
   if (hGap != null) style.columnGap = horizontalSpacingToPx(hGap as number | string) + 'px';
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
   if (vGap != null) style.rowGap = verticalSpacingToPx(vGap as number | string) + 'px';
-  // width/height：fill→100%；"48px"/widthValue.pixels→定宽高（图标容器）。
-  const icWv = p.widthValue as { type?: string; value?: string | number } | undefined;
+  // width：见 resolveInteractiveContainerWidth（fill/缺省 → 100%，auto → auto，pixels → Npx）。
+  // height：只有 pixels 生效（真机 heightValue 只认 pixels），定高时不再让 flex 压缩。
   const icHv = p.heightValue as { type?: string; value?: string | number } | undefined;
-  const w = resolveDimensionPx(p.width, icWv);
+  style.width = resolveInteractiveContainerWidth(p as Record<string, unknown>);
   const hPx = resolveDimensionPx(p.height, icHv);
-  if (w) style.width = w;
   if (hPx) {
     style.height = hPx;
     style.flexShrink = '0';
@@ -1663,7 +1702,11 @@ registerComponent('collapsible_panel', (el, ctx) => {
   }
   const content = h(
     'div',
-    { className: `${CLS}-collapsible-panel__content`, style: contentStyle },
+    {
+      className: `${CLS}-collapsible-panel__content`
+        + (isRow ? ` ${CLS}-collapsible-panel__content--row` : ''),
+      style: contentStyle,
+    },
     renderElements(p.elements, ctx),
   );
 

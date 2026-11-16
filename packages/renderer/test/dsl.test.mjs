@@ -1406,7 +1406,7 @@ function icStyle(ic) {
     schema: '2.0',
     body: { elements: [{ tag: 'interactive_container', width: '48px', height: '48px', elements: [{ tag: 'markdown', content: 'x' }], ...ic }] },
   });
-  const m = html.match(/class="universal-card-interactive-container"[^>]*style="([^"]*)"/);
+  const m = html.match(/class="universal-card-interactive-container(?: [^"]*)?"[^>]*style="([^"]*)"/);
   assert.ok(m, 'interactive_container 应输出内联 style');
   return m[1];
 }
@@ -1441,6 +1441,59 @@ test('interactive_container: 未写 align 时不输出 justify/align（交给 CS
   assert.equal(/row-gap/.test(style), false);
 });
 
+/* ---- interactive_container 宽度（真机 useSize）----
+   widthValue 是唯一真值来源：
+     builtin_interactive_container_width:auto → width:auto（贴内容宽，胶囊标签靠它）
+                                      :fill → width:100%
+     缺省                                     → width:100%（真机 element-shell 默认撑满）
+     pixels                                   → width:Npx（定宽图标框） */
+
+function icWidthStyle(ic) {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'interactive_container', elements: [{ tag: 'markdown', content: 'x' }], ...ic }] },
+  });
+  const m = html.match(/class="universal-card-interactive-container(?: [^"]*)?"[^>]*style="([^"]*)"/);
+  assert.ok(m, 'interactive_container 应输出内联 style');
+  return m[1];
+}
+
+test('interactive_container: width 缺省 → 100%（真机 element-shell 默认撑满）', () => {
+  assert.match(icWidthStyle({}), /(?:^|;)width:100%/);
+});
+
+test('interactive_container: width=fill → 100%，width=auto → auto', () => {
+  assert.match(icWidthStyle({ width: 'fill' }), /(?:^|;)width:100%/);
+  assert.match(icWidthStyle({ width: 'auto' }), /(?:^|;)width:auto/);
+});
+
+test('interactive_container: RAW widthValue 四种子形态', () => {
+  const raw = (widthValue) => renderCardToString({
+    json_card: {
+      schema: '2.0',
+      body: { tag: 'body', property: { elements: [{
+        tag: 'interactive_container',
+        property: { elements: [{ tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: 'x' } }] } }], ...(widthValue ? { widthValue } : {}) },
+      }] } },
+    },
+  });
+  const styleOf = (html) => html.match(/class="universal-card-interactive-container(?: [^"]*)?"[^>]*style="([^"]*)"/)[1];
+  // 缺省：真机 useSize 返回 default() → 100%
+  assert.match(styleOf(raw(undefined)), /(?:^|;)width:100%/);
+  assert.match(styleOf(raw({ type: 'builtin_interactive_container_width', value: 'fill' })), /(?:^|;)width:100%/);
+  assert.match(styleOf(raw({ type: 'builtin_interactive_container_width', value: 'auto' })), /(?:^|;)width:auto/);
+  assert.match(styleOf(raw({ type: 'pixels', value: 48 })), /(?:^|;)width:48px/);
+});
+
+test('interactive_container: direction=horizontal 挂 --row（横排不参与子元素撑满）', () => {
+  assert.match(icWidthStyle({ direction: 'horizontal' }), /flex-direction:row/);
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{ tag: 'interactive_container', direction: 'horizontal', elements: [{ tag: 'markdown', content: 'x' }] }] },
+  });
+  assert.match(html, /universal-card-interactive-container--row/);
+});
+
 /* ---- column 布局字段（direction / align / spacing）----
   真机把 column / column_set / interactive_container 的对齐都交给同一个 qr()：
   isRow = direction==='horizontal'，horizontal_align 走主轴侧、vertical_align 走交叉轴侧。
@@ -1452,7 +1505,7 @@ function columnStyle(col) {
     schema: '2.0',
     body: { elements: [{ tag: 'column_set', columns: [{ tag: 'column', elements: [{ tag: 'markdown', content: 'x' }], ...col }] }] },
   });
-  const m = html.match(/class="universal-card-column"[^>]*style="([^"]*)"/);
+  const m = html.match(/class="universal-card-column(?: [^"]*)?"[^>]*style="([^"]*)"/);
   assert.ok(m, 'column 应输出内联 style');
   return m[1];
 }
@@ -1575,7 +1628,7 @@ function icBorder(ic) {
     schema: '2.0',
     body: { elements: [{ tag: 'interactive_container', elements: [{ tag: 'markdown', content: 'x' }], ...ic }] },
   });
-  const m = html.match(/class="universal-card-interactive-container[^"]*"[^>]*style="([^"]*)"/);
+  const m = html.match(/class="universal-card-interactive-container(?: [^"]*)?"[^>]*style="([^"]*)"/);
   return m ? m[1] : '';
 }
 
