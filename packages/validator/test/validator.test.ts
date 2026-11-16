@@ -326,3 +326,29 @@ test('图标 token：IconTokenSchema 与 icon-tokens.list 严格一一对应', (
   const options = [...(IconTokenSchema as unknown as { options: readonly string[] }).options].sort();
   assert.deepEqual(options, [...ICON_TOKENS].sort());
 });
+
+test('枚举报错只保留前几个取值（图标 1167 个，message 不能爆）', () => {
+  const src = `{
+    "schema": "2.0",
+    "header": {
+      "title": { "tag": "plain_text", "content": "t" },
+      "icon": { "tag": "standard_icon", "token": "not-a-token" }
+    },
+    "body": { "elements": [] }
+  }`;
+  const ds = validate(src);
+  const d = ds.find((x) => x.path === '/header/icon/token');
+  assert.ok(d, '应该报图标非法');
+  assert.ok(d.message.length < 400, `message 太长：${d.message.length}`);
+  assert.match(d.message, /… \(\d+ options\)/);
+  assert.match(d.message, new RegExp(`\\(${ICON_TOKENS.length} options\\)`));
+  // 前几个合法值仍然给出，方便定位
+  assert.ok(d.message.includes(ICON_TOKENS[0]));
+});
+
+test('普通校验错误不被截断', () => {
+  const ds = validate(OK.replace('"markdown"', '"not_a_tag"'));
+  assert.ok(ds.length > 0);
+  assert.ok(!/options\)$/.test(ds[0].message));
+  assert.ok(ds[0].message.length <= 800);
+});

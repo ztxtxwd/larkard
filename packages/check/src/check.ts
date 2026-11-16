@@ -15,7 +15,11 @@
 import { lintAst, type LintDiagnostic } from '@open-feishu-card/linter';
 import { astToValue, isBuilderDocument, parse } from '@open-feishu-card/parser';
 import { FeishuCardV2Schema } from '@open-feishu-card/schema';
-import { validateAst, type Diagnostic as ValidatorDiagnostic } from '@open-feishu-card/validator';
+import {
+  formatIssueMessage,
+  validateAst,
+  type Diagnostic as ValidatorDiagnostic,
+} from '@open-feishu-card/validator';
 
 import { repairDeviceIssues } from './device.js';
 import type { CheckIssue, CheckOptions, CheckResult } from './types.js';
@@ -53,10 +57,11 @@ function fromLinter(diagnostic: LintDiagnostic): CheckIssue {
   };
 }
 
-function schemaIssue(issue: { path: readonly PropertyKey[]; message: string }): CheckIssue {
+function schemaIssue(issue: { path: readonly PropertyKey[]; message: string; values?: unknown }): CheckIssue {
   return {
     path: issue.path.length > 0 ? toPointer(issue.path) : '/',
-    message: issue.message,
+    // 与 validator 的诊断同一套截断：枚举类报错不能把 1167 个 token 全塞进来。
+    message: formatIssueMessage(issue),
     severity: 'error',
     source: 'schema',
   };

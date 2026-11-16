@@ -114,6 +114,34 @@ function validateBuilderEnvelope(resolved: ResolvedCardDocument, diagnostics: Di
   }
 }
 
+/** Zod 的枚举报错里保留的取值个数：再多的部分折成计数。 */
+const MAX_OPTIONS_IN_MESSAGE = 6;
+/** 兜底上限：不认识的超长报错（例如判别联合把整份 tag 列表拼进来）也截断。 */
+const MAX_MESSAGE_LENGTH = 800;
+const ENUM_MESSAGE_PREFIX = 'Invalid option: expected one of ';
+
+/**
+ * Zod 的枚举类报错会把**整份取值列表**拼进 message：图标 token 有 1167 个，
+ * 一条诊断能到 25KB（塞进 LSP 诊断、模型上下文、错误日志都不合适）。
+ *
+ * 这里只保留前 6 个取值，其余折成 `… (N options)`；措辞不是 Zod 的枚举格式
+ * （`Invalid option: expected one of …`）时原样返回，不做猜测。
+ */
+export function formatIssueMessage(issue: { message: string; values?: unknown }): string {
+  const values = issue.values;
+  const isEnumList =
+    Array.isArray(values) &&
+    values.length > MAX_OPTIONS_IN_MESSAGE &&
+    issue.message.startsWith(ENUM_MESSAGE_PREFIX);
+  const message = isEnumList
+    ? `${ENUM_MESSAGE_PREFIX}${values
+        .slice(0, MAX_OPTIONS_IN_MESSAGE)
+        .map((value) => JSON.stringify(value))
+        .join(' | ')} … (${values.length} options)`
+    : issue.message;
+  return message.length > MAX_MESSAGE_LENGTH ? `${message.slice(0, MAX_MESSAGE_LENGTH)}…` : message;
+}
+
 function validateCardAgainstSchema(
   cardAst: JsonObjectNode,
   cardData: unknown,
@@ -129,7 +157,7 @@ function validateCardAgainstSchema(
         ? node.range
         : { start: cardAst.range.start, end: cardAst.range.start };
       diagnostics.push({
-        message: issue.message,
+        message: formatIssueMessage(issue),
         severity: 'error',
         range,
         path: joinCardPointer(pathPrefix, pointerToString(issue.path)),
@@ -236,7 +264,7 @@ export function validateData(data: unknown): Diagnostic[] {
     const prefix = isBuilderDocument(data) ? '/dsl' : '';
     for (const issue of checkResult.error.issues) {
       diagnostics.push({
-        message: issue.message,
+        message: formatIssueMessage(issue),
         severity: 'error',
         range: ZERO,
         path: joinCardPointer(prefix, pointerToString(issue.path)),

@@ -24,6 +24,9 @@ test('Schema 非法值报 JSON Pointer，且不返回 card', () => {
   assert.ok(result.errors.length > 0);
   assert.equal(result.errors[0].path, '/header/icon/token');
   assert.equal(result.card, undefined);
+  // 枚举里 1167 个图标 token 不能整份塞进一条诊断（历史 25KB）
+  assert.ok(result.errors[0].message.length < 400, `message 太长：${result.errors[0].message.length}`);
+  assert.match(result.errors[0].message, /\(\d+ options\)/);
 });
 
 test('真机约束（间距值域）单独拦发送，source 为 device', () => {
