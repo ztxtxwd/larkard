@@ -1,0 +1,39 @@
+{
+  "name": "@open-feishu-card/patch",
+  "version": "0.0.0",
+  "description": "卡片 DSL 的 RFC 6902 JSON Patch：操作校验 + 不可变应用 + 带操作序号与 JSON Pointer 的中文报错",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup && tsc -p tsconfig.json --emitDeclarationOnly",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.3",
+    "typescript": "^7.0.2",
+    "@types/node": "^22.20.1"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ztxtxwd/open-feishu-card-monorepo.git",
+    "directory": "packages/patch"
+  }
+}
