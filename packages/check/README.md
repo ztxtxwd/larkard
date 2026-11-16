@@ -76,4 +76,7 @@ const problems = findDeviceIssues(dsl)                  // 只拿问题
 - **只接受卡片本身**：搭建工具文档（`{ name, dsl, variables }`）请先用
   `@open-feishu-card/parser` 的 `unwrapCardData()` 取出 `dsl`，否则抛 `TypeError`。
 - **linter 的问题没有 `path`**：它检查的是结构（嵌套深度、元素数），路径固定 `/`，规则名在 `code`。
+- **枚举类报错会截断**：图标 token 有 1167 个，`errors[].message` 只保留前 6 个取值 +
+  `… (1167 options)`（完整列表见 `@open-feishu-card/schema` 的 `ICON_TOKENS`），避免一条
+  诊断把模型上下文撑爆。
 - **`fix` 不碰产品规则**：emoji 列表符号、品牌色可读性这类「口味」不在本包，放在各自的卡片产品里。
