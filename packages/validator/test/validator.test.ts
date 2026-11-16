@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { ICON_TOKENS, IconTokenSchema } from '@open-feishu-card/schema';
 import { validate } from '../src/index.js';
 
 const OK = `{
@@ -283,10 +284,14 @@ test('builder deprecated prop path is prefixed with /dsl', () => {
   assert.equal(w.path, '/dsl/i18n_elements');
 });
 
-test('图标 token：客户端内置 AI 图标（ai-common_colorful 等）与官方彩色图标不被判非法', () => {
-  // 回归：这些 token 确实存在于客户端 ud-icons 字体（2484 glyph），
-  // 官方「图标库」文档未收录，曾因此被 zod 枚举判为 error。
-  for (const token of ['ai-common_colorful', 'ai-search_colorful', 'approval_colorful']) {
+test('图标 token：清单内的前缀图标不被判非法，清单外 token 报错', () => {
+  // 回归：以下 token 曾因枚举落后于客户端图标清单而被 zod 判为 error。
+  for (const token of [
+    'ai-common_colorful', 'approval_colorful',
+    'chat-loading_outlined', 'feishuclip_filled', 'headphone-solid_outlined', 'inline-view_outlined',
+    'jira-filter_outlined', 'original_outlined', 'port-export_outlined', 'rename_outlined',
+    'trello_outlined', 'up-top-round_outlined', 'meeting-ai_filled', 'calendar-disable_colorful',
+  ]) {
     const ds = validate(`{
       "schema": "2.0",
       "body": { "elements": [ {
@@ -297,14 +302,27 @@ test('图标 token：客户端内置 AI 图标（ai-common_colorful 等）与官
     }`);
     assert.equal(ds.filter((d) => d.severity === 'error').length, 0, `${token} 不应报错：${JSON.stringify(ds)}`);
   }
-  // 而真正不存在的 token 仍然报错
-  const bad = validate(`{
-    "schema": "2.0",
-    "body": { "elements": [ {
-      "tag": "div",
-      "icon": { "tag": "standard_icon", "token": "nope_outlined" },
-      "text": { "tag": "plain_text", "content": "hi" }
-    } ] }
-  }`);
-  assert.ok(bad.some((d) => d.severity === 'error'));
+  // 清单外（臆造 token、以及不在清单内的客户端私有 AI 图标）仍然报错
+  for (const token of ['nope_outlined', 'ai-search_colorful', 'ai-video_outlined']) {
+    const bad = validate(`{
+      "schema": "2.0",
+      "body": { "elements": [ {
+        "tag": "div",
+        "icon": { "tag": "standard_icon", "token": "${token}" },
+        "text": { "tag": "plain_text", "content": "hi" }
+      } ] }
+    }`);
+    assert.ok(bad.some((d) => d.severity === 'error'), `${token} 应被判非法`);
+  }
+});
+
+test('图标 token：IconTokenSchema 与 icon-tokens.list 严格一一对应', () => {
+  // 枚举由 ICON_TOKENS 生成；这里守住「清单 = 校验通过集合」，防止有人绕过清单改枚举。
+  assert.equal(new Set(ICON_TOKENS).size, ICON_TOKENS.length, 'ICON_TOKENS 存在重复 token');
+  for (const token of ICON_TOKENS) {
+    assert.ok(/(_outlined|_filled|_colorful)$/.test(token), `token 命名不合规范：${token}`);
+    assert.ok(IconTokenSchema.safeParse(token).success, `清单内 token 校验失败：${token}`);
+  }
+  const options = [...(IconTokenSchema as unknown as { options: readonly string[] }).options].sort();
+  assert.deepEqual(options, [...ICON_TOKENS].sort());
 });

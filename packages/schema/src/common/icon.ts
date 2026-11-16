@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { ColorSchema } from './enums.js';
 import { IconTokenSchema } from './icon-tokens.js';
 
-export { IconTokenSchema } from './icon-tokens.js';
+export { ICON_TOKENS, IconTokenSchema } from './icon-tokens.js';
 export type { IconToken } from './icon-tokens.js';
 
 /** 标准图标库图标 */
