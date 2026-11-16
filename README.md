@@ -10,6 +10,7 @@
 | `@open-feishu-card/schema` | 基于 Zod 的卡片 Schema 2.0 规范与类型导出 | Universal |
 | `@open-feishu-card/validator` | AST × Schema 对比，输出字符级精确定位诊断 | Universal |
 | `@open-feishu-card/linter` | 嵌套深度、可读性、废弃属性等静态最佳实践检查 | Universal |
+| `@open-feishu-card/check` | 发送前检查门面：Schema + 定位诊断 + 最佳实践 + 真机硬约束，可选自动修复 | Universal |
 | `@open-feishu-card/adapter` | 公开 DSL ↔ 飞书内部 RAW JSON 双向适配（raw→DSL 对齐 feishu-raw-card-to-dsl） | Universal |
 | `@open-feishu-card/compiler` | DSL → 标准 RAW 编译器 + 非标属性净化器 (Sanitizer) | Universal |
 | `@open-feishu-card/components` | 轻量 JSX 运行时：用 TSX 声明卡片，序列化为 JSON 2.0 | Universal |
@@ -28,6 +29,19 @@ pnpm test    # 全部包测试
 ```
 
 ## 使用示例
+
+**检查一张卡能不能发（check）**
+
+```typescript
+import { checkCard } from '@open-feishu-card/check';
+
+const { card, errors, hints } = checkCard(dsl); // 对象或 JSON / JSONC 源码
+if (errors.length > 0) throw new Error(errors.map((e) => `${e.path}: ${e.message}`).join('\n'));
+await sendMessage(card!); // 无错时才是可发送的净化卡片
+```
+
+除了 Schema 与最佳实践，它还会拦下 Schema 放行、飞书却整卡拒绝的真机约束
+（间距值域、面板内边距上限、音视频字段等），`{ fix: true }` 可自动修并逐条回报 `fixes`。
 
 **净化非标属性（compiler）**
 
