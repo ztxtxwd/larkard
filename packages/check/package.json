@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/check",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "发送前检查：Schema + 字符级诊断 + 最佳实践 + 真机硬约束，可选自动修复（间距值域、面板内边距、媒体字段）",
   "type": "module",
   "main": "./dist/index.cjs",
