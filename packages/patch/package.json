@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/patch",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "卡片 DSL 的 RFC 6902 JSON Patch：操作校验 + 不可变应用 + 带操作序号与 JSON Pointer 的中文报错",
   "type": "module",
   "main": "./dist/index.cjs",
