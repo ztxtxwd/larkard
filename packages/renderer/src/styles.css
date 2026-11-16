@@ -325,6 +325,22 @@
   width: 100%; box-sizing: border-box;
 }
 
+/* 真机每个子元素外都有 .universal-card-element-shell，且
+   `.universal-card-element-shell__container > .universal-card-element-shell { position:relative }`。
+   渲染器没有这层壳，这里等价地给容器直接子项 position:relative：
+   后面的元素用负 margin 压到前面的图片上时，按 DOM 顺序绘制在上面；
+   否则图片内部 position:relative 的 wrapper 会反过来盖住后面的面板。 */
+:where(.universal-card-body > *),
+:where(.universal-card-column-set > *),
+:where(.universal-card-column > *),
+:where(.universal-card-interactive-container > *),
+:where(.universal-card-collapsible-panel__content > *),
+:where(.universal-card-form > *),
+:where(.universal-card-div > *),
+:where(.universal-card-note > *) {
+  position: relative;
+}
+
 /* ---- markdown 段落 ---- */
 /* 对齐网页版：line-height 默认 1.6；具体字号/行高由组件内联 style 按 text_size 给出 */
 .universal-card-markdown {
@@ -376,6 +392,42 @@
   background-color: var(--line-divider-default, #dee0e3);
   border: none;
   margin: 8px 0;
+}
+
+/* ---- note 备注块（v1 兼容；2.0 已废弃但 RAW/回读内容仍会下发） ---- */
+/* 对齐网页版 .universal-card-note：12px / N600，行内流式排布，子项不撑满。
+   真机会给 note 子元素套 element-shell（width:auto），图片降 Tiny、markdown 强制 notation；
+   这里用子选择器还原宽度与字号继承。 */
+.universal-card-note {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: 20px;
+  column-gap: 4px;
+  row-gap: 0;
+  color: var(--N600);
+  font-size: 12px;
+  overflow: hidden;
+}
+/* is_footer=true：顶部 16px + 分割线（真机 .universal-card-note--hr） */
+.universal-card-note--hr {
+  padding-top: 16px;
+  border-top: 1px solid var(--line-divider-default, #dee0e3);
+}
+.universal-card-note > * {
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+/* note 子文本继承备注字号/颜色；显式 textStyle 的内联 style 仍会覆盖 */
+.universal-card-note .universal-card-markdown,
+.universal-card-note .universal-card-text {
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
 }
 
 .universal-card-avatar {
@@ -739,9 +791,13 @@
 /* ---- interactive_container 可点击交互容器 ---- */
 /* 真机无默认圆角；圆角只由 DSL/RAW corner_radius 内联输出（见 resolveCornerRadius）。 */
 .universal-card-interactive-container {
+  /* 真机：position:relative + overflow:hidden（网页版同款），
+     负 margin 上移时才能按 DOM 顺序压住前面的图片。 */
+  position: relative;
   display: flex; flex-direction: column; box-sizing: border-box;
   padding: 0; text-decoration: none; color: inherit;
   row-gap: 4px;
+  overflow: hidden;
   transition: background-color .1s;
 }
 /* 真机：cursor:pointer 与 hover 底只在 __action 层；纯展示容器（无 actions/url）保持默认箭头 */

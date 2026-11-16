@@ -132,6 +132,31 @@ test('hr renders', () => {
   assert.match(html, /universal-card-hr/);
 });
 
+test('RAW: note 渲染 v1 文本子项（text tag），is_footer 出顶部分割线', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'note', property: { elements: [
+      { tag: 'text', property: { text: 'om · diagnostic probe 2' } },
+    ] } },
+    { tag: 'note', property: { is_footer: true, elements: [
+      // 简化卡片内容常见的扁平字段（没有 property 包裹）
+      { tag: 'text', text: '页尾备注' },
+    ] } },
+  ] } } } });
+  assert.match(html, /universal-card-note/);
+  assert.match(html, /om · diagnostic probe 2/);
+  assert.match(html, /页尾备注/);
+  assert.match(html, /universal-card-note--hr/);
+  // note 根节点是 div，子文本是 span（不是被当成未知 tag 丢掉）
+  assert.match(html, /universal-card-note[^>]*><span class="universal-card-text"/);
+});
+
+test('styles: note 用 12px/N600，footer 顶部 16px + 分割线', () => {
+  assert.match(ALL_CSS, /\.universal-card-note\s*\{[^}]*font-size:\s*12px/);
+  assert.match(ALL_CSS, /\.universal-card-note\s*\{[^}]*color:\s*var\(--N600\)/);
+  assert.match(ALL_CSS, /\.universal-card-note--hr\s*\{[^}]*padding-top:\s*16px/);
+  assert.match(ALL_CSS, /\.universal-card-note--hr\s*\{[^}]*border-top:\s*1px solid var\(--line-divider-default/);
+});
+
 // video / audio：无 resolveMedia 时出封面壳 / 播放条；有 src 时 video 走原生 controls。
 test('video: 无 src 时渲染封面壳 + 播放钮', () => {
   const html = renderCardToString({
@@ -1014,6 +1039,18 @@ test('styles: collapsible_panel header 用 caption 色（N600），不是正文�
   // 真机 --text-caption → N600；标题不再写死 #1f2329
   assert.match(ALL_CSS, /\.universal-card-collapsible-panel__header\s*\{[^}]*color:\s*var\(--N600\)/);
   assert.doesNotMatch(ALL_CSS, /\.universal-card-collapsible-panel__title\s*\{[^}]*color:\s*#1f2329/);
+});
+
+test('RAW: interactive_container backgroundStyle=bg-white → 白底（不是被当未知色名丢弃）', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [{
+    tag: 'interactive_container',
+    property: {
+      backgroundStyle: 'bg-white',
+      elements: [{ tag: 'markdown', property: { elements: [{ tag: 'plain_text', property: { content: '白底块' } }] } }],
+    },
+  }] } } } });
+  const open = html.match(/<div class="universal-card-interactive-container"[^>]*>/)?.[0] || '';
+  assert.match(open, /background:var\(--bg-body\)/);
 });
 
 test('RAW: display-only interactive_container has no --action (no pointer cursor)', () => {
@@ -1935,6 +1972,25 @@ test('styles: 容器子元素默认撑满（element-shell 等价），按钮/横
   }
   assert.ok(rule.includes(':not(.universal-card-button)'), '按钮必须排除（宽度走窄屏/宽屏分档）');
   assert.ok(rule.includes(':not(.universal-card-audio__wrapper--inline)'), 'inline 语音条必须排除');
+});
+
+// 真机每个子元素都有 element-shell，且 __container > __element-shell 是 position:relative。
+// 渲染器没有 shell 层，必须给容器直接子项补 position:relative，否则负 margin 叠放时
+// 图片内部 position:relative 的 wrapper 会盖住后面的灰底面板。
+test('styles: 容器直接子项 position:relative（element-shell 等价，负 margin 叠放靠 DOM 顺序）', () => {
+  const rule = ALL_CSS.split('}').find((r) => r.includes('.universal-card-body > *') && r.includes('position: relative'));
+  assert.ok(rule, '缺少容器子项 position:relative 规则');
+  for (const sel of [
+    '.universal-card-body > *',
+    '.universal-card-column-set > *',
+    '.universal-card-column > *',
+    '.universal-card-interactive-container > *',
+    '.universal-card-collapsible-panel__content > *',
+    '.universal-card-form > *',
+  ]) {
+    assert.ok(rule.includes(sel), `规则缺少 ${sel}`);
+  }
+  assert.match(ALL_CSS, /\.universal-card-interactive-container\s*\{[^}]*position:\s*relative/);
 });
 
 // 语义色 token 必须与客户端 light token 表一致（feishu-web-dump/debugger/19ecdc88…js）：

@@ -4,7 +4,7 @@
  * 用显式函数调用而非 import 副作用，避免被打包器 tree-shake 掉。
  * 元素 property 结构与样式规则均逆向自网页版飞书引擎，详见 README。
  */
-import type { CardElement, ElementProperty, RenderContext, TableColumn, TableHeaderStyle, VNode } from './types';
+import type { CardElement, ElementProperty, RenderContext, TableColumn, TableHeaderStyle, TextStyle, VNode } from './types';
 import {
   BASE_FONT_SIZE, BASE_LINE_HEIGHT,
   CHART_DEFAULT_ASPECT_RATIO, CHART_FIXED_MIN_SIZE, CHART_MIN_HEIGHT, CHART_MIN_WIDTH,
@@ -736,8 +736,54 @@ registerComponent('plain_text', (el) => {
 // br：换行
 registerComponent('br', () => h('br', {}));
 
+// text：旧版/简化卡片内容里的文本叶子（{tag:'text', text:'...'}）。
+// 2.0 官方 tag 是 plain_text；但服务端回读的 v1 内容、以及 markdown 解析结果里都可能出现 text，
+// 之前未注册 → renderElement 直接丢弃，note 里那句「om · diagnostic probe 2」就是这样消失的。
+// 渲染语义与 plain_text 一致：span + textStyle（及扁平 text_size/text_color）。
+registerComponent('text', (el) => {
+  const p = (el.property || {}) as Record<string, unknown>;
+  const direct = el as unknown as { text?: unknown; content?: unknown };
+  const value = p.content ?? p.text ?? direct.content ?? direct.text;
+  // DSL 侧的 {tag:'text', text:'...'} 经 adapter 归一后，p.text 会变成 plain_text 叶子对象；
+  // RAW 侧的 p.text 则是字符串。两种都要能取到文案。
+  const content = typeof value === 'string' || typeof value === 'number'
+    ? String(value)
+    : (value && typeof value === 'object'
+      ? (extractPlainText(value) || extractText(value as never))
+      : '');
+  const textStyle: TextStyle = isRecord(p.textStyle) ? { ...(p.textStyle as TextStyle) } : {};
+  const size = p.text_size ?? p.textSize;
+  if (textStyle.size == null && typeof size === 'string') textStyle.size = size;
+  const color = p.text_color ?? p.textColor;
+  if (textStyle.color == null && typeof color === 'string') textStyle.color = color;
+  const mods = textStyleToModifiers(textStyle);
+  const className = [`${CLS}-text`, ...mods.map((m) => `${CLS}-text--${m}`)].join(' ');
+  const style = textStyleToStyle(textStyle);
+  delete style.fontWeight;
+  delete style.fontStyle;
+  delete style.textDecoration;
+  Object.assign(style, lineClampStyle(p.lines));
+  return h('span', { className, style }, content);
+});
+
 // hr：分割线
 registerComponent('hr', () => h('div', { className: `${CLS}-hr` }));
+
+// note：旧版卡片的备注块（2.0 已废弃，但真机 RAW/回读内容仍会下发）。
+// 对齐网页版 .universal-card-note：12px/N600 行内流式排布，is_footer → --hr（顶部 16px + 分割线）。
+// 真机会给 note 子元素套 element-shell（width:auto），图片降为 Tiny、markdown 强制 notation 字号；
+// 这里用 CSS（.universal-card-note > *）实现同样的宽度/字号继承，避免子项撑满整行。
+registerComponent('note', (el, ctx) => {
+  const p = el.property || {};
+  const isFooter = p.is_footer === true || p.isFooter === true;
+  const style: Record<string, string> = {};
+  applyOuterMargin(style, p.margin);
+  const props: Record<string, unknown> = {
+    className: `${CLS}-note${isFooter ? ` ${CLS}-note--hr` : ''}`,
+  };
+  if (Object.keys(style).length) props.style = style;
+  return h('div', props, renderElements(getChildElements(el), ctx));
+});
 
 // div：通用容器。
 // RAW 的 div 常把单个内容元素挂在 property.text（如一段 markdown），

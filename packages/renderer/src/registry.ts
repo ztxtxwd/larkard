@@ -572,6 +572,10 @@ export function bgStyleToColor(style: unknown): string | null {
   const v = style.trim();
   if (!v || v === 'default' || v === 'none' || v === 'transparent') return null;
   if (v === 'grey' || v === 'gray' || v === '1') return 'var(--bg-float-overlay)';
+  // 真机 fallbackStyle 的容器底色枚举：bg-white → bg-body（白底），white → static-white。
+  // 两者在 light 主题都是 #fff，但不能落回 resolveColor('bg-white')（无此色名 → 直接丢背景）。
+  if (v === 'bg-white') return 'var(--bg-body)';
+  if (v === 'white') return 'var(--static-white)';
   return resolveColor(v) || null;
 }
 
@@ -584,5 +588,10 @@ export function propertyBackgroundColor(property: ElementProperty | Record<strin
     if (c) return c;
   }
   const p = property as Record<string, unknown>;
-  return bgStyleToColor(p.backgroundStyle ?? p.background_style);
+  // 客户端 Gr()：backgroundColor ?? backgroundStyle；background_color 是 DSL 拼写。
+  // collapsible_panel 用 background_color（bg-white / grey / #hex），
+  // column / column_set / interactive_container 用 background_style，两者都要认。
+  return bgStyleToColor(
+    p.backgroundColor ?? p.background_color ?? p.backgroundStyle ?? p.background_style,
+  );
 }

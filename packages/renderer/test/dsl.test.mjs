@@ -192,6 +192,36 @@ test('column_set: background_style=grey → var(--bg-float-overlay)（客户端 
   assert.match(ALL_CSS, /\.universal-card-column-set--bg[^}]*border-radius:\s*6px/);
 });
 
+test('background_style=bg-white / white → 白底（真机 fallbackStyle 枚举）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [
+      { tag: 'interactive_container', background_style: 'bg-white', elements: [
+        { tag: 'markdown', content: '省去模式选择，需求直达创作' },
+      ] },
+      { tag: 'column_set', background_style: 'grey', columns: [
+        { tag: 'column', background_style: 'bg-white', elements: [{ tag: 'markdown', content: '应用开发模式' }] },
+        { tag: 'column', background_style: 'white', elements: [{ tag: 'markdown', content: '统一完整能力开箱即用' }] },
+      ] },
+    ] },
+  });
+  assert.match(html, /background:var\(--bg-body\)/);
+  assert.match(html, /background:var\(--static-white\)/);
+  assert.doesNotMatch(html, /background:bg-white/);
+});
+
+test('DSL: note + text 子项经 adapter 仍渲染（text leaf 归一为 plain_text）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: { elements: [{
+      tag: 'note',
+      elements: [{ tag: 'text', text: 'om · diagnostic probe 2' }],
+    }] },
+  });
+  assert.match(html, /universal-card-note/);
+  assert.match(html, /om · diagnostic probe 2/);
+});
+
 test('column: background_style 有色 → --bg 圆角，不自动加 padding', () => {
   const html = renderDslToString({
     schema: '2.0',
