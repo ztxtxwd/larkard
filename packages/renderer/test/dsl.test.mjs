@@ -574,6 +574,40 @@ test('button: icon 渲染在文字前', () => {
   assert.match(html, /接受邀请/);
 });
 
+/* ---- button size 分档：对齐引擎 ud__button 的 xs/sm/md/lg ---- */
+test('button: size → 盒子高度 24/28/32/40 + 字号 12/12/14/16', () => {
+  const html = renderDslToString({
+    body: {
+      elements: ['tiny', 'small', 'medium', 'large'].map((size) => ({
+        tag: 'button',
+        size,
+        text: { content: size },
+        behaviors: [{ type: 'open_url', default_url: 'https://open.feishu.cn' }],
+      })),
+    },
+  });
+  for (const size of ['tiny', 'small', 'medium', 'large']) {
+    assert.match(html, new RegExp(`universal-card-button--${size}`));
+  }
+  // 高度 = padding + line-height + 上下描边（真机 height:auto 的实际取值）
+  assert.match(ALL_CSS, /\.universal-card-button--tiny\s*\{[^}]*min-height: 24px[^}]*font-size: 12px[^}]*line-height: 20px/);
+  assert.match(ALL_CSS, /\.universal-card-button--small\s*\{[^}]*min-height: 28px[^}]*font-size: 12px[^}]*line-height: 20px/);
+  assert.match(ALL_CSS, /\.universal-card-button--large\s*\{[^}]*min-height: 40px[^}]*font-size: 16px[^}]*line-height: 24px/);
+});
+
+test('button: 未写 size 不产生尺寸类（基础样式即 medium）', () => {
+  const html = renderDslToString({
+    body: {
+      elements: [{
+        tag: 'button',
+        text: { content: '默认' },
+        behaviors: [{ type: 'open_url', default_url: 'https://open.feishu.cn' }],
+      }],
+    },
+  });
+  assert.doesNotMatch(html, /universal-card-button--(tiny|small|medium|large)/);
+});
+
 test('standard_icon: indigo 等 default_color_tokens 命名色生效', () => {
   const html = renderDslToString({
     body: {

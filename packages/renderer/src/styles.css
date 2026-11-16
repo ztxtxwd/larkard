@@ -612,6 +612,17 @@
 .universal-card-button--block { width: 100%; min-width: unset; }
 .universal-card-button--auto { width: auto; }
 
+/* —— 尺寸族：对齐真机 ud__button 的 size 分档 ——
+   真机卡片外壳 `.universal-card-button .ud__button{height:auto}`，所以盒子高度由
+   padding + line-height + 1px 描边决定：tiny/xs 24、small/sm 28、medium/md 32、large/lg 40。
+   未写 size / medium 走上面的基础值（视觉与 medium 一致）。
+   仅描边族 / 实心族参与：text 纯文字族在下面单独覆盖 padding（真机 ud__button--text），
+   几何另有实测，暂不随 size 变。 */
+.universal-card-button--tiny { min-height: 24px; padding: 1px 7px; font-size: 12px; line-height: 20px; }
+.universal-card-button--small { min-height: 28px; padding: 3px 7px; font-size: 12px; line-height: 20px; }
+.universal-card-button--medium { min-height: 32px; padding: 4px 12px; font-size: 14px; line-height: 22px; }
+.universal-card-button--large { min-height: 40px; padding: 7px 15px; font-size: 16px; line-height: 24px; }
+
 /* —— outlined 描边族 —— */
 /* default：灰描边 + 白底 + 深字（未加变体类的裸 .universal-card-button 已是白底深字，
    这里补上默认灰边与 default 变体一致） */

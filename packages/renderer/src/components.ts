@@ -1824,13 +1824,16 @@ registerComponent('collapsible_panel', (el, ctx) => {
 });
 
 // button：按钮。文本是纯文本（不支持富文本）；可带前置 icon（继承按钮文字色）。
-// 按钮尺寸 → 字号（与引擎 button.size 一致）；icon 走 inheritFontSize=1em，等同按钮字号。
+// 按钮尺寸 → 字号/内边距/行高（对齐引擎 ud__button 的 xs/sm/md/lg 分档）；
+// 盒子高度 = padding + line-height + 上下描边：tiny 24 / small 28 / medium 32 / large 40。
+// icon 走 inheritFontSize=1em，等同按钮字号。
 const BUTTON_FONT_SIZE: Record<string, number> = {
   tiny: 12, small: 12, medium: 14, large: 16,
 };
 registerComponent('button', (el, ctx) => {
   const p = el.property || {};
   const type = p.type || 'default';
+  const btnSize = String(p.size || 'medium');
   // 飞书按钮文本是纯文本，不支持富文本：递归抽出所有文字、去掉格式与换行，平铺成一行。
   // text 可能是 plain_text（property.content），也可能是 markdown（property.elements，
   // 内含 emoji / text_tag / br / 副标题）——两种都只取纯文字。
@@ -1840,7 +1843,6 @@ registerComponent('button', (el, ctx) => {
   const iconRaw = (p.icon || p.udIcon) as CardElement | undefined;
   let iconVNode: VNode | null = null;
   if (iconRaw && iconRaw.tag) {
-    const btnSize = String(p.size || 'medium');
     const iconPx = BUTTON_FONT_SIZE[btnSize] || 14;
     const ip = { ...(iconRaw.property || {}) } as Record<string, unknown>;
     const nested = (ip.style && typeof ip.style === 'object' ? ip.style : null) as { size?: unknown } | null;
@@ -1870,9 +1872,16 @@ registerComponent('button', (el, ctx) => {
   const block = isFill || textFamily;
   // 其余（未写 width）→ 宽屏自适应、窄屏撑满
   const auto = !block && !pxWidth;
+  // 尺寸类：未写 size / 无法识别的值不写类（基础样式即 medium）。
+  // text 纯文字族暂不参与：它的内边距/行高是真机另一套（ud__button--text 覆盖 padding），
+  // 没有逐档实测前不跟着改，避免把当前几何带偏。
+  const sizeCls = p.size && BUTTON_FONT_SIZE[btnSize] && !textFamily
+    ? ` ${CLS}-button--${btnSize}`
+    : '';
   const base = `${CLS}-button ${CLS}-button--${type}`
     + (block ? ` ${CLS}-button--block` : '')
-    + (auto ? ` ${CLS}-button--auto` : '');
+    + (auto ? ` ${CLS}-button--auto` : '')
+    + sizeCls;
   // 外边距（如 margin:12px 20px）。撑满的按钮用 calc 抵消左右 margin（对齐真机元素壳的算法）；
   // 自适应宽度的按钮保持内容宽，margin 直接给，只用 max-width 防溢出。
   const style: Record<string, string> = {};
