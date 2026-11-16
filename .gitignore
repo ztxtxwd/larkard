@@ -20,6 +20,17 @@ feishu-web-dump
 /强化对齐与安全工作.html
 /cursor_card_schema_and_validation_files.md
 
+# 图标 token 快照（正本在 packages/schema/src/common/icon-tokens.list.ts）
+/icon.list
+
+# Cloudflare Browser Run 截图的本地工具与实测记录，暂不入库
+/docs/cloudflare-browser-run.md
+/scripts/card-to-png.mjs
+
+# 真机 vs 渲染器样式比对图
+/样式比对-*.jpg
+/样式比对-*.png
+
 # 本地 agent / MCP 配置
 /.mcp.json
 /.omc/
