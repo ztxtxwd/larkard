@@ -1823,3 +1823,81 @@ describe("img.title", () => {
     expect(rawToDsl(back as never)).toEqual(back);
   });
 });
+
+describe("spacing default 回显", () => {
+  // RAW 回读会给每一列都带 verticalSpacingValue(builtin default)，即使卡片从没设过
+  // 间距；把 `default` 投到公开 DSL 上会被飞书整卡拒绝（11310 vertical spacing
+  // invalid，ErrPath 指向父容器），所以公开 DSL 一律不写这个值。
+  const raw = {
+    schema: "2.0",
+    body: {
+      id: "_1",
+      property: {
+        verticalSpacing: "default",
+        elements: [
+          {
+            id: "_2",
+            tag: "column_set",
+            property: {
+              flexMode: "none",
+              horizontalSpacing: "default",
+              horizontalSpacingValue: {
+                type: "builtin_column_set_horizontal_spacing",
+                value: "default",
+              },
+              columns: [
+                {
+                  id: "_3",
+                  tag: "column",
+                  property: {
+                    verticalSpacingValue: {
+                      type: "builtin_column_vertical_spacing",
+                      value: "default",
+                    },
+                    horizontalSpacingValue: {
+                      type: "builtin_column_horizontal_spacing",
+                      value: "default",
+                    },
+                    elements: [],
+                  },
+                },
+                { id: "_4", tag: "column", property: { verticalSpacing: "default", elements: [] } },
+                {
+                  id: "_5",
+                  tag: "column",
+                  property: {
+                    verticalSpacing: "default",
+                    verticalSpacingValue: { type: "pixels", value: 8 },
+                    elements: [],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    config: {},
+  };
+
+  it("builtin default 回显 / 枚举都落不到公开 DSL 上，像素回显照常折算", () => {
+    const dsl = rawToDsl(raw as never) as AnyDsl;
+    const body = dsl.body as Record<string, unknown>;
+    expect("vertical_spacing" in body).toBe(false);
+
+    const set = findElements(dsl, (e) => e.tag === "column_set")[0]!;
+    expect("horizontal_spacing" in set).toBe(false);
+
+    const columns = (set.columns as Record<string, unknown>[]) ?? [];
+    expect("vertical_spacing" in columns[0]!).toBe(false);
+    expect("horizontal_spacing" in columns[0]!).toBe(false);
+    expect("vertical_spacing" in columns[1]!).toBe(false);
+    // 像素回显比粗粒度枚举更精确：default 被像素值覆盖，而不是被丢掉
+    expect(columns[2]!.vertical_spacing).toBe("8px");
+  });
+
+  it("幂等：再跑一遍 rawToDsl 不产生 diff", () => {
+    const once = rawToDsl(raw as never) as AnyDsl;
+    expect(rawToDsl(once as never)).toEqual(once);
+  });
+});

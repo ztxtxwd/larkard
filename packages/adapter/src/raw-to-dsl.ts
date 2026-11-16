@@ -253,7 +253,6 @@ const TAG_DEFAULT_DROPS: Record<string, Record<string, unknown>> = {
   },
   column_set: {
     disabled: false,
-    horizontal_spacing: "default",
   },
   button: {
     disabled: false,
@@ -265,6 +264,23 @@ const TAG_DEFAULT_DROPS: Record<string, Record<string, unknown>> = {
     height: "auto",
   },
 };
+
+/**
+ * `horizontal_spacing` / `vertical_spacing` 的公开取值域由飞书发送接口决定，
+ * 并且比 `z.string()` 窄很多（2026-11 逐个取值实测）：
+ *
+ * - 收：`small` / `medium` / `large` / `extra_large`、`0px`…`99px`（可带小数，上限看整数部分）、空串；
+ * - 拒：`default` / `auto` / `none` / 裸数字 / `8 px` / `8PX` / 负数 / `>=100px`，
+ *   报 `11310 vertical spacing invalid`（`horizontal_spacing` 同套，`ErrPath` 指向父容器）。
+ *
+ * 唯一例外是 `column_set.horizontal_spacing` 收 `default`，但语义就是“不写”，
+ * 所以统一不往公开 DSL 上写 `default`。
+ *
+ * RAW 回读却会给**每一列**都带上它，即使这张卡从来没设过间距：
+ * `verticalSpacingValue:{type:'builtin_column_vertical_spacing', value:'default'}`。
+ * 把它投影成 `vertical_spacing:"default"` 会让“RAW → DSL → 重发”整卡被拒。
+ */
+const SPACING_KEYS = ["horizontal_spacing", "vertical_spacing"] as const;
 
 /**
  * Maps a `*_value` echo field to the sibling enum it should reconcile with.
@@ -1106,7 +1122,12 @@ function convertProperty(
     // dropping the echo (the old behavior) left whatever stale `weight` the
     // RAW happened to have — usually 1 — and the preview rendered weighted
     // columns 1:1 while the device showed e.g. 1:2.
-    if (ownerTag === "column") {
+    //
+    // Gated on echoKey: a column also echoes horizontalSpacingValue /
+    // verticalSpacingValue / marginValue as `{type:'pixels'}`, and those are not
+    // the column width. Without the gate the last pixel echo in field order won
+    // (`verticalSpacingValue:{type:'pixels',value:0}` → width:"0px").
+    if (ownerTag === "column" && echoKey === "width_value") {
       if (echoType === "column_width_weighted" && typeof echoValue === "number") {
         out.width = "weighted";
         out.weight = echoValue;
@@ -1168,6 +1189,15 @@ function convertProperty(
       if (enumVal === undefined) out[enumKey] = echoValue;
       continue;
     }
+  }
+
+  // Spacing: never project the internal `default` keyword onto the public DSL.
+  // It arrives both as an enum (`verticalSpacing:"default"` on a column_set) and
+  // as a builtin echo on columns that never set a spacing at all; Feishu rejects
+  // it everywhere except column_set.horizontal_spacing, where it merely means
+  // "omit the field". See SPACING_KEYS for the measured domain.
+  for (const key of SPACING_KEYS) {
+    if (out[key] === "default") delete out[key];
   }
 
   // Drop per-tag editor defaults.
