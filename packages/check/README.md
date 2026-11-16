@@ -56,7 +56,7 @@ const { card, fixes, errors } = checkCard(dsl, { fix: true })
 
 | `code` | 规则 | 修复方式 |
 | --- | --- | --- |
-| `spacing-domain` | `horizontal_spacing` / `vertical_spacing` 只收 `small` / `medium` / `large` / `extra_large` 或 `0–99px`；`default` / `auto` / 裸数字 / `>=100px` 都会被拒 | 归一化格式，非法值删字段 |
+| `spacing-domain` | `horizontal_spacing` / `vertical_spacing` 只收 `small` / `medium` / `large` / `extra_large`、`0–99px`、空串（等同没设置）；`default` / `auto` / 裸数字 / `>=100px` 会被拒。**唯一例外**：`column_set.horizontal_spacing` 收 `default` / `auto` | 归一化格式，非法值删字段 |
 | `panel-header-padding` | `collapsible_panel.header.padding` 只收 `0–28px` | 夹到 28px；不是 px 就删字段 |
 | `media-duration` | `audio` / `video` 不能写 `duration` / `duration_ms`（时长在上传时确定） | 删字段 |
 | `media-enable-forward` | 含音视频时必须 `config.enable_forward = false` | 置为 `false` |

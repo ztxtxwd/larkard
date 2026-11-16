@@ -57,6 +57,31 @@ test('column_set.horizontal_spacing 的 default 是唯一合法例外', () => {
   assert.deepEqual(issues, []);
 });
 
+test('column_set.horizontal_spacing 的 auto 也是合法值', () => {
+  const { issues } = repairDeviceIssues({
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'column_set',
+          horizontal_spacing: 'auto',
+          columns: [{ tag: 'column', elements: [md] }],
+        },
+      ],
+    },
+  });
+  assert.deepEqual(issues, []);
+});
+
+test('空串间距等同没设置，不算违规', () => {
+  const { card, issues } = repairDeviceIssues({
+    schema: '2.0',
+    body: { elements: [md], vertical_spacing: '' },
+  });
+  assert.deepEqual(issues, []);
+  assert.equal((card.body as Record<string, unknown>).vertical_spacing, '');
+});
+
 test('间距：裸数字与大小写归一化也算一次修复', () => {
   const { card, issues } = repairDeviceIssues({
     schema: '2.0',

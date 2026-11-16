@@ -138,11 +138,16 @@ export function repairDeviceIssues(input: Record<string, unknown>): RepairResult
     for (const key of ['horizontal_spacing', 'vertical_spacing'] as const) {
       if (!(key in node)) continue;
       const raw = node[key];
-      // 唯一例外：`column_set.horizontal_spacing: "default"` 真机是收的，
-      // 且落点就是默认值（删掉渲染不变），所以只认这一处、按合法处理。
-      const columnSetDefault =
-        key === 'horizontal_spacing' && node.tag === 'column_set' && raw === 'default';
-      const next = columnSetDefault ? raw : normalizeSpacing(raw);
+      // 真机接受的两种「非 px」写法（实测见 docs/feishu-card-doc-gaps/column-spacing-value-domain.md）：
+      // - 空串 `""`：等同没设置，所有间距字段都收；
+      // - `default` / `auto`：只有 `column_set.horizontal_spacing` 收（落点就是默认值）。
+      const acceptedAsIs =
+        (typeof raw === 'string' && raw.trim() === '') ||
+        (key === 'horizontal_spacing' &&
+          node.tag === 'column_set' &&
+          typeof raw === 'string' &&
+          (raw.trim() === 'default' || raw.trim() === 'auto'));
+      const next = acceptedAsIs ? raw : normalizeSpacing(raw);
       if (next === undefined) {
         delete node[key];
         record(
