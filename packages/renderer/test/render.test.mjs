@@ -1261,6 +1261,50 @@ test('icon: _colorful token does NOT get a color override', () => {
   assert.doesNotMatch(html, /color:#e22e28/); // 彩色图标自带色，不覆盖
 });
 
+// ---- 自带渐变的彩色图标（AI 系列）：真机是彩色，不是模板色单色 ----
+
+test('icon: ai-common_colorful 走渐变裁切而不是继承父级单色', () => {
+  const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
+    { tag: 'standard_icon', property: { token: 'ai-common_colorful', color: 'red' } },
+  ] } } } });
+  assert.match(html, /ud-icon_ai-common_colorful/);
+  assert.match(html, /universal-card-icon--colorful/);
+  assert.match(html, /--universal-card-icon-gradient:linear-gradient\(90deg, #4752E6 0%, #CF5ECF 100%\)/);
+  assert.match(html, /--universal-card-icon-gradient-dark:linear-gradient\(90deg, #7B83F7 0%, #B54AB5 100%\)/);
+  assert.doesNotMatch(html, /color:#e22e28/); // 不吃显式 color
+});
+
+test('icon: 渐变规则进 ALL_CSS（background-clip:text 裁到 :before glyph）', () => {
+  assert.match(ALL_CSS, /\.universal-card-icon--colorful:before\s*\{[^}]*background-clip:\s*text/);
+});
+
+test('header: ai-common_colorful 不注入模板标题色（否则渲染成蓝色单色星芒）', () => {
+  const html = renderCardToString({ json_card: {
+    schema: '2.0',
+    header: { tag: 'card_header', property: {
+      template: 'blue',
+      title: { tag: 'plain_text', property: { content: '直播预告' } },
+      udIcon: { tag: 'ud_icon', property: { imageID: '29', style: { horizontalPadding: 0 }, token: 'ai-common_colorful' } },
+    } },
+    body: { tag: 'body', property: { elements: [] } },
+  } });
+  assert.match(html, /universal-card-icon--colorful/);
+  assert.doesNotMatch(html, /ud-icon_ai-common_colorful" style="[^"]*color:/); // 无 color
+});
+
+test('header: 单色图标仍注入模板标题色', () => {
+  const html = renderCardToString({ json_card: {
+    schema: '2.0',
+    header: { tag: 'card_header', property: {
+      template: 'blue',
+      title: { tag: 'plain_text', property: { content: 'x' } },
+      udIcon: { tag: 'ud_icon', property: { token: 'car_outlined' } },
+    } },
+    body: { tag: 'body', property: { elements: [] } },
+  } });
+  assert.match(html, /ud-icon_car_outlined" style="[^"]*color:#1456f0/); // 模板 blue 的 title_color
+});
+
 test('icon: no/unknown named color → no color (inherits currentColor)', () => {
   const html = renderCardToString(iconCard({ token: 'add_outlined' }));
   assert.doesNotMatch(html, /color:#/);

@@ -1006,6 +1006,22 @@
   justify-content: center;
   vertical-align: -0.125em;
 }
+/* 自带渐变的彩色图标（`*_colorful`，见 constants.ts COLORFUL_ICON_GRADIENTS）：
+   ud-icons 是单色轮廓字体，真机上这类图标带自己的渐变（AI 系列 = 蓝 → 粉紫）。
+   渐变值由组件内联到两个 CSS 变量上，这里用 background-clip:text 把渐变裁进 glyph。
+   注意：规则落在 :before 上——背景必须和文字同一个盒子，否则裁不到字形。 */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .universal-card-icon--colorful:before {
+    background-image: var(--universal-card-icon-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .universal-card-root.theme-dark .universal-card-icon--colorful:before {
+    background-image: var(--universal-card-icon-gradient-dark, var(--universal-card-icon-gradient));
+  }
+}
 
 /* ---- video 视频 ---- */
 /* 对齐飞书 .universal-card-video：有 src 时原生 <video controls>；无 src 时封面 + 播放钮。 */

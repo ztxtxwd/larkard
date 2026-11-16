@@ -3,6 +3,10 @@ import { z } from 'zod';
 /**
  * 飞书卡片图标库 token 枚举。
  * 来源：开放平台「图标库」文档（线性 / 面性 / 彩色）。
+ *
+ * 额外收录：官方文档未列出、但客户端 ud-icons 字体（2484 个 glyph，见 renderer/src/icon-font.ts）
+ * 里确实存在的 token（如 AI 系列 ai-common_colorful）。这些 token 在真机上能正常渲染
+ * ——标题前缀图标常用——若不收录会被校验判为非法。
  */
 export const IconTokenSchema = z
   .enum([
@@ -1159,6 +1163,19 @@ export const IconTokenSchema = z
     'meego_colorful',
     'myai_colorful',
     'apaas_colorful',
+    'approval_colorful',
+    // AI 系列：客户端内置图标（官方文档未列），卡片 header 前缀图标高频使用。
+    'ai-block_outlined',
+    'ai-build_colorful',
+    'ai-common_colorful',
+    'ai-computer_colorful',
+    'ai-doc_colorful',
+    'ai-explain_colorful',
+    'ai-project_colorful',
+    'ai-search_colorful',
+    'ai-update_filled',
+    'ai-video_filled',
+    'ai-video_outlined',
   ])
   .describe('飞书图标库 token，如 add_outlined、chat-forbidden_filled');
 

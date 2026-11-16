@@ -317,6 +317,36 @@ export const ICON_COLOR_MAP: Record<string, string> = (() => {
   return out;
 })();
 
+/**
+ * 自带渐变的彩色图标（`*_colorful`）→ CSS 渐变。
+ *
+ * 背景：ud-icons 字体是**单色轮廓**字体（原始 woff2 只有 glyf/cmap/hmtx…，没有 COLR/CPAL
+ * 彩色表；网页版 CSS 也只有 `content` 映射），所以 `*_colorful` 的 glyph 只能被外部颜色
+ * 单色画出——不带颜色时会继承父级（header 里就是标题的模板色，看起来偏蓝）。
+ * 真机给这些图标上的是图标自带的渐变，其中 AI 系列取自客户端同款彩色图标
+ * `AiCommonColorful`（linearGradient：#4752E6 → #CF5ECF，dark：#7B83F7 → #B54AB5）。
+ *
+ * 表里命中的 token 由 renderIcon 换成「渐变裁切 glyph」渲染（见 styles.css
+ * `.universal-card-icon--colorful`）；未命中的 `*_colorful` 保持单色（与网页版一致）。
+ */
+export const COLORFUL_ICON_GRADIENTS: Record<string, { light: string; dark: string }> = (() => {
+  const light = `linear-gradient(90deg, #4752E6 0%, #CF5ECF 100%)`;
+  const dark = `linear-gradient(90deg, #7B83F7 0%, #B54AB5 100%)`;
+  const out: Record<string, { light: string; dark: string }> = {};
+  for (const t of [
+    'ai-build_colorful',
+    'ai-common_colorful',
+    'ai-computer_colorful',
+    'ai-doc_colorful',
+    'ai-explain_colorful',
+    'ai-project_colorful',
+    'ai-search_colorful',
+  ]) {
+    out[t] = { light, dark };
+  }
+  return out;
+})();
+
 /** 人员尺寸 token（逆向自网页版 fallbackStyle.person.single_size / person.size） */
 export type PersonSizeToken = {
   avatar_size: number;

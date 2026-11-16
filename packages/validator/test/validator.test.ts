@@ -282,3 +282,29 @@ test('builder deprecated prop path is prefixed with /dsl', () => {
   assert.ok(w);
   assert.equal(w.path, '/dsl/i18n_elements');
 });
+
+test('图标 token：客户端内置 AI 图标（ai-common_colorful 等）与官方彩色图标不被判非法', () => {
+  // 回归：这些 token 确实存在于客户端 ud-icons 字体（2484 glyph），
+  // 官方「图标库」文档未收录，曾因此被 zod 枚举判为 error。
+  for (const token of ['ai-common_colorful', 'ai-search_colorful', 'approval_colorful']) {
+    const ds = validate(`{
+      "schema": "2.0",
+      "body": { "elements": [ {
+        "tag": "div",
+        "icon": { "tag": "standard_icon", "token": "${token}" },
+        "text": { "tag": "plain_text", "content": "hi" }
+      } ] }
+    }`);
+    assert.equal(ds.filter((d) => d.severity === 'error').length, 0, `${token} 不应报错：${JSON.stringify(ds)}`);
+  }
+  // 而真正不存在的 token 仍然报错
+  const bad = validate(`{
+    "schema": "2.0",
+    "body": { "elements": [ {
+      "tag": "div",
+      "icon": { "tag": "standard_icon", "token": "nope_outlined" },
+      "text": { "tag": "plain_text", "content": "hi" }
+    } ] }
+  }`);
+  assert.ok(bad.some((d) => d.severity === 'error'));
+});
