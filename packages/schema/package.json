@@ -11,6 +11,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./icon-catalog": {
+      "types": "./dist/common/icon-catalog.d.ts",
+      "import": "./dist/icon-catalog.js",
+      "require": "./dist/icon-catalog.cjs"
     }
   },
   "files": [
@@ -19,14 +24,15 @@
   "scripts": {
     "build": "tsup && tsc -p tsconfig.json --emitDeclarationOnly",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "echo no tests"
+    "test": "tsx --test test/*.test.ts"
   },
   "dependencies": {
     "zod": "^4.0.0"
   },
   "devDependencies": {
     "tsup": "^8.3.5",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "tsx": "^4.19.3"
   },
   "license": "MIT",
   "publishConfig": {
