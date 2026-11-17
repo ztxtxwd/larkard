@@ -318,26 +318,21 @@ export const ICON_COLOR_MAP: Record<string, string> = (() => {
 })();
 
 /**
- * 自带渐变的彩色图标（`*_colorful`）→ CSS 渐变。
+ * 真机用 SVG 组件绘制的彩色图标（token → 样式类）。
  *
- * 背景：ud-icons 字体是**单色轮廓**字体（原始 woff2 只有 glyf/cmap/hmtx…，没有 COLR/CPAL
- * 彩色表；网页版 CSS 也只有 `content` 映射），所以 `*_colorful` 的 glyph 只能被外部颜色
- * 单色画出——不带颜色时会继承父级（header 里就是标题的模板色，看起来偏蓝）。
- * 真机给这些图标上的是图标自带的渐变，其中 AI 星芒 `ai-common_colorful` 取自客户端同款彩色图标
- * `AiCommonColorful`（linearGradient：#4752E6 → #CF5ECF，dark：#7B83F7 → #B54AB5）。
+ * ud-icons 是**单色轮廓**字体（woff2 无 COLR/CPAL 彩色表），`*_colorful` 的 glyph 只能被
+ * 外部单色画出；而且字体 glyph 的形状也不保证与真机一致——`ai-common_colorful` 的
+ * \f128 在四角星右上角多画了一颗小星，而客户端 `AiCommonColorful` 只有一颗四角星
+ * （逆向自客户端 SVG 组件：24×24，linearGradient #4752E6→#CF5ECF；dark #7B83F7→#B54AB5）。
  *
- * 表里命中的 token 由 renderIcon 换成「渐变裁切 glyph」渲染（见 styles.css
- * `.universal-card-icon--colorful`）；未命中的 `*_colorful` 保持单色（与网页版一致）。
+ * 命中本表的 token 由 renderIcon 换成「不挂 ud-icon_ token 类的 <i> + 背景图」渲染，
+ * 图形在 styles.css 里以 data URI 内联真机 SVG（`.universal-card-icon--ai-common-colorful`，
+ * 暗色走 `.theme-dark` 覆盖）；未命中的 `*_colorful` 保持单色（与网页版一致）。
  */
-export const COLORFUL_ICON_GRADIENTS: Record<string, { light: string; dark: string }> = (() => {
-  const light = `linear-gradient(90deg, #4752E6 0%, #CF5ECF 100%)`;
-  const dark = `linear-gradient(90deg, #7B83F7 0%, #B54AB5 100%)`;
-  const out: Record<string, { light: string; dark: string }> = {};
-  for (const t of ['ai-common_colorful']) {
-    out[t] = { light, dark };
-  }
-  return out;
-})();
+export const SVG_COLORFUL_ICONS: Record<string, string> = {
+  'ai-common_colorful': `${CLS}-icon--ai-common-colorful`,
+  'ai-common_colorful-dm': `${CLS}-icon--ai-common-colorful`,
+};
 
 /** 人员尺寸 token（逆向自网页版 fallbackStyle.person.single_size / person.size） */
 export type PersonSizeToken = {

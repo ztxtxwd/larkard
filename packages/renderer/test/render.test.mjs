@@ -1298,21 +1298,23 @@ test('icon: _colorful token does NOT get a color override', () => {
   assert.doesNotMatch(html, /color:#e22e28/); // 彩色图标自带色，不覆盖
 });
 
-// ---- 自带渐变的彩色图标（AI 系列）：真机是彩色，不是模板色单色 ----
+// ---- 彩色图标（AI 系列）：真机是客户端 SVG，不是字体 glyph 单色 ----
 
-test('icon: ai-common_colorful 走渐变裁切而不是继承父级单色', () => {
+test('icon: ai-common_colorful 用真机 SVG 而不是字体 glyph', () => {
   const html = renderCardToString({ json_card: { body: { tag: 'body', property: { elements: [
     { tag: 'standard_icon', property: { token: 'ai-common_colorful', color: 'red' } },
   ] } } } });
-  assert.match(html, /ud-icon_ai-common_colorful/);
-  assert.match(html, /universal-card-icon--colorful/);
-  assert.match(html, /--universal-card-icon-gradient:linear-gradient\(90deg, #4752E6 0%, #CF5ECF 100%\)/);
-  assert.match(html, /--universal-card-icon-gradient-dark:linear-gradient\(90deg, #7B83F7 0%, #B54AB5 100%\)/);
+  assert.match(html, /universal-card-icon--ai-common-colorful/);
+  // 真机 AiCommonColorful 只有一颗四角星；字体 \f128 右上角多一颗小星，不能再走 glyph
+  assert.doesNotMatch(html, /ud-icon_ai-common_colorful/);
   assert.doesNotMatch(html, /color:#e22e28/); // 不吃显式 color
 });
 
-test('icon: 渐变规则进 ALL_CSS（background-clip:text 裁到 :before glyph）', () => {
-  assert.match(ALL_CSS, /\.universal-card-icon--colorful:before\s*\{[^}]*background-clip:\s*text/);
+test('icon: ai-common_colorful 的真机 SVG 进 ALL_CSS（data URI + 渐变）', () => {
+  assert.match(ALL_CSS, /\.universal-card-icon--ai-common-colorful\s*\{[^}]*data:image\/svg\+xml/);
+  assert.match(ALL_CSS, /%234752E6/); // #4752E6
+  assert.match(ALL_CSS, /%23CF5ECF/); // #CF5ECF
+  assert.match(ALL_CSS, /theme-dark[^{]*\.universal-card-icon--ai-common-colorful[^{]*\{[^}]*%237B83F7/);
 });
 
 test('header: ai-common_colorful 不注入模板标题色（否则渲染成蓝色单色星芒）', () => {
@@ -1325,8 +1327,9 @@ test('header: ai-common_colorful 不注入模板标题色（否则渲染成蓝�
     } },
     body: { tag: 'body', property: { elements: [] } },
   } });
-  assert.match(html, /universal-card-icon--colorful/);
-  assert.doesNotMatch(html, /ud-icon_ai-common_colorful" style="[^"]*color:/); // 无 color
+  assert.match(html, /universal-card-icon--ai-common-colorful/);
+  const iconTag = html.match(/<i[^>]*universal-card-icon--ai-common-colorful[^>]*>/)[0];
+  assert.doesNotMatch(iconTag, /color:/); // 不注入模板标题色（渐变在 SVG 里）
 });
 
 test('header: 单色图标仍注入模板标题色', () => {

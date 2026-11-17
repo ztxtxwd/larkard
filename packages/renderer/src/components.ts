@@ -8,7 +8,7 @@ import type { CardElement, ElementProperty, RenderContext, TableColumn, TableHea
 import {
   BASE_FONT_SIZE, BASE_LINE_HEIGHT,
   CHART_DEFAULT_ASPECT_RATIO, CHART_FIXED_MIN_SIZE, CHART_MIN_HEIGHT, CHART_MIN_WIDTH,
-  CLS, COLORFUL_ICON_GRADIENTS, HEADER_TEMPLATE, HEADING_ICON_SIZE, HEADING_LEVELS, ICON_COLOR_MAP, ICON_SIZE_MAP,
+  CLS, SVG_COLORFUL_ICONS, HEADER_TEMPLATE, HEADING_ICON_SIZE, HEADING_LEVELS, ICON_COLOR_MAP, ICON_SIZE_MAP,
   NAMED_TEXT_COLOR, ORDER_STYLES, AT_FALLBACK_NAME,
   PERSON_FALLBACK_AVATAR, PERSON_FALLBACK_NAME, PERSON_FOLLOW_FONT,
   PERSON_LIST_COMMA, PERSON_LIST_SIZE, PERSON_SINGLE_SIZE,
@@ -503,7 +503,7 @@ export function registerBuiltins(): void {
     // （典型案例 ai-common_colorful：真机是蓝→粉紫渐变，注色后成了模板蓝的单色星芒）。
     const ip = (iconRaw.property || {}) as Record<string, unknown>;
     const token = String(ip.token || ip.key || '').trim();
-    const selfColored = token.endsWith('_colorful') || Boolean(COLORFUL_ICON_GRADIENTS[token]);
+    const selfColored = token.endsWith('_colorful') || Boolean(SVG_COLORFUL_ICONS[token]);
     const hasColor = selfColored
       || typeof ip.color === 'string' && ip.color
       || (ip.style && typeof ip.style === 'object' && typeof (ip.style as { color?: unknown }).color === 'string');
@@ -2395,8 +2395,8 @@ registerComponent('emoji', (el, ctx) => {
 // standard_icon / ud_icon：图标字体。空 <i class="ud-icon_<token>"> 靠字体 :before 出图。
 // token 形如 "warning_outlined"；size 走 ICON_SIZE_MAP（默认 16px），color 走 ICON_COLOR_MAP
 // 或直接 #/rgb 直值；缺/未知 color 不输出，继承父级文字色（currentColor）。
-// _colorful 结尾的彩色图标不再写 color：字体是单色轮廓，命 COLORFUL_ICON_GRADIENTS 的
-// 改走渐变裁切（真机是自带渐变的多色图标，不是单色继承）；其余彩色图标仍继承父级色。
+// _colorful 结尾的彩色图标不再写 color：字体是单色轮廓，自带渐变/彩色图形的
+// （见 SVG_COLORFUL_ICONS）由真机 SVG 画出，其余彩色图标仍继承父级色。
 // 两种形态：standard_icon 的 color/size 直接挂 property；ud_icon 把它们嵌在 property.style 里。
 
 /** RAW 图标尺寸（widthValue/heightValue，或 "12px"/12）→ px */
@@ -2472,20 +2472,21 @@ function renderIcon(el: CardElement, ctx: RenderContext, defaultSize?: number) {
   style.fontSize = Math.min(boxW, boxH) + 'px';
   style.width = boxW + 'px';
   style.height = boxH + 'px';
-  // 自带渐变的彩色图标：把渐变交给 CSS 变量，由 .universal-card-icon--colorful 用
-  // background-clip:text 裁到 glyph 上（单色字体 + 渐变着色，见 COLORFUL_ICON_GRADIENTS）。
-  const gradient = COLORFUL_ICON_GRADIENTS[token];
-  if (gradient) {
-    style['--universal-card-icon-gradient'] = gradient.light;
-    style['--universal-card-icon-gradient-dark'] = gradient.dark;
-  } else if (!token.endsWith('_colorful')) {
+  // 真机以 SVG 绘制的彩色图标（字体 glyph 形状与真机不同）：不挂 ud-icon_ token 类，
+  // 避免字体 :before 再画一层；图形由 `.universal-card-icon--ai-common-colorful`
+  // 的 data URI 提供（见 styles.css / constants.ts SVG_COLORFUL_ICONS）。
+  const svgIconCls = SVG_COLORFUL_ICONS[token];
+  if (svgIconCls) {
+    return h('i', { className: `${CLS}-icon ${svgIconCls}`, style });
+  }
+  if (!token.endsWith('_colorful')) {
     // 命名色：ICON_COLOR_MAP（含 indigo/wathet 等）→ paletteColor（indigo-500）→ #/rgb 直值
     const c = ICON_COLOR_MAP[colorRaw]
       || paletteColor(colorRaw)
       || (/^#|^rgb/i.test(colorRaw) ? colorRaw : '');
     if (c) style.color = c;
   }
-  const cls = `${CLS}-icon ud-icon_${token}${gradient ? ` ${CLS}-icon--colorful` : ''}`;
+  const cls = `${CLS}-icon ud-icon_${token}`;
   return h('i', { className: cls, style });
 }
 registerComponent('standard_icon', renderIcon);
