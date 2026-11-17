@@ -1679,6 +1679,27 @@ test('markdown inline <person> 胶囊仅姓名：内容盒同样锁 20px（与�
   assert.match(html, /padding:0 6px/);
 });
 
+test('markdown inline <person> 相邻两行胶囊：内容盒居中在行高里，两行之间保留空隙', () => {
+  // 真机：根节点撑满父级行高 24，胶囊内容盒 B=20 且在根节点内居中，
+  // 上下各留 2px；相邻两行胶囊之间因此有 4px 空隙。旧实现把根/内容盒
+  // 都撑到整行高，连续两行胶囊会贴在一起。
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        text_size: 'normal',
+        content: "<person id='ou_a' show_name=true show_avatar=false style='capsule'></person>　A\n"
+          + "<person id='ou_b' show_name=true show_avatar=true style='capsule'></person>　B",
+      }],
+    },
+  });
+  assert.equal((html.match(/style="height:24px;line-height:24px"/g) || []).length, 2);
+  assert.equal((html.match(/style="height:20px;line-height:20px"/g) || []).length, 2);
+  // 内容盒不能在根节点里贴顶（baseline），否则胶囊与下一行只剩单边空隙。
+  assert.doesNotMatch(ALL_CSS, /person:not\(\.universal-card-person--avatar\)[^{]*\{[^}]*align-items:\s*baseline/);
+});
+
 test('markdown inline <person> 胶囊仅头像：头像 = 正文行高 22px（不是 medium 的 30px）', () => {
   const html = renderDslToString({
     schema: '2.0',

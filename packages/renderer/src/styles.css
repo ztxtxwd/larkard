@@ -930,18 +930,16 @@
 }
 /* 有头像：网页版就是 vertical-align:bottom。middle 按拉丁 x-height 居中，
  * 中文行里整盒（头像 18 + 姓名 22）会视觉偏下。
- * 仅姓名：跟正文基线对齐，不要 bottom/middle。 */
+ * 仅姓名：整颗 chip 跟正文基线对齐（vertical-align:baseline），不要 bottom/middle。
+ * 注意根节点/内容盒保留网页版的 align-items:center：胶囊内容盒 B 比根节点矮，
+ * 居中后上下各留 2px；改成 baseline 会让内容盒贴根节点顶部，
+ * 与下一行胶囊的视觉间距比真机小一截。 */
 .universal-card-markdown .universal-card-person--avatar,
 .universal-card-person--avatar {
   vertical-align: bottom;
 }
 .universal-card-markdown .universal-card-person:not(.universal-card-person--avatar) {
   vertical-align: baseline;
-  align-items: baseline;
-}
-.universal-card-markdown .universal-card-person:not(.universal-card-person--avatar) .universal-card-person__content,
-.universal-card-markdown .universal-card-person:not(.universal-card-person--avatar) .universal-card-person__name {
-  align-items: baseline;
 }
 .universal-card-person__content {
   display: flex; align-items: center; max-width: 100%; cursor: default;
