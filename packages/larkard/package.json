@@ -87,12 +87,12 @@
       "require": "./dist/optimize/index.cjs"
     },
     "./patch": {
-      "types": "./dist/patch/index.d.ts",
+      "types": "./dist/core/patch/index.d.ts",
       "import": "./dist/patch/index.js",
       "require": "./dist/patch/index.cjs"
     },
     "./state": {
-      "types": "./dist/state/index.d.ts",
+      "types": "./dist/core/state/index.d.ts",
       "import": "./dist/state/index.js",
       "require": "./dist/state/index.cjs"
     },
