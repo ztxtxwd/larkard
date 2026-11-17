@@ -2,6 +2,8 @@
 
 这份文档记录从 `open-feishu-card-monorepo` 切换到 `larkard` 的一次性操作。之后的常规发版见 [`NOTES.md`](NOTES.md)。
 
+> 当前状态（2026-11-17）：仓库已改名为 `ztxtxwd/larkard` 并转为 Public；重构提交在 `release/larkard` 分支，`main` 仍指向旧提交。完成第 2 步的 npm Trusted Publisher 配置后，再把 `release/larkard` 快进到 `main` 并 push。
+
 ## 0. 前置条件
 
 - `gh auth status` 已登录，且对 `ztxtxwd` 有仓库管理权限。
