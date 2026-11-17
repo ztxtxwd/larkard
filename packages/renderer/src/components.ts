@@ -10,7 +10,7 @@ import {
   CHART_DEFAULT_ASPECT_RATIO, CHART_FIXED_MIN_SIZE, CHART_MIN_HEIGHT, CHART_MIN_WIDTH,
   CLS, SVG_COLORFUL_ICONS, HEADER_TEMPLATE, HEADING_ICON_SIZE, HEADING_LEVELS, ICON_COLOR_MAP, ICON_SIZE_MAP,
   NAMED_TEXT_COLOR, ORDER_STYLES, AT_FALLBACK_NAME,
-  PERSON_FALLBACK_AVATAR, PERSON_FALLBACK_NAME, PERSON_FOLLOW_FONT,
+  PERSON_FALLBACK_AVATAR, PERSON_FALLBACK_NAME, PERSON_FOLLOW_FONT, PERSON_CAPSULE_TIGHT_SIZE_KEYS,
   PERSON_LIST_COMMA, PERSON_LIST_SIZE, PERSON_SINGLE_SIZE,
   PERSON_UNKNOWN_AVATAR, PERSON_UNKNOWN_NAME,
   TABLE_COLUMN_MIN_WIDTH, TABLE_HEAD_BG, TABLE_ROW_HEIGHT, TABLE_ROW_HEIGHT_LINES,
@@ -153,7 +153,13 @@ function renderAvatarNode(
  *
  * 尺寸两套：
  * - 独立组件：走 PERSON_SINGLE_SIZE（缺省 medium）
- * - markdown 内联：飞书设 avatarFollowFontSize，跟正文字号（默认 14 → 头像 18）
+ * - markdown 内联：飞书设 avatarFollowFontSize，跟正文字号。真机 Person 组件
+ *   （feishu-web-dump aa0d1645…js 的 Ss）分三种算法：
+ *   - 仅头像：头像 = 组件行高 de(fontSize)（14→22 / 16→24 / 17→24），与 size/胶囊无关；
+ *   - 头像+姓名 normal：14/16/17 走 PERSON_FOLLOW_FONT（ks 表），其余字号取 de(fontSize)；
+ *   - 胶囊（带姓名）：内容盒 B = max(de(fontSize) - 2, fontSize)，头像 = max(B - 4, min(字号, B))，
+ *     xxx-large/heading-1/xxxx-large/heading-0 再收紧 2px。
+ *   根节点与姓名行高由 markdown 父级行高决定（带 text_size 时含桌面端 +2）。
  */
 function renderPersonChip(
   userID: string | undefined,
@@ -178,41 +184,51 @@ function renderPersonChip(
   // markdown 注入 textMetrics，或元素自带 avatarFollowFontSize（RAW / md-parse 形态）
   const follow = prop.avatarFollowFontSize === true || !!ctx.textMetrics;
   const parentFs = Number(prop.fontSize) || ctx.textMetrics?.fontSize || (follow ? BASE_FONT_SIZE : 0);
-  const parentLh = Number(prop.lineHeight) || ctx.textMetrics?.lineHeight;
 
   let fontSize: number;
   let lineHeight: number;
-  let avatarPx: number;
-  let followMargins = false;
+  /** markdown 内联：根节点/姓名的行高（真机 parentLineHeight） */
+  let parentLineHeight = 0;
+  /** markdown 内联：是否按父级行高撑根节点 */
+  let markdownInline = false;
+  /** 胶囊（带姓名）的内容盒高度（真机 B）；仅 markdown 内联有 */
+  let capsuleHeight: number | undefined;
+  let avatarPx = 0;
 
   if (follow && parentFs) {
-    const hl = PERSON_FOLLOW_FONT[parentFs];
+    markdownInline = true;
     fontSize = parentFs;
-    lineHeight = hl?.lineHeight ?? parentLh ?? parentFs + 8;
-    followMargins = true;
-    if (showAvatar && showName) {
-      avatarPx = hl?.avatarSize ?? (capsule
-        ? lineHeight - (fontSize > 20 ? 8 : 4)
-        : lineHeight);
-    } else if (showAvatar && capsule) {
-      const token = PERSON_SINGLE_SIZE[String(prop.size ?? 'medium')] || PERSON_SINGLE_SIZE.medium;
-      avatarPx = token.avatar_size;
-    } else if (showAvatar) {
-      avatarPx = lineHeight;
-    } else {
-      avatarPx = 0;
+    // 真机 D = de(fontSize)（组件行高），_ = 父级行高（带 text_size 时 message-card +2）
+    const componentLh = lineHeightForFontSize(fontSize);
+    lineHeight = componentLh;
+    parentLineHeight = Number(prop.lineHeight) || ctx.textMetrics?.lineHeight || componentLh;
+
+    // 胶囊内容盒与头像无关：仅姓名（showAvatar=false）时真机同样锁 B
+    if (capsule && showName) capsuleHeight = Math.max(componentLh - 2, fontSize);
+    if (showAvatar) {
+      if (!showName) {
+        // 仅头像：取组件行高。旧实现胶囊误用了独立组件的 medium 头像 30px。
+        avatarPx = componentLh;
+      } else if (capsuleHeight != null) {
+        const tight = PERSON_CAPSULE_TIGHT_SIZE_KEYS.has(String(ctx.textMetrics?.sizeKey ?? '')) ? 2 : 0;
+        avatarPx = Math.max(capsuleHeight - 4 - tight, Math.min(fontSize, capsuleHeight));
+      } else {
+        // normal 头像+姓名：14/16/17 有专用表，其余字号回到组件行高
+        avatarPx = PERSON_FOLLOW_FONT[fontSize]?.avatarSize ?? componentLh;
+      }
     }
   } else {
     const sizeKey = String(prop.size ?? 'medium');
     const token = PERSON_SINGLE_SIZE[sizeKey] || PERSON_SINGLE_SIZE.medium;
     fontSize = token.name_font_size;
     lineHeight = token.name_line_height;
+    parentLineHeight = lineHeight;
     // 真机：showAvatar+showName 时 capsule 头像 = lineHeight - (large?8:4)；normal = lineHeight
     avatarPx = token.avatar_size;
-    if (showAvatar && showName) {
-      avatarPx = capsule ? lineHeight - (fontSize > 20 ? 8 : 4) : lineHeight;
-    } else if (showAvatar && !capsule) {
-      avatarPx = lineHeight;
+    if (showAvatar) {
+      avatarPx = showName
+        ? (capsule ? lineHeight - (fontSize > 20 ? 8 : 4) : lineHeight)
+        : lineHeight;
     }
   }
 
@@ -221,16 +237,20 @@ function renderPersonChip(
   const contentChildren: Array<ReturnType<typeof h> | null> = [];
 
   if (showAvatar) {
-    let margin: string | undefined;
+    const wrapperStyle: Record<string, string> = {};
     if (showName) {
       // 真机：capsule 或 followFontSize 时用紧凑左右 margin
-      if (capsule || followMargins) margin = largeType ? '0 4px' : '0 4px 0 2px';
-      else margin = largeType ? '4px' : '2px 4px 2px 2px';
+      if (capsule || markdownInline) wrapperStyle.margin = largeType ? '0 4px' : '0 4px 0 2px';
+      else wrapperStyle.margin = largeType ? '4px' : '2px 4px 2px 2px';
+    }
+    if (capsuleHeight != null) {
+      wrapperStyle.alignItems = 'center';
+      wrapperStyle.height = capsuleHeight + 'px';
     }
     contentChildren.push(
       h('div', {
         className: `${CLS}-person__avatar-wrapper`,
-        style: margin ? { margin } : undefined,
+        style: Object.keys(wrapperStyle).length ? wrapperStyle : undefined,
       }, renderAvatarNode(`${CLS}-person__internal-avatar`, avatarPx, src, name))
     );
   }
@@ -238,8 +258,8 @@ function renderPersonChip(
   if (showName) {
     const nameStyle: Record<string, string> = {
       fontSize: fontSize + 'px',
-      // markdown 内联跟父级行高，避免 22px 盒子在 1.6 行里把整段顶矮/顶歪
-      lineHeight: follow ? 'inherit' : lineHeight + 'px',
+      // markdown 内联跟父级行高（真机 _ || D），避免 22px 盒子在 1.6 行里把整段顶矮/顶歪
+      lineHeight: (markdownInline ? parentLineHeight : lineHeight) + 'px',
     };
     if (capsule) {
       const pad = largeType ? 10 : 6;
@@ -270,8 +290,16 @@ function renderPersonChip(
     capsule ? `${CLS}-person__content--capsule` : '',
   ].filter(Boolean).join(' ');
 
-  return h('div', { className: rootCls, title: name },
-    h('div', { className: contentCls }, contentChildren)
+  // 真机 markdown 内联会把根节点撑到父级行高；胶囊内容盒再单独锁 B（姓名仍按父级行高）
+  const rootStyle = markdownInline
+    ? { height: parentLineHeight + 'px', lineHeight: parentLineHeight + 'px' }
+    : undefined;
+  const contentStyle = capsuleHeight != null
+    ? { height: capsuleHeight + 'px', lineHeight: capsuleHeight + 'px' }
+    : undefined;
+
+  return h('div', { className: rootCls, title: name, style: rootStyle },
+    h('div', { className: contentCls, style: contentStyle }, contentChildren)
   );
 }
 
@@ -591,7 +619,7 @@ function MarkdownComponent(el: CardElement, ctx: RenderContext) {
     style.fontSize = fontSize + 'px';
     style.lineHeight = lineHeight + 'px';
   }
-  const childCtx: RenderContext = { ...ctx, textMetrics: { fontSize, lineHeight } };
+  const childCtx: RenderContext = { ...ctx, textMetrics: { fontSize, lineHeight, sizeKey } };
   // #22/D12：客户端 plain_text/markdown 支持 property.lines（textLines），超出省略。
   // 用 -webkit-line-clamp 纯 CSS 截断。
   const linesStyle = lineClampStyle(p.lines ?? p.textLines);

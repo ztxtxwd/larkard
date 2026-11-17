@@ -1636,9 +1636,10 @@ test('markdown inline <person>: 跟随正文字号（14px / 头像 18px），不
       }],
     },
   });
-  // 跟正文 14：字号 14、行高跟父级、头像 18（PERSON_FOLLOW_FONT）
+  // 跟正文 14：字号 14、根节点/姓名行高 = 父级 22、头像 18（PERSON_FOLLOW_FONT）
   assert.match(html, /font-size:14px/);
-  assert.match(html, /line-height:inherit/);
+  assert.match(html, /style="height:22px;line-height:22px"/);
+  assert.match(html, /line-height:22px/);
   assert.match(html, /width:18px/);
   assert.match(html, /height:18px/);
   // 不应落到独立 person 的 medium（字号 20 / 头像 30）
@@ -1646,7 +1647,7 @@ test('markdown inline <person>: 跟随正文字号（14px / 头像 18px），不
   assert.doesNotMatch(html, /width:30px/);
 });
 
-test('markdown inline <person> 仅姓名：行高跟正文 inherit，不带 --avatar', () => {
+test('markdown inline <person> 仅姓名：行高跟正文 22px，不带 --avatar', () => {
   const html = renderDslToString({
     schema: '2.0',
     body: {
@@ -1659,8 +1660,122 @@ test('markdown inline <person> 仅姓名：行高跟正文 inherit，不带 --av
   assert.match(html, /这些场景都/);
   assert.match(html, /universal-card-person--name/);
   assert.doesNotMatch(html, /universal-card-person--avatar/);
-  assert.match(html, /line-height:inherit/);
+  assert.match(html, /style="height:22px;line-height:22px"/);
+  assert.match(html, /line-height:22px/);
   assert.doesNotMatch(html, /person__internal-avatar|person__avatar-wrapper/);
+});
+
+test('markdown inline <person> 胶囊仅姓名：内容盒同样锁 20px（与是否带头像无关）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "<person id='ou_a' show_name=true show_avatar=false style='capsule'></person>",
+      }],
+    },
+  });
+  assert.match(html, /universal-card-person__content--name universal-card-person__content--capsule" style="height:20px;line-height:20px"/);
+  assert.match(html, /padding:0 6px/);
+});
+
+test('markdown inline <person> 胶囊仅头像：头像 = 正文行高 22px（不是 medium 的 30px）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "<person id='ou_a' show_name=false show_avatar=true style='capsule' size='large'></person>",
+      }],
+    },
+  });
+  assert.match(html, /universal-card-person--capsule/);
+  assert.doesNotMatch(html, /universal-card-person__content--capsule universal-card-person__content--name/);
+  // 跟随正文字号时 size 枚举不参与头像计算（旧实现会误取 large/medium 的 40/30）
+  assert.match(html, /width:22px;height:22px/);
+  assert.doesNotMatch(html, /width:30px|height:30px|width:40px|height:40px/);
+});
+
+test('markdown inline <person> 胶囊头像+姓名：内容盒 20px / 头像 16px（正文 14px）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "<person id='ou_a' show_name=true show_avatar=true style='capsule'></person>",
+      }],
+    },
+  });
+  // 真机：B = max(de(14)-2, 14) = 20；头像 = max(B-4, min(14,B)) = 16
+  assert.match(html, /width:16px;height:16px/);
+  assert.match(html, /universal-card-person__content--avatar universal-card-person__content--name[^"]*"[^>]*style="height:20px;line-height:20px"/);
+  // 根节点仍按父级行高 22，姓名 padding 走胶囊的 6px
+  assert.match(html, /style="height:22px;line-height:22px"/);
+  assert.match(html, /padding:0 6px 0 0/);
+});
+
+test('markdown inline <person> 显式 text_size=normal：头像仍 18，根行高 = 22+2 = 24', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        text_size: 'normal',
+        content: "<person id='ou_a' show_name=true show_avatar=true></person>",
+      }],
+    },
+  });
+  assert.match(html, /font-size:14px/);
+  assert.match(html, /width:18px;height:18px/);
+  assert.match(html, /style="height:24px;line-height:24px"/);
+});
+
+test('markdown inline <person> 全字号档：normal/胶囊/仅头像三套尺寸与网页版公式一致', () => {
+  // [text_size, 父级行高, normal 头像, 胶囊内容盒 B, 胶囊头像, 仅头像]
+  const rows = [
+    ['small', 22, 20, 18, 14, 20],
+    ['normal', 24, 18, 20, 16, 22],
+    ['large', 26, 17, 22, 18, 24],
+    ['x-large', 30, 28, 26, 22, 28],
+    ['xx-large', 32, 30, 28, 24, 30],
+    ['xxx-large', 38, 36, 34, 28, 36],
+    ['xxxx-large', 48, 46, 44, 38, 46],
+  ];
+  for (const [sizeKey, parentLh, normalAvatar, capsuleB, capsuleAvatar, avatarOnlyPx] of rows) {
+    const render = (attrs) => renderDslToString({
+      schema: '2.0',
+      body: { elements: [{
+        tag: 'markdown',
+        text_size: sizeKey,
+        content: `<person id='ou_a' ${attrs}></person>`,
+      }] },
+    });
+    const normal = render('show_name=true show_avatar=true');
+    assert.match(normal, new RegExp(`person__internal-avatar[^>]*style="width:${normalAvatar}px`), `${sizeKey} normal avatar`);
+    assert.match(normal, new RegExp(`title="[^"]*" style="height:${parentLh}px;line-height:${parentLh}px"`), `${sizeKey} root height`);
+
+    const capsule = render("show_name=true show_avatar=true style='capsule'");
+    assert.match(capsule, new RegExp(`person__content--capsule" style="height:${capsuleB}px;line-height:${capsuleB}px"`), `${sizeKey} capsule box`);
+    assert.match(capsule, new RegExp(`person__internal-avatar[^>]*style="width:${capsuleAvatar}px`), `${sizeKey} capsule avatar`);
+
+    const avatarOnly = render("show_name=false show_avatar=true style='capsule'");
+    assert.match(avatarOnly, new RegExp(`person__internal-avatar[^>]*style="width:${avatarOnlyPx}px`), `${sizeKey} avatar-only`);
+  }
+});
+
+test('markdown heading 内联 <person> 仅头像：头像 = de(17) = 24px（ks 表只作用于头像+姓名）', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        content: "# 负责人 <person id='ou_a' show_name=false show_avatar=true></person>",
+      }],
+    },
+  });
+  assert.match(html, /markdown-heading/);
+  assert.match(html, /width:24px;height:24px/);
+  assert.match(html, /style="height:28px;line-height:28px"/);
 });
 
 test('markdown heading 内联 <person> 跟随标题字号（h1=17px / 头像 22px）', () => {

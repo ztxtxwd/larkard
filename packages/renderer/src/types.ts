@@ -497,7 +497,7 @@ export interface RenderContext {
    * markdown 父级注入的正文字号（飞书对内联 Person 设 avatarFollowFontSize）。
    * 有此字段时，person_v1 按正文字号缩放，而非独立组件的 size 枚举（默认 medium）。
    */
-  textMetrics?: { fontSize: number; lineHeight: number };
+  textMetrics?: { fontSize: number; lineHeight: number; sizeKey?: string };
   /**
    * column_set 注入给子 column 的分栏模式（#17/D7）。真机只在窄屏（卡片容器 ≤320px，
    * 即客户端 isWide 为 false）才用它覆盖列宽：stretch → 每列 100% 堆叠、

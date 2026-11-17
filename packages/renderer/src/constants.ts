@@ -355,14 +355,23 @@ export const PERSON_SINGLE_SIZE: Record<string, PersonSizeToken> = {
 };
 
 /**
- * markdown 内联 person 跟随正文字号时的头像/行高表（逆向网页版 Person hl 表）。
- * key = 正文字号 px；缺省回退 lineHeight=fontSize+8、avatar≈lineHeight 公式。
+ * markdown 内联 person「头像+姓名（normal）」的头像/行高表（逆向网页版 Person ks 表）。
+ * key = 正文字号 px；只覆盖 14/16/17，其余字号头像直接取引擎行高 de(fontSize)。
+ * 仅头像、胶囊两类走另外的公式，见 renderPersonChip。
  */
 export const PERSON_FOLLOW_FONT: Record<number, { avatarSize: number; lineHeight: number }> = {
   14: { avatarSize: 18, lineHeight: 22 },
   16: { avatarSize: 17, lineHeight: 24 },
   17: { avatarSize: 22, lineHeight: 26 },
 };
+
+/**
+ * 胶囊（带姓名）内头像再收紧 2px 的字号档（逆向网页版 Person Ls 集合）。
+ * 只有 24/30px 这两个超大档会命中，避免胶囊被大字号撑得过高。
+ */
+export const PERSON_CAPSULE_TIGHT_SIZE_KEYS = new Set([
+  'xxx-large', 'heading-1', 'xxxx-large', 'heading-0',
+]);
 
 /**
  * person_list 尺寸表（fallbackStyle.person.size）。
