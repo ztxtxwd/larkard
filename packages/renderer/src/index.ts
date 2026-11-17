@@ -30,6 +30,22 @@ function unwrap(card: CardInput | null | undefined): JsonCard | null {
   return card as JsonCard;
 }
 
+type WidthMode = 'default' | 'compact' | 'fill';
+
+/**
+ * 读取卡片宽度模式（config.width_mode，JSON 2.0）。
+ *
+ * RAW 里字段名可能是 snake_case（真机消息）或 camelCase（部分宿主），两种都认，
+ * 与 adapter 的行为保持一致。不填或非法值按官方默认值 default 处理。
+ */
+function readWidthMode(jc: JsonCard): WidthMode {
+  const cfg = jc.config;
+  if (!cfg || typeof cfg !== 'object') return 'default';
+  const raw = (cfg as Record<string, unknown>).width_mode
+    ?? (cfg as Record<string, unknown>).widthMode;
+  return raw === 'compact' || raw === 'fill' ? raw : 'default';
+}
+
 /**
  * 从输入里捞 json_attachment.persons 合进 options.persons（不覆盖 caller 显式传入的）。
  * 这样直接把整条消息对象 { json_card, json_attachment } 丢给同步渲染时，人员姓名/头像也能出。
@@ -70,7 +86,7 @@ function buildCardVNode(card: CardInput, options: RenderOptions): VNode {
   }
 
   return h('div', {
-    className: `${CLS}-root ${CLS}`,
+    className: `${CLS}-root ${CLS} ${CLS}-root--width-${readWidthMode(jc)}`,
     style: { fontSize: BASE_FONT_SIZE + 'px', lineHeight: String(BASE_LINE_HEIGHT) },
   }, parts.filter((p): p is VNode => !!p));
 }

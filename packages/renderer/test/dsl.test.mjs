@@ -1789,3 +1789,14 @@ test('markdown: 无 icon 时不输出图标容器', () => {
   const html = mdHtml(undefined);
   assert.equal(html.includes('universal-card-markdown__icon'), false);
 });
+
+test('config.width_mode 经 DSL → RAW 透传到根节点', () => {
+  const make = (widthMode) => ({
+    schema: '2.0',
+    ...(widthMode ? { config: { width_mode: widthMode } } : {}),
+    body: { elements: [{ tag: 'markdown', content: 'x' }] },
+  });
+  assert.match(renderDslToString(make('compact')), /universal-card-root--width-compact/);
+  assert.match(renderDslToString(make('fill')), /universal-card-root--width-fill/);
+  assert.match(renderDslToString(make(undefined)), /universal-card-root--width-default/);
+});

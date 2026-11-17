@@ -50,7 +50,8 @@ ${feishuCardStyleTag()}
     display: flex;
     justify-content: center;
   }
-  .mount { width: 100%; max-width: 605px; }
+  /* 宽度交给卡片根节点（config.width_mode）：default 600 / compact 400 / fill 撑满 */
+  .mount { width: 100%; display: flex; justify-content: center; }
 </style>
 </head>
 <body>

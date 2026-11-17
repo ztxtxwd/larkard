@@ -44,7 +44,14 @@ export interface ContainerMeasurement {
 /** client interactive_container 的默认 padding（`ws={left:12,right:12,top:4,bottom:4}`）。 */
 const CONTAINER_DEFAULT_PADDING = { top: 4, right: 12, bottom: 4, left: 12 };
 /** CSS `.universal-card-interactive-container { row-gap: 4px }`。 */
-const CONTAINER_DEFAULT_ROW_GAP = 4;
+export const CONTAINER_DEFAULT_ROW_GAP = 4;
+
+/** 容器子项纵向间距：未声明时取 CSS 的 4px，否则按 spacing 枚举 / px 解析。 */
+export function containerRowGap(el: JsonObject): number {
+  return el.vertical_spacing == null
+    ? CONTAINER_DEFAULT_ROW_GAP
+    : verticalSpacingPx(el.vertical_spacing);
+}
 
 /** 按钮 size → 盒高（renderer / client 的 padding + line-height + 1px 描边）。 */
 const BUTTON_HEIGHT: Record<string, number> = {
@@ -382,9 +389,7 @@ export function measureInteractiveContainer(
   const elements = Array.isArray(el.elements) ? el.elements : [];
   if (elements.length === 0) return { detail: 'empty' };
 
-  const rowGap = el.vertical_spacing == null
-    ? CONTAINER_DEFAULT_ROW_GAP
-    : verticalSpacingPx(el.vertical_spacing);
+  const rowGap = containerRowGap(el);
   let childrenHeight = 0;
   for (const raw of elements) {
     if (!isRecord(raw)) return { detail: 'child' };

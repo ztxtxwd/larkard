@@ -2304,3 +2304,38 @@ test('RAW column: 无任何 width 时不输出宽度（默认贴内容宽）', (
   assert.equal(/width:/.test(style), false);
   assert.equal(/flex-grow/.test(style), false);
 });
+
+/* ---- config.width_mode ---- */
+
+const widthCard = (config) => ({
+  json_card: {
+    schema: '2.0',
+    ...(config ? { config } : {}),
+    body: { tag: 'body', property: { elements: [{ tag: 'plain_text', property: { content: 'x' } }] } },
+  },
+});
+
+test('width_mode 不填 → default（600px 上限）', () => {
+  const html = renderCardToString(widthCard(undefined));
+  assert.match(html, /universal-card-root--width-default/);
+  assert.match(ALL_CSS, /\.universal-card-root--width-default\s*\{[^}]*max-width:\s*600px/);
+});
+
+test('width_mode=compact → 400px，且强制窄屏档位（真机 forceNarrow）', () => {
+  const html = renderCardToString(widthCard({ width_mode: 'compact' }));
+  assert.match(html, /universal-card-root--width-compact/);
+  assert.match(ALL_CSS, /\.universal-card-root--width-compact\s*\{[^}]*max-width:\s*400px/);
+  assert.match(ALL_CSS, /\.universal-card-root--width-compact \.universal-card-button--auto\s*\{\s*width:\s*100%/);
+  assert.match(ALL_CSS, /\.universal-card-root--width-compact \.universal-card-column-set--stretch > \.universal-card-column/);
+});
+
+test('width_mode=fill → 取消 max-width（撑满容器）', () => {
+  const html = renderCardToString(widthCard({ width_mode: 'fill' }));
+  assert.match(html, /universal-card-root--width-fill/);
+  assert.match(ALL_CSS, /\.universal-card-root--width-fill\s*\{[^}]*max-width:\s*none/);
+});
+
+test('width_mode 兼容 camelCase；非法值回退 default', () => {
+  assert.match(renderCardToString(widthCard({ widthMode: 'compact' })), /--width-compact/);
+  assert.match(renderCardToString(widthCard({ width_mode: 'spacious' })), /--width-default/);
+});

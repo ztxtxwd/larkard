@@ -14,7 +14,7 @@
  *   遇到图表、表格、音视频、嵌套容器等拿不准的组件整组跳过。
  *
  * 宽度敏感：固定高度在窄卡上可能不够。`widths` 可以传多个参考宽度（例如
- * `[605, 360]`），优化器取每个容器在所有宽度下的最大预测值，宁可留白不裁字。
+ * `[600, 360]`），优化器取每个容器在所有宽度下的最大预测值，宁可留白不裁字。
  */
 import {
   hasBackground,
@@ -45,8 +45,8 @@ import type {
   SkipReason,
 } from './types.js';
 
-/** 渲染器 `.universal-card-root { max-width: 605px }`。 */
-const DEFAULT_CARD_WIDTH = 605;
+/** 渲染器 `.universal-card-root { max-width: 600px }`。 */
+const DEFAULT_CARD_WIDTH = 600;
 /** 渲染器 `.universal-card-body { padding: 12px }`。 */
 const DEFAULT_BODY_PADDING = 12;
 
@@ -58,6 +58,7 @@ interface GroupMeasurement {
   path: Path;
   containerPaths: Path[];
   heights: number[];
+  innerWidths: number[];
 }
 
 interface Skip {
@@ -240,6 +241,7 @@ function measureGroup(
   const columns = columnSet.columns as JsonObject[];
   const containerPaths: Path[] = [];
   const heights: number[] = [];
+  const innerWidths: number[] = [];
 
   for (let index = 0; index < columns.length; index++) {
     const column = columns[index]!;
@@ -296,9 +298,10 @@ function measureGroup(
     }
     containerPaths.push(paths[0]!);
     heights.push(measured.height);
+    innerWidths.push(measured.innerWidth!);
   }
 
-  return { group: { path, containerPaths, heights }, columns: resolved };
+  return { group: { path, containerPaths, heights, innerWidths }, columns: resolved };
 }
 
 function scanElements(
@@ -404,7 +407,7 @@ function mergeSkips(
   return merged;
 }
 
-function normalizeWidths(options: EqualizeHeightsOptions): number[] {
+export function normalizeWidths(options: EqualizeHeightsOptions): number[] {
   const raw = options.widths && options.widths.length > 0
     ? options.widths
     : [options.cardWidth ?? DEFAULT_CARD_WIDTH];
@@ -418,7 +421,7 @@ function normalizeWidths(options: EqualizeHeightsOptions): number[] {
  * @example
  * ```ts
  * const { card, groups, skipped } = equalizeInteractiveContainerHeights(dsl);
- * // 窄屏也要覆盖时：{ widths: [605, 360] }
+ * // 窄屏也要覆盖时：{ widths: [600, 360] }
  * ```
  */
 export function equalizeInteractiveContainerHeights(
@@ -468,6 +471,7 @@ export function equalizeInteractiveContainerHeights(
       return {
         path: containerPath,
         estimates,
+        innerWidths: runs.map((run) => run.innerWidths[index]!),
         naturalHeight: Math.max(...estimates),
       };
     });

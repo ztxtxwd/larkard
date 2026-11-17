@@ -28,7 +28,9 @@
   border: 1px solid var(--N300);
   overflow: hidden;
   width: 100%;
-  max-width: 605px;
+  /* 默认宽度：官方卡片 JSON 2.0 规定 config.width_mode 不填时为 default，
+     PC 宽版 / iPad 上的宽度上限为 600px。具体模式见下方 --width-* 修饰类。 */
+  max-width: 600px;
   box-sizing: border-box;
   /* 真机按「卡片容器宽度 > 320px」区分宽/窄屏按钮档位，这里用容器查询复刻 */
   container-type: inline-size;
@@ -217,6 +219,11 @@
   --bg-body: var(--N00);
   --static-white: var(--N00);
 }
+/* config.width_mode：default（600px 上限）/ compact（400px）/ fill（撑满容器）。
+   缺省或非法值由渲染器归一到 default。 */
+.universal-card-root--width-default { max-width: 600px; }
+.universal-card-root--width-compact { max-width: 400px; }
+.universal-card-root--width-fill { max-width: none; }
 .universal-card-root *,
 .universal-card-root *::before,
 .universal-card-root *::after { box-sizing: border-box; }
@@ -232,8 +239,9 @@
   padding: 12px;
   background-repeat: no-repeat;
   background-position: 0 0;
-  /* 对齐飞书：max(100%, 605px) 140px，窄卡不把高光拉稀 */
-  background-size: max(100%, 605px) 140px;
+  /* 对齐飞书：max(100%, 600px) 140px，窄卡不把高光拉稀
+     （真机 CSS 此处写的是 605px，按卡片默认宽度统一为 600px） */
+  background-size: max(100%, 600px) 140px;
 }
 /* default/disabled 模板真机不设背景色（bg_color 为空串），此时 header 不留底部内边距 */
 .universal-card-header__bg--no-template { padding-bottom: 0; }
@@ -1729,4 +1737,37 @@
     flex-grow: 0 !important;
     flex-basis: auto !important;
   }
+}
+
+/* ---- width_mode=compact 的窄屏档位 ----
+   真机对 compact 同时设置 forceNarrow（isWide=false），所以即使卡宽 400px
+   大于 320px 阈值，按钮与 column_set flex_mode 也按窄屏渲染。
+   以下规则须与上方 @container (max-width: 320px) 两个窄屏块保持一致。 */
+.universal-card-root--width-compact .universal-card-button--auto { width: 100%; }
+
+.universal-card-root--width-compact .universal-card-column-set--flow,
+.universal-card-root--width-compact .universal-card-column-set--stretch,
+.universal-card-root--width-compact .universal-card-column-set--bisect,
+.universal-card-root--width-compact .universal-card-column-set--trisect { flex-wrap: wrap; }
+
+.universal-card-root--width-compact .universal-card-column-set--stretch > .universal-card-column {
+  width: 100% !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+  flex-shrink: 1 !important;
+}
+.universal-card-root--width-compact .universal-card-column-set--bisect > .universal-card-column {
+  width: calc(50% - var(--universal-card-column-gap, 8px) / 2) !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+}
+.universal-card-root--width-compact .universal-card-column-set--trisect > .universal-card-column {
+  width: calc(33.33% - var(--universal-card-column-gap, 8px) * 2 / 3) !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+}
+.universal-card-root--width-compact .universal-card-column-set--flow > .universal-card-column {
+  width: auto !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
 }

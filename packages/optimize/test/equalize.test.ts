@@ -97,9 +97,9 @@ test('窄 520px：前两列多折一行，统一到 126px', () => {
   assert.equal(result.changes.length, 3);
 });
 
-test('多参考宽度：取最大预测值（605 已经等高，520 需要 126）', () => {
+test('多参考宽度：取最大预测值（600 已经等高，520 需要 126）', () => {
   const result = equalizeInteractiveContainerHeights(threeStepsCard(), {
-    widths: [605, 520],
+    widths: [600, 520],
   });
   assert.equal(result.groups.length, 1);
   assert.equal(result.groups[0]!.height, 126);
@@ -333,7 +333,7 @@ test('markdown 块级构造（标题/列表/引用/代码块/分割线）按 mar
     },
   };
   const result = equalizeInteractiveContainerHeights(card, { skipWhenEqual: false });
-  // Chrome 605px 实测 263.95；预测 264（padding 20 + 描边 2 + 内容 242）。
+  // 600px 卡宽下预测 264（padding 20 + 描边 2 + 内容 242）。
   assert.ok(Math.abs(result.groups[0]!.containers[0]!.naturalHeight - 264) < 0.1);
 });
 
@@ -380,8 +380,8 @@ test('固定 px 列 + weighted 列按剩余空间分宽度', () => {
       ],
     },
   };
-  const result = equalizeInteractiveContainerHeights(card, { cardWidth: 605 });
+  const result = equalizeInteractiveContainerHeights(card, { cardWidth: 600 });
   assert.equal(result.groups.length, 1);
-  // 正文宽 579；两个 weighted 列各 (579-100)/2 = 239.5；19 个 14px 汉字 = 266 > 239.5 → 2 行
+  // 正文宽 574；两个 weighted 列各 (574-100)/2 = 237；19 个 14px 汉字 = 266 > 237 → 2 行
   assert.ok(result.groups[0]!.containers[1]!.naturalHeight > result.groups[0]!.containers[2]!.naturalHeight);
 });
