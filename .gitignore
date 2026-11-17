@@ -20,7 +20,7 @@ feishu-web-dump
 /强化对齐与安全工作.html
 /cursor_card_schema_and_validation_files.md
 
-# 图标 token 快照（正本在 packages/schema/src/common/icon-tokens.list.ts）
+# 图标 token 快照（正本在 packages/larkard/src/content/icons/official-tokens.ts）
 /icon.list
 
 # Cloudflare Browser Run 截图的本地工具与实测记录，暂不入库

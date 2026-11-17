@@ -8,7 +8,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync, unlinkSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateData } from '@open-feishu-card/validator';
+import { validateData } from 'larkard';
 import { IconTokenSchema } from '../../../packages/schema/src/common/icon-tokens.js';
 
 const ROOT = join(fileURLToPath(import.meta.url), '..', '..');

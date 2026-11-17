@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "rootDir": ".",
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "larkard"
+  },
+  "include": ["src", "test", "examples"]
+}

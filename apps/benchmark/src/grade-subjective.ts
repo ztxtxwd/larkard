@@ -2,11 +2,8 @@
  * 主观题判分：复用仓库工具链
  * parser -> validator -> linter -> compiler -> (golden 相似度 | renderer 渲染检查)
  */
-import { compile } from '@open-feishu-card/compiler';
-import { lint } from '@open-feishu-card/linter';
-import { parse } from '@open-feishu-card/parser';
-import { renderDslToString } from '@open-feishu-card/renderer';
-import { validateData } from '@open-feishu-card/validator';
+import { compile, lint, parse, validateData } from 'larkard';
+import { renderDslToString } from 'larkard/renderer';
 import { extractJsonText } from './extract.js';
 import type { SubjectiveScore, SubjectiveTask } from './types.js';
 

@@ -9,6 +9,6 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "lark-card-preview",
-    "@open-feishu-card/benchmark"
+    "larkard-benchmark"
   ]
 }

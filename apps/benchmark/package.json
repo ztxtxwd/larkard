@@ -1,5 +1,5 @@
 {
-  "name": "@open-feishu-card/benchmark",
+  "name": "larkard-benchmark",
   "version": "0.1.0",
   "private": true,
   "description": "飞书卡片生成能力 Benchmark：客观题（知识问答）+ 主观题（真实生成，工具链自动判分）",
@@ -15,18 +15,18 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist", "datasets", "models.json"],
+  "files": [
+    "dist",
+    "datasets",
+    "models.json"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && chmod +x dist/cli.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "tsx --test test/*.test.ts"
   },
   "dependencies": {
-    "@open-feishu-card/compiler": "workspace:*",
-    "@open-feishu-card/linter": "workspace:*",
-    "@open-feishu-card/parser": "workspace:*",
-    "@open-feishu-card/renderer": "workspace:*",
-    "@open-feishu-card/validator": "workspace:*"
+    "larkard": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.3",

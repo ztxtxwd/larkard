@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- 品牌更新：显示名改为 **Larkard**，命令标题改为 `Larkard: ...`；扩展 ID `TianxiongZhao.lark-card-preview` 与旧命令 ID 别名保持不变
+- 底层库合并为单包 `larkard@0.1.0`：schema / adapter / renderer / core 全部从 `larkard` 子路径引入，不再依赖多个 `@open-feishu-card/*` 包
+- Problems 面板的诊断来源显示为 `larkard`；Quick Fix / 净化命令同步更新
+
 ## 0.2.31
 
 - 彩色图标（`*_colorful`）不再渲染成单色：`ud-icons` 字体是单色轮廓，预览里 `ai-common_colorful` 等 AI 图标此前继承 header 标题色（看起来是纯蓝）；现在按真机配色走渐变裁切（AI 系列 `#4752E6 → #CF5ECF`，暗色 `#7B83F7 → #B54AB5`）

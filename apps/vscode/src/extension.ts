@@ -7,14 +7,14 @@ import {
   type ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { renderDslToString } from '@open-feishu-card/renderer';
-import { sanitize } from '@open-feishu-card/compiler';
+import { renderDslToString } from 'larkard/renderer';
 import {
   parse,
   resolveCardDocument,
+  sanitize,
   serializeCardDocument,
   unwrapCardData,
-} from '@open-feishu-card/parser';
+} from 'larkard';
 
 type PreviewSettings = { theme: string; maxWidth: number };
 type PreviewPayload =
@@ -387,7 +387,7 @@ function createWebviewHtml(
   customEditor: boolean,
 ): string {
   const nonce = crypto.randomBytes(16).toString('base64');
-  // @open-feishu-card/renderer all.css: layout + icon font + emoji sprite positioning
+  // larkard/renderer all.css: layout + icon font + emoji sprite positioning
   const cardStyles = webview.asWebviewUri(
     vscode.Uri.joinPath(context.extensionUri, 'dist', 'card-styles.css'),
   );

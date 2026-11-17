@@ -1,0 +1,611 @@
+/**
+ * 组件注册表（仿飞书引擎 kernel.getComponent(tag)）+ 元素遍历 + 样式辅助。
+ */
+import type {
+  CardElement, ComponentFn, ElementProperty, PersonInfo, RenderContext, TextStyle, VNode,
+} from './types.js';
+import {
+  resolveCustomBackgroundLight,
+  resolveTextStyleColor,
+} from '../adapter/index.js';
+import {
+  BASE_FONT_SIZE, PALETTE, TEXT_FONT_COLOR_TOKEN, paletteColor,
+  PERSON_AVATAR_BASE, PERSON_AVATAR_SUFFIX, TEXT_SIZE_MAP,
+} from './constants.js';
+
+const registry: Record<string, ComponentFn> = {};
+
+/** 注册（或覆盖）一个 tag 的渲染组件 */
+export function registerComponent(tag: string, fn: ComponentFn): void {
+  registry[tag] = fn;
+}
+
+/** 取某 tag 的组件 */
+export function getComponent(tag: string): ComponentFn | null {
+  return registry[tag] || null;
+}
+
+/** 渲染单个元素 {tag,id,property} -> VNode（统一附加 hover_tips / disabled_tips） */
+export function renderElement(el: CardElement | null | undefined, ctx: RenderContext): VNode | null {
+  if (!el || !el.tag) return null;
+  const comp = getComponent(el.tag);
+  if (!comp) {
+    if (ctx.options.warnOnUnknownTag) {
+      // eslint-disable-next-line no-console
+      console.warn(`[FeishuCard] 未注册的 tag: <${el.tag}>，已跳过`);
+    }
+    return null;
+  }
+  return withHoverTip(el, comp(el, ctx));
+}
+
+/**
+ * 给组件的根节点挂原生 title，作为悬浮提示。
+ * 组件自己已给出 title（如人员姓名）时保留原值，不覆盖。
+ */
+function withHoverTip(el: CardElement, vnode: VNode | null): VNode | null {
+  if (!vnode) return null;
+  const tip = resolveHoverTips(el.property);
+  if (!tip) return vnode;
+  const props = vnode.props || {};
+  if (props.title != null && props.title !== '') return vnode;
+  return { ...vnode, props: { ...props, title: tip } };
+}
+
+/** 渲染元素数组 */
+export function renderElements(arr: CardElement[] | undefined, ctx: RenderContext): VNode[] {
+  if (!Array.isArray(arr)) return [];
+  return arr.map((e) => renderElement(e, ctx)).filter((v): v is VNode => !!v);
+}
+
+/**
+ * 取容器的子元素数组。RAW 有两种形态：
+ * - 包在 property 里：el.property.elements（常见 DSL 形态）
+ * - 直接挂在元素上：el.elements（部分 RAW body 无 property 包裹）
+ */
+export function getChildElements(el: CardElement | null | undefined): CardElement[] | undefined {
+  if (!el) return undefined;
+  if (Array.isArray(el.property?.elements)) return el.property!.elements;
+  const direct = (el as { elements?: CardElement[] }).elements;
+  if (Array.isArray(direct)) return direct;
+  return undefined;
+}
+
+/**
+ * 颜色解析统一入口。飞书正文 <font color>/背景 backgroundStyle 支持三类值：
+ *  1) 空/'default' -> undefined（不指定，回退继承色）；
+ *  2) 自定义色 #hex / rgb() / hsl() -> 原样直通；
+ *  3) 命名色（含色阶后缀，如 blue-500 / grey / carmine-600）或裸色阶 token（B600）
+ *     -> 经 paletteColor 解析为飞书 :root light 主题 hex。
+ * 解析不出返回 undefined（不再回填无效字符串，避免污染 CSS）。
+ */
+export function resolveColor(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const v = raw.trim();
+  if (!v || v === 'default') return undefined;
+  if (/^(#|rgb|hsl)/i.test(v)) return v;
+  return paletteColor(v);
+}
+
+/**
+ * 容器**描边**色的 token 表（网页版 fallbackStyle，见 feishu-web-dump）：
+ *   collapsible_panel.border_color     = { grey: 'line-border-component' }
+ *   interactive_container.border_color = { 'bg-white': 'bg-body', grey: 'line-border-component', white: 'static-white' }
+ * 要点：同一个 `grey` 作正文色是 N600、作描边色是 N350（--line-border-component）。
+ * 之前直接走 resolveColor 把灰描边渲染成 N600（深灰），比真机明显重一档。
+ * 带档位的色名（grey-300）/ 自定义色 / 其它命名色仍按 default_color_tokens 解析。
+ */
+const BORDER_COLOR_TOKENS: Record<string, string> = {
+  grey: 'line-border-component',
+  gray: 'line-border-component',
+  'bg-white': 'bg-body',
+  white: 'static-white',
+};
+
+export function resolveBorderColor(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const v = raw.trim();
+  if (!v || v === 'default') return undefined;
+  if (/^(#|rgb|hsl)/i.test(v)) return v;
+  const token = BORDER_COLOR_TOKENS[v];
+  if (token) return `var(--${token})`;
+  return paletteColor(v);
+}
+
+/**
+ * 正文色名 → 色阶 token（orange→O400 等，见 TEXT_FONT_COLOR_TOKEN）。
+ * 自定义 #hex/rgb 返回 undefined（调用方走直通）。
+ */
+export function resolveTextFontToken(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const v = raw.trim();
+  if (!v || v === 'default' || /^(#|rgb|hsl)/i.test(v)) return undefined;
+  if (TEXT_FONT_COLOR_TOKEN[v]) return TEXT_FONT_COLOR_TOKEN[v];
+  if (PALETTE[v]) return v; // 已是色阶 token（O400 / B600）
+  return undefined;
+}
+
+/**
+ * textStyle → BEM 修饰名（不含前缀）。对齐真机：
+ *   color:"orange" + bold → ["orange","bold"] → .universal-card-text--orange/--bold
+ * strikethrough 真机类名是 through。
+ */
+export function textStyleToModifiers(textStyle: TextStyle | undefined): string[] {
+  if (!textStyle) return [];
+  const out: string[] = [];
+  const color = resolveTextStyleColor(textStyle) ?? textStyle?.color?.trim();
+  if (color && color !== 'default' && !/^(#|rgb|hsl)/i.test(color)) out.push(color);
+  const attrs = textStyle.attributes || [];
+  if (attrs.includes('bold')) out.push('bold');
+  if (attrs.includes('italic')) out.push('italic');
+  if (attrs.includes('strikethrough')) out.push('through');
+  return out;
+}
+
+/** textStyle -> CSS style 对象（颜色走 var(--TOKEN)，对齐真机 he()） */
+export function textStyleToStyle(textStyle: TextStyle | undefined): Record<string, string> {
+  const style: Record<string, string> = {};
+  if (!textStyle) return style;
+  const attrs = textStyle.attributes || [];
+  if (attrs.includes('bold')) style.fontWeight = '600';
+  if (attrs.includes('italic')) style.fontStyle = 'italic';
+  if (attrs.includes('strikethrough')) style.textDecoration = 'line-through';
+  const color = resolveTextStyleColor(textStyle) ?? textStyle.color;
+  if (color) {
+    const token = resolveTextFontToken(color);
+    if (token) style.color = `var(--${token})`;
+    else {
+      const c = resolveColor(color);
+      if (c) style.color = c;
+    }
+  }
+  const sizeName = textStyle.size || (textStyle.platformSize && (textStyle.platformSize.pc || textStyle.platformSize.mobile));
+  // TEXT_SIZE_MAP 覆盖 RAW textStyle.size 全量枚举（含 notation/heading），
+  // 旧 SIZE_MAP 缺 notation，导致真机 RAW 的 12px 辅助信息回退成 14px。
+  if (sizeName && TEXT_SIZE_MAP[sizeName] != null && TEXT_SIZE_MAP[sizeName] !== BASE_FONT_SIZE) {
+    style.fontSize = TEXT_SIZE_MAP[sizeName] + 'px';
+  }
+  return style;
+}
+
+/**
+ * 解析段落级字号枚举键。
+ * - DSL：`text_size`（snake）
+ * - 少数中间态：`textSize`（camel）
+ * - 真机 RAW：`textStyle.size` / `textStyle.platformSize.{pc,mobile}`
+ *   （服务端把 DSL text_size 归一进 textStyle，不再保留 text_size 字段）
+ */
+export function resolveTextSizeKey(property: ElementProperty | Record<string, unknown> | undefined | null): string | undefined {
+  if (!property) return undefined;
+  const p = property as Record<string, unknown>;
+  const direct = p.text_size ?? p.textSize;
+  if (typeof direct === 'string' && direct) return direct;
+  const ts = p.textStyle as TextStyle | undefined;
+  if (!ts) return undefined;
+  const fromStyle = ts.size || ts.platformSize?.pc || ts.platformSize?.mobile;
+  return typeof fromStyle === 'string' && fromStyle ? fromStyle : undefined;
+}
+
+/** textAlign -> CSS（left 为默认不输出） */
+export function alignToStyle(align: string | undefined): Record<string, string> {
+  if (align && align !== 'left') return { textAlign: align };
+  return {};
+}
+
+/** 从 {tag,property:{content}} 或字符串里取纯文本 */
+export function extractText(node: CardElement | string | undefined | null): string {
+  if (node == null) return '';
+  if (typeof node === 'string') return node;
+  if (node.property && node.property.content != null) return String(node.property.content);
+  const direct = (node as { content?: unknown }).content;
+  if (direct != null) return String(direct);
+  return '';
+}
+
+/**
+ * 悬浮提示文案。
+ * - 可用态：hover_tips（DSL）/ hoverTips（RAW）
+ * - 禁用态：disabled_tips / disabledTips
+ * - 文本叶子兼容 RAW 的 { tag, property:{ content } } 与 DSL 的 { tag, content }
+ *
+ * 禁用时不回退到 hover_tips：与飞书一致，禁用组件只展示 disabled_tips。
+ * 第二个参数供 select_img 这类「组件级 disabled 会连带禁用选项」的场景覆写禁用态。
+ */
+export function resolveHoverTips(
+  property: ElementProperty | Record<string, unknown> | null | undefined,
+  disabled?: boolean,
+): string {
+  if (!property) return '';
+  const p = property as Record<string, unknown>;
+  const isDisabled = disabled ?? p.disabled === true;
+  const raw = isDisabled
+    ? (p.disabled_tips ?? p.disabledTips)
+    : (p.hover_tips ?? p.hoverTips);
+  return extractText(raw as never);
+}
+
+/**
+ * 递归抽出元素树里的纯文本，丢弃所有格式（加粗/颜色/徽章等）与换行。
+ * 用于按钮：飞书按钮文本不支持富文本，须平铺成一行纯文字。
+ * 展开 property.content / property.elements / property.text（text_tag 内层），
+ * br 视为空格，最后压缩多余空白。
+ */
+export function extractPlainText(node: unknown): string {
+  const out: string[] = [];
+  const walk = (n: unknown): void => {
+    if (n == null) return;
+    if (typeof n === 'string') { out.push(n); return; } // 占位符等可能直接是字符串
+    if (typeof n !== 'object') return;
+    if (Array.isArray(n)) { n.forEach(walk); return; }
+    const el = n as CardElement;
+    if (el.tag === 'br') { out.push(' '); return; }
+    const p = el.property;
+    if (p) {
+      if (p.content != null) out.push(String(p.content));
+      if (Array.isArray(p.elements)) p.elements.forEach(walk);
+      if (p.text) walk(p.text as CardElement); // text_tag 等的内层文本
+    }
+  };
+  walk(node);
+  return out.join('').replace(/\s+/g, ' ').trim();
+}
+
+/** 图片地址解析：options.resolveImage -> src/url/img_url -> imageBaseURL+(imageID|img_key) */
+export function resolveImageSrc(p: ElementProperty, ctx: RenderContext): string | null {
+  if (ctx.options.resolveImage) {
+    const r = ctx.options.resolveImage(p);
+    if (r) return r;
+  }
+  if (p.src) return p.src;
+  if (p.url) return resolveURL(p.url) || null;
+  if (p.img_url) return p.img_url;
+  const imageId = p.imageID || (p as { img_key?: string }).img_key;
+  if (imageId && ctx.options.imageBaseURL) return ctx.options.imageBaseURL + imageId;
+  return null;
+}
+
+/**
+ * 音视频地址解析：options.resolveMedia -> src -> mediaBaseURL+fileID -> url。
+ * RAW 用 fileID（file_v3_...）；DSL 用 file_key（dual-read）。
+ * 飞书真机 src 走带鉴权的 uni_api/download；离线渲染需 caller 注入 resolveMedia / mediaBaseURL。
+ *
+ * 注意：markdown_audio 的 property.url 是降级跳转链接（如 open.feishu.cn），不是可播地址；
+ * 有 fileID 时绝不能用它顶替媒体源。
+ */
+export function resolveMediaSrc(
+  p: ElementProperty,
+  kind: 'video' | 'audio',
+  ctx: RenderContext,
+): string | null {
+  if (ctx.options.resolveMedia) {
+    const r = ctx.options.resolveMedia(p, kind);
+    if (r) return r;
+  }
+  if (typeof p.src === 'string' && p.src) return p.src;
+  const fileID = (p.fileID ?? p.file_key) as string | undefined;
+  if (fileID && ctx.options.mediaBaseURL) return ctx.options.mediaBaseURL + fileID;
+  // 无 fileID 时才回退 url（少数直链场景）；有 fileID 则 url 多为 markdown_audio 降级链
+  if (!fileID && p.url) return resolveURL(p.url) || null;
+  return null;
+}
+
+/**
+ * 视频封面：coverImageID（RAW，常为 img_v3_...）/ image_key · cover_image_key（DSL 扁平别名）
+ * / cover: { img_key }（公开 DSL 官方形态，部分 RAW 也会嵌套）→ 走图片解析。
+ */
+export function resolveVideoCoverSrc(p: ElementProperty, ctx: RenderContext): string | null {
+  const cover = p.cover;
+  const coverId = (p.coverImageID ?? p.image_key ?? p.cover_image_key
+    ?? (typeof cover === 'string'
+      ? cover
+      : cover?.img_key ?? cover?.imageID ?? cover?.image_id
+        ?? cover?.cover_image_id ?? cover?.coverImageId)) as string | undefined;
+  if (!coverId) return null;
+  return resolveImageSrc({ imageID: coverId }, ctx);
+}
+
+/** 按 open_id 从 ctx 的人员表反查 PersonInfo（姓名 + 头像 key） */
+export function lookupPerson(userID: string | undefined, ctx: RenderContext): PersonInfo | null {
+  if (!userID) return null;
+  const map = ctx.options.persons;
+  return (map && map[userID]) || null;
+}
+
+/**
+ * 头像地址解析：resolvePersonAvatar 钩子 -> avatarBaseURL+avatar_key+suffix。
+ * 飞书头像 key 公开可取（无需鉴权），故无 key 时返回 null（渲染首字占位）。
+ */
+export function personAvatarSrc(person: PersonInfo | null, ctx: RenderContext): string | null {
+  if (!person) return null;
+  if (ctx.options.resolvePersonAvatar) {
+    const r = ctx.options.resolvePersonAvatar(person);
+    if (r) return r;
+  }
+  if (person.avatar_url) return person.avatar_url;
+  if (!person.avatar_key) return null;
+  const base = ctx.options.avatarBaseURL || PERSON_AVATAR_BASE;
+  const suffix = ctx.options.avatarURLSuffix ?? PERSON_AVATAR_SUFFIX;
+  return base + person.avatar_key + suffix;
+}
+
+/**
+ * 间距枚举/数值 -> px 数。
+ * #16/D6：客户端 horizontal_spacing 与 vertical_spacing 是**两套不同枚举**：
+ *   horizontal: {small:4, default:8, large:12}      （无 medium / extra_large）
+ *   vertical:   {default:8, medium:12, large:16}    （无 small  / extra_large）
+ * 未知名值一律回落 default(8)。数字与像素串（"0px"/"12"）照常解析。
+ */
+const HORIZONTAL_SPACING_PX: Record<string, number> = { small: 4, default: 8, large: 12 };
+const VERTICAL_SPACING_PX: Record<string, number> = { default: 8, medium: 12, large: 16 };
+
+function namedSpacingToPx(v: string, map: Record<string, number>): number {
+  const named = map[v];
+  if (named != null) return named;
+  // 像素串（"0px" / "12px" / "6"）：取数值。飞书 DSL 的 spacing 常是这种形态，
+  // 若不解析会全部落到下面的默认 8，造成「0px 被当成 8px」等间距偏大。
+  const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/.exec(v.trim());
+  if (m) return Number(m[1]);
+  return map.default ?? 8;
+}
+
+/** horizontal_spacing（列间水平间距）枚举 → px */
+export function horizontalSpacingToPx(v: number | string | undefined): number {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') return namedSpacingToPx(v, HORIZONTAL_SPACING_PX);
+  return HORIZONTAL_SPACING_PX.default;
+}
+
+/** vertical_spacing（块内纵向间距）枚举 → px */
+export function verticalSpacingToPx(v: number | string | undefined): number {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') return namedSpacingToPx(v, VERTICAL_SPACING_PX);
+  return VERTICAL_SPACING_PX.default;
+}
+
+/**
+ * 通用间距解析（margin 简写等不区分横纵的场景）。
+ * 兼容旧调用方；对命名值取并集，未知值回落 default=8。
+ */
+export function spacingToPx(v: number | string | undefined): number {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') {
+    const named: Record<string, number> = { small: 4, medium: 8, large: 12, extra_large: 16, default: 8 };
+    if (named[v] != null) return named[v];
+    const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/.exec(v.trim());
+    if (m) return Number(m[1]);
+  }
+  return 8;
+}
+
+/**
+ * 解析链接：url 可能是字符串，也可能是多端地址对象 { pcURL, url, ... }。
+ * 两种拼写都认：编辑器/历史 RAW 是 camelCase，服务端存储与 dslToRaw 输出是 snake_case。
+ */
+export function resolveURL(url: unknown): string {
+  if (!url) return '';
+  if (typeof url === 'string') return url;
+  if (typeof url === 'object') {
+    const u = url as Record<string, string | undefined>;
+    return u.pcURL || u.pc_url || u.url || u.iosURL || u.ios_url || u.androidURL
+      || u.android_url || u.harmonyURL || u.harmony_url || '';
+  }
+  return '';
+}
+
+/** 尺寸数值/字符串 -> CSS 长度 */
+export function sizeToPx(v: number | string | undefined): string {
+  return typeof v === 'number' ? v + 'px' : String(v);
+}
+
+/** RAW padding/margin 对象或 DSL 简写字符串 → CSS 速记 */
+export function marginToStyle(margin: unknown): string | null {
+  if (typeof margin === 'string' && margin.trim()) return margin.trim();
+  return boxToStyle(margin as Spacing4);
+}
+
+/**
+ * 解析外边距的左右像素（用于 width:calc 抵消 body > * {width:100%} 造成的溢出）。
+ * 支持 CSS 简写字符串与 RAW 四向对象。
+ */
+export function horizontalMarginPx(margin: unknown): { left: number; right: number } {
+  if (typeof margin === 'string' && margin.trim()) {
+    const parts = margin.trim().split(/\s+/).map((t) => spacingToPx(t));
+    if (parts.length === 1) return { left: parts[0], right: parts[0] };
+    if (parts.length === 2 || parts.length === 3) return { left: parts[1], right: parts[1] };
+    if (parts.length >= 4) return { left: parts[3], right: parts[1] };
+  }
+  if (margin && typeof margin === 'object') {
+    const m = margin as Spacing4;
+    return { left: Number(m.left?.value ?? 0), right: Number(m.right?.value ?? 0) };
+  }
+  return { left: 0, right: 0 };
+}
+
+/**
+ * 把 margin 写进 style；若有水平外边距且当前/默认是撑满宽，则改成
+ * `calc(100% - L - R)`，避免与 `.universal-card-body > * { width:100% }` 叠加溢出。
+ * 已有明确像素宽（如图标框 48px）时不改 width。
+ *
+ * 负外边距＝出血（如顶层大图 margin:-20px 顶到卡片边）：真机那个带 margin 的盒子
+ * width 是 auto，负 margin 会让它同时向两侧撑宽；渲染器这边盒子已经写死 width:100%，
+ * 光加负 margin 只会整体左移、右边留一条空白，所以要把宽度改成 `calc(100% + |L+R|)`，
+ * 并放开 max-width（CSS 的 max-width:100% 会把出血宽度夹回容器宽，右边又留白）。
+ */
+export function applyOuterMargin(
+  style: Record<string, string>,
+  margin: unknown,
+): void {
+  const mg = marginToStyle(margin);
+  if (!mg) return;
+  style.margin = mg;
+  const { left, right } = horizontalMarginPx(margin);
+  const inset = left + right;
+  if (inset === 0) return;
+  const w = style.width;
+  if (w && /px$/i.test(w) && !w.includes('%')) return; // 定宽元素保持原宽
+  if (!w || w === '100%' || w === 'fill') {
+    style.width = inset > 0 ? `calc(100% - ${inset}px)` : `calc(100% + ${-inset}px)`;
+    // 出血时盒子比容器宽，max-width:100% 会被夹回容器宽 → 右边又留白，放开。
+    if (inset < 0) style.maxWidth = 'none';
+  }
+}
+
+/** 解析 "Npx" / 数字 / widthValue|heightValue 像素槽 → CSS 长度；fill→100%；auto/default→undefined */
+export function resolveDimensionPx(
+  direct: unknown,
+  valueObj: { type?: string; value?: string | number } | undefined,
+): string | undefined {
+  const fromObj = (): string | undefined => {
+    if (!valueObj) return undefined;
+    const t = String(valueObj.type || '').toLowerCase();
+    if (t === 'pixels' || t === 'pixel') {
+      const n = Number(valueObj.value);
+      return Number.isFinite(n) ? n + 'px' : undefined;
+    }
+    const v = valueObj.value;
+    if (v === 'fill') return '100%';
+    if (v === 'auto' || v === 'default') return undefined;
+    if (typeof v === 'number' && Number.isFinite(v)) return v + 'px';
+    if (typeof v === 'string') {
+      const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/i.exec(v.trim());
+      if (m) return m[1] + 'px';
+    }
+    return undefined;
+  };
+  if (typeof direct === 'number' && Number.isFinite(direct)) return direct + 'px';
+  if (typeof direct === 'string') {
+    const s = direct.trim();
+    if (s === 'fill') return '100%';
+    if (s === 'auto' || s === 'default' || !s) return undefined;
+    const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/i.exec(s);
+    if (m) return m[1] + 'px';
+  }
+  return fromObj();
+}
+
+/**
+ * img.size / sizeValue → 定宽高或宽高比。
+ * - "24px 24px" / width_height_pixels → 固定像素
+ * - "16:9" / aspect_ratio → CSS aspect-ratio
+ */
+export function resolveImageSize(property: Record<string, unknown> | undefined | null): {
+  width?: string;
+  height?: string;
+  aspectRatio?: string;
+} {
+  if (!property) return {};
+  const size = property.size ?? property.size_value;
+  if (typeof size === 'string') {
+    const s = size.trim();
+    const pxPair = /^(\d+(?:\.\d+)?)px\s+(\d+(?:\.\d+)?)px$/i.exec(s);
+    if (pxPair) return { width: pxPair[1] + 'px', height: pxPair[2] + 'px' };
+    const ratio = /^(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)$/.exec(s);
+    if (ratio) return { aspectRatio: `${ratio[1]} / ${ratio[2]}` };
+  }
+  const echo = (property.sizeValue ?? property.size_value) as
+    | { type?: string; value?: { width?: number; height?: number } | string | number }
+    | undefined;
+  if (echo && typeof echo === 'object') {
+    const t = String(echo.type || '').toLowerCase();
+    const v = echo.value;
+    if (t === 'width_height_pixels' && v && typeof v === 'object') {
+      const w = Number((v as { width?: number }).width);
+      const h = Number((v as { height?: number }).height);
+      if (Number.isFinite(w) && Number.isFinite(h)) {
+        return { width: w + 'px', height: h + 'px' };
+      }
+    }
+    if (t === 'aspect_ratio' && v && typeof v === 'object') {
+      const w = Number((v as { width?: number }).width);
+      const h = Number((v as { height?: number }).height);
+      if (Number.isFinite(w) && Number.isFinite(h) && h !== 0) {
+        return { aspectRatio: `${w} / ${h}` };
+      }
+    }
+  }
+  return {};
+}
+
+/** 飞书圆角只接受**单个** px / 百分比值；CSS 四角简写（如 `8px 0 0 8px`）真机不支持。 */
+const CORNER_RADIUS_RE = /^\d+(?:\.\d+)?(?:px|%)$/;
+
+/**
+ * 圆角值（DSL 字符串 / RAW 数字 / `{type,value}` echo）→ 单个合法的 CSS 值。
+ * 多值、带其它单位或空字符串一律返回 undefined：真机不支持的值不渲染，
+ * 避免预览比真机「更能画」。
+ */
+export function normalizeCornerRadius(value: unknown): string | undefined {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value >= 0 ? `${value}px` : undefined;
+  }
+  if (typeof value === 'string') {
+    const text = value.trim();
+    return CORNER_RADIUS_RE.test(text) ? text : undefined;
+  }
+  if (value && typeof value === 'object' && 'value' in value) {
+    const echo = value as { type?: unknown; value: unknown };
+    const next = normalizeCornerRadius(echo.value);
+    // RAW 的 echo 带 type：pixels → px，percent → %（当前样本只用 pixels，兜底兼容）。
+    if (next && typeof echo.type === 'string' && /percent/i.test(echo.type) && !next.endsWith('%')) {
+      return next.replace(/px$/, '%');
+    }
+    return next;
+  }
+  return undefined;
+}
+
+/** RAW cornerRadiusValue / DSL corner_radius → CSS border-radius。
+ * 未声明或空字符串（主题页尾常用 `""`）→ undefined，不输出默认圆角（对齐真机）。 */
+export function resolveCornerRadius(property: Record<string, unknown> | undefined | null): string | undefined {
+  if (!property) return undefined;
+  const direct = property.corner_radius ?? property.cornerRadius;
+  if (direct != null) return normalizeCornerRadius(direct);
+  return normalizeCornerRadius(property.cornerRadiusValue);
+}
+/** RAW 的 padding/margin 对象 {top,right,bottom,left:{type:'pixels',value}} -> CSS 速记 */
+type Spacing4 = { top?: { value?: number }; right?: { value?: number }; bottom?: { value?: number }; left?: { value?: number } };
+export function boxToStyle(box: Spacing4 | undefined): string | null {
+  if (!box || typeof box !== 'object') return null;
+  const t = box.top?.value ?? 0;
+  const r = box.right?.value ?? 0;
+  const b = box.bottom?.value ?? 0;
+  const l = box.left?.value ?? 0;
+  // 对象存在即视为显式指定（含全 0），须输出以覆盖 CSS 默认值（如 body padding:12px）。
+  return `${t}px ${r}px ${b}px ${l}px`;
+}
+
+/**
+ * 容器 backgroundStyle -> CSS background 值。
+ * 枚举 grey（及历史值 1）：真机写 `background: var(--bg-float-overlay)`，
+ * light 主题 alias 为 `--N50`（#f5f6f7），不是正文色 grey→N600。
+ * 带档位色名（green-50 / blue-100）、裸色阶 token、自定义 #hex 走色板。
+ * "default"/"none"/空 -> 无背景。
+ */
+export function bgStyleToColor(style: unknown): string | null {
+  if (typeof style !== 'string') return null;
+  const v = style.trim();
+  if (!v || v === 'default' || v === 'none' || v === 'transparent') return null;
+  if (v === 'grey' || v === 'gray' || v === '1') return 'var(--bg-float-overlay)';
+  // 真机 fallbackStyle 的容器底色枚举：bg-white → bg-body（白底），white → static-white。
+  // 两者在 light 主题都是 #fff，但不能落回 resolveColor('bg-white')（无此色名 → 直接丢背景）。
+  if (v === 'bg-white') return 'var(--bg-body)';
+  if (v === 'white') return 'var(--static-white)';
+  return resolveColor(v) || null;
+}
+
+/** RAW customBackgroundStyle first, then enum backgroundStyle / background_style. */
+export function propertyBackgroundColor(property: ElementProperty | Record<string, unknown> | undefined | null): string | null {
+  if (!property) return null;
+  const custom = resolveCustomBackgroundLight(property);
+  if (custom) {
+    const c = resolveColor(custom);
+    if (c) return c;
+  }
+  const p = property as Record<string, unknown>;
+  // 客户端 Gr()：backgroundColor ?? backgroundStyle；background_color 是 DSL 拼写。
+  // collapsible_panel 用 background_color（bg-white / grey / #hex），
+  // column / column_set / interactive_container 用 background_style，两者都要认。
+  return bgStyleToColor(
+    p.backgroundColor ?? p.background_color ?? p.backgroundStyle ?? p.background_style,
+  );
+}

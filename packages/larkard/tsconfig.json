@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "larkard",
+    "paths": {
+      "larkard": ["./src/index.ts"],
+      "larkard/content": ["./src/content/index.ts"],
+      "larkard/schema": ["./src/schema/index.ts"],
+      "larkard/adapter": ["./src/adapter/index.ts"],
+      "larkard/renderer": ["./src/renderer/index.ts"],
+      "larkard/renderer/browser": ["./src/renderer/browser.ts"],
+      "larkard/renderer/assets": ["./src/renderer/assets/index.ts"],
+      "larkard/renderer/remote": ["./src/renderer/remote.ts"],
+      "larkard/components": ["./src/components/index.ts"],
+      "larkard/jsx-runtime": ["./src/components/jsx-runtime.ts"],
+      "larkard/jsx-dev-runtime": ["./src/components/jsx-dev-runtime.ts"],
+      "larkard/optimize": ["./src/optimize/index.ts"],
+      "larkard/patch": ["./src/core/patch/index.ts"],
+      "larkard/store": ["./src/core/store/index.ts"],
+      "larkard/language-server": ["./src/language-server/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,8 +1,8 @@
 {
-  "name": "open-feishu-card-monorepo",
+  "name": "larkard-monorepo",
   "private": true,
   "version": "0.1.0",
-  "description": "飞书卡片 (Feishu/Lark Card Schema 2.0) 全栈工具链：解析、校验、适配、编译、渲染、LSP 与 IDE 插件",
+  "description": "larkard：飞书卡片 JSON 2.0 工具链（单包多入口）+ VS Code 插件 + Benchmark",
   "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@10.30.3",
@@ -10,7 +10,6 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "lint": "turbo run lint",
     "ci:version": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {
@@ -23,5 +22,8 @@
       "esbuild",
       "turbo"
     ]
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

@@ -6,7 +6,7 @@
  * 用法：
  *   node scripts/card-to-html.mjs <input.card> [output.html]
  *
- * 依赖：需先 build adapter + renderer（pnpm --filter @open-feishu-card/renderer... build）
+ * 依赖：需先 build adapter + renderer（pnpm --filter larkard build）
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -24,9 +24,13 @@ const outPath = resolve(
 );
 
 const rendererUrl = pathToFileURL(
-  resolve(import.meta.dirname, '../packages/renderer/dist/index.js'),
+  resolve(import.meta.dirname, '../packages/larkard/dist/renderer/index.js'),
 ).href;
-const { renderDslToString, feishuCardStyleTag } = await import(rendererUrl);
+const assetsUrl = pathToFileURL(
+  resolve(import.meta.dirname, '../packages/larkard/dist/renderer/assets/index.js'),
+).href;
+const { renderDslToString } = await import(rendererUrl);
+const { feishuCardStyleTag } = await import(assetsUrl);
 
 const raw = JSON.parse(readFileSync(inputPath, 'utf8'));
 const dsl = raw && typeof raw === 'object' && 'dsl' in raw ? raw.dsl : raw;

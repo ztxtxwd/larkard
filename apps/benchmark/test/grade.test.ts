@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { validateData } from '@open-feishu-card/validator';
+import { validateData } from 'larkard';
 import { gradeObjective } from '../src/grade-objective.js';
 import { bagF1, gradeSubjective, tagSequence } from '../src/grade-subjective.js';
 import { loadObjectiveTasks, loadSubjectiveTasks, loadGolden } from '../src/tasks.js';

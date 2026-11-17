@@ -1,10 +1,10 @@
-# Open Feishu Card
+# Larkard
 
 在 VS Code 里编辑、校验并预览飞书 / Lark **Card Schema 2.0**。这不是单纯的预览插件：内嵌语言服务器会在你写 `.card` 时给出 Schema 诊断、补全、Hover 和 Quick Fix，预览仍在本地 Webview 里实时渲染。
 
-- 显示名：**Open Feishu Card**（原「飞书卡片预览」）
+- 显示名：**Larkard**（原「Open Feishu Card / 飞书卡片预览」）
 - 扩展 ID 不变：[`TianxiongZhao.lark-card-preview`](https://marketplace.visualstudio.com/items?itemName=TianxiongZhao.lark-card-preview)
-- 源码：[open-feishu-card-monorepo](https://github.com/ztxtxwd/open-feishu-card-monorepo) 的 `apps/vscode`。原独立仓库 `lark-card-preview` 已归档。
+- 源码：[larkard](https://github.com/ztxtxwd/larkard) 的 `apps/vscode`。原独立仓库 `lark-card-preview` 已归档。
 
 已安装旧版的用户会直接收到 `0.2.0` 更新，不必卸了重装。
 
@@ -14,8 +14,8 @@
 
 - **语言服务（LSP）**：打开 `*.card` 即启用。Problems 面板里是字符级定位的 Schema / 最佳实践诊断；输入 `tag` 等字段时补全组件名；悬停查看字段说明；灯泡菜单可一键修常见问题，也支持 `source.fixAll`。
 - **只作用于 `.card`**：普通 `.json` 不再被当成卡片检查，避免污染整个工作区。需要预览时仍可用命令手动打开。
-- **净化非标属性**：命令 **Open Feishu Card: Sanitize Card**，去掉 Schema 不认的字段，便于贴进飞书开放平台。
-- **同一套工具链**：解析、校验、适配、渲染来自 `@open-feishu-card/*`，与 CLI / npm 包一致。
+- **净化非标属性**：命令 **Larkard: Sanitize Card**，去掉 Schema 不认的字段，便于贴进飞书开放平台。
+- **同一套工具链**：解析、校验、适配、渲染来自 `larkard` 单包多入口，与 CLI / npm 包一致。
 
 ## 语言服务
 
@@ -23,7 +23,7 @@
 
 | 能力 | 说明 |
 | --- | --- |
-| 诊断 | 合并 Schema 校验与 linter（嵌套过深、废弃属性等），来源显示为 `open-feishu-card` |
+| 诊断 | 合并 Schema 校验与 linter（嵌套过深、废弃属性等），来源显示为 `larkard` |
 | 补全 | 在 `tag` 等位置提示合法组件；触发字符 `"`, `:`, 空格 |
 | Hover | 已知字段的说明 |
 | Quick Fix | 针对当前诊断的修复；可一次性净化整份卡片 |
@@ -34,23 +34,23 @@
 
 - 打开 `.card` 默认进入 **文本编辑器**（LSP 诊断 / 补全 / Hover / Quick Fix 可用），并自动在侧边打开实时预览。
 - 关闭自动侧边预览：设置 `openFeishuCard.preview.openOnSide` 为 `false`；仍可用标题栏 **Open Preview to the Side** 手动打开。
-- 若要用整页自定义预览编辑器：命令面板 **Reopen Editor With… → Open Feishu Card**。
+- 若要用整页自定义预览编辑器：命令面板 **Reopen Editor With… → Larkard**。
 - 解析错误可点进大致源码位置。
 - 跟随 VS Code 亮/暗色，或用设置强制主题。
 - 可选 `openFeishuCard.imageBaseURL` 给图片 ID 加前缀。
 - 默认完全本地渲染，不请求预览服务。页眉纹理、图标字体、emoji shortcode（`:Fire:`、`:OK:` 等）由渲染器内置样式提供。
 
-命令面板运行 **Open Feishu Card: Open Sample Card** 可打开内置示例 `samples/welcome.card`。
+命令面板运行 **Larkard: Open Sample Card** 可打开内置示例 `samples/welcome.card`。
 
 ## 命令
 
 | 命令 | 作用 |
 | --- | --- |
-| `Open Feishu Card: Open Preview to the Side` | 侧边实时预览 |
-| `Open Feishu Card: Open Sample Card` | 打开内置 DSL 示例 |
-| `Open Feishu Card: Refresh Preview` | 刷新独立预览面板 |
-| `Open Feishu Card: Open Source` | 从预览回到 JSON |
-| `Open Feishu Card: Sanitize Card` | 去掉非标属性 |
+| `Larkard: Open Preview to the Side` | 侧边实时预览 |
+| `Larkard: Open Sample Card` | 打开内置 DSL 示例 |
+| `Larkard: Refresh Preview` | 刷新独立预览面板 |
+| `Larkard: Open Source` | 从预览回到 JSON |
+| `Larkard: Sanitize Card` | 去掉非标属性 |
 
 `0.1.x` 的命令 ID（`larkCardPreview.*`）仍注册为别名，原有快捷键不用改。
 
@@ -71,10 +71,10 @@
 
 Marketplace 按同一扩展更新。主要行为变化：
 
-1. 扩展列表里显示为 **Open Feishu Card**，ID 仍是 `TianxiongZhao.lark-card-preview`。
+1. 扩展列表里显示为 **Larkard**，ID 仍是 `TianxiongZhao.lark-card-preview`。
 2. 诊断和补全只挂在 `*.card` 上，不再扫遍工作区 JSON。
 3. 命令与设置命名空间改为 `openFeishuCard.*`（旧 ID / 旧键兼容）。
-4. 自定义编辑器 viewType 改为 `openFeishuCard.editor`，且不再作为默认打开方式；需要整页预览时用 **Reopen Editor With… → Open Feishu Card**。
+4. 自定义编辑器 viewType 改为 `openFeishuCard.editor`，且不再作为默认打开方式；需要整页预览时用 **Reopen Editor With… → Larkard**。
 
 ## 本地开发与打包
 

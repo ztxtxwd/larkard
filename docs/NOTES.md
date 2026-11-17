@@ -1,8 +1,9 @@
 # 开发笔记
 
-- monorepo：pnpm workspace + turbo，包在 packages/*，VS Code 插件在 apps/vscode。
-- 各 Universal 包用 tsc 构建（NodeNext，ESM），renderer 用 tsup 双格式，vscode 用 esbuild bundle。
-- 测试：node:test + tsx（renderer 针对 dist 产物，需先 build）。
+- monorepo：pnpm workspace + turbo。库在 `packages/larkard`（单包多入口），应用在 `apps/*`（vscode、benchmark）。
+- 入口与设计约束见 [`ARCHITECTURE.md`](../ARCHITECTURE.md)。一句话：真机常量在 `src/content`，RAW 类型 / Markdown tokenizer 在 `src/adapter`，发送前检查统一走 `src/core/check.ts`。
+- 构建：`tsup` 多入口双格式 + `tsc` 产出 d.ts；renderer 入口为 `index`（SSR）、`browser`、`assets`、`remote`；vscode 用 esbuild bundle。
+- 测试：统一 node:test + tsx；renderer 测试针对 `dist` 产物，需先 build。
 
 ## 发版
 
@@ -13,4 +14,3 @@
 - 工作流文件名必须保持 `publish.yml`：npm Trusted Publisher 绑定的是这个文件名。
 - VS Code 扩展不在 changesets 管理内：手动 bump `apps/vscode/package.json` 版本 + 补 CHANGELOG，
   推 `vscode-v<version>` tag 触发 `publish-vscode.yml`（Marketplace + Open VSX + GitHub Release）。
-

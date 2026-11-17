@@ -10,8 +10,9 @@ await mkdir('dist', { recursive: true });
 // all.css = layout + icon font + emoji sprite（webview 渲染需要三件套）
 import { dirname, join } from 'node:path';
 const rendererDist = join(
-  dirname(require.resolve('@open-feishu-card/renderer/package.json')),
+  dirname(require.resolve('larkard/package.json')),
   'dist',
+  'renderer',
   'all.css',
 );
 await copyFile(rendererDist, 'dist/card-styles.css');
@@ -20,7 +21,7 @@ await copyFile(rendererDist, 'dist/card-styles.css');
 // 运行时由 extension 以独立 Node 进程启动（stdio LSP）。
 await esbuild.build({
   entryPoints: [
-    join(dirname(require.resolve('@open-feishu-card/language-server/package.json')), 'dist', 'server.js'),
+    join(dirname(require.resolve('larkard/package.json')), 'dist', 'language-server', 'server.js'),
   ],
   bundle: true,
   outfile: 'dist/server.cjs',

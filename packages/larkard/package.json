@@ -1,0 +1,157 @@
+{
+  "name": "larkard",
+  "version": "0.0.0",
+  "description": "飞书卡片 JSON 2.0 工具链：解析、校验、发送前检查、RAW ↔ DSL、渲染、TSX、CLI 与 LSP",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./schema": {
+      "types": "./dist/schema/index.d.ts",
+      "import": "./dist/schema/index.js",
+      "require": "./dist/schema/index.cjs"
+    },
+    "./icons": {
+      "types": "./dist/content/icons/index.d.ts",
+      "import": "./dist/content/icons/index.js",
+      "require": "./dist/content/icons/index.cjs"
+    },
+    "./emoji": {
+      "types": "./dist/content/emoji/index.d.ts",
+      "import": "./dist/content/emoji/index.js",
+      "require": "./dist/content/emoji/index.cjs"
+    },
+    "./metrics": {
+      "types": "./dist/content/metrics.d.ts",
+      "import": "./dist/content/metrics.js",
+      "require": "./dist/content/metrics.cjs"
+    },
+    "./spacing": {
+      "types": "./dist/content/spacing.d.ts",
+      "import": "./dist/content/spacing.js",
+      "require": "./dist/content/spacing.cjs"
+    },
+    "./adapter": {
+      "types": "./dist/adapter/index.d.ts",
+      "import": "./dist/adapter/index.js",
+      "require": "./dist/adapter/index.cjs"
+    },
+    "./renderer": {
+      "types": "./dist/renderer/index.d.ts",
+      "import": "./dist/renderer/index.js",
+      "require": "./dist/renderer/index.cjs"
+    },
+    "./renderer/browser": {
+      "types": "./dist/renderer/browser.d.ts",
+      "import": "./dist/renderer/browser.js",
+      "require": "./dist/renderer/browser.cjs"
+    },
+    "./renderer/assets": {
+      "types": "./dist/renderer/assets/index.d.ts",
+      "import": "./dist/renderer/assets/index.js",
+      "require": "./dist/renderer/assets/index.cjs"
+    },
+    "./renderer/async": {
+      "types": "./dist/renderer/async.d.ts",
+      "import": "./dist/renderer/async.js",
+      "require": "./dist/renderer/async.cjs"
+    },
+    "./renderer/styles.css": "./dist/renderer/styles.css",
+    "./renderer/icon-font.css": "./dist/renderer/icon-font.css",
+    "./renderer/emoji.css": "./dist/renderer/emoji.css",
+    "./renderer/all.css": "./dist/renderer/all.css",
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js",
+      "require": "./dist/components/index.cjs"
+    },
+    "./jsx-runtime": {
+      "types": "./dist/components/jsx-runtime.d.ts",
+      "import": "./dist/components/jsx-runtime.js",
+      "require": "./dist/components/jsx-runtime.cjs"
+    },
+    "./jsx-dev-runtime": {
+      "types": "./dist/components/jsx-dev-runtime.d.ts",
+      "import": "./dist/components/jsx-dev-runtime.js",
+      "require": "./dist/components/jsx-dev-runtime.cjs"
+    },
+    "./optimize": {
+      "types": "./dist/optimize/index.d.ts",
+      "import": "./dist/optimize/index.js",
+      "require": "./dist/optimize/index.cjs"
+    },
+    "./patch": {
+      "types": "./dist/patch/index.d.ts",
+      "import": "./dist/patch/index.js",
+      "require": "./dist/patch/index.cjs"
+    },
+    "./state": {
+      "types": "./dist/state/index.d.ts",
+      "import": "./dist/state/index.js",
+      "require": "./dist/state/index.cjs"
+    },
+    "./language-server": {
+      "types": "./dist/language-server/index.d.ts",
+      "import": "./dist/language-server/index.js",
+      "require": "./dist/language-server/index.cjs"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "require": "./dist/cli.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "larkard": "./dist/cli-bin.js",
+    "larkard-language-server": "./dist/language-server/server.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "./dist/chunk-*.js",
+    "./dist/chunk-*.cjs",
+    "./dist/renderer/**"
+  ],
+  "scripts": {
+    "build": "node scripts/gen-base-styles.mjs && tsup && tsc -p tsconfig.build.json && chmod +x dist/cli-bin.js dist/language-server/server.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "test": "tsx --tsconfig tsconfig.test.json --test test/*.test.ts test/*.test.tsx && node --test test/*.test.mjs",
+    "example": "tsx --tsconfig tsconfig.test.json examples/approval-card.tsx"
+  },
+  "dependencies": {
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.3",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ztxtxwd/larkard.git",
+    "directory": "packages/larkard"
+  },
+  "homepage": "https://github.com/ztxtxwd/larkard#readme",
+  "bugs": {
+    "url": "https://github.com/ztxtxwd/larkard/issues"
+  }
+}

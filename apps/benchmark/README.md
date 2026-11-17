@@ -1,4 +1,4 @@
-# @open-feishu-card/benchmark
+# larkard/benchmark
 
 评测大模型在飞书卡片（Feishu/Lark Card JSON 2.0）上的能力。完全复用 monorepo 工具链（parser / validator / linter / compiler / renderer）做自动判分，无需人工打分。
 
@@ -16,10 +16,10 @@
 
 | 维度 | 权重 | 实现 |
 | --- | --- | --- |
-| JSON 可解析 | 20% | `@open-feishu-card/parser` |
-| Schema 合法 | 30% | `@open-feishu-card/validator` |
-| 最佳实践 | 15% | `@open-feishu-card/linter` |
-| 编译通过（pass@1） | 20% | `@open-feishu-card/compiler` |
+| JSON 可解析 | 20% | `larkard`（`parse`） |
+| Schema 合法 | 30% | `larkard`（`validateData`） |
+| 最佳实践 | 15% | `larkard`（`lint`） |
+| 编译通过（pass@1） | 20% | `larkard`（`compile`） |
 | 结构相似度 | 15% | 与官方示例的组件 tag 序列 F1 |
 
 **总分 = 领域知识加权准确率 × 40% + 主观总分 × 60%**（综合榜用；分析时请分开看两轨）
