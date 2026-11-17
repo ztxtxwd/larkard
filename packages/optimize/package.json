@@ -1,6 +1,6 @@
 {
   "name": "@open-feishu-card/optimize",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "卡片视觉优化：按真机渲染规则对公开 DSL 做可解释、可回退的发送前增强（分栏内交互容器等高、纯文本升级富文本）",
   "type": "module",
   "main": "./dist/index.cjs",
