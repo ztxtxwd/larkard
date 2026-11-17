@@ -555,3 +555,36 @@ test('dslToRaw / rawToDsl round-trips img_combination + select_img', () => {
     disabled_tips: { tag: 'plain_text', content: '不可选' },
   });
 });
+
+test('note: DSL ↔ RAW 保留 is_footer 与图标/文本子项', () => {
+  const dsl = {
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'note',
+          is_footer: true,
+          elements: [
+            { tag: 'standard_icon', token: 'info_outlined', color: 'grey' },
+            { tag: 'plain_text', content: '备注信息' },
+          ],
+        },
+      ],
+    },
+  };
+
+  const raw = dslToRaw(dsl) as any;
+  const note = raw.body.property.elements[0];
+  assert.equal(note.tag, 'note');
+  assert.equal(note.property.is_footer, true);
+  assert.equal(note.property.elements[0].tag, 'standard_icon');
+  assert.equal(note.property.elements[1].property.content, '备注信息');
+
+  const back = rawToDsl(raw) as any;
+  const backNote = back.body.elements[0];
+  assert.equal(backNote.tag, 'note');
+  assert.equal(backNote.is_footer, true);
+  assert.equal(backNote.elements[0].tag, 'standard_icon');
+  assert.equal(backNote.elements[1].tag, 'plain_text');
+  assert.equal(backNote.elements[1].content, '备注信息');
+});

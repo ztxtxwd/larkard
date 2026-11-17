@@ -17,6 +17,7 @@ test('analyze merges validator + linter diagnostics', () => {
 test('complete returns tag completions inside tag value', () => {
   const items = complete('{ "tag": "mar', 12);
   assert.ok(items.some((i) => i.label === 'markdown'));
+  assert.ok(items.some((i) => i.label === 'note'));
 });
 
 test('hover explains known keys', () => {

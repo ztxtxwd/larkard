@@ -329,6 +329,32 @@ test('conformance: 已知分歧——官方 Avatar 过度 required（custom_size
   );
 });
 
+test('conformance: 已知分歧——note 是客户端仍渲染的旧版组件（官方 2.0 schema 不认）', () => {
+  const card = {
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'note',
+          is_footer: true,
+          elements: [
+            { tag: 'standard_icon', token: 'info_outlined', color: 'grey' },
+            { tag: 'plain_text', content: '备注信息' },
+          ],
+        },
+      ],
+    },
+  };
+  // 本项目把 note 视为 Schema 2.0 的一部分（客户端 RAW/回读仍会下发）；
+  // 官方公开 schema 已移除该 tag，因此只要求 Zod 放行。
+  assertZodOk(card, 'note-legacy');
+  const issues = validateOfficialCard(card as JsonValue, officialSchema);
+  assert.ok(
+    issues.length > 0,
+    `期望官方 schema 拒绝 note（用于记录已知分歧），实际：${JSON.stringify(issues)}`,
+  );
+});
+
 test('conformance: 项目扩展字段官方会报 additionalProperties', () => {
   const card = {
     schema: '2.0',

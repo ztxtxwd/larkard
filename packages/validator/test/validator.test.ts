@@ -352,3 +352,36 @@ test('普通校验错误不被截断', () => {
   assert.ok(!/options\)$/.test(ds[0].message));
   assert.ok(ds[0].message.length <= 800);
 });
+
+test('note 作为 Schema 2.0 组件通过校验', () => {
+  const ds = validate(`{
+    "schema": "2.0",
+    "body": {
+      "elements": [
+        {
+          "tag": "note",
+          "is_footer": true,
+          "elements": [
+            { "tag": "standard_icon", "token": "info_outlined", "color": "grey" },
+            { "tag": "plain_text", "content": "备注信息" }
+          ]
+        }
+      ]
+    }
+  }`);
+  assert.deepEqual(ds, []);
+});
+
+test('note 子项非法时定位到具体节点', () => {
+  const ds = validate(`{
+    "schema": "2.0",
+    "body": {
+      "elements": [
+        { "tag": "note", "elements": [ { "tag": "not_a_note_child" } ] }
+      ]
+    }
+  }`);
+  const d = ds.find((x) => x.severity === 'error');
+  assert.ok(d, JSON.stringify(ds));
+  assert.equal(d.range.start.line, 5);
+});

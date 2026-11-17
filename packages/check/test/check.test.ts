@@ -177,3 +177,18 @@ test('linter 只进 hints，不拦发送', () => {
   assert.ok(result.hints.some((hint) => hint.source === 'linter' && hint.code === 'element-count'));
   assert.ok(result.card);
 });
+
+test('note 作为 Schema 2.0 组件可通过发送前检查，字段不被剥离', () => {
+  const note = {
+    tag: 'note',
+    is_footer: true,
+    elements: [
+      { tag: 'standard_icon', token: 'info_outlined', color: 'grey' },
+      { tag: 'plain_text', content: '备注信息' },
+    ],
+  };
+  const result = checkCard({ schema: '2.0', body: { elements: [note] } });
+  assert.deepEqual(result.errors, []);
+  assert.ok(result.card);
+  assert.deepEqual((result.card.body as any).elements[0], note);
+});

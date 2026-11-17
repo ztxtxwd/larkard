@@ -8,7 +8,12 @@ import {
   SpacingValueSchema,
   VerticalAlignSchema,
 } from '../common/enums.js';
-import { IconSchema, UdIconSchema } from '../common/icon.js';
+import {
+  CustomIconSchema,
+  IconSchema,
+  StandardIconSchema,
+  UdIconSchema,
+} from '../common/icon.js';
 import {
   StyledTextObjectSchema,
   TextObjectSchema,
@@ -16,6 +21,7 @@ import {
 } from '../common/text.js';
 import { BehaviorsSchema } from '../common/behavior.js';
 import { ConfirmSchema } from '../common/confirm.js';
+import { MarkdownSchema } from '../markdown/component.js';
 
 /**
  * 普通文本组件（div）。
@@ -473,6 +479,48 @@ export const HrSchema = z
   .describe('分割线组件（hr）');
 
 export type Hr = z.infer<typeof HrSchema>;
+
+/**
+ * 备注组件（note）的内容元素。
+ * 官方旧版文档定义为图标（standard_icon / custom_icon）、图片（img）与文本
+ * （plain_text / lark_md）；真机回读还会把 lark_md 存成 markdown 元素树，故一并接受。
+ */
+export const NoteChildSchema = z
+  .discriminatedUnion('tag', [
+    StandardIconSchema,
+    CustomIconSchema,
+    TextObjectSchema,
+    ImageSchema,
+    MarkdownSchema,
+  ])
+  .describe('备注内容：图标 / 图片 / 文本 / 富文本');
+
+export type NoteChild = z.infer<typeof NoteChildSchema>;
+
+/**
+ * 备注组件（note）。
+ * 旧版卡片的备注块；官方 2.0 文档标注废弃，但客户端引擎仍保留渲染与 RAW 回读，
+ * 本项目将其继续视为 Schema 2.0 的一部分（RAW ↔ DSL 双向无损）。
+ */
+export const NoteSchema = z
+  .object({
+    tag: z.literal('note').describe('组件标签，固定为 note'),
+    element_id: ElementIdSchema.optional().describe('组件唯一标识'),
+    margin: SpacingValueSchema.optional().describe('组件外边距'),
+    is_footer: z
+      .boolean()
+      .optional()
+      .describe('底部备注标记（真机 RAW 回读字段）；为 true 时顶部带间距与分割线'),
+    elements: z
+      .array(NoteChildSchema)
+      .optional()
+      .describe('备注内容：支持图标、图片和文本'),
+  })
+  .describe(
+    '备注组件（note）：旧版卡片的备注块；2.0 官方已废弃但客户端仍渲染，本项目保留为 Schema 2.0 组件',
+  );
+
+export type Note = z.infer<typeof NoteSchema>;
 
 /**
  * 音频组件（audio）。

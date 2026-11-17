@@ -102,7 +102,7 @@ export const CARD_TOP_LEVEL_KEYS: CompletionItem[] = [
 
 const ELEMENT_TAGS = [
   'column_set', 'column', 'form', 'interactive_container', 'collapsible_panel',
-  'div', 'markdown', 'img', 'img_combination', 'person', 'person_list',
+  'div', 'markdown', 'note', 'img', 'img_combination', 'person', 'person_list',
   'avatar', 'chart', 'table', 'hr', 'collapse_divider', 'fallback_text',
   'audio', 'video',
   'input', 'button', 'overflow',
