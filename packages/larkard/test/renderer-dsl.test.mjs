@@ -497,6 +497,29 @@ test('parseMarkdown: <font color> 段落着色', () => {
   assert.equal(red.property.textStyle.color, 'red');
 });
 
+test('markdown: escapeMarkdown 写入的 HTML 实体渲染时还原', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{ tag: 'markdown', content: '2026&#45;11&#45;17 &#42;不是斜体&#42;' }],
+    },
+  });
+  assert.match(html, /2026-11-17 \*不是斜体\*/);
+  assert.doesNotMatch(html, /&#45;|&#42;/);
+});
+
+test('header 副标题: lark_md 里的 HTML 实体渲染时还原', () => {
+  const html = renderDslToString({
+    schema: '2.0',
+    header: {
+      subtitle: { tag: 'lark_md', content: '2026&#45;11&#45;17 这是一个标题的副标题。' },
+    },
+    body: { elements: [] },
+  });
+  assert.match(html, /2026-11-17 这是一个标题的副标题。/);
+  assert.doesNotMatch(html, /&#45;/);
+});
+
 /* ---- 真实 DSL 语料（取自 feishu-raw-card-to-dsl 的 250+ 卡片对齐 fixture） ---- */
 // 契约：真实公开 DSL 喂进 dslToRaw + 渲染，不炸，且正文文本如实出现在 HTML 里。
 

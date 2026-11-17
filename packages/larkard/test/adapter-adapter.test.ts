@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   dslToRaw,
+  parseMarkdown,
   rawToDsl,
   degradeUnknown,
   isRawCardEnvelope,
@@ -58,6 +59,28 @@ test('dslToRaw: header subtitle lark_md → markdown elements (originTag:lark_md
   assert.equal(subtitle.property.elements[0].tag, 'at');
   assert.equal(subtitle.property.elements[0].property.userID, 'ou_113bce58203b98552a06a738827e95b7');
   assert.equal(subtitle.property.content, undefined);
+});
+
+test('parseMarkdown: 还原 escapeMarkdown 写入的 HTML 实体', () => {
+  const els = parseMarkdown(
+    '2026&#45;11&#45;17 &#42;不是斜体&#42; &amp; &sim; &nbsp;',
+  ) as any[];
+  assert.equal(els.length, 1);
+  assert.equal(els[0].tag, 'plain_text');
+  assert.equal(els[0].property.content, '2026-11-17 *不是斜体* & ~ \u00a0');
+  assert.equal(els[0].property.textStyle, undefined);
+});
+
+test('parseMarkdown: 行首转义的 - 不会被当成列表', () => {
+  const els = parseMarkdown('&#45; 不是列表') as any[];
+  assert.equal(els.length, 1);
+  assert.equal(els[0].tag, 'plain_text');
+  assert.equal(els[0].property.content, '- 不是列表');
+});
+
+test('parseMarkdown: 实体只还原一遍', () => {
+  const els = parseMarkdown('&amp;#45;') as any[];
+  assert.equal(els[0].property.content, '&#45;');
 });
 
 test('rawToDsl: header lark_md subtitle round-trips through dslToRaw', () => {

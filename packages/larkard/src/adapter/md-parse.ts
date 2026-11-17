@@ -18,6 +18,7 @@
  */
 import type { CardElement, TextStyle } from './types.js';
 import { EMOJI_KEY_TO_NAME } from '../content/emoji/index.js';
+import { decodeMarkdownEntities } from '../schema/markdown/escape.js';
 
 /** 行内解析时的样式上下文 */
 interface InlineStyle {
@@ -41,7 +42,10 @@ function styleAttrs(s: InlineStyle): TextStyle | undefined {
 }
 
 function makeText(content: string, s: InlineStyle): CardElement {
-  const property: CardElement['property'] = { content };
+  // 飞书客户端渲染 lark_md 时会还原 HTML 实体（`&#45;` → `-`）；plain_text
+  // 文本节点也必须还原，否则 `escapeMarkdown()` 写出的转义会原样显示。
+  // 代码块 / 行内代码故意不经过这里：CommonMark 的 code span 不解码实体。
+  const property: CardElement['property'] = { content: decodeMarkdownEntities(content) };
   const ts = styleAttrs(s);
   if (ts) property!.textStyle = ts;
   return { tag: 'plain_text', property };
