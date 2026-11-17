@@ -8,6 +8,12 @@ export interface CommonProps {
   key?: string | number;
 }
 
+/**
+ * 圆角半径：飞书只接受**一个** px 或百分比值，
+ * 不支持 CSS 四角简写（如 `"8px 0 0 8px"`）。
+ */
+export type CornerRadius = `${number}px` | `${number}%`;
+
 export interface CardProps extends CommonProps {
   headerTheme?: HeaderTemplate;
   config?: CardConfig;
@@ -183,7 +189,7 @@ export interface ImageProps extends CommonProps {
   title?: string;
   scaleType?: 'crop_center' | 'crop_top' | 'fit_horizontal';
   size?: string;
-  cornerRadius?: string;
+  cornerRadius?: CornerRadius;
   preview?: boolean;
   transparent?: boolean;
 }
@@ -198,7 +204,7 @@ export interface ImgCombinationProps extends CommonProps {
   mode: 'double' | 'triple' | 'bisect' | 'trisect';
   images: Array<string | ImgCombinationImageProp>;
   transparent?: boolean;
-  cornerRadius?: string;
+  cornerRadius?: CornerRadius;
 }
 
 export interface PersonProps extends CommonProps {
@@ -307,7 +313,7 @@ export interface InteractiveContainerProps extends CommonProps {
   backgroundStyle?: string;
   hasBorder?: boolean;
   borderColor?: string;
-  cornerRadius?: string;
+  cornerRadius?: CornerRadius;
   disabled?: boolean;
   disabledTips?: string;
   hoverTips?: string;
@@ -331,7 +337,7 @@ export interface CollapsiblePanelProps extends CommonProps {
   /** 标题区位置（header.position）：top 在内容上方（默认）/ bottom 在内容下方 */
   headerPosition?: 'top' | 'bottom';
   borderColor?: string;
-  cornerRadius?: string;
+  cornerRadius?: CornerRadius;
   /** 面板内边距（collapsible_panel.padding） */
   padding?: string;
   /** 标题区内边距（header.padding），与面板 padding 是不同字段 */

@@ -27,11 +27,11 @@ import { parseMarkdown } from './md-parse';
 import { h } from './vnode';
 import {
   alignToStyle, applyOuterMargin, bgStyleToColor, boxToStyle, extractPlainText, extractText,
-  getChildElements, propertyBackgroundColor, resolveBorderColor, resolveCornerRadius,
-  lookupPerson, personAvatarSrc,
+  getChildElements, normalizeCornerRadius, propertyBackgroundColor, resolveBorderColor,
+  resolveCornerRadius, lookupPerson, personAvatarSrc,
   registerComponent, renderElement, renderElements,
   resolveColor, resolveDimensionPx, resolveHoverTips, resolveImageSize, resolveImageSrc, resolveMediaSrc,
-  resolveTextSizeKey, resolveURL, resolveVideoCoverSrc, sizeToPx,
+  resolveTextSizeKey, resolveURL, resolveVideoCoverSrc,
   horizontalMarginPx, horizontalSpacingToPx, verticalSpacingToPx,
   textStyleToModifiers, textStyleToStyle,
 } from './registry';
@@ -1041,7 +1041,9 @@ registerComponent('img', (el, ctx) => {
   const scale = p.scaleType || p.scale_type || p.mode;
   const wrapStyle: Record<string, string> = {};
   const imgStyle: Record<string, string> = {};
-  if (p.corner_radius != null) imgStyle.borderRadius = sizeToPx(p.corner_radius);
+  // 圆角只认单个 px / 百分比值；多值（四角不同）真机不支持，不渲染。
+  const radius = resolveCornerRadius(p as Record<string, unknown>);
+  if (radius) imgStyle.borderRadius = radius;
   // size:"24px 24px" / sizeValue width_height_pixels：图标格等定宽高（缺省会按原图撑爆）
   const sized = resolveImageSize(p as Record<string, unknown>);
   if (sized.width && sized.height) {
@@ -1388,13 +1390,12 @@ function renderAudio(el: CardElement, ctx: RenderContext) {
   }
   // mask 按 border-width 向外扩；真机 wrapper 恒定 1px 描边。
   style['--universal-card-audio-border-width'] = '1px';
-  // corner_radius：DSL 字符串 / RAW {type:'pixels',value} / 裸数字都支持。
-  const radiusRaw = borderObj?.corner_radius ?? borderObj?.cornerRadius
-    ?? p.corner_radius ?? p.cornerRadius;
-  const radiusVal = isRecord(radiusRaw) ? radiusRaw.value : radiusRaw;
-  if (radiusVal != null && radiusVal !== '') {
-    style.borderRadius = typeof radiusVal === 'number' ? radiusVal + 'px' : String(radiusVal);
-  }
+  // corner_radius：DSL 字符串 / RAW {type:'pixels',value} / 裸数字都支持；
+  // 但只渲染单个 px / 百分比值（真机不支持四角多值）。
+  const radius = normalizeCornerRadius(
+    borderObj?.corner_radius ?? borderObj?.cornerRadius ?? p.corner_radius ?? p.cornerRadius,
+  );
+  if (radius) style.borderRadius = radius;
 
   // 背景：customBackgroundStyle（主题自定义色）优先，其次 background_style / backgroundColor。
   const bg = resolveCustomBackgroundLight(p)
@@ -1670,9 +1671,9 @@ registerComponent('collapsible_panel', (el, ctx) => {
   // 之前直接 resolveColor('grey') → N600 #646a73，同一张卡片描边深了一整档。
   const borderRaw = p.border;
   let hasBorder = false;
-  let borderRadiusRaw: number | string | undefined;
+  let borderRadiusRaw: unknown;
   if (borderRaw && typeof borderRaw === 'object') {
-    const border = borderRaw as { color?: string; corner_radius?: number | string };
+    const border = borderRaw as { color?: string; corner_radius?: unknown };
     const borderColor = resolveBorderColor(border.color) ?? 'var(--line-border-component)';
     style.border = `1px solid ${borderColor}`;
     hasBorder = true;
@@ -1680,8 +1681,10 @@ registerComponent('collapsible_panel', (el, ctx) => {
   }
   // 真机 --fat：有描边 / 面板底色 / header 底色 任一条成立 → border-radius:6px。
   // （只有纯无样式面板才是直角；DSL 显式的 corner_radius 覆盖本默认值。）
+  // 非法/多值圆角真机不支持，按未声明处理，回落默认 6px。
   const isFat = hasBorder || hasBg || !!hbg;
-  if (borderRadiusRaw != null) style.borderRadius = sizeToPx(borderRadiusRaw);
+  const borderRadius = normalizeCornerRadius(borderRadiusRaw);
+  if (borderRadius) style.borderRadius = borderRadius;
   else if (isFat) style.borderRadius = '6px';
   // header.position=bottom：标题落在内容下方。<summary> 必须是 <details> 的首个子节点才能
   // 充当开关键，所以 DOM 顺序不动，用 flex order 调换视觉顺序（details 变成纵向 flex 容器）。

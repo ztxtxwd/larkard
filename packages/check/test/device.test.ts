@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { findDeviceIssues, normalizeSpacing, repairDeviceIssues } from '../src/index.js';
+import { findDeviceIssues, normalizeCornerRadius, normalizeSpacing, repairDeviceIssues } from '../src/index.js';
 
 const md = { tag: 'markdown', content: 'hi' };
 
@@ -178,4 +178,93 @@ test('findDeviceIssues 与 repairDeviceIssues 结论一致', () => {
   assert.deepEqual(findDeviceIssues(input), repairDeviceIssues(input).issues);
   // 非对象输入不炸
   assert.deepEqual(findDeviceIssues(null), []);
+});
+
+test('normalizeCornerRadius：单个值归一化，四角简写只在全等时可折叠', () => {
+  assert.equal(normalizeCornerRadius('8px'), '8px');
+  assert.equal(normalizeCornerRadius('8.5px'), '8.5px');
+  assert.equal(normalizeCornerRadius('50%'), '50%');
+  // 只差格式的写法顺手纠正
+  assert.equal(normalizeCornerRadius(' 8PX '), '8px');
+  assert.equal(normalizeCornerRadius(8), '8px');
+  assert.equal(normalizeCornerRadius('8'), '8px');
+  // 四角相同才有唯一正确解
+  assert.equal(normalizeCornerRadius('8px 8px 8px 8px'), '8px');
+  assert.equal(normalizeCornerRadius('0 0 0 0'), '0px');
+  // 各角不同 / 非法值：无法自动修复
+  assert.equal(normalizeCornerRadius('8px 0 0 8px'), undefined);
+  assert.equal(normalizeCornerRadius('8px 8px 0 8px'), undefined);
+  assert.equal(normalizeCornerRadius('8em'), undefined);
+  assert.equal(normalizeCornerRadius(-4), undefined);
+  assert.equal(normalizeCornerRadius(''), undefined);
+});
+
+test('圆角值域：各角不同只报错，全等简写折叠为单值', () => {
+  const input = {
+    schema: '2.0',
+    body: {
+      elements: [
+        {
+          tag: 'img',
+          img_key: 'img_x',
+          alt: { tag: 'plain_text', content: '图' },
+          corner_radius: '8px 0 0 8px',
+        },
+        {
+          tag: 'collapsible_panel',
+          header: {},
+          border: { corner_radius: '8px 8px 8px 8px' },
+        },
+        { tag: 'interactive_container', elements: [], corner_radius: '50%' },
+      ],
+    },
+  };
+  const { card, issues, fixes } = repairDeviceIssues(input);
+
+  const multi = issues.find((issue) => issue.path === '/body/elements/0/corner_radius');
+  assert.ok(multi);
+  assert.equal(multi.code, 'corner-radius-domain');
+  assert.equal(multi.severity, 'error');
+  assert.equal(multi.fixable, false);
+
+  const collapsed = issues.find((issue) => issue.path === '/body/elements/1/border/corner_radius');
+  assert.ok(collapsed);
+  assert.equal(collapsed.fixable, true);
+  assert.deepEqual(fixes, [collapsed]);
+
+  const elements = (card.body as any).elements;
+  // 无唯一正确解的原样保留，交给调用方决定
+  assert.equal(elements[0].corner_radius, '8px 0 0 8px');
+  assert.equal(elements[1].border.corner_radius, '8px');
+  // 合法单值不动，也不产生 issue
+  assert.equal(elements[2].corner_radius, '50%');
+  assert.equal(issues.length, 2);
+  // 入参深拷贝未被修改
+  assert.equal((input.body as any).elements[1].border.corner_radius, '8px 8px 8px 8px');
+});
+
+test('圆角值域：不碰 chart_spec 里的 vega cornerRadius', () => {
+  const { card, issues } = repairDeviceIssues({
+    schema: '2.0',
+    body: {
+      elements: [{ tag: 'chart', chart_spec: { cornerRadius: '8 8 8 8' } }],
+    },
+  });
+  assert.deepEqual(issues, []);
+  assert.equal((card.body as any).elements[0].chart_spec.cornerRadius, '8 8 8 8');
+});
+
+test('圆角值域：空字符串等同未设置，不报错', () => {
+  const { card, issues } = repairDeviceIssues({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        elements: [],
+        corner_radius: '',
+      }],
+    },
+  });
+  assert.deepEqual(issues, []);
+  assert.equal((card.body as any).elements[0].corner_radius, '');
 });

@@ -61,6 +61,7 @@ const { card, fixes, errors } = checkCard(dsl, { fix: true })
 | `media-duration` | `audio` / `video` 不能写 `duration` / `duration_ms`（时长在上传时确定） | 删字段 |
 | `media-enable-forward` | 含音视频时必须 `config.enable_forward = false` | 置为 `false` |
 | `panel-border-field` | `collapsible_panel` 写了 `interactive_container` 的边框字段（`has_border` 等），Schema 会静默剥离 | 只提示（删了等于丢样式） |
+| `corner-radius-domain` | `corner_radius`（`img` / `img_combination` / `interactive_container` / `audio.border` / `collapsible_panel.border`）只收**单个** px 或百分比值，不支持 CSS 四角简写（如 `8px 0 0 8px`） | 四角全等的简写折叠为单值；各角不同只报错（没有唯一正确解） |
 
 只想修不想检查时：
 

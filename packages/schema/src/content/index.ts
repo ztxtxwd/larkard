@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import {
   ColorSchema,
+  CornerRadiusSchema,
   ElementIdSchema,
   HorizontalAlignSchema,
   SpacingValueSchema,
@@ -71,7 +72,9 @@ export const ImageSchema = z
       })
       .optional()
       .describe('图片标题'),
-    corner_radius: z.string().optional().describe('圆角半径，如 8px 或 50%'),
+    corner_radius: CornerRadiusSchema.optional().describe(
+      '图片圆角半径：单个 px 或百分比值（如 8px / 50%），飞书不支持四角多值',
+    ),
     scale_type: z
       .enum(['crop_center', 'crop_top', 'fit_horizontal'])
       .optional()
@@ -140,7 +143,9 @@ export const ImgCombinationSchema = z
       .boolean()
       .optional()
       .describe('混排区域是否透明底色，默认 false'),
-    corner_radius: z.string().optional().describe('图片圆角半径'),
+    corner_radius: CornerRadiusSchema.optional().describe(
+      '图片圆角半径：单个 px 或百分比值，飞书不支持四角多值',
+    ),
     img_list_length: z
       .number()
       .int()
@@ -507,7 +512,9 @@ export const AudioSchema = z
     border: z
       .object({
         color: ColorSchema.optional().describe('边框颜色'),
-        corner_radius: z.string().optional().describe('边框圆角'),
+        corner_radius: CornerRadiusSchema.optional().describe(
+          '边框圆角：单个 px 或百分比值，飞书不支持四角多值',
+        ),
       })
       .optional()
       .describe('边框样式'),

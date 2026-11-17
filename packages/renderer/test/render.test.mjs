@@ -960,6 +960,46 @@ test('img 圆角：未声明 corner_radius 时不加圆角（对齐真机 border
   assert.match(rounded, /universal-card-image__(?:host|placeholder)[^>]*border-radius:8px/);
 });
 
+// 飞书 corner_radius 只接受一个 px / 百分比值；CSS 四角简写真机不支持，
+// 预览也不能比真机「更能画」。
+test('圆角只渲染单个 px / 百分比值，多值不渲染', () => {
+  const renderImg = (cornerRadius) =>
+    renderDslToString({
+      schema: '2.0',
+      body: {
+        elements: [{
+          tag: 'img',
+          img_key: 'img_test',
+          scale_type: 'fit_horizontal',
+          corner_radius: cornerRadius,
+          alt: { tag: 'plain_text', content: '图' },
+        }],
+      },
+    });
+
+  for (const value of ['8px 0 0 8px', '8px 0', '8em', '8']) {
+    const html = renderImg(value);
+    const img = html.match(/class="universal-card-image__(?:host|placeholder)"[^>]*>/)?.[0] || '';
+    assert.ok(img, html);
+    assert.doesNotMatch(img, /border-radius/, value);
+  }
+
+  assert.match(renderImg('50%'), /border-radius:50%/);
+
+  const combo = renderDslToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'img_combination',
+        combination_mode: 'double',
+        img_list: [{ img_key: 'a' }, { img_key: 'b' }],
+        corner_radius: '8px 0 0 8px',
+      }],
+    },
+  });
+  assert.doesNotMatch(combo, /border-radius/);
+});
+
 // 图片标题与盒子规则对齐真机 dump：
 //   .universal-card-image__title{margin-bottom:8px}（标题在图片上方）
 //   .universal-card-image__wrapper{...;overflow:hidden} / __host{width:100%;border-radius:0}

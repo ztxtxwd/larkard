@@ -20,7 +20,9 @@ export type DeviceRule =
   /** 含音视频时必须 `config.enable_forward = false` */
   | 'media-enable-forward'
   /** `collapsible_panel` 写了 `interactive_container` 的边框字段（Schema 静默剥离） */
-  | 'panel-border-field';
+  | 'panel-border-field'
+  /** `corner_radius` 只接受单个 px / 百分比值，四角多值真机不支持 */
+  | 'corner-radius-domain';
 
 export interface DeviceIssue extends CheckIssue {
   severity: 'error' | 'warning';
@@ -48,6 +50,12 @@ const SPACING_PX = /^\d{1,2}(?:\.\d+)?px$/;
 const PANEL_PADDING_MAX = 28;
 /** 属于 `interactive_container`、`collapsible_panel` 不认的边框字段。 */
 const PANEL_FOREIGN_FIELDS = ['has_border', 'border_color', 'corner_radius', 'background_style'] as const;
+/** 单个圆角值：px 或百分比。飞书不接受 CSS 四角简写（如 `8px 0 0 8px`）。 */
+const CORNER_RADIUS = /^\d+(?:\.\d+)?(?:px|%)$/;
+/** `corner_radius` 是顶层字段的组件。 */
+const CORNER_RADIUS_TOP_LEVEL_TAGS = new Set(['img', 'img_combination', 'interactive_container']);
+/** `corner_radius` 在 `border` 对象里的组件。 */
+const CORNER_RADIUS_BORDER_TAGS = new Set(['audio', 'collapsible_panel']);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -73,6 +81,32 @@ export function normalizeSpacing(value: unknown): string | undefined {
   if (SPACING_TOKENS.has(text)) return text;
   const compact = text.replace(/\s+/g, '').toLowerCase();
   return SPACING_PX.test(compact) ? compact : undefined;
+}
+
+/**
+ * 圆角值归一化：飞书只接受**一个** px 或百分比值。
+ *
+ * - 纯数字按 px 理解（`8` → `8px`），大小写/空格顺手纠正；
+ * - 四角简写只有在**四角完全相同时**才有唯一正确解（`8px 8px 8px 8px` → `8px`），
+ *   各角不同（`8px 0 0 8px`）返回 undefined，交给调用方报错而不是瞎猜一个角；
+ * - 空字符串 / 其它单位 / 负值返回 undefined（真机不支持）。
+ */
+export function normalizeCornerRadius(value: unknown): string | undefined {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value >= 0 ? `${value}px` : undefined;
+  }
+  if (typeof value !== 'string') return undefined;
+  const text = value.trim();
+  if (!text) return undefined;
+  const parts = text.split(/\s+/);
+  if (parts.length > 1) {
+    const normalized = parts.map((part) => normalizeCornerRadius(part));
+    const first = normalized[0];
+    return first !== undefined && normalized.every((part) => part === first) ? first : undefined;
+  }
+  const compact = text.toLowerCase();
+  if (/^\d+(?:\.\d+)?$/.test(compact)) return `${compact}px`;
+  return CORNER_RADIUS.test(compact) ? compact : undefined;
 }
 
 /** `padding` 支持 1–4 个 px 值（CSS 简写语义）；解析成四边并夹到 0–28px。 */
@@ -233,6 +267,55 @@ export function repairDeviceIssues(input: Record<string, unknown>): RepairResult
             'media-duration',
             'error',
             `${node.tag} 组件不能写 ${key}：时长在上传文件时确定，组件里带上会被飞书拒绝`,
+            true,
+          ),
+          true,
+        );
+      }
+    }
+
+    // 圆角：只认一个 px / 百分比值。飞书不支持 CSS 四角简写，
+    // 各角不同时没有唯一正确解，只报告不修（删掉会直接丢样式）。
+    const radiusHolders: Array<{ holder: Record<string, unknown>; radiusPath: (string | number)[] }> = [];
+    if (
+      typeof node.tag === 'string' &&
+      CORNER_RADIUS_TOP_LEVEL_TAGS.has(node.tag) &&
+      'corner_radius' in node
+    ) {
+      radiusHolders.push({ holder: node, radiusPath: [...path, 'corner_radius'] });
+    }
+    if (
+      typeof node.tag === 'string' &&
+      CORNER_RADIUS_BORDER_TAGS.has(node.tag) &&
+      isRecord(node.border) &&
+      'corner_radius' in node.border
+    ) {
+      radiusHolders.push({ holder: node.border, radiusPath: [...path, 'border', 'corner_radius'] });
+    }
+    for (const { holder, radiusPath } of radiusHolders) {
+      const raw = holder.corner_radius;
+      // 空串是编辑器「未设置」的写法（主题页尾常见），真机按无圆角处理，不算违规。
+      if (typeof raw === 'string' && raw.trim() === '') continue;
+      const next = normalizeCornerRadius(raw);
+      if (next === undefined) {
+        record(
+          issue(
+            radiusPath,
+            'corner-radius-domain',
+            'error',
+            `corner_radius 只接受单个像素值或百分比值（如 "8px" / "50%"），飞书不支持四角多值；${JSON.stringify(raw)} 无法自动归一化，请改成单个值`,
+            false,
+          ),
+          false,
+        );
+      } else if (next !== raw) {
+        holder.corner_radius = next;
+        record(
+          issue(
+            radiusPath,
+            'corner-radius-domain',
+            'error',
+            `corner_radius 已归一化为 ${JSON.stringify(next)}（原值 ${JSON.stringify(raw)}）：飞书只接受单个 px / 百分比值`,
             true,
           ),
           true,

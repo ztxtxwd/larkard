@@ -24,6 +24,20 @@ export const SpacingValueSchema = z
 
 export type SpacingValue = z.infer<typeof SpacingValueSchema>;
 
+/**
+ * 圆角半径：飞书只接受**单个**像素值或百分比值（如 `"8px"` / `"50%"`），
+ * 不支持 CSS 的「上右下左」四角简写（如 `"8px 0 0 8px"`）。
+ * 空字符串是编辑器「未设置」的写法（主题页尾常见），回读时需原样保留。
+ */
+export const CornerRadiusSchema = z
+  .string()
+  .regex(/^(?:\d+(?:\.\d+)?(?:px|%)|)$/, {
+    error: 'corner_radius 只接受单个像素值或百分比值（如 "8px" / "50%"），或空字符串表示未设置；飞书不支持多值圆角',
+  })
+  .describe('圆角半径：单个 px 或百分比值（如 8px / 50%）；空字符串等同未设置');
+
+export type CornerRadius = z.infer<typeof CornerRadiusSchema>;
+
 /** 间距枚举或自定义 px 值 */
 export const SpacingTokenSchema = z
   .union([

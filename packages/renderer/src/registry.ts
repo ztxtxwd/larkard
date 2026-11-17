@@ -526,27 +526,41 @@ export function resolveImageSize(property: Record<string, unknown> | undefined |
   return {};
 }
 
+/** 飞书圆角只接受**单个** px / 百分比值；CSS 四角简写（如 `8px 0 0 8px`）真机不支持。 */
+const CORNER_RADIUS_RE = /^\d+(?:\.\d+)?(?:px|%)$/;
+
+/**
+ * 圆角值（DSL 字符串 / RAW 数字 / `{type,value}` echo）→ 单个合法的 CSS 值。
+ * 多值、带其它单位或空字符串一律返回 undefined：真机不支持的值不渲染，
+ * 避免预览比真机「更能画」。
+ */
+export function normalizeCornerRadius(value: unknown): string | undefined {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value >= 0 ? `${value}px` : undefined;
+  }
+  if (typeof value === 'string') {
+    const text = value.trim();
+    return CORNER_RADIUS_RE.test(text) ? text : undefined;
+  }
+  if (value && typeof value === 'object' && 'value' in value) {
+    const echo = value as { type?: unknown; value: unknown };
+    const next = normalizeCornerRadius(echo.value);
+    // RAW 的 echo 带 type：pixels → px，percent → %（当前样本只用 pixels，兜底兼容）。
+    if (next && typeof echo.type === 'string' && /percent/i.test(echo.type) && !next.endsWith('%')) {
+      return next.replace(/px$/, '%');
+    }
+    return next;
+  }
+  return undefined;
+}
+
 /** RAW cornerRadiusValue / DSL corner_radius → CSS border-radius。
  * 未声明或空字符串（主题页尾常用 `""`）→ undefined，不输出默认圆角（对齐真机）。 */
 export function resolveCornerRadius(property: Record<string, unknown> | undefined | null): string | undefined {
   if (!property) return undefined;
   const direct = property.corner_radius ?? property.cornerRadius;
-  if (typeof direct === 'string') {
-    const t = direct.trim();
-    if (!t) return undefined;
-    return sizeToPx(t);
-  }
-  if (direct != null) return sizeToPx(direct as number | string);
-  const echo = property.cornerRadiusValue;
-  // 少数 RAW 直接把像素数写在 cornerRadiusValue（非 {type:'pixels',value} echo）。
-  if (typeof echo === 'number') return echo + 'px';
-  if (typeof echo === 'string' && echo.trim()) return sizeToPx(echo);
-  if (echo && typeof echo === 'object') {
-    const value = (echo as { type?: string; value?: number | string }).value;
-    if (typeof value === 'number') return value + 'px';
-    if (typeof value === 'string' && value.trim()) return sizeToPx(value);
-  }
-  return undefined;
+  if (direct != null) return normalizeCornerRadius(direct);
+  return normalizeCornerRadius(property.cornerRadiusValue);
 }
 /** RAW 的 padding/margin 对象 {top,right,bottom,left:{type:'pixels',value}} -> CSS 速记 */
 type Spacing4 = { top?: { value?: number }; right?: { value?: number }; bottom?: { value?: number }; left?: { value?: number } };

@@ -4,6 +4,7 @@ import { BehaviorsSchema } from '../common/behavior.js';
 import { ConfirmSchema } from '../common/confirm.js';
 import {
   ColorSchema,
+  CornerRadiusSchema,
   DirectionSchema,
   ElementIdSchema,
   HorizontalAlignSchema,
@@ -209,7 +210,9 @@ export const InteractiveContainerSchema = z
       .optional()
       .describe('是否展示边框，默认 false；默认不要开边框墙'),
     border_color: ColorSchema.optional().describe('边框颜色'),
-    corner_radius: z.string().optional().describe('圆角半径'),
+    corner_radius: CornerRadiusSchema.optional().describe(
+      '容器圆角半径：单个 px 或百分比值，飞书不支持四角多值',
+    ),
     padding: SpacingValueSchema.optional().describe('组件内边距'),
     hover_tips: TipsTextSchema.optional().describe('悬浮提示'),
     disabled: z
@@ -316,7 +319,9 @@ export const CollapsiblePanelSchema = z
     border: z
       .object({
         color: ColorSchema.optional().describe('边框颜色；推荐 grey-200'),
-        corner_radius: z.string().optional().describe('边框圆角；推荐 8px'),
+        corner_radius: CornerRadiusSchema.optional().describe(
+          '边框圆角：单个 px 或百分比值；推荐 8px，飞书不支持四角多值',
+        ),
       })
       .optional()
       .describe('面板边框样式；推荐 { color: "grey-200", corner_radius: "8px" }'),
