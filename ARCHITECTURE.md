@@ -29,6 +29,8 @@ larkard                     ← core：parse / validate / lint / check / compile
 ├── larkard/components      ← TSX 组件
 │   └── larkard/jsx-runtime
 ├── larkard/optimize        ← 分栏等高 / 富文本升级
+├── larkard/palette         ← 图片取色 / 任意卡片换色 / 官方色物化
+│   └── /browser            ← File/URL → RGBA 像素
 ├── larkard/patch           ← RFC 6902
 ├── larkard/state           ← 卡片内嵌 state
 ├── larkard/language-server ← LSP 核心（server 为 bin）
@@ -48,6 +50,7 @@ larkard                     ← core：parse / validate / lint / check / compile
 | `src/renderer` | RAW / DSL → HTML / DOM | 根入口 DOM-free；浏览器专属代码在 `browser.ts` / `dom.ts` |
 | `src/components` | TSX → DSL | props 白名单；输出必须过 schema 契约测试 |
 | `src/optimize` | 发送前视觉优化 | 不依赖 renderer，真机常量从 content 取 |
+| `src/palette` | 图片取色、色板合成、官方色物化 / 枚举回写 | 纯函数；DOM 解码只在 `palette/browser.ts`；官方色从 content 取 |
 | `src/cli.ts` / `src/language-server` | 工具入口 | 只消费 core 公共 API |
 
 ## 设计约束
@@ -72,6 +75,7 @@ larkard                     ← core：parse / validate / lint / check / compile
 | 新 RAW ↔ DSL 映射 | `src/adapter` |
 | 新图标 / emoji / 字号 / 间距 | `src/content` |
 | 新渲染组件 | `src/renderer/components.ts` |
+| 图片取色 / 换色 / 官方色映射 | `src/palette` |
 | 浏览器交互 | `src/renderer/browser.ts` / `dom.ts` |
 | 编辑器能力 | `src/language-server` |
 | 终端能力 | `src/cli.ts` |

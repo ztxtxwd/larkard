@@ -1,9 +1,10 @@
 /**
  * 元素高度预测。
  *
- * 覆盖 interactive_container 里常见的叶子组件：markdown / plain_text / div / img /
- * button / hr。遇到拿不准的组件（chart / table / audio / video / 嵌套容器 / 行内图片）
- * 返回 undefined，让等高优化跳过整组。
+ * 覆盖 interactive_container 里常见的组件：markdown / plain_text / div / img /
+ * button / hr，以及嵌套的 interactive_container。无显式 `size` 的图片需要调用方
+ * 通过 `imageSize` 提供原始宽高比。遇到拿不准的组件（chart / table / audio /
+ * video / 行内图片等）返回 undefined，让等高优化跳过整组。
  */
 import {
   hasBackground,
@@ -26,10 +27,12 @@ import {
   fontSizeOf,
   textLineHeight,
 } from '../content/metrics.js';
-import type { JsonObject, MeasureText } from './types.js';
+import type { JsonObject, MeasureImage, MeasureText } from './types.js';
 
 export interface MeasureEnv {
   measure: MeasureText;
+  /** 无显式 `size` 图片的原始尺寸；不传则这类图片不可测。 */
+  imageSize?: MeasureImage;
 }
 
 export interface ContainerMeasurement {
@@ -256,12 +259,17 @@ function imageTitleHeight(el: JsonObject): number {
   return lineHeight + 8; // .universal-card-image__title { margin-bottom: 8px }
 }
 
+/** 图片 key 的几种写法：公开 DSL 用 `img_key`，RAW / 回读用 `imageID`。 */
+function imageKeyOf(el: JsonObject): string | undefined {
+  const raw = el.img_key ?? el.image_key ?? el.imageID ?? el.imgKey ?? el.img_id;
+  return typeof raw === 'string' && raw ? raw : undefined;
+}
+
 function measureImgElement(
   el: JsonObject,
   width: number,
   env: MeasureEnv,
 ): number | undefined {
-  void env;
   const size = typeof el.size === 'string' ? el.size.trim() : '';
   let imageHeight: number | undefined;
   const pxPair = /^(\d+(?:\.\d+)?)px\s+(\d+(?:\.\d+)?)px$/i.exec(size);
@@ -274,8 +282,12 @@ function measureImgElement(
     if (!(w > 0) || !(h > 0)) return undefined;
     imageHeight = width * h / w;
   } else {
-    // 没有显式尺寸：真实高度取决于图片原始宽高比，服务端拿不到。
-    return undefined;
+    // 没有显式尺寸（内容图 fit_horizontal）：高度由原图宽高比决定。
+    // 调用方给了图片原始尺寸时按列宽换算；否则不可测。
+    const key = imageKeyOf(el);
+    const known = key ? env.imageSize?.(key, el) : undefined;
+    if (!known || !(known.width > 0) || !(known.height > 0)) return undefined;
+    imageHeight = width * known.height / known.width;
   }
   return imageTitleHeight(el) + imageHeight;
 }
@@ -283,6 +295,74 @@ function measureImgElement(
 function measureButtonElement(el: JsonObject): number {
   const size = typeof el.size === 'string' ? el.size : 'medium';
   return BUTTON_HEIGHT[size] ?? BUTTON_HEIGHT.medium!;
+}
+
+/**
+ * 嵌套 `interactive_container` 的高度。
+ *
+ * 纵向：子项高度求和 + row-gap，和顶层容器一致。
+ * 横向：子项宽度取决于内容（weighted / auto），拿不到精确分栏；高度按「每个
+ * 子项都占满整行」估算后取最大值，单子项时与真机一致。宁可将容器估矮一点
+ * （高估宽度 → 少折行）也不估高，最多多补一行字符。
+ */
+function measureNestedContainer(
+  el: JsonObject,
+  availableWidth: number,
+  env: MeasureEnv,
+): ContainerMeasurement {
+  const padding = el.padding == null
+    ? CONTAINER_DEFAULT_PADDING
+    : parseBox(el.padding);
+  if (!padding) return { detail: 'padding' };
+  const bordered = el.has_border === true || el.hasBorder === true;
+  const border = bordered ? 1 : 0;
+
+  let outerWidth = availableWidth;
+  const rawWidth = el.width;
+  if (typeof rawWidth === 'number' && Number.isFinite(rawWidth)) {
+    outerWidth = Math.min(rawWidth, availableWidth);
+  } else if (typeof rawWidth === 'string') {
+    const px = lengthPx(rawWidth);
+    if (px != null) outerWidth = Math.min(px, availableWidth);
+  }
+  const innerWidth = outerWidth - padding.left - padding.right - border * 2;
+  if (innerWidth <= 0) return { detail: 'width-overflow' };
+
+  const elements = Array.isArray(el.elements) ? el.elements : [];
+  if (elements.length === 0) return { detail: 'empty' };
+
+  if (isHorizontal(el)) {
+    let maxHeight = 0;
+    for (const raw of elements) {
+      if (!isRecord(raw)) return { detail: 'child' };
+      const height = measureElement(raw, innerWidth, env);
+      if (height == null) {
+        return { detail: typeof raw.tag === 'string' ? raw.tag : 'unknown' };
+      }
+      maxHeight = Math.max(maxHeight, height);
+    }
+    return {
+      height: padding.top + padding.bottom + border * 2 + maxHeight,
+      innerWidth,
+    };
+  }
+
+  const rowGap = containerRowGap(el);
+  let childrenHeight = 0;
+  for (const raw of elements) {
+    if (!isRecord(raw)) return { detail: 'child' };
+    const height = measureElement(raw, innerWidth, env);
+    if (height == null) {
+      return { detail: typeof raw.tag === 'string' ? raw.tag : 'unknown' };
+    }
+    childrenHeight += height;
+  }
+  return {
+    height: padding.top + padding.bottom + border * 2
+      + childrenHeight
+      + rowGap * Math.max(0, elements.length - 1),
+    innerWidth,
+  };
 }
 
 /**
@@ -314,6 +394,9 @@ export function measureElement(
       break;
     case 'img':
       height = measureImgElement(el, innerWidth, env);
+      break;
+    case 'interactive_container':
+      height = measureNestedContainer(el, innerWidth, env).height;
       break;
     case 'button':
       height = measureButtonElement(el);

@@ -2228,11 +2228,31 @@ registerComponent('at_all', () =>
 );
 
 // link：超链接（url 可能是字符串或多端地址对象）
-registerComponent('link', (el) => {
+// 富文本 `<link icon='…'>` 的前缀图标固定蓝色；普通 `[t](u)` 无 icon。
+registerComponent('link', (el, ctx) => {
   const p = el.property || {};
   const url = resolveURL(p.url) || resolveURL(p.multiURL) || '#';
   const style = textStyleToStyle(p.textStyle);
+  const iconRaw = p.icon;
+  const iconToken = typeof iconRaw === 'string'
+    ? iconRaw
+    : isRecord(iconRaw)
+      ? (typeof iconRaw.token === 'string' ? iconRaw.token
+        : typeof iconRaw.img_key === 'string' ? iconRaw.img_key : undefined)
+      : undefined;
+  const iconNode = iconToken
+    ? renderIcon({
+      tag: 'standard_icon',
+      property: { token: iconToken, color: 'blue', size: '14px' },
+    } as CardElement, ctx)
+    : null;
   return h('a', { className: `${CLS}-markdown-link`, href: url, target: '_blank', rel: 'noopener', style },
+    iconNode
+      ? h('span', {
+        className: `${CLS}-markdown-link__icon`,
+        style: { display: 'inline-flex', marginRight: '4px', verticalAlign: '-2px' },
+      }, iconNode)
+      : null,
     p.content != null ? String(p.content) : url);
 });
 
@@ -2284,9 +2304,16 @@ registerComponent('number_tag', (el, ctx) => {
   const parentFs = ctx.textMetrics?.fontSize ?? BASE_FONT_SIZE;
   const fs = Math.max(11, Math.round(parentFs * 0.85));
   const c = TAG_COLOR.blue;
+  // 显式 background_color / font_color（官方枚举或 #hex/rgb）优先；缺省走 blue 色板。
+  const bgRaw = typeof (p.backgroundColor ?? p.background_color) === 'string'
+    ? String(p.backgroundColor ?? p.background_color) : '';
+  const fgRaw = typeof (p.fontColor ?? p.font_color) === 'string'
+    ? String(p.fontColor ?? p.font_color) : '';
+  const bg = (bgRaw && (resolveColor(bgRaw) ?? bgRaw)) || c.bg;
+  const fg = (fgRaw && (resolveColor(fgRaw) ?? fgRaw)) || c.text;
   const style: Record<string, string> = {
-    backgroundColor: c.bg,
-    color: c.text,
+    backgroundColor: bg,
+    color: fg,
     fontSize: fs + 'px',
     lineHeight: '1.4',
     padding: '0 4px',

@@ -9,3 +9,5 @@ export * from './icons/index.js';
 export * from './emoji/index.js';
 export * from './metrics.js';
 export * from './spacing.js';
+export * from './colors.js';
+export * from './official-colors.js';

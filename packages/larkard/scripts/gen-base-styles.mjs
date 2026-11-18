@@ -1,6 +1,6 @@
 /**
  * 构建前生成：
- * 1) 把 constants.ts 的 PALETTE 同步进 styles.css 的色阶 CSS 变量区；
+ * 1) 把 content/colors.ts 的 PALETTE 同步进 styles.css 的色阶 CSS 变量区；
  * 2) 把 styles.css 内联进 base-styles.ts，供 ALL_CSS 运行时聚合。
  *
  * 挂在 build/dev 前置（package.json），styles.css / PALETTE 一改即同步。
@@ -14,13 +14,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, '..');
 
 const SRC_CSS = join(repoRoot, 'src', 'renderer', 'styles.css');
-const SRC_CONSTANTS = join(repoRoot, 'src', 'renderer', 'constants.ts');
+const SRC_CONSTANTS = join(repoRoot, 'src', 'content', 'colors.ts');
 const OUT_TS = join(repoRoot, 'src', 'renderer', 'assets', 'base-styles.ts');
 
-const PALETTE_BEGIN = '  /* BEGIN PALETTE VARS (auto-generated from constants.ts PALETTE) */';
+const PALETTE_BEGIN = '  /* BEGIN PALETTE VARS (auto-generated from content/colors.ts PALETTE) */';
 const PALETTE_END = '  /* END PALETTE VARS */';
 
-/** 从 constants.ts 抽出 PALETTE 对象字面量里的 KEY: '#hex' 对 */
+/** 从 content/colors.ts 抽出 PALETTE 对象字面量里的 KEY: '#hex' 对 */
 function extractPalette(ts) {
   const m = ts.match(/export const PALETTE:[^=]*=\s*\{([\s\S]*?)\n\};/);
   if (!m) throw new Error('未找到 export const PALETTE = {...}');

@@ -26,12 +26,37 @@ npm i larkard
 | `larkard/components` | TSX → 卡片 JSON | Universal |
 | `larkard/jsx-runtime` | JSX 运行时（`jsxImportSource`） | Universal |
 | `larkard/optimize` | 分栏等高、纯文本升级富文本 | Universal |
+| `larkard/palette` | 图片取色、任意卡片换色、官方色物化 / 枚举回写 | Universal |
+| `larkard/palette/browser` | File / URL → RGBA 像素（`createImageBitmap` + Canvas） | Browser |
 | `larkard/patch` | RFC 6902 JSON Patch | Universal |
 | `larkard/state` | 把卡片 state 封印进空分栏 URL | Universal |
 | `larkard/language-server` | LSP 核心（stdio 服务器为 `larkard-language-server` bin） | Node / WebWorker |
 | `larkard/cli` | CLI 的 `run(argv)` | Node |
 
 CLI bin：`larkard`；LSP bin：`larkard-language-server`。
+
+## 图片换色
+
+`larkard/palette` 把图片调色板套到任意卡片上。算法是确定性的：不调用模型、不用随机数，
+同一张图 + 同一张卡输出一致。
+
+```ts
+import { recolorCardWithImage } from 'larkard/palette';
+import { recolorCardFromFile } from 'larkard/palette/browser';
+
+// 已有 RGBA 像素（Node 可用 sharp 解码）
+const { card, changed, warnings } = recolorCardWithImage(dsl, { data, width, height });
+
+// 浏览器里直接选文件
+const result = await recolorCardFromFile(dsl, file);
+```
+
+它做三件事：
+
+1. **物化**：把支持自定义色、但写的是官方枚举/字面量的字段改成 `config.style.color` 的 cus-* token；
+2. **合成**：按图片色板保留原卡明暗关系，修复文字对比度，输出 light/dark；
+3. **枚举回写**：icon / text_tag / header.template 等只能走官方枚举的字段，挑最接近的枚举；
+   非 danger、非 form 按钮转成可自定义底色的 `interactive_container`。
 
 ## 发送前检查
 

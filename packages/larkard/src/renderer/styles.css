@@ -35,7 +35,7 @@
   /* 真机按「卡片容器宽度 > 320px」区分宽/窄屏按钮档位，这里用容器查询复刻 */
   container-type: inline-size;
   container-name: universal-card;
-  /* BEGIN PALETTE VARS (auto-generated from constants.ts PALETTE) */
+  /* BEGIN PALETTE VARS (auto-generated from content/colors.ts PALETTE) */
   /* 正文 color:var(--O400) 等依赖这些变量；与飞书 :root light 色阶对齐 */
   --B50: #f0f4ff;
   --B100: #e0e9ff;
@@ -218,6 +218,7 @@
   --colorful-blue: var(--B500); /* markdown 列表符号 */
   --bg-body: var(--N00);
   --static-white: var(--N00);
+
 }
 /* config.width_mode：default（600px 上限）/ compact（400px）/ fill（撑满容器）。
    缺省或非法值由渲染器归一到 default。 */

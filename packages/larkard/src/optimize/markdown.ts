@@ -2,7 +2,8 @@
  * 预测 markdown 元素的高度。
  *
  * 只复刻「占高」相关的那部分渲染规则：
- * - 行内元素（加粗 / 链接 / 行内代码 / emoji / @人 / text_tag）先归一成文字原子；
+ * - 行内元素（加粗 / 链接 / 行内代码 / emoji / @人 / text_tag / number_tag /
+ *   link / a）先归一成文字原子；
  * - 块级构造（标题 / 列表 / 引用 / 代码块 / 分割线 / 空行）按 renderer `parseMarkdown`
  *   的分块方式累加；
  * - 换行按 CSS `word-break: break-word` + `white-space: pre-wrap` 的贪心折行估算。
@@ -264,6 +265,58 @@ export function parseInline(
     if (rest.startsWith('<audio')) {
       return undefined;
     }
+    if (rest.startsWith('<number_tag')) {
+      const match = /^<number_tag\b[^>]*>([\s\S]*?)<\/number_tag>/i.exec(rest);
+      if (match) {
+        flush();
+        // 徽标字号约为主文 0.85；左右 margin 2px + 内边距 4px。
+        out.push({
+          text: match[1]!,
+          bold: isBold,
+          fontSize: Math.max(11, Math.round(fontSize * 0.85)),
+          atomic: true,
+          extraPx: 8,
+        });
+        i += match[0].length;
+        continue;
+      }
+    }
+    if (rest.startsWith('<local_datetime')) {
+      // 时间按客户端时区/格式渲染，静态测量拿不到真实宽度：不猜。
+      return undefined;
+    }
+    if (rest.startsWith('<link')) {
+      const match = /^<link\b[^>]*>([\s\S]*?)<\/link>/i.exec(rest);
+      if (match) {
+        flush();
+        const inner = parseInline(match[1]!, fontSize, isBold);
+        if (!inner) return undefined;
+        // 前缀图标约 1.1em（14px 图标 + 4px 间距）。
+        out.push({ text: '', bold: isBold, fontSize, atomic: true, fixedEm: 1.1 });
+        out.push(...inner);
+        i += match[0].length;
+        continue;
+      }
+    }
+    if (rest.startsWith('<a')) {
+      const match = /^<a\b[^>]*>([\s\S]*?)<\/a>/i.exec(rest);
+      if (match) {
+        flush();
+        const inner = parseInline(match[1]!, fontSize, isBold);
+        if (!inner) return undefined;
+        out.push(...inner);
+        i += match[0].length;
+        continue;
+      }
+    }
+    if (rest.startsWith('<br')) {
+      const match = /^<br\s*\/?>/i.exec(rest);
+      if (match) { flush(); i += match[0].length; continue; }
+    }
+    if (rest.startsWith('<hr')) {
+      const match = /^<hr\s*\/?>/i.exec(rest);
+      if (match) { flush(); i += match[0].length; continue; }
+    }
     if (ch === ':') {
       const match = /^:([A-Za-z0-9_+-]+):/.exec(rest);
       if (match) {
@@ -324,7 +377,16 @@ export function measureMarkdownContent(
     hasBlockSyntax: false,
   };
 
-  const lines = String(source ?? '').replace(/\r\n?/g, '\n').split('\n');
+  // `<br>` 是硬换行：正文里按行拆开参与行数计算；代码块内保持字面。
+  const rawLines = String(source ?? '').replace(/\r\n?/g, '\n').split('\n');
+  const lines: string[] = [];
+  let inFence = false;
+  for (const raw of rawLines) {
+    const fence = RE_FENCE.test(raw);
+    if (fence) inFence = !inFence;
+    if (fence || inFence) lines.push(raw);
+    else lines.push(...raw.replace(/<br\s*\/?>/gi, '\n').split('\n'));
+  }
   let paragraph: string[] = [];
   let hadParagraph = false;
 
@@ -404,7 +466,7 @@ export function measureMarkdownContent(
       continue;
     }
 
-    if (RE_HR.test(line)) {
+    if (RE_HR.test(line) || /^\s*<hr\s*\/?>\s*$/i.test(line)) {
       if (!flushParagraph()) return undefined;
       sink.hasBlockSyntax = true;
       addBlock(sink, 1, 8, 8);

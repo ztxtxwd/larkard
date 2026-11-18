@@ -1501,10 +1501,11 @@ function convertField(
 /**
  * Markdown elements in raw split the original source string across multiple
  * children: plain_text segments (optionally with bold/color), at_all, br,
- * link, code_span, text_tag, person_v1, etc. We re-stitch them into a single
- * content string with inline markdown markers — bold (asterisk asterisk),
- * font tag, link, code span, br -> newline, at -> at-tag, person_v1 ->
- * <person> tag.
+ * link, code_span, text_tag, person_v1, number_tag, local_datetime, etc. We
+ * re-stitch them into a single content string with inline markdown markers —
+ * bold (asterisk asterisk), font tag, link, code span, br -> newline, at ->
+ * at-tag, person_v1 -> <person> tag, number_tag / local_datetime -> the
+ * corresponding public HTML tags.
  */
 
 /**
@@ -1612,6 +1613,115 @@ function renderInlineAudio(prop: Record<string, unknown>): string {
   }
 
   return `<audio ${attrs.join(" ")}></audio>`;
+}
+
+/** 取 plain_text 叶子（或已摊平的 `{ content }`）的文本。 */
+function leafContent(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (!isRecord(value)) return "";
+  const prop = isRecord(value.property) ? value.property : value;
+  return typeof prop.content === "string" ? prop.content : "";
+}
+
+function firstString(...values: unknown[]): string | undefined {
+  for (const v of values) {
+    if (typeof v === "string" && v) return v;
+  }
+  return undefined;
+}
+
+/** RAW link/number_tag 的 url 形态 → 主地址 + 多端地址。 */
+function linkParts(prop: Record<string, unknown>): {
+  url: string;
+  pc?: string;
+  ios?: string;
+  android?: string;
+} {
+  const bag = isRecord(prop.url) ? prop.url
+    : isRecord(prop.multiURL) ? prop.multiURL
+    : undefined;
+  if (!bag) {
+    return { url: typeof prop.url === "string" ? prop.url : "" };
+  }
+  const pc = firstString(bag.pcURL, bag.pc_url);
+  const ios = firstString(bag.iosURL, bag.ios_url);
+  const android = firstString(bag.androidURL, bag.android_url);
+  return {
+    // `<link url>` 必填：主地址缺失时用任一多端地址兜底。
+    url: (firstString(bag.url, bag.default_url)
+      ?? (typeof prop.url === "string" ? prop.url : ""))
+      || pc || ios || android || "",
+    pc,
+    ios,
+    android,
+  };
+}
+
+/**
+ * Project raw `number_tag` to the public inline
+ * `<number_tag background_color='…' font_color='…' url='…'>1</number_tag>`.
+ * Without this, number_tag falls through the default case and only its inner
+ * text survives (the badge shell disappears on round-trip).
+ */
+function renderInlineNumberTag(prop: Record<string, unknown>): string {
+  const inner = leafContent(prop.text) || (typeof prop.content === "string" ? prop.content : "");
+  const attrs: string[] = [];
+  const bg = firstString(prop.backgroundColor, prop.background_color);
+  if (bg) attrs.push(`background_color='${bg}'`);
+  const fg = firstString(prop.fontColor, prop.font_color);
+  if (fg) attrs.push(`font_color='${fg}'`);
+  const { url, pc, ios, android } = linkParts(prop);
+  if (url) attrs.push(`url='${url}'`);
+  if (pc) attrs.push(`pc_url='${pc}'`);
+  if (ios) attrs.push(`ios_url='${ios}'`);
+  if (android) attrs.push(`android_url='${android}'`);
+  const suffix = attrs.length ? ` ${attrs.join(" ")}` : "";
+  return `<number_tag${suffix}>${inner}</number_tag>`;
+}
+
+/**
+ * Project raw `local_datetime` to the public inline
+ * `<local_datetime millisecond='…' format_type='…' link='…'></local_datetime>`.
+ */
+function renderInlineLocalDateTime(prop: Record<string, unknown>): string {
+  const attrs: string[] = [];
+  const ms = prop.milliseconds ?? prop.millisecond ?? prop.millisecondSince1970;
+  if (typeof ms === "string" || typeof ms === "number") {
+    attrs.push(`millisecond='${ms}'`);
+  }
+  const formatType = firstString(prop.formatType, prop.format_type, prop.format);
+  if (formatType) attrs.push(`format_type='${formatType}'`);
+  const link = isRecord(prop.link)
+    ? linkParts({ url: prop.link }).url
+    : firstString(prop.link);
+  if (link) attrs.push(`link='${link}'`);
+  const suffix = attrs.length ? ` ${attrs.join(" ")}` : "";
+  return `<local_datetime${suffix}></local_datetime>`;
+}
+
+/**
+ * Project raw `link` to public markdown. A plain link becomes `[text](url)`;
+ * a link carrying an icon or per-platform URLs is emitted as the public
+ * `<link icon='…' url='…' pc_url='…' ios_url='…' android_url='…'>` tag so the
+ * extra fields survive the round-trip (plain markdown links cannot carry them).
+ */
+function renderInlineLink(prop: Record<string, unknown>): string {
+  const text = typeof prop.content === "string" ? prop.content : "";
+  const { url, pc, ios, android } = linkParts(prop);
+  const iconRaw = prop.icon;
+  const icon = typeof iconRaw === "string"
+    ? iconRaw
+    : isRecord(iconRaw) ? firstString(iconRaw.token, iconRaw.img_key) : undefined;
+  if (!icon && !pc && !ios && !android) {
+    return `[${text}](${url})`;
+  }
+  const attrs: string[] = [];
+  if (icon) attrs.push(`icon='${icon}'`);
+  attrs.push(`url='${url}'`);
+  if (pc) attrs.push(`pc_url='${pc}'`);
+  if (ios) attrs.push(`ios_url='${ios}'`);
+  if (android) attrs.push(`android_url='${android}'`);
+  return `<link ${attrs.join(" ")}>${text}</link>`;
 }
 
 /**
@@ -1816,10 +1926,12 @@ function childToInlineSegment(
         colorKind,
       };
     case "link": {
-      const text = typeof prop.content === "string" ? prop.content : "";
-      const urlObj = isRecord(prop.url) ? prop.url : undefined;
-      const url = urlObj && typeof urlObj.url === "string" ? urlObj.url : "";
-      return { content: `[${text}](${url})`, bold, color, colorKind };
+      const rendered = renderInlineLink(prop);
+      // `<link>` carries its own icon / multi-end URLs and must not inherit
+      // adjacent bold/color markers; plain `[text](url)` keeps inline styling.
+      return rendered.startsWith("<link")
+        ? { content: rendered, bold: false }
+        : { content: rendered, bold, color, colorKind };
     }
     case "at_all":
       return { content: "<at id=all></at>", bold, color };
@@ -1860,6 +1972,14 @@ function childToInlineSegment(
       // Inline audio player. Opaque — no bold/color wrapping around the tag.
       const rendered = renderInlineAudio(prop);
       return rendered ? { content: rendered, bold: false } : undefined;
+    }
+    case "number_tag": {
+      // Inline numeric badge. Opaque like text_tag — it has its own colors.
+      return { content: renderInlineNumberTag(prop), bold: false };
+    }
+    case "local_datetime": {
+      // Inline localized timestamp. Opaque — no bold/color wrapping.
+      return { content: renderInlineLocalDateTime(prop), bold: false };
     }
     default:
       return undefined;
@@ -1905,12 +2025,13 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
     case "markdown_audio":
       // Same dual-path as person/emoji: list items etc. recurse here.
       return renderInlineAudio(prop);
-    case "link": {
-      const text = typeof prop.content === "string" ? prop.content : "";
-      const urlObj = isRecord(prop.url) ? prop.url : undefined;
-      const url = urlObj && typeof urlObj.url === "string" ? urlObj.url : "";
-      return `[${text}](${url})`;
-    }
+    case "link":
+      // Also reachable via list/heading/blockquote recursion.
+      return renderInlineLink(prop);
+    case "number_tag":
+      return renderInlineNumberTag(prop);
+    case "local_datetime":
+      return renderInlineLocalDateTime(prop);
     case "code_span": {
       const text = typeof prop.content === "string" ? prop.content : "";
       return `\`${text}\``;

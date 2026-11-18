@@ -12,11 +12,12 @@
  *   行内：加粗 ** **、斜体 * */ /* _、删除线 ~~、行内代码 ` `、链接 [t](u)、
  *         <font color='x'>、<at id=x>、<at id=all>、<text_tag color='x'>、
  *         <person id='x' show_name=true show_avatar=true style='normal'>、
- *         <audio file_key='…' audio_id='1' show_time=true …>
- *   块级：# 标题、- / 1. 列表（含缩进层级）、> 引用、``` 代码块、--- 分割线、软换行
+ *         <audio file_key='…' audio_id='1' show_time=true …>、
+ *         <number_tag>、<local_datetime>、<link>、<a href>、<br>、<hr>
+ *   块级：# 标题、- / 1. 列表（含缩进层级）、> 引用、``` 代码块、--- / <hr> 分割线、软换行
  * 未覆盖的构造（如表格）按纯文本降级——渲染器无对应组件，literal 输出即可。
  */
-import type { CardElement, TextStyle } from './types.js';
+import type { CardElement, LinkURL, TextStyle } from './types.js';
 import { EMOJI_KEY_TO_NAME } from '../content/emoji/index.js';
 import { decodeMarkdownEntities } from '../schema/markdown/escape.js';
 
@@ -72,8 +73,13 @@ export function parseInline(text: string): CardElement[] {
   while (i < n) {
     const c = text[i];
 
-    // 软换行 → br
-    if (c === '\n') { flush(); out.push({ tag: 'br', property: {} }); i += 1; continue; }
+    // 软换行 → br。紧跟显式 <br> 的换行不再叠加一个空行
+    // （CommonMark：行尾硬换行消耗该行结尾，不会再产生软换行）。
+    if (c === '\n') {
+      flush();
+      if (out[out.length - 1]?.tag !== 'br') out.push({ tag: 'br', property: {} });
+      i += 1; continue;
+    }
 
     // 转义：\* \_ \` 等，原样取下一个字符
     if (c === '\\' && i + 1 < n) { buf += text[i + 1]; i += 2; continue; }
@@ -211,6 +217,84 @@ export function parseInline(text: string): CardElement[] {
       }
     }
 
+    // <br> / <br/>：硬换行
+    if (startsWith('<br')) {
+      const m = /^<br\s*\/?>/i.exec(text.slice(i));
+      if (m) {
+        flush();
+        out.push({ tag: 'br', property: {} });
+        i += m[0].length; continue;
+      }
+    }
+
+    // <hr> / <hr/>：分割线（官方要求单独一行；行内出现也按块级元素处理）
+    if (startsWith('<hr')) {
+      const m = /^<hr\s*\/?>/i.exec(text.slice(i));
+      if (m) {
+        flush();
+        out.push({ tag: 'hr', property: {} });
+        i += m[0].length; continue;
+      }
+    }
+
+    // <number_tag background_color='…' font_color='…' url='…'>1</number_tag>
+    if (startsWith('<number_tag')) {
+      const m = /^<number_tag\b([^>]*)>([\s\S]*?)<\/number_tag>/i.exec(text.slice(i));
+      if (m) {
+        flush();
+        out.push({
+          tag: 'number_tag',
+          property: numberTagAttrsToProperty(parseHtmlAttrs(m[1]), m[2]),
+        });
+        i += m[0].length; continue;
+      }
+    }
+
+    // <local_datetime millisecond='…' format_type='date_num' link='…'></local_datetime>
+    if (startsWith('<local_datetime')) {
+      const m = /^<local_datetime\b([^>]*?)(?:\/>|>\s*<\/local_datetime>)/i.exec(text.slice(i));
+      if (m) {
+        flush();
+        out.push({
+          tag: 'local_datetime',
+          property: localDateTimeAttrsToProperty(parseHtmlAttrs(m[1])),
+        });
+        i += m[0].length; continue;
+      }
+    }
+
+    // <link icon='…' url='…' pc_url='…' ios_url='…' android_url='…'>文案</link>
+    if (startsWith('<link')) {
+      const m = /^<link\b([^>]*)>([\s\S]*?)<\/link>/i.exec(text.slice(i));
+      if (m) {
+        flush();
+        out.push({
+          tag: 'link',
+          property: linkAttrsToProperty(parseHtmlAttrs(m[1]), m[2]),
+        });
+        i += m[0].length; continue;
+      }
+    }
+
+    // <a href='https://…'>文案</a>
+    // RAW 没有 `a` 元素，统一投影为 link（渲染器只注册了 link）。
+    if (startsWith('<a')) {
+      const m = /^<a\b([^>]*)>([\s\S]*?)<\/a>/i.exec(text.slice(i));
+      if (m) {
+        flush();
+        const attrs = parseHtmlAttrs(m[1]);
+        const property: CardElement['property'] = {
+          content: decodeMarkdownEntities(m[2]),
+        };
+        const ts = styleAttrs(style);
+        if (ts) property!.textStyle = ts;
+        const href = attrs.href || attrs.url;
+        if (href) property!.url = href;
+        out.push({ tag: 'link', property });
+        i += m[0].length; continue;
+      }
+    }
+
     buf += c;
     i += 1;
   }
@@ -266,6 +350,72 @@ function audioAttrsToProperty(attrs: Record<string, string>): CardElement['prope
   return property;
 }
 
+/**
+ * `url` / `pc_url` / `ios_url` / `android_url` 属性 → RAW 的 link URL 形态。
+ * 只有默认地址时返回字符串；带多端地址时返回 `{ url, pcURL, iosURL, androidURL }`
+ * （与 raw-to-dsl 的 link / open_url 投影一致）。
+ */
+function urlAttrs(attrs: Record<string, string>): string | LinkURL | undefined {
+  const url = attrs.url || attrs.href;
+  const pc = attrs.pc_url || attrs.pcURL;
+  const ios = attrs.ios_url || attrs.iosURL;
+  const android = attrs.android_url || attrs.androidURL;
+  if (!pc && !ios && !android) return url || undefined;
+  const bag: LinkURL = {};
+  if (url) bag.url = url;
+  if (pc) bag.pcURL = pc;
+  if (ios) bag.iosURL = ios;
+  if (android) bag.androidURL = android;
+  return bag;
+}
+
+/** 数字角标属性 → RAW number_tag.property（渲染器读 text 叶子 + camelCase 颜色）。 */
+function numberTagAttrsToProperty(
+  attrs: Record<string, string>,
+  inner: string,
+): CardElement['property'] {
+  const property: CardElement['property'] = {
+    text: { tag: 'plain_text', property: { content: decodeMarkdownEntities(inner) } },
+  };
+  const bg = attrs.background_color || attrs.backgroundColor;
+  if (bg) property!.backgroundColor = bg;
+  const fg = attrs.font_color || attrs.fontColor;
+  if (fg) property!.fontColor = fg;
+  const url = urlAttrs(attrs);
+  if (url !== undefined) property!.url = url;
+  return property;
+}
+
+/** 国际化时间属性 → RAW local_datetime.property（毫秒优先存 number）。 */
+function localDateTimeAttrsToProperty(
+  attrs: Record<string, string>,
+): CardElement['property'] {
+  const property: CardElement['property'] = {};
+  const ms = attrs.millisecond || attrs.milliseconds;
+  if (ms) {
+    property!.milliseconds =
+      /^-?\d+(?:\.\d+)?$/.test(ms) ? Number(ms) : ms;
+  }
+  const formatType = attrs.format_type || attrs.formatType;
+  if (formatType) property!.formatType = formatType;
+  if (attrs.link) property!.link = attrs.link;
+  return property;
+}
+
+/** 含图标的多端链接属性 → RAW link.property。 */
+function linkAttrsToProperty(
+  attrs: Record<string, string>,
+  inner: string,
+): CardElement['property'] {
+  const property: CardElement['property'] = {
+    content: decodeMarkdownEntities(inner),
+  };
+  const url = urlAttrs(attrs);
+  if (url !== undefined) property!.url = url;
+  if (attrs.icon) property!.icon = attrs.icon;
+  return property;
+}
+
 function isWord(ch: string | undefined): boolean {
   return !!ch && /[\w一-龥]/.test(ch);
 }
@@ -293,6 +443,7 @@ function matchLink(text: string, start: number): { text: string; url: string; en
 
 const RE_HEADING = /^(#{1,6})\s+(.*)$/;
 const RE_HR = /^\s*([-*_])\1{2,}\s*$/;
+const RE_HTML_HR = /^\s*<hr\s*\/?>\s*$/i;
 const RE_LIST = /^(\s*)([-*+]|\d+\.)\s+(.*)$/;
 const RE_FENCE = /^\s*```(.*)$/;
 
@@ -355,8 +506,10 @@ export function parseMarkdown(content: string | undefined | null): CardElement[]
       continue;
     }
 
-    // 分割线
-    if (RE_HR.test(line)) { flushPara(); out.push({ tag: 'hr', property: {} }); continue; }
+    // 分割线（`---` 或官方推荐的 `<hr>` / `<hr/>`，须单独一行）
+    if (RE_HR.test(line) || RE_HTML_HR.test(line)) {
+      flushPara(); out.push({ tag: 'hr', property: {} }); continue;
+    }
 
     // 引用块（连续 > 行合并）
     if (/^\s*>\s?/.test(line)) {

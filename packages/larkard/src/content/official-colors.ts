@@ -1,0 +1,177 @@
+/**
+ * 官方颜色的深色模式色对。
+ *
+ * light 值来自 `content/colors.ts` 的 PALETTE（`:root` 全局默认套系）；
+ * dark 值与飞书客户端 dark theme 对齐；键覆盖 13 个色族 + 50–900 明度。
+ *
+ * palette 模块用它把「官方枚举 → light/dark 颜色对」物化成 cus-* token；
+ * 没有深色值时退回 light。
+ */
+
+import { COLOR_NAME_TO_TOKEN, PALETTE } from './colors.js';
+
+export interface OfficialColorPair {
+  light: string;
+  dark: string;
+}
+
+/** 色族/明度 → dark hex。 */
+export const OFFICIAL_DARK: Record<string, string> = {
+  "grey-50": "#1A1A1A",
+  "grey-100": "#292929",
+  "grey-200": "#373737",
+  "grey-300": "#434343",
+  "grey-400": "#5f5f5f",
+  "grey-500": "#757575",
+  "grey-600": "#a6a6a6",
+  "grey-700": "#e0e0e0",
+  "grey-800": "#e8e8e8",
+  "grey-900": "#ebebeb",
+  "grey": "#a6a6a6",
+  "blue-50": "#152340",
+  "blue-100": "#173166",
+  "blue-200": "#194294",
+  "blue-300": "#2655B6",
+  "blue-400": "#3370EB",
+  "blue-500": "#4C88FF",
+  "blue-600": "#75A4FF",
+  "blue-700": "#8FB4FF",
+  "blue-800": "#BDD2FF",
+  "blue-900": "#E0E9FF",
+  "blue": "#75A4FF",
+  "wathet-50": "#152830",
+  "wathet-100": "#103647",
+  "wathet-200": "#164359",
+  "wathet-300": "#135A78",
+  "wathet-400": "#1A7FAB",
+  "wathet-500": "#1099CC",
+  "wathet-600": "#25B2E5",
+  "wathet-700": "#51C3F0",
+  "wathet-800": "#89DFFE",
+  "wathet-900": "#C7F0FF",
+  "wathet": "#25B2E5",
+  "turquoise-50": "#132926",
+  "turquoise-100": "#173B36",
+  "turquoise-200": "#1D4E47",
+  "turquoise-300": "#25665E",
+  "turquoise-400": "#198578",
+  "turquoise-500": "#1FA18F",
+  "turquoise-600": "#1AB7A1",
+  "turquoise-700": "#17CFB5",
+  "turquoise-800": "#65E7D5",
+  "turquoise-900": "#B7F7EF",
+  "turquoise": "#1AB7A1",
+  "green-50": "#0E2B0A",
+  "green-100": "#173B12",
+  "green-200": "#21511A",
+  "green-300": "#296621",
+  "green-400": "#35872A",
+  "green-500": "#419E34",
+  "green-600": "#51BA43",
+  "green-700": "#69CC5C",
+  "green-800": "#99E490",
+  "green-900": "#CBF5C6",
+  "green": "#51BA43",
+  "lime-50": "#212702",
+  "lime-100": "#303804",
+  "lime-200": "#404C06",
+  "lime-300": "#53610A",
+  "lime-400": "#6B7F05",
+  "lime-500": "#82990A",
+  "lime-600": "#93AF04",
+  "lime-700": "#A6C313",
+  "lime-800": "#C2E12D",
+  "lime-900": "#E3F391",
+  "lime": "#93AF04",
+  "yellow-50": "#30250A",
+  "yellow-100": "#473409",
+  "yellow-200": "#63470F",
+  "yellow-300": "#8A6419",
+  "yellow-400": "#D49B0B",
+  "yellow-500": "#F0B622",
+  "yellow-600": "#FBCB46",
+  "yellow-700": "#FCD456",
+  "yellow-800": "#FFDE75",
+  "yellow-900": "#FFEAA3",
+  "yellow": "#FBCB46",
+  "orange-50": "#33210B",
+  "orange-100": "#4A2B10",
+  "orange-200": "#683A12",
+  "orange-300": "#8A4A19",
+  "orange-400": "#B85E1A",
+  "orange-500": "#DB7018",
+  "orange-600": "#F3871B",
+  "orange-700": "#F89E44",
+  "orange-800": "#FEC88B",
+  "orange-900": "#FEE7CD",
+  "orange": "#F3871B",
+  "red-50": "#3D1A19",
+  "red-100": "#591F1D",
+  "red-200": "#7B2524",
+  "red-300": "#A03331",
+  "red-400": "#D14642",
+  "red-500": "#F05B56",
+  "red-600": "#F6827E",
+  "red-700": "#F89E9B",
+  "red-800": "#FDC6C4",
+  "red-900": "#FEE3E2",
+  "red": "#F6827E",
+  "carmine-50": "#3A182B",
+  "carmine-100": "#591C3F",
+  "carmine-200": "#782B57",
+  "carmine-300": "#94386C",
+  "carmine-400": "#C24A8E",
+  "carmine-500": "#DB5EA4",
+  "carmine-600": "#ED77BA",
+  "carmine-700": "#FC94CF",
+  "carmine-800": "#FFC2E5",
+  "carmine-900": "#FFE0F2",
+  "carmine": "#ED77BA",
+  "violet-50": "#3B153B",
+  "violet-100": "#541854",
+  "violet-200": "#712871",
+  "violet-300": "#8B378B",
+  "violet-400": "#B54AB5",
+  "violet-500": "#D661D6",
+  "violet-600": "#E17FE1",
+  "violet-700": "#E99BE9",
+  "violet-800": "#F4C3F4",
+  "violet-900": "#FCDFFC",
+  "violet": "#E17FE1",
+  "purple-50": "#2B194A",
+  "purple-100": "#3F2073",
+  "purple-200": "#5529A3",
+  "purple-300": "#6C39C6",
+  "purple-400": "#8C55EC",
+  "purple-500": "#A575FA",
+  "purple-600": "#B88FFE",
+  "purple-700": "#C5A3FF",
+  "purple-800": "#DBC8FD",
+  "purple-900": "#EFE5FF",
+  "purple": "#B88FFE",
+  "indigo-50": "#1E204A",
+  "indigo-100": "#2A2D69",
+  "indigo-200": "#373D90",
+  "indigo-300": "#474FB8",
+  "indigo-400": "#5E68E8",
+  "indigo-500": "#7B83F7",
+  "indigo-600": "#9499F7",
+  "indigo-700": "#AAAFF8",
+  "indigo-800": "#CDD0F9",
+  "indigo-900": "#E7E9FE",
+  "indigo": "#9499F7",
+};
+
+/**
+ * 官方色名 → light/dark 色对。light 由 PALETTE 经 COLOR_NAME_TO_TOKEN 反查，
+ * 避免和 renderer 的 light 事实源出现两份值。
+ */
+export const COLOR_VALUES: Record<string, OfficialColorPair> = (() => {
+  const out: Record<string, OfficialColorPair> = {};
+  for (const [name, dark] of Object.entries(OFFICIAL_DARK)) {
+    const token = COLOR_NAME_TO_TOKEN[name];
+    const light = token ? PALETTE[token] : undefined;
+    if (light) out[name] = { light, dark };
+  }
+  return out;
+})();

@@ -40,6 +40,8 @@ export type {
   EqualizedContainer,
   EqualizedGroup,
   HeightChange,
+  ImageSize,
+  MeasureImage,
   MeasureText,
   PadHeightsOptions,
   PadHeightsResult,

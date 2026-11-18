@@ -18,6 +18,8 @@ export default defineConfig({
     'components/jsx-runtime': 'src/components/jsx-runtime.ts',
     'components/jsx-dev-runtime': 'src/components/jsx-dev-runtime.ts',
     'optimize/index': 'src/optimize/index.ts',
+    'palette/index': 'src/palette/index.ts',
+    'palette/browser': 'src/palette/browser.ts',
     'patch/index': 'src/core/patch/index.ts',
     'state/index': 'src/core/state/index.ts',
     'language-server/index': 'src/language-server/index.ts',

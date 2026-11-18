@@ -86,6 +86,16 @@
       "import": "./dist/optimize/index.js",
       "require": "./dist/optimize/index.cjs"
     },
+    "./palette": {
+      "types": "./dist/palette/index.d.ts",
+      "import": "./dist/palette/index.js",
+      "require": "./dist/palette/index.cjs"
+    },
+    "./palette/browser": {
+      "types": "./dist/palette/browser.d.ts",
+      "import": "./dist/palette/browser.js",
+      "require": "./dist/palette/browser.cjs"
+    },
     "./patch": {
       "types": "./dist/core/patch/index.d.ts",
       "import": "./dist/patch/index.js",

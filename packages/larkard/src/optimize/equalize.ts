@@ -10,8 +10,9 @@
  * - 只处理公开 DSL（`body.elements` → `column_set` → `column` → `interactive_container`）；
  * - 每列必须恰好一个顶层 interactive_container，且还没写死高度；
  * - 列宽必须都是 weighted / 固定 px，auto 宽度算不出来就整组跳过；
- * - 容器里只测量 markdown / plain_text / div / img（显式尺寸）/ button / hr，
- *   遇到图表、表格、音视频、嵌套容器等拿不准的组件整组跳过。
+ * - 容器里只测量 markdown / plain_text / div / img / button / hr 和嵌套的
+ *   interactive_container；图片没有显式 `size` 时，需要调用方用 `measureImage`
+ *   提供原始宽高比。图表、表格、音视频等拿不准的组件仍然整组跳过。
  *
  * 宽度敏感：固定高度在窄卡上可能不够。`widths` 可以传多个参考宽度（例如
  * `[600, 360]`），优化器取每个容器在所有宽度下的最大预测值，宁可留白不裁字。
@@ -430,7 +431,10 @@ export function equalizeInteractiveContainerHeights(
 ): EqualizeResult {
   const card = cloneCard(input);
   const widths = normalizeWidths(options);
-  const env: MeasureEnv = { measure: options.measureText ?? defaultMeasureText };
+  const env: MeasureEnv = {
+    measure: options.measureText ?? defaultMeasureText,
+    ...(options.measureImage ? { imageSize: options.measureImage } : {}),
+  };
   const overwriteFixedHeight = options.overwriteFixedHeight === true;
   // 每个宽度单独扫描：宽度会改变列宽与折行。
   const scans = widths.map((width) => scanCard(card, width, env, overwriteFixedHeight));

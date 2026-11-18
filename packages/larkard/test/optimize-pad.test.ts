@@ -271,3 +271,114 @@ test('自定义 fillerTextSize 不合法时报错', () => {
     /未知的 fillerTextSize/,
   );
 });
+
+/** 两列各一个交互容器，容器里「无 size 图片 + 一段说明」。 */
+function imageColumnsCard(contents: [string, string]): JsonObject {
+  const column = (content: string): JsonObject => ({
+    tag: 'column',
+    width: 'weighted',
+    weight: 1,
+    elements: [{
+      tag: 'interactive_container',
+      width: 'fill',
+      padding: '10px 10px 10px 10px',
+      elements: [
+        { tag: 'img', img_key: 'img_test', scale_type: 'fit_horizontal' },
+        markdown(content, 'notation'),
+      ],
+    }],
+  });
+  return {
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'column_set',
+        columns: [column(contents[0]), column(contents[1])],
+      }],
+    },
+  };
+}
+
+test('无 size 图片：measureImage 提供原始尺寸后按列宽折算高度并补字符', () => {
+  const result = equalizeInteractiveContainerHeightsByPadding(
+    imageColumnsCard(['短', '这是一段会折很多行的说明文字，用来把第二列撑高。']),
+    {
+      widths: [600],
+      measureImage: () => ({ width: 480, height: 360 }),
+    },
+  );
+
+  assert.equal(result.groups.length, 1);
+  assert.equal(result.skipped.length, 0);
+  assert.ok(result.groups[0]!.containers[0]!.fillerChars > 0);
+  assert.equal(result.groups[0]!.containers[1]!.fillerChars, 0);
+
+  // 没有 measureImage 时仍是不可测，整组跳过。
+  const skipped = equalizeInteractiveContainerHeightsByPadding(
+    imageColumnsCard(['短', '这是一段会折很多行的说明文字，用来把第二列撑高。']),
+    { widths: [600] },
+  );
+  assert.equal(skipped.groups.length, 0);
+  assert.equal(skipped.skipped[0]!.reason, 'unsupported-child');
+});
+
+test('嵌套 interactive_container 参与高度测量', () => {
+  const nested = (content: string): JsonObject => ({
+    tag: 'interactive_container',
+    width: 'fill',
+    padding: '10px 10px 10px 10px',
+    elements: [{
+      tag: 'interactive_container',
+      width: 'fill',
+      margin: '8px 0px 0px 0px',
+      padding: '0px 0px 0px 0px',
+      direction: 'horizontal',
+      elements: [markdown(content, 'normal')],
+    }],
+  });
+  const card: JsonObject = {
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'column_set',
+        columns: [
+          { tag: 'column', width: 'weighted', weight: 1, elements: [nested('短')] },
+          {
+            tag: 'column',
+            width: 'weighted',
+            weight: 1,
+            elements: [nested('这是一段会折很多行的说明文字，用来把第二列撑高。')],
+          },
+        ],
+      }],
+    },
+  };
+
+  const result = equalizeInteractiveContainerHeightsByPadding(card, { widths: [600] });
+  assert.equal(result.groups.length, 1);
+  assert.equal(result.skipped.length, 0);
+  assert.ok(result.groups[0]!.containers[0]!.fillerChars > 0);
+});
+
+test('preserveUnmeasuredFillers：测不出来的分组保留旧填充，默认仍然清理', () => {
+  const card = imageColumnsCard(['短', '长文本']);
+  const oldFiller = {
+    tag: 'markdown',
+    element_id: 'ofc_hfill_7',
+    content: `${ZWSP}${IDEOGRAPHIC_SPACE.repeat(12)}`,
+    text_size: 'notation',
+  };
+  const first = containersOf(card)[0]!;
+  (first.elements as JsonObject[]).push(JSON.parse(JSON.stringify(oldFiller)));
+
+  const cleaned = equalizeInteractiveContainerHeightsByPadding(card, { widths: [600] });
+  assert.equal(cleaned.skipped[0]!.reason, 'unsupported-child');
+  assert.equal(fillersOf(cleaned.card).length, 0);
+
+  const preserved = equalizeInteractiveContainerHeightsByPadding(card, {
+    widths: [600],
+    preserveUnmeasuredFillers: true,
+  });
+  assert.equal(preserved.skipped[0]!.reason, 'unsupported-child');
+  assert.deepEqual(fillersOf(preserved.card), [oldFiller]);
+});

@@ -181,10 +181,20 @@ export interface ElementProperty {
   // ---- link ----（RAW 里 url 可能是对象 { pcURL, url, ... }）
   multiURL?: LinkURL;
 
-  // ---- text_tag ----
+  // ---- text_tag / number_tag ----
   color?: NamedColor | string;
   tagStyle?: NamedColor | string;
   backgroundColor?: string;
+  /** 数字角标数字颜色（公开 DSL 为 font_color；RAW camelCase） */
+  fontColor?: string;
+
+  // ---- local_datetime ----
+  /** Unix 毫秒时间戳（公开 DSL 为 millisecond） */
+  milliseconds?: number | string;
+  /** 时间展示格式枚举（公开 DSL 为 format_type） */
+  formatType?: string;
+  /** 点击时间跳转的链接 */
+  link?: string;
 
   // ---- heading ----
   level?: number;
@@ -211,7 +221,8 @@ export interface ElementProperty {
   style?: string | { color?: string; size?: string; [key: string]: unknown };
 
   // ---- div 前置图标 ----（同一图标的两种形态，引擎取 udIcon || icon）
-  icon?: CardElement;
+  // link 的 icon 在公开语法里只是图标 token 字符串，因此并集兼容 string。
+  icon?: CardElement | string;
   udIcon?: CardElement;
   // ---- card_header 图标回退 ----（#20/D10：udIcon(token) → avatar(imageID)→Img Tiny）
   avatar?: CardElement;

@@ -33,6 +33,7 @@ import type {
   PaddingChange,
   Path,
   SkippedGroup,
+  SkipReason,
 } from './types.js';
 
 /** 表意空格：全角、不可见、可按字换行。 */
@@ -103,6 +104,87 @@ function stripFillers(root: JsonObject, prefix: string): WeakMap<object, number>
   };
   walk(root);
   return previous;
+}
+
+/** 已有填充元素里最大的编号；保留旧填充时从它之后继续发号，避免 element_id 撞车。 */
+function maxFillerIndex(root: JsonObject, prefix: string): number {
+  let max = -1;
+  const walk = (value: unknown): void => {
+    if (Array.isArray(value)) {
+      value.forEach(walk);
+      return;
+    }
+    if (!isRecord(value)) return;
+    if (typeof value.element_id === 'string' && value.element_id.startsWith(prefix)) {
+      const suffix = value.element_id.slice(prefix.length);
+      if (/^\d+$/.test(suffix)) max = Math.max(max, Number(suffix));
+    }
+    for (const child of Object.values(value)) walk(child);
+  };
+  walk(root);
+  return max;
+}
+
+/** 这些跳过原因说明「不是不需要补，而是这一轮测不出来」，旧填充按原样保留。 */
+const PRESERVED_SKIP_REASONS = new Set<SkipReason>([
+  'unsupported-child',
+  'container-width',
+  'container-empty',
+]);
+
+/**
+ * 把入参里原有的填充元素恢复到 `card` 的同一位置。
+ *
+ * 只用来兜住「浏览器按真实图片尺寸算好、服务端拿不到尺寸」的卡：服务端先按
+ * 无填充态测量，测不出来就把浏览器写的填充原样放回去，而不是删掉。恢复的
+ * 元素不重写 id（`elementCounter` 会从已有最大编号之后开始发号）。
+ */
+function restoreUnmeasuredFillers(
+  card: JsonObject,
+  original: JsonObject,
+  skipped: readonly SkippedGroup[],
+  prefix: string,
+): void {
+  for (const skip of skipped) {
+    if (!PRESERVED_SKIP_REASONS.has(skip.reason)) continue;
+    const fromSet = readAt(original, skip.path);
+    const toSet = readAt(card, skip.path);
+    if (!isRecord(fromSet) || !isRecord(toSet)) continue;
+    const fromColumns = fromSet.columns;
+    const toColumns = toSet.columns;
+    if (!Array.isArray(fromColumns) || !Array.isArray(toColumns)) continue;
+
+    fromColumns.forEach((fromColumn, columnIndex) => {
+      const toColumn = toColumns[columnIndex];
+      if (!isRecord(fromColumn) || !isRecord(toColumn)) return;
+      const fromElements = Array.isArray(fromColumn.elements) ? fromColumn.elements : [];
+      const toElements = Array.isArray(toColumn.elements) ? toColumn.elements : [];
+      const fromContainers = fromElements.filter(
+        (el) => isRecord(el) && el.tag === 'interactive_container',
+      );
+      const toContainers = toElements.filter(
+        (el) => isRecord(el) && el.tag === 'interactive_container',
+      );
+      fromContainers.forEach((fromContainer, containerIndex) => {
+        const toContainer = toContainers[containerIndex];
+        if (!isRecord(fromContainer) || !isRecord(toContainer)) return;
+        const children = Array.isArray(fromContainer.elements) ? fromContainer.elements : [];
+        const target = Array.isArray(toContainer.elements) ? toContainer.elements : [];
+        let restored = false;
+        for (const child of children) {
+          if (
+            isRecord(child)
+            && typeof child.element_id === 'string'
+            && child.element_id.startsWith(prefix)
+          ) {
+            target.push(JSON.parse(JSON.stringify(child)));
+            restored = true;
+          }
+        }
+        if (restored) toContainer.elements = target;
+      });
+    });
+  }
 }
 
 /** 一行能放下的填充字符数。 */
@@ -253,11 +335,15 @@ export function equalizeInteractiveContainerHeightsByPadding(
     skipWhenEqual: false,
     overwriteFixedHeight: options.overwriteFixedHeight === true,
     measureText: options.measureText,
+    ...(options.measureImage ? { measureImage: options.measureImage } : {}),
   });
   const skipped: SkippedGroup[] = [...measured.skipped];
   const groups: PaddedGroup[] = [];
   const changes: PaddingChange[] = [];
-  let elementCounter = 0;
+  // 保留旧填充时，新填充从已有最大编号之后发号，避免和恢复进来的 element_id 撞车。
+  let elementCounter = options.preserveUnmeasuredFillers
+    ? maxFillerIndex(input, prefix) + 1
+    : 0;
 
   const safety = Number.isFinite(options.safety) ? options.safety! : 0;
   const minHeight = Number.isFinite(options.minHeight) ? options.minHeight! : undefined;
@@ -402,6 +488,12 @@ export function equalizeInteractiveContainerHeightsByPadding(
       targets: publicTargets,
       containers: planned.map(({ container }) => container),
     });
+  }
+
+  // 3) 测不出来的分组（典型是浏览器按真实图片尺寸补过、服务端没有图片元信息）
+  //    保留入参里的旧填充，别把端上算好的结果删掉。
+  if (options.preserveUnmeasuredFillers) {
+    restoreUnmeasuredFillers(card, input, skipped, prefix);
   }
 
   return { card, widths: requestedWidths, groups, skipped, changes };

@@ -12,6 +12,21 @@ export type Path = Array<string | number>;
  */
 export type MeasureText = (text: string, fontSize: number, bold: boolean) => number;
 
+/** 图片原始像素尺寸。 */
+export interface ImageSize {
+  width: number;
+  height: number;
+}
+
+/**
+ * 无显式 `size` 的图片尺寸查询。
+ *
+ * `fit_horizontal` 等内容图不写 `size`，高度由原图宽高比决定；优化器本身拿不到
+ * 图片元信息，浏览器端可从已加载的 `<img>` 读 `naturalWidth/naturalHeight`，
+ * 服务端可以查媒体表 / 导入时记录。查不到就返回 `undefined`，含该图的分组跳过。
+ */
+export type MeasureImage = (key: string, el: JsonObject) => ImageSize | undefined;
+
 export interface EqualizeHeightsOptions {
   /**
    * 参考卡片宽度（px，含卡片 1px 描边，对应渲染器 `.universal-card-root` 的
@@ -47,6 +62,12 @@ export interface EqualizeHeightsOptions {
   overwriteFixedHeight?: boolean;
   /** 自定义文字测量；不传用内置字宽表。 */
   measureText?: MeasureText;
+  /**
+   * 无显式 `size` 图片的原始尺寸查询；不传时遇到这类图片整组跳过。
+   *
+   * 只用于高度预测，不会写回卡片。
+   */
+  measureImage?: MeasureImage;
 }
 
 export interface EqualizedContainer {
@@ -130,6 +151,15 @@ export interface PadHeightsOptions extends EqualizeHeightsOptions {
   maxFillerChars?: number;
   /** 填充元素的 `element_id` 前缀，默认 `ofc_hfill_`；用于重复运行时的识别与替换。 */
   fillerElementIdPrefix?: string;
+  /**
+   * 分组因为没有可用的测量结果被跳过时，保留入参里已有的填充元素，默认 `false`。
+   *
+   * 典型场景：浏览器端用真实图片尺寸算好填充后保存，服务端拿不到图片尺寸；
+   * 服务端如果直接删掉旧填充再跳过，就会把浏览器补好的等高结果清掉。开启后
+   * 只对 `unsupported-child` / `container-width` / `container-empty` 三组保留，
+   * 其余跳过原因（尤其是 `already-equal`）仍然清理旧填充。
+   */
+  preserveUnmeasuredFillers?: boolean;
 }
 
 export interface PaddedContainer {

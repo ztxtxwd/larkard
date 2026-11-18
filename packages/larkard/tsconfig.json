@@ -19,6 +19,8 @@
       "larkard/jsx-runtime": ["./src/components/jsx-runtime.ts"],
       "larkard/jsx-dev-runtime": ["./src/components/jsx-dev-runtime.ts"],
       "larkard/optimize": ["./src/optimize/index.ts"],
+      "larkard/palette": ["./src/palette/index.ts"],
+      "larkard/palette/browser": ["./src/palette/browser.ts"],
       "larkard/patch": ["./src/core/patch/index.ts"],
       "larkard/store": ["./src/core/store/index.ts"],
       "larkard/language-server": ["./src/language-server/index.ts"]
