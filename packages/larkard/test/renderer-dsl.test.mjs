@@ -96,6 +96,16 @@ test('hr 渲染', () => {
   assert.match(html, /universal-card-hr/);
 });
 
+// 真机 RAW 里 hr 与后续文本之间的显式 br（空行）必须留下：
+// RAW→DSL 会把它写成 <br>，渲染成 hr 之后、链接之前的一行空白。
+test('markdown: hr 与后续文本之间的硬换行保留为一行空白', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'markdown',
+    content: '正文\n\n---\n\n<br>\n[124513254](https://a.com)',
+  }] } });
+  assert.match(html, /universal-card-hr"><\/div><br><a class="universal-card-markdown-link"/);
+});
+
 /* ---- dslToRaw 结构：元素被包进 property ---- */
 
 test('dslToRaw: 元素字段包进 property', () => {

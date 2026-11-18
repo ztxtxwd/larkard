@@ -434,6 +434,60 @@ describe("code_block re-stitch", () => {
   });
 });
 
+describe("markdown br after block", () => {
+  // Regression: RAW `hr → br → link` (an explicit blank line under the rule).
+  // Serializing the br as a bare "\n" appended to the hr's "\n\n" leaves only
+  // block padding, which parseMarkdown ignores — the blank line disappeared
+  // when the DSL was rendered. It must survive as the documented <br> tag.
+  it("keeps an explicit br after hr as <br> in the DSL content", () => {
+    const envelope = {
+      json_card: JSON.stringify({
+        schema: "2.0",
+        body: {
+          id: "_1",
+          tag: "body",
+          property: {
+            elements: [
+              {
+                id: "_2",
+                tag: "markdown",
+                property: {
+                  originTag: "markdown",
+                  markdownElements: [],
+                  elements: [
+                    { id: "_3", tag: "hr", property: {} },
+                    { id: "_4", tag: "br", property: {} },
+                    {
+                      id: "_5",
+                      tag: "link",
+                      property: { content: "124513254", url: { url: "https://a.com" } },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      }),
+      json_attachment: {},
+      card_schema: 2,
+    };
+    const dsl = rawCardToDsl(envelope) as AnyDsl;
+    const md = findElements(dsl, (el) => el.tag === "markdown" && typeof el.content === "string");
+    assert.equal(md.length, 1);
+    assert.ok((md[0]?.content as string).includes("---\n\n<br>\n[124513254](https://a.com)"));
+
+    // DSL → RAW must restore the explicit br sibling (not just blank text).
+    const raw = dslToRaw(dsl as never) as Record<string, any>;
+    const roundTripped = findElements(
+      { body: raw.body } as AnyDsl,
+      (el) => el.tag === "markdown" && Array.isArray(el.property?.elements),
+    )[0];
+    const tags = (roundTripped?.property?.elements as Array<Record<string, any>>).map((el) => el.tag);
+    assert.deepEqual(tags, ["hr", "br", "link"]);
+  });
+});
+
 describe("button projection", () => {
   it("projects raw button.actions:[{type:open_url}] to behaviors[]", () => {
     const dsl = rawCardToDsl(loadFixture("button-behaviors.raw.json")) as AnyDsl;

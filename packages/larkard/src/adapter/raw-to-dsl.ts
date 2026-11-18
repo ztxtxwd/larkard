@@ -1855,10 +1855,23 @@ function resolveInlineStyle(
   return { bold, color, colorKind: 'enum' };
 }
 
+/**
+ * Block-level markdown children. Their serializers already end with a
+ * paragraph break (`\n` / `\n\n`), so a sibling `br` right after them cannot
+ * be encoded as a bare newline: the parser only sees block padding and drops
+ * it. Such a `br` is emitted as the documented `<br>` tag instead.
+ */
+const MARKDOWN_BLOCK_TAGS = new Set([
+  "hr", "list", "heading", "blockquote", "code_block", "table",
+]);
+
 function renderChildren(children: unknown[], ctx: Ctx): { content: string } {
   interface Segment extends InlineSegment {}
   let out = "";
   let buffer: Segment[] = [];
+  // Whether the output currently sits on a block boundary (start of the
+  // markdown counts as one). A `br` here needs an explicit <br> tag.
+  let afterBlock = true;
 
   function flushBuffer() {
     if (buffer.length === 0) return;
@@ -1883,14 +1896,23 @@ function renderChildren(children: unknown[], ctx: Ctx): { content: string } {
     }
     emitGroup();
     buffer = [];
+    afterBlock = false;
   }
 
   for (const child of children) {
     if (!isRecord(child)) continue;
+    // RAW br after a block (e.g. hr → br → link) must survive the
+    // string round-trip; see MARKDOWN_BLOCK_TAGS.
+    if (child.tag === "br") {
+      flushBuffer();
+      out += afterBlock ? "<br>\n" : "\n";
+      continue;
+    }
     const inline = childToInlineSegment(child, ctx);
     if (inline) { buffer.push(inline); continue; }
     flushBuffer();
     out += childToMarkdown(child, ctx);
+    afterBlock = MARKDOWN_BLOCK_TAGS.has(String(child.tag));
   }
   flushBuffer();
   return { content: out };
