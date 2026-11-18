@@ -674,9 +674,42 @@ test('emoji: 未知 key 保持字面（不成雪碧图）', () => {
   assert.doesNotMatch(html, /larkw-emoji__img--emoji-/);
 });
 
+test('emoji: 未知 key 降级节点带 fallback 类（可恢复字号，不被 font-size:0 吞掉）', () => {
+  const html = renderCardToString({
+    schema: '2.0',
+    body: {
+      elements: [{
+        tag: 'markdown',
+        property: { elements: [{ tag: 'emoji', property: { key: 'NOTAREALKEY' } }] },
+      }],
+    },
+  });
+  assert.match(html, /universal-card-emoji--fallback/);
+});
+
+test('emoji: 表情尺寸跟随所在 markdown 字号（size = 字号 × 1.6）', () => {
+  const small = renderDslToString({
+    body: { elements: [{ tag: 'markdown', content: ':DONE:', text_size: 'small' }] },
+  });
+  assert.match(small, /font-size:19\.2px/); // 12 × 1.6
+  const normal = renderDslToString({
+    body: { elements: [{ tag: 'markdown', content: ':DONE:' }] },
+  });
+  assert.match(normal, /font-size:22\.4px/); // 14 × 1.6
+});
+
 test('parseMarkdown: :Fire: → emoji 元素', () => {
   const els = parseMarkdown('a :Fire: b');
   assert.ok(els.some((e) => e.tag === 'emoji' && e.property.key === 'Fire'));
+});
+
+test('emoji 布局对齐真机：inline-block + vertical-align:top + inline atom 2px 间距', () => {
+  assert.match(ALL_CSS, /\.universal-card-emoji \{[^}]*display: inline-block/);
+  assert.match(ALL_CSS, /\.universal-card-emoji \{[^}]*font-size: 0/);
+  assert.match(ALL_CSS, /\.universal-card-emoji \{[^}]*vertical-align: top/);
+  assert.match(ALL_CSS, /\.universal-card-emoji \{[^}]*margin: 0 2px/);
+  // 连续表情不叠加左间距
+  assert.match(ALL_CSS, /\.universal-card-emoji \+ \.universal-card-emoji \{ margin-left: 0; \}/);
 });
 
 test('EMOJI_SPRITE_CSS: 含 CDN 背景图 + 宽度覆盖(ok_v2)', () => {

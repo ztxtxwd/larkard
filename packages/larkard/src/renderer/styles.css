@@ -1098,10 +1098,34 @@
   border-radius: 6px; overflow-x: auto;
   font-family: Menlo, Consolas, monospace; white-space: pre;
 }
-.universal-card-emoji { display: inline; }
+/* emoji 对齐真机：
+ * - 外层 .larkw-emoji__wrapper 是 inline-block + font-size:0 + vertical-align:top，
+ *   避免自身行盒把整行撑高；表情高度 = 字号 × 1.6，恰好等于正文行高，
+ *   顶对齐后视觉上就是行内垂直居中。
+ * - 富文本里表情按 inline atom 处理，左右各留 2px（真机
+ *   .universal-card-markdown__inline-atom / ._17ad500 均为 margin:0 2px）；
+ *   连续表情不叠加左间距，避免两个表情之间出现 4px 空档。
+ */
+.universal-card-emoji {
+  display: inline-block;
+  font-size: 0;
+  vertical-align: top;
+  overflow: hidden;
+  position: relative;
+  margin: 0 2px;
+}
+.universal-card-emoji + .universal-card-emoji { margin-left: 0; }
+/* 未知短码降级为字面 :key:：恢复普通行内文本，不能被 font-size:0 吞掉 */
+.universal-card-emoji--fallback {
+  display: inline;
+  font-size: inherit;
+  vertical-align: baseline;
+  overflow: visible;
+  margin: 0;
+}
 /* emoji 雪碧图：<i> 的 background-image/size/position/width 由 emoji.css（larkw-emoji__img--emoji-*）提供；
-   这里只管行内对齐（vertical-align 让表情与文字基线大致对齐）。 */
-.universal-card-emoji__img { display: inline-block; vertical-align: -0.15em; }
+   这里只管布局——真机 img 是 display:block，由外层 inline-block 控制宽高。 */
+.universal-card-emoji > .universal-card-emoji__img { display: block; }
 
 /* 图标（standard_icon / ud_icon）：glyph 由图标字体 :before 画出。
    字体 @font-face 与每图标 content 规则随 JS 注入（浏览器端 renderCard 自动注入，

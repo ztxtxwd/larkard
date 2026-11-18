@@ -2378,18 +2378,24 @@ registerComponent('vote-card-select', (el) => {
 // 尺寸 = 所在文字字号 × 行高倍率（引擎 be8b738f：emoji size = s*Z，Z=1.6）。
 // 正文默认 14px → 14*1.6 = 22.4px，与网页版原版一致。
 // 未知 key 降级为字面 :key:（与飞书一致——不认识的短码原样显示）。
-// 14 * 1.6 = 22.4；toFixed 消除浮点尾巴（22.400000000000002）
-const EMOJI_FONT_SIZE = Number((BASE_FONT_SIZE * BASE_LINE_HEIGHT).toFixed(2));
+// 引擎常量 Z=1.6（与字体行高倍率恰好相同，但二者是独立规则）。
+const EMOJI_SIZE_RATIO = 1.6;
 registerComponent('emoji', (el, ctx) => {
   const p = el.property || {};
   const key = String(p.key || p.emoji_type || p.code || '');
   const name = EMOJI_KEY_TO_NAME[key];
-  if (!name) return h('span', { className: `${CLS}-emoji` }, key ? `:${key}:` : '');
+  if (!name) {
+    return h('span', { className: `${CLS}-emoji ${CLS}-emoji--fallback` }, key ? `:${key}:` : '');
+  }
+  // 引擎按「所在 markdown 的字号 × Z」传 size；text_size=small/heading 时
+  // 表情要跟着缩放，不能固定 22.4px。非 markdown 上下文退回正文字号。
+  const fontSize = ctx.textMetrics?.fontSize ?? BASE_FONT_SIZE;
+  const emojiFontSize = Number((fontSize * EMOJI_SIZE_RATIO).toFixed(2));
   ctx.options.injectAssets?.('emoji');
   return h('span', { className: `${CLS}-emoji` },
     h('i', {
       className: `${CLS}-emoji__img larkw-emoji__img--emoji-${name}`,
-      style: { fontSize: EMOJI_FONT_SIZE + 'px' },
+      style: { fontSize: emojiFontSize + 'px' },
     })
   );
 });
