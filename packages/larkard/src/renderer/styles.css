@@ -392,8 +392,11 @@
   height: 1px;
   background-color: var(--line-divider-default, #dee0e3);
   border: none;
-  margin: 8px 0;
+  /* 真机 .universal-card-hr{margin:16px 0}，首尾元素各自收掉外侧间距 */
+  margin: 16px 0;
 }
+.universal-card-hr:first-child { margin-top: 0; }
+.universal-card-hr:last-child { margin-bottom: 0; }
 
 .universal-card-collapse-divider {
   width: 100%;
@@ -1032,11 +1035,61 @@
 
 /* ---- @人 / 链接 ---- */
 .universal-card-markdown-at { word-break: break-word; }
-.universal-card-markdown-link { color: #1456f0; text-decoration: none; }
-.universal-card-markdown-link:hover { text-decoration: underline; }
+/* 真机 .universal-card-markdown-link{display:inline}；链接文案 color:var(--B500)，
+ * hover 不加下划线（客户端没有 text-decoration 规则）。 */
+.universal-card-markdown-link {
+  display: inline;
+  color: var(--B500, #336df4);
+  text-decoration: none;
+}
+/* note 内链接降为 N600（真机 .universal-card-note .universal-card-markdown-link__content） */
+.universal-card-note .universal-card-markdown-link { color: var(--N600, #646a73); }
 
 /* ---- text_tag 彩色标签 ---- */
-.universal-card-text-tag { vertical-align: middle; margin: 0 2px; white-space: nowrap; }
+/* 真机 .universal-card-text-tag{display:inline-flex;align-items:center;max-width:100%}
+ * 尺寸/行高/垂直偏移由组件内联（跟随父字号），外层不带 margin。 */
+.universal-card-text-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/* ---- number_tag 数字徽标 ---- */
+/* 真机结构：外层 inline + 左右 3px，内层固定正方形（内联宽高）圆形底。 */
+.universal-card-number-tag {
+  display: inline;
+  padding: 0 3px;
+  user-select: none;
+}
+.universal-card-number-tag__content {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+  color: rgba(31, 35, 41, 0.8);
+  /* --N900-raw = 31,35,41（light） */
+  background-color: var(--universal-card-number-tag-bg, rgba(31, 35, 41, 0.08));
+}
+.universal-card-number-tag__content:hover:not(.universal-card-number-tag__content--no-url) {
+  color: var(--static-white, #fff);
+  background-color: var(--universal-card-number-tag-hover-bg, var(--primary-fill-hover, #336df4));
+}
+.universal-card-number-tag__content:active:not(.universal-card-number-tag__content--no-url) {
+  color: var(--static-white, #fff);
+  background-color: var(--universal-card-number-tag-active-bg, var(--primary-fill-pressed, #0442d2));
+}
+.universal-card-number-tag__link {
+  padding: 0 !important;
+  white-space: nowrap;
+  color: inherit;
+  width: 100%;
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+.universal-card-number-tag__link--no-url { cursor: default; }
 
 /* ---- markdown: heading / blockquote / list / code ---- */
 .universal-card-markdown-heading { word-break: break-word; }
@@ -1645,6 +1698,11 @@
 }
 .universal-card-root.theme-dark .universal-card-markdown { color: #d6d6d6; }
 .universal-card-root.theme-dark .universal-card-hr { background-color: #2e2e30; }
+/* 数字徽标跟随暗色 N900-raw（235,235,235），否则深色圆点会融进暗背景 */
+.universal-card-root.theme-dark .universal-card-number-tag__content {
+  color: rgba(235, 235, 235, 0.8);
+  background-color: var(--universal-card-number-tag-bg, rgba(235, 235, 235, 0.08));
+}
 
 /* ---- Toast 宿主（对齐客户端 .ud__toast.ud__notice：顶部下拉、深色胶囊） ---- */
 .universal-card-toast-host {

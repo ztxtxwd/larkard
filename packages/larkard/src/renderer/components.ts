@@ -53,22 +53,56 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-// text_tag 默认尺寸：对齐设计系统 Tag `extra-small`
-// （_pp-tag__size-extra-small：height:16px; padding:0 4px; font-size:10px；
-//  或 font-size:12px + zoom:.833 ≈ 10px 视觉效果）。
-// 之前用 12px 无缩放，字看起来偏大。
-function textTagStyle(bg: string, text: string): Record<string, string> {
+// text_tag：正文 markdown 内联标签。尺寸**跟随父级字号**（引擎 La()，be8b738f.js）：
+//   parentFontSize <= 18 → height/line-height 18px、font-size 12px、padding 0 4px
+//   parentFontSize >  18 → height = 父字号、font-size floor(父字号 / 1.5)、
+//                          padding 水平 ceil(父字号 * 0.25)
+// 外层再按父行高做垂直居中补偿：vertical-align:top + top = (父行高 - 标签高)/2 + .5。
+// 之前固定 16px/10px（设计系统 extra-small 裸样式），没有 size-follow，位置也和真机有偏差。
+function textTagMetrics(parentFontSize?: number, parentLineHeight?: number) {
+  const fs = parentFontSize && Number.isFinite(parentFontSize) ? parentFontSize : BASE_FONT_SIZE;
+  // parentLineHeight 缺失（如 header 的 text_tag_list）时真机不做行内偏移，
+  // 标签按默认基线/flex 居中排布。
+  const lh = parentLineHeight && Number.isFinite(parentLineHeight) && parentLineHeight > 0
+    ? parentLineHeight
+    : undefined;
+  const height = fs <= 18 ? 18 : fs;
+  return {
+    height,
+    fontSize: fs <= 18 ? 12 : Math.floor(fs / 1.5),
+    paddingX: fs <= 18 ? 4 : Math.ceil(fs * 0.25),
+    // 真机 C.position=relative; C.verticalAlign=top; C.top=(d-e)/2+.5
+    top: lh != null ? (lh - height) / 2 + 0.5 : 0,
+    compensate: lh != null,
+  };
+}
+
+function textTagStyle(
+  bg: string,
+  text: string,
+  parentFontSize?: number,
+  parentLineHeight?: number,
+): Record<string, string> {
+  const m = textTagMetrics(parentFontSize, parentLineHeight);
   return {
     backgroundColor: bg,
     color: text,
-    padding: '0 4px',
+    padding: `0 ${m.paddingX}px`,
     borderRadius: '4px',
-    fontSize: '10px',
+    fontSize: m.fontSize + 'px',
     fontWeight: '500',
     display: 'inline-flex',
     alignItems: 'center',
-    lineHeight: '16px',
-    height: '16px',
+    justifyContent: 'center',
+    lineHeight: m.height + 'px',
+    height: m.height + 'px',
+    boxSizing: 'border-box',
+    maxWidth: '100%',
+    whiteSpace: 'nowrap',
+    // 对齐真机外层 .universal-card-text-tag 的定位补偿（有父行高时）
+    ...(m.compensate
+      ? { position: 'relative', verticalAlign: 'top', top: m.top + 'px' }
+      : {}),
   };
 }
 
@@ -459,9 +493,10 @@ export function registerBuiltins(): void {
   const tplKey = (p.template || 'default') as keyof typeof HEADER_TEMPLATE;
   const tpl = HEADER_TEMPLATE[tplKey] || HEADER_TEMPLATE.default;
   // #19/D9：客户端 header textTagList.slice(0,3)，每项以 TextTag + parentFontSize 渲染。
-  // 标题字号 16px（见 .universal-card-header__text-title），注入 textMetrics 供内联跟随字号的组件缩放。
+  // 标题字号 16px（见 .universal-card-header__text-title）；header 只传 parentFontSize、
+  // 不传 parentLineHeight，所以 TextTag 不做行内 top 补偿（lineHeight: 0 表示未知）。
   const tags = (p.text_tag_list || p.textTagList) as CardElement[] | undefined;
-  const tagCtx: RenderContext = { ...ctx, textMetrics: { fontSize: 16, lineHeight: 24 } };
+  const tagCtx: RenderContext = { ...ctx, textMetrics: { fontSize: 16, lineHeight: 0 } };
   const tagVNodes = Array.isArray(tags) && tags.length
     ? renderElements(tags.slice(0, 3), tagCtx)
     : [];
@@ -555,15 +590,20 @@ function MarkdownComponent(el: CardElement, ctx: RenderContext) {
   //   12→20+2=22 / 14→22+2=24 / 16→24+2=26
   // （此前用「字号 + 8」，12/14/16 恰好对上字号表，但漏了 +2，
   //   带 text_size 的段落行距比真机小 2px——列表逐行累积后很明显。）
-  let fontSize = BASE_FONT_SIZE;
-  let lineHeight = Math.round(BASE_FONT_SIZE * BASE_LINE_HEIGHT);
+  // 没有显式 text_size 时继承父级注入的 textMetrics（如 note 强制 notation 12/20），
+  // 否则内联标签会按默认 14/22 计算，位置比真机偏低 1px。
+  let fontSize = ctx.textMetrics?.fontSize ?? BASE_FONT_SIZE;
+  let lineHeight = ctx.textMetrics?.lineHeight ?? Math.round(BASE_FONT_SIZE * BASE_LINE_HEIGHT);
   if (sizeKey != null && TEXT_SIZE_MAP[String(sizeKey)] != null) {
     fontSize = TEXT_SIZE_MAP[String(sizeKey)];
     lineHeight = textLineHeight(fontSize);
     style.fontSize = fontSize + 'px';
     style.lineHeight = lineHeight + 'px';
   }
-  const childCtx: RenderContext = { ...ctx, textMetrics: { fontSize, lineHeight, sizeKey } };
+  const childCtx: RenderContext = {
+    ...ctx,
+    textMetrics: { fontSize, lineHeight, sizeKey: sizeKey ?? ctx.textMetrics?.sizeKey },
+  };
   // #22/D12：客户端 plain_text/markdown 支持 property.lines（textLines），超出省略。
   // 用 -webkit-line-clamp 纯 CSS 截断。
   const linesStyle = lineClampStyle(p.lines ?? p.textLines);
@@ -754,7 +794,13 @@ registerComponent('note', (el, ctx) => {
     className: `${CLS}-note${isFooter ? ` ${CLS}-note--hr` : ''}`,
   };
   if (Object.keys(style).length) props.style = style;
-  return h('div', props, renderElements(getChildElements(el), ctx));
+  // 真机在 note 内强制 notation（12px/20px），子项里的 text_tag / number_tag
+  // 也按这个父字号计算尺寸和行内偏移。
+  const noteCtx: RenderContext = {
+    ...ctx,
+    textMetrics: { fontSize: 12, lineHeight: 20, sizeKey: 'notation' },
+  };
+  return h('div', props, renderElements(getChildElements(el), noteCtx));
 });
 
 // div：通用容器。
@@ -2258,12 +2304,17 @@ registerComponent('link', (el, ctx) => {
 
 // text_tag：彩色标签。色板走 --udtoken-tag-*（半透明底 + 实心字色）。
 // 缺省 / 未知色（含非法的 grey）回退 blue，对齐飞书引擎对 text_tag 的默认与容错。
-registerComponent('text_tag', (el) => {
+registerComponent('text_tag', (el, ctx) => {
   const p = el.property || {};
   const rawColor = (p.color || p.tagStyle || 'blue') as string;
   const colorName = TAG_COLOR[rawColor] ? rawColor : 'blue';
   const c = TAG_COLOR[colorName];
-  const style = textTagStyle(p.backgroundColor || c.bg, c.text);
+  const style = textTagStyle(
+    p.backgroundColor || c.bg,
+    c.text,
+    ctx.textMetrics?.fontSize,
+    ctx.textMetrics?.lineHeight,
+  );
   return h('span', { className: `${CLS}-text-tag ${CLS}-text-tag--${colorName}`, style }, extractText(p.text));
 });
 
@@ -2293,38 +2344,91 @@ registerComponent('local_datetime', (el) => {
   return h('span', { className: `${CLS}-local-datetime` }, text);
 });
 
-// number_tag：markdown 内联数字徽标（#14/D4）。跟随正文字号（ctx.textMetrics，缺省 14px），
-// 圆角小胶囊，复用 text_tag blue 色板。plainMode 下客户端降级纯文本——静态渲染无 plainMode，
-// 直接输出徽标（与 text_tag 一致）。
+// number_tag：markdown 内联数字徽标（#14/D4）。逆向自客户端 NumberTag（be8b738f.js）：
+//   - 外层 .universal-card-number-tag 是 inline + padding 0 3px（真机的左右留白来源）；
+//   - 内层 .universal-card-number-tag__content 是**固定正方形**（默认 16×16），
+//     border-radius:999px → 圆形，内容居中；
+//   - 颜色是中性色：bg rgba(N900,.08)、字 rgba(N900,.8)，不是 text_tag 的蓝色板；
+//   - 尺寸/字号按父字号查表：14/16 → 16px/10px，17 → 18px/14px；
+//     其它 ≤16 → 16px/10px，>16 → 高 = 父字号、字 = 父字号-4（≥24 减 6，≥30 减 10）；
+//   - 父字号 ≥14 时按行高把圆点上移 (行高 - 尺寸)/6，抵消 inline-flex 基线带来的下沉。
+// plainMode 下客户端降级纯文本——静态渲染无 plainMode，直接输出徽标（与 text_tag 一致）。
+const NUMBER_TAG_PRESETS: Record<number, { fontSize: number; size: number }> = {
+  14: { fontSize: 10, size: 16 },
+  16: { fontSize: 10, size: 16 },
+  17: { fontSize: 14, size: 18 },
+};
+
+function numberTagMetrics(parentFontSize: number) {
+  const preset = NUMBER_TAG_PRESETS[parentFontSize];
+  const size = preset?.size || (parentFontSize <= 16 ? 16 : parentFontSize);
+  const fontSize = preset?.fontSize || (parentFontSize <= 16
+    ? 10
+    : parentFontSize >= 30 ? parentFontSize - 10
+      : parentFontSize >= 24 ? parentFontSize - 6
+        : parentFontSize - 4);
+  return { size, fontSize };
+}
+
+// 数字标签 background_color 走 default_color_tokens（grey/white 与正文色名不同）。
+const NUMBER_TAG_BG_TOKENS: Record<string, string> = {
+  grey: 'var(--line-border-component)',
+  gray: 'var(--line-border-component)',
+  white: 'var(--static-white)',
+  'bg-white': 'var(--bg-body)',
+};
+
 registerComponent('number_tag', (el, ctx) => {
   const p = el.property || {};
   const raw = extractText(p.text);
   const text = raw != null && raw !== '' ? raw : (p.content != null ? String(p.content) : '');
   if (text === '') return null;
   const parentFs = ctx.textMetrics?.fontSize ?? BASE_FONT_SIZE;
-  const fs = Math.max(11, Math.round(parentFs * 0.85));
-  const c = TAG_COLOR.blue;
-  // 显式 background_color / font_color（官方枚举或 #hex/rgb）优先；缺省走 blue 色板。
+  const parentLh = ctx.textMetrics?.lineHeight ?? Math.round(parentFs * BASE_LINE_HEIGHT);
+  const { size, fontSize } = numberTagMetrics(parentFs);
   const bgRaw = typeof (p.backgroundColor ?? p.background_color) === 'string'
     ? String(p.backgroundColor ?? p.background_color) : '';
   const fgRaw = typeof (p.fontColor ?? p.font_color) === 'string'
     ? String(p.fontColor ?? p.font_color) : '';
-  const bg = (bgRaw && (resolveColor(bgRaw) ?? bgRaw)) || c.bg;
-  const fg = (fgRaw && (resolveColor(fgRaw) ?? fgRaw)) || c.text;
   const style: Record<string, string> = {
-    backgroundColor: bg,
-    color: fg,
-    fontSize: fs + 'px',
-    lineHeight: '1.4',
-    padding: '0 4px',
-    borderRadius: '4px',
+    height: size + 'px',
+    width: size + 'px',
+    minWidth: size + 'px',
+    fontSize: fontSize + 'px',
+    lineHeight: size + 'px',
+    borderRadius: '999px',
     display: 'inline-flex',
+    justifyContent: 'center',
     alignItems: 'center',
     whiteSpace: 'nowrap',
-    margin: '0 2px',
-    verticalAlign: 'baseline',
+    boxSizing: 'border-box',
+    position: 'relative',
   };
-  return h('span', { className: `${CLS}-number-tag`, style }, text);
+  // 自定义背景/字色才写内联，缺省交给 CSS（hover 才能覆盖，和真机一致）。
+  if (bgRaw) style['--universal-card-number-tag-bg'] = NUMBER_TAG_BG_TOKENS[bgRaw]
+    ?? resolveColor(bgRaw) ?? bgRaw;
+  if (fgRaw) style.color = resolveColor(fgRaw) ?? fgRaw;
+  if (parentFs >= 14) {
+    const bottom = (parentLh - size) / 6;
+    if (bottom) style.bottom = bottom + 'px';
+  }
+  const url = resolveURL(p.url) || resolveURL(p.multiURL) || '';
+  const noUrl = url === '';
+  const content = h('span', {
+    className: `${CLS}-number-tag__content${noUrl ? ` ${CLS}-number-tag__content--no-url` : ''}`,
+    style,
+  },
+    url
+      ? h('a', {
+        className: `${CLS}-number-tag__link`,
+        href: url,
+        target: '_blank',
+        rel: 'noopener',
+      }, text)
+      : h('span', { className: `${CLS}-number-tag__link ${CLS}-number-tag__link--no-url` }, text));
+  return h('div', {
+    className: `${CLS}-number-tag${noUrl ? ` ${CLS}-number-tag--no-url` : ''}`,
+  }, content);
 });
 
 // vote-card-select：消息流投票卡片单选项（#24/D14，Tier C 流式组件）。
@@ -3252,7 +3356,9 @@ function renderCell(value: unknown, col: TableColumn, ctx: RenderContext, lines?
         const c = tableColor ?? TAG_COLOR.blue;
         return h('span', {
           className: `${CLS}-text-tag ${CLS}-text-tag--table ${CLS}-text-tag--${tableColor ? colorName : 'blue'}`,
-          style: tableColor ? tableTagStyle(c.bg, c.text) : textTagStyle(c.bg, c.text),
+          // 表内 Tag 恒为 size=small / shape=round；查不到 _table 色时只回退配色，
+          // 骨架仍是表格标签（引擎 Tag: size = table ? "small" : "extra-small"）。
+          style: tableTagStyle(c.bg, c.text),
         }, opt.text);
       });
     if (!chips.length) return tablePlaceholder(lines);

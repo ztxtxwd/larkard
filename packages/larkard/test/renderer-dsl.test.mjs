@@ -1335,6 +1335,58 @@ test('text_tag: color=neutral 仍是灰标签', () => {
   assert.match(html, /#646a73/);
 });
 
+test('text_tag: 尺寸跟随父字号（正文 14px → 18px 高 / 12px 字 + 行高补偿）', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'markdown',
+    content: "<text_tag color='blue'>标签</text_tag> 正文",
+  }] } });
+  // 引擎 La()：parentFontSize 14 <= 18 → height/line-height 18、font-size 12；
+  // 外层 vertical-align:top + top=(22-18)/2+.5
+  assert.match(html, /font-size:12px;font-weight:500[^>]*line-height:18px;height:18px/);
+  assert.match(html, /vertical-align:top;top:2\.5px/);
+  // 不再固定设计系统 extra-small 的 10px / 16px
+  assert.doesNotMatch(html, /universal-card-text-tag[^>]*font-size:10px/);
+});
+
+test('text_tag: note 内按 notation 12/20 计算，垂直偏移 1.5px', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'note',
+    elements: [{ tag: 'markdown', content: "<text_tag color='green'>备注</text_tag> 文字" }],
+  }] } });
+  assert.match(html, /universal-card-text-tag--green[^>]*top:1\.5px/);
+});
+
+test('number_tag: 真机 16×16 圆形、中性底色、左右 3px 留白', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'markdown',
+    content: '数字 <number_tag>1</number_tag> 标签',
+  }] } });
+  assert.match(html, /universal-card-number-tag[^"]*"><span class="universal-card-number-tag__content/);
+  assert.match(html, /height:16px;width:16px[^>]*font-size:10px[^>]*border-radius:999px/);
+  // 真机不用 text_tag 的蓝色板；底色/字色来自 CSS（N900 8% / 80%）
+  assert.doesNotMatch(html, /universal-card-number-tag__content[^>]*background-color:rgba\(20, 86, 240/);
+  assert.match(ALL_CSS, /\.universal-card-number-tag\s*\{[^}]*padding:\s*0 3px/);
+  assert.match(ALL_CSS, /\.universal-card-number-tag__content\s*\{[^}]*rgba\(31, 35, 41, 0\.08\)/);
+  assert.match(ALL_CSS, /\.universal-card-number-tag__content\s*\{[^}]*border-radius:\s*999px/);
+});
+
+test('hr: 上下 16px，首尾元素收掉外侧间距', () => {
+  assert.match(ALL_CSS, /\.universal-card-hr\s*\{[^}]*margin:\s*16px 0/);
+  assert.match(ALL_CSS, /\.universal-card-hr:first-child\s*\{\s*margin-top:\s*0/);
+  assert.match(ALL_CSS, /\.universal-card-hr:last-child\s*\{\s*margin-bottom:\s*0/);
+});
+
+test('link: B500 链接色，hover 不加下划线', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'markdown',
+    content: '[飞书](https://feishu.cn)',
+  }] } });
+  assert.match(html, /universal-card-markdown-link/);
+  assert.match(ALL_CSS, /\.universal-card-markdown-link\s*\{[^}]*color:\s*var\(--B500/);
+  assert.doesNotMatch(ALL_CSS, /\.universal-card-markdown-link:hover\s*\{[^}]*text-decoration/);
+  assert.doesNotMatch(ALL_CSS, /\.universal-card-markdown-link\s*\{[^}]*text-decoration:\s*underline/);
+});
+
 test('table: options 单对象（非数组）也渲染成标签', () => {
   const html = renderDslToString({ body: { elements: [{
     tag: 'table',
