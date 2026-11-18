@@ -53,25 +53,19 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-// text_tag：正文 markdown 内联标签。尺寸**跟随父级字号**（引擎 La()，be8b738f.js）：
-//   parentFontSize <= 18 → height/line-height 18px、font-size 12px、padding 0 4px
-//   parentFontSize >  18 → height = 父字号、font-size floor(父字号 / 1.5)、
-//                          padding 水平 ceil(父字号 * 0.25)
-// 外层再按父行高做垂直居中补偿：vertical-align:top + top = (父行高 - 标签高)/2 + .5。
-// 之前固定 16px/10px（设计系统 extra-small 裸样式），没有 size-follow，位置也和真机有偏差。
-function textTagMetrics(parentFontSize?: number, parentLineHeight?: number) {
-  const fs = parentFontSize && Number.isFinite(parentFontSize) ? parentFontSize : BASE_FONT_SIZE;
-  // parentLineHeight 缺失（如 header 的 text_tag_list）时真机不做行内偏移，
-  // 标签按默认基线/flex 居中排布。
+// text_tag：正文内联标签。按真机截图与桌面端样式表对齐设计系统 Tag `extra-small`：
+//   height/line-height 16px、font-size 10px、padding 0 4px、border-radius 4px，
+//   外层 `.universal-card-text-tag` 自带 margin: 0 2px（桌面端 2bf6f140.css）。
+// 位置用真机同款行高补偿：vertical-align:top + top=(父行高 - 16)/2 + .5，
+// 有多行上下文时才加（header 的 text_tag_list 不传父行高，交给 flex 居中）。
+function textTagMetrics(parentLineHeight?: number) {
+  const height = 16;
+  // parentLineHeight 缺失（如 header 的 text_tag_list）时真机不做行内偏移。
   const lh = parentLineHeight && Number.isFinite(parentLineHeight) && parentLineHeight > 0
     ? parentLineHeight
     : undefined;
-  const height = fs <= 18 ? 18 : fs;
   return {
     height,
-    fontSize: fs <= 18 ? 12 : Math.floor(fs / 1.5),
-    paddingX: fs <= 18 ? 4 : Math.ceil(fs * 0.25),
-    // 真机 C.position=relative; C.verticalAlign=top; C.top=(d-e)/2+.5
     top: lh != null ? (lh - height) / 2 + 0.5 : 0,
     compensate: lh != null,
   };
@@ -80,16 +74,15 @@ function textTagMetrics(parentFontSize?: number, parentLineHeight?: number) {
 function textTagStyle(
   bg: string,
   text: string,
-  parentFontSize?: number,
   parentLineHeight?: number,
 ): Record<string, string> {
-  const m = textTagMetrics(parentFontSize, parentLineHeight);
+  const m = textTagMetrics(parentLineHeight);
   return {
     backgroundColor: bg,
     color: text,
-    padding: `0 ${m.paddingX}px`,
+    padding: '0 4px',
     borderRadius: '4px',
-    fontSize: m.fontSize + 'px',
+    fontSize: '10px',
     fontWeight: '500',
     display: 'inline-flex',
     alignItems: 'center',
@@ -2312,7 +2305,6 @@ registerComponent('text_tag', (el, ctx) => {
   const style = textTagStyle(
     p.backgroundColor || c.bg,
     c.text,
-    ctx.textMetrics?.fontSize,
     ctx.textMetrics?.lineHeight,
   );
   return h('span', { className: `${CLS}-text-tag ${CLS}-text-tag--${colorName}`, style }, extractText(p.text));

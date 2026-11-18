@@ -1335,25 +1335,26 @@ test('text_tag: color=neutral 仍是灰标签', () => {
   assert.match(html, /#646a73/);
 });
 
-test('text_tag: 尺寸跟随父字号（正文 14px → 18px 高 / 12px 字 + 行高补偿）', () => {
+test('text_tag: 真机 extra-small 尺寸（16px 高 / 10px 字）+ 行高补偿', () => {
   const html = renderDslToString({ body: { elements: [{
     tag: 'markdown',
     content: "<text_tag color='blue'>标签</text_tag> 正文",
   }] } });
-  // 引擎 La()：parentFontSize 14 <= 18 → height/line-height 18、font-size 12；
-  // 外层 vertical-align:top + top=(22-18)/2+.5
-  assert.match(html, /font-size:12px;font-weight:500[^>]*line-height:18px;height:18px/);
-  assert.match(html, /vertical-align:top;top:2\.5px/);
-  // 不再固定设计系统 extra-small 的 10px / 16px
-  assert.doesNotMatch(html, /universal-card-text-tag[^>]*font-size:10px/);
+  // 设计系统 Tag extra-small：height/line-height 16、font-size 10、padding 0 4；
+  // 外层 vertical-align:top + top=(22-16)/2+.5
+  assert.match(html, /font-size:10px;font-weight:500[^>]*line-height:16px;height:16px/);
+  assert.match(html, /padding:0 4px/);
+  assert.match(html, /vertical-align:top;top:3\.5px/);
+  // 真机外层有 2px 左右外边距
+  assert.match(ALL_CSS, /\.universal-card-text-tag\s*\{[^}]*margin:\s*0 2px/);
 });
 
-test('text_tag: note 内按 notation 12/20 计算，垂直偏移 1.5px', () => {
+test('text_tag: note 内按 notation 12/20 计算，垂直偏移 2.5px', () => {
   const html = renderDslToString({ body: { elements: [{
     tag: 'note',
     elements: [{ tag: 'markdown', content: "<text_tag color='green'>备注</text_tag> 文字" }],
   }] } });
-  assert.match(html, /universal-card-text-tag--green[^>]*top:1\.5px/);
+  assert.match(html, /universal-card-text-tag--green[^>]*top:2\.5px/);
 });
 
 test('number_tag: 真机 16×16 圆形、中性底色、左右 3px 留白', () => {

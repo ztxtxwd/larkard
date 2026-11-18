@@ -1046,13 +1046,15 @@
 .universal-card-note .universal-card-markdown-link { color: var(--N600, #646a73); }
 
 /* ---- text_tag 彩色标签 ---- */
-/* 真机 .universal-card-text-tag{display:inline-flex;align-items:center;max-width:100%}
- * 尺寸/行高/垂直偏移由组件内联（跟随父字号），外层不带 margin。 */
+/* 真机 .universal-card-text-tag{display:inline-flex;align-items:center;max-width:100%;
+ * white-space:break-spaces;margin:0 2px}（桌面端 2bf6f140.css）。
+ * 尺寸/行高/垂直偏移由组件内联（设计系统 extra-small：16px/10px）。 */
 .universal-card-text-tag {
   display: inline-flex;
   align-items: center;
   max-width: 100%;
-  white-space: nowrap;
+  white-space: break-spaces;
+  margin: 0 2px;
 }
 
 /* ---- number_tag 数字徽标 ---- */
