@@ -1,5 +1,14 @@
 # larkard
 
+## 0.2.4
+
+### Patch Changes
+
+- 443654d: 修复 RAW → DSL 丢失块级元素后显式 `br` 的问题：
+  
+  - RAW markdown 里 `hr` / `list` / `code_block` 等块级元素后面的 `br`（真机表现为一行空白）此前被序列化成裸换行，紧跟在块自带的段落换行之后会被 markdown 解析器当作块间距丢弃。
+  - 现在块边界上的 `br` 输出为官方支持的 `<br>` 标签，DSL 渲染后恢复真机的那行空白（例如 `---` 与后续链接之间）。
+
 ## 0.2.3
 
 ### Patch Changes
