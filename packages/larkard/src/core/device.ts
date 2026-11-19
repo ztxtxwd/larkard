@@ -22,7 +22,9 @@ export type DeviceRule =
   /** `collapsible_panel` 写了 `interactive_container` 的边框字段（Schema 静默剥离） */
   | 'panel-border-field'
   /** `corner_radius` 只接受单个 px / 百分比值，四角多值真机不支持 */
-  | 'corner-radius-domain';
+  | 'corner-radius-domain'
+  /** `markdown.font_color` 是 DSL 便利字段，发送接口不认（200621 unknown property） */
+  | 'markdown-font-color';
 
 export interface DeviceIssue extends CheckIssue {
   severity: 'error' | 'warning';
@@ -43,6 +45,7 @@ export interface RepairResult {
 }
 
 import { DSL_SPACING_TOKENS } from '../content/spacing.js';
+import { wrapMarkdownContentWithFontColor } from '../adapter/expand-dsl-colors.js';
 
 /** 合法的间距 token（间距字段是字符串枚举 + px，裸数字 / `auto` / `default` 都会被拒）。 */
 const SPACING_TOKENS = DSL_SPACING_TOKENS;
@@ -253,6 +256,31 @@ export function repairDeviceIssues(input: Record<string, unknown>): RepairResult
             false,
           ),
           false,
+        );
+      }
+    }
+
+    // markdown 的块级字色是 DSL 便利字段：渲染 / adapter 会把它包成 content 里的
+    // `<font color>`，但发送接口不认这个属性（200621 unknown property）。展开是
+    // 唯一正确解——直接删会丢样式，所以 fixable。
+    if (node.tag === 'markdown' && typeof node.font_color === 'string') {
+      const raw = node.font_color;
+      delete node.font_color;
+      if (raw.trim()) {
+        const content = typeof node.content === 'string' ? node.content : '';
+        const wrapped = wrapMarkdownContentWithFontColor(content, raw);
+        if (wrapped !== content) node.content = wrapped;
+        record(
+          issue(
+            [...path, 'font_color'],
+            'markdown-font-color',
+            'error',
+            wrapped !== content
+              ? `markdown.font_color 会被飞书拒绝（200621 unknown property）；已展开为 content 内的 <font color='${raw}'>`
+              : `markdown.font_color 会被飞书拒绝（200621 unknown property）；content 已有内联 <font color>，块级字色本来就不生效，已删除该字段`,
+            true,
+          ),
+          true,
         );
       }
     }

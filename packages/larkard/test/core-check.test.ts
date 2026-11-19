@@ -192,3 +192,28 @@ test('note 作为 Schema 2.0 组件可通过发送前检查，字段不被剥离
   assert.ok(result.card);
   assert.deepEqual((result.card.body as any).elements[0], note);
 });
+
+test('markdown.font_color：不带 fix 报真机约束，fix 后展开成可发送的 <font>', () => {
+  const card = {
+    schema: '2.0',
+    body: { elements: [{ tag: 'markdown', content: '标题', font_color: 'grey' }] },
+  };
+  const before = checkCard(card);
+  const deviceError = before.errors.find((error) => error.code === 'markdown-font-color');
+  assert.ok(deviceError);
+  assert.equal(deviceError.path, '/body/elements/0/font_color');
+  assert.equal(deviceError.source, 'device');
+  assert.equal(before.card, undefined);
+
+  const after = checkCard(card, { fix: true });
+  assert.deepEqual(after.errors, []);
+  assert.ok(after.card);
+  const md = (after.card.body as any).elements[0];
+  assert.equal(md.font_color, undefined);
+  assert.equal(md.content, "<font color='grey'>标题</font>");
+  assert.equal(after.fixes.length, 1);
+  assert.equal(after.fixes[0].code, 'markdown-font-color');
+
+  // 入参不被修改
+  assert.equal((card.body.elements[0] as any).font_color, 'grey');
+});

@@ -268,3 +268,45 @@ test('圆角值域：空字符串等同未设置，不报错', () => {
   assert.deepEqual(issues, []);
   assert.equal((card.body as any).elements[0].corner_radius, '');
 });
+
+test('markdown.font_color：展开成 content 内 <font>（飞书 200621 unknown property）', () => {
+  const input = {
+    schema: '2.0',
+    body: {
+      elements: [
+        { tag: 'markdown', content: '标题', font_color: 'cus-ink-1' },
+        { tag: 'markdown', content: "<font color='red'>红</font> 黑", font_color: 'blue' },
+        { tag: 'markdown', content: '', font_color: 'grey' },
+        { tag: 'markdown', content: '空字色', font_color: '' },
+      ],
+    },
+  };
+  const { card, issues, fixes } = repairDeviceIssues(input);
+  const els = (card.body as any).elements;
+  assert.equal(els[0].font_color, undefined);
+  assert.equal(els[0].content, "<font color='cus-ink-1'>标题</font>");
+  // 已有内联字色：块级字色本来就不生效，只删属性
+  assert.equal(els[1].font_color, undefined);
+  assert.equal(els[1].content, "<font color='red'>红</font> 黑");
+  // 空内容没有可包的字，只删属性
+  assert.equal(els[2].font_color, undefined);
+  assert.equal(els[2].content, '');
+  // 空串等同未设置，不算违规
+  assert.equal(els[3].font_color, undefined);
+  assert.equal(els[3].content, '空字色');
+
+  assert.equal(issues.length, 3);
+  assert.deepEqual(issues.map((issue) => issue.code), [
+    'markdown-font-color',
+    'markdown-font-color',
+    'markdown-font-color',
+  ]);
+  assert.deepEqual(issues.map((issue) => issue.path), [
+    '/body/elements/0/font_color',
+    '/body/elements/1/font_color',
+    '/body/elements/2/font_color',
+  ]);
+  assert.deepEqual(fixes, issues);
+  // 入参不变
+  assert.equal((input.body as any).elements[0].font_color, 'cus-ink-1');
+});
