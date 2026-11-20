@@ -138,6 +138,34 @@ test('table: markdown 单元格支持 ![](image)（RAW img，URL 走 src）', ()
   assert.match(html, /<img[^>]+src="https:\/\/example\.com\/a\.png"/);
 });
 
+test('table: markdown 单元格不设 max-height，换行会撑高整行（对齐真机）', () => {
+  const html = renderDslToString(table(
+    [
+      { name: 'md', display_name: '说明', data_type: 'markdown' },
+      { name: 'txt', display_name: '类型', data_type: 'text' },
+    ],
+    [{ md: '各组前 2 名，共 4 队晋级', txt: '小组赛' }],
+  ));
+  // 真机 dataType=markdown 的 row-item-wrapper 恒带 --auto，且没有 max-height：
+  // 文本换行时 td/tr 会跟着长高（row height 只是最小值）。
+  assert.match(
+    html,
+    /class="universal-card-table__cell universal-card-table__cell--auto" style="justify-content:flex-start"/,
+  );
+  assert.match(CSS, /\.universal-card-table__cell--auto\s*\{[^}]*overflow:\s*auto/);
+  // text 列仍然按行高截断（max-height = 32px），不会撑行。
+  assert.match(
+    html,
+    /class="universal-card-table__cell" style="justify-content:flex-start;max-height:32px"/,
+  );
+});
+
+test('table: lark_md 单元格仍按行数截断，不参与撑行', () => {
+  const html = one({ data_type: 'lark_md' }, '各组前 2 名，共 4 队晋级');
+  assert.doesNotMatch(html, /universal-card-table__cell--auto/);
+  assert.match(html, /max-height:32px/);
+});
+
 /* ---- RAW camelCase 参数投影 ---- */
 
 test('table RAW: verticalAlign / dateFormat / rowMaxHeightValue 归一', () => {
