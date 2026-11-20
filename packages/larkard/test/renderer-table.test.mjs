@@ -138,7 +138,7 @@ test('table: markdown 单元格支持 ![](image)（RAW img，URL 走 src）', ()
   assert.match(html, /<img[^>]+src="https:\/\/example\.com\/a\.png"/);
 });
 
-test('table: markdown 单元格不设 max-height，换行会撑高整行（对齐真机）', () => {
+test('table: 根级 table 的 markdown 单元格在固定行高内滚动（max-height=32）', () => {
   const html = renderDslToString(table(
     [
       { name: 'md', display_name: '说明', data_type: 'markdown' },
@@ -146,21 +146,35 @@ test('table: markdown 单元格不设 max-height，换行会撑高整行（对�
     ],
     [{ md: '各组前 2 名，共 4 队晋级', txt: '小组赛' }],
   ));
-  // 真机 dataType=markdown 的 row-item-wrapper 恒带 --auto，且没有 max-height：
-  // 文本换行时 td/tr 会跟着长高（row height 只是最小值）。
+  // 真机根级 table 默认 row_height=low：markdown 单元格 row-item-wrapper--auto
+  // 带 overflow:auto，但 rowStyle 仍给 max-height:32px → 内容在单元格内滚动。
   assert.match(
     html,
-    /class="universal-card-table__cell universal-card-table__cell--auto" style="justify-content:flex-start"/,
+    /class="universal-card-table__cell universal-card-table__cell--auto" style="justify-content:flex-start;max-height:32px"/,
   );
   assert.match(CSS, /\.universal-card-table__cell--auto\s*\{[^}]*overflow:\s*auto/);
-  // text 列仍然按行高截断（max-height = 32px），不会撑行。
+  // text 列仍然按行高截断（max-height = 32px），不参与撑行。
   assert.match(
     html,
     /class="universal-card-table__cell" style="justify-content:flex-start;max-height:32px"/,
   );
 });
 
-test('table: lark_md 单元格仍按行数截断，不参与撑行', () => {
+test('table: row_height:auto 时 markdown 单元格可把行撑高（max-height=124）', () => {
+  const html = renderDslToString(table(
+    [{ name: 'md', display_name: '说明', data_type: 'markdown' }],
+    [{ md: '各组前 2 名，共 4 队晋级' }],
+    { row_height: 'auto' },
+  ));
+  // 真机 markdown 内嵌 table 会被强制 rowHeightValue=auto：max-height 124px，
+  // 内容少时 td/tr 跟随长高，超过 124px 才在单元格内滚动。
+  assert.match(
+    html,
+    /class="universal-card-table__cell universal-card-table__cell--auto" style="justify-content:flex-start;max-height:124px"/,
+  );
+});
+
+test('table: lark_md 单元格仍按行数截断，不参与撑行/滚动', () => {
   const html = one({ data_type: 'lark_md' }, '各组前 2 名，共 4 队晋级');
   assert.doesNotMatch(html, /universal-card-table__cell--auto/);
   assert.match(html, /max-height:32px/);

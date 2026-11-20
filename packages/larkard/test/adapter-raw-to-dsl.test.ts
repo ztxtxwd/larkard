@@ -1162,6 +1162,8 @@ describe("markdown-embedded table hoisting", () => {
     assert.equal(table.columns[0].data_type, "markdown");
     assert.equal(table.header_style.bold, true);
     assert.equal(table.page_size, 10);
+    // 真机对 markdown 内嵌 table 强制 auto 行高：行会被内容撑高（上限 124px）。
+    assert.equal(table.row_height, "auto");
     assert.equal(table.rows[0]["0"], "小组赛");
     assert.equal(table.rows[0]["1"], "4 队");
     // 不再残留管道表文本

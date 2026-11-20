@@ -491,13 +491,37 @@ function splitMarkdownTables(element: unknown): unknown[] | null {
   for (const child of children) {
     if (isRecord(child) && child.tag === "table") {
       flush();
-      out.push(child);
+      out.push(withMarkdownTableAutoHeight(child));
     } else {
       buffer.push(child);
     }
   }
   flush();
   return out;
+}
+
+/**
+ * markdown 内嵌 table 的 rowHeight 语义。
+ *
+ * 真机 table 组件在 `inMarkdownComponent` 时会把 rowHeightValue 强制改成
+ * `builtin_table_row_height_extension:auto`（见网页版 table 组件的 useMemo），
+ * 所以嵌在 markdown 里的表格行会被内容撑高（上限 row_max_height，缺省 124px），
+ * 而不是像根级 table 那样固定在 32px 并在单元格里滚动。
+ *
+ * rawToDsl 把 table 提升到 body 根级后，必须补上 `row_height:"auto"` 才能还原
+ * 真机的行为；已有显式 rowHeight 的表格保持原值，不替作者改设置。
+ */
+function withMarkdownTableAutoHeight(table: Record<string, unknown>): Record<string, unknown> {
+  if (!isRecord(table.property)) return table;
+  const property = table.property as Record<string, unknown>;
+  if ("rowHeightValue" in property || "rowHeight" in property) return table;
+  return {
+    ...table,
+    property: {
+      ...property,
+      rowHeightValue: { type: "builtin_table_row_height_extension", value: "auto" },
+    },
+  };
 }
 
 function convertBody(node: Record<string, unknown>, ctx: Ctx): unknown {
