@@ -432,6 +432,54 @@ describe("code_block re-stitch", () => {
     assert.ok((block).includes("```bash\nnpm run build\n```"));
     assert.ok(!(block).includes("npm run build\n\n```"));
   });
+
+  it("normalizes editor storage (content line + separate \\n entry) without blank lines", () => {
+    // Editor-saved cards store each source line twice: the line entry ends
+    // with "\n", followed by a standalone "\n" entry. Treating every outer
+    // entry as a line (or join("\n")) inserted two blank lines per source line.
+    const line = (content: string) => ({ contents: [{ content }] });
+    const envelope = {
+      json_card: JSON.stringify({
+        schema: "2.0",
+        body: {
+          id: "_1",
+          tag: "body",
+          property: {
+            elements: [{
+              id: "_2",
+              tag: "markdown",
+              property: {
+                originTag: "markdown",
+                elements: [{
+                  id: "_2_0",
+                  tag: "code_block",
+                  property: {
+                    language: "json",
+                    contents: [
+                      line("{\n"), line("\n"),
+                      line('  "mcpServers": {\n'), line("\n"),
+                      line('    "a": 1\n'), line("\n"),
+                      line("  }\n"), line("\n"),
+                      line("}\n"), line("\n"),
+                    ],
+                  },
+                }],
+              },
+            }],
+          },
+        },
+      }),
+      json_attachment: {},
+      card_schema: 2,
+    };
+    const dsl = rawCardToDsl(envelope) as AnyDsl;
+    const block = codeBlocks(dsl)[0];
+    assert.equal(
+      block,
+      '\n```json\n{\n  "mcpServers": {\n    "a": 1\n  }\n}\n```\n',
+    );
+    assert.ok(!block.includes("{\n\n"));
+  });
 });
 
 describe("markdown br after block", () => {
@@ -1058,6 +1106,117 @@ describe("table projection", () => {
       k === "freezeFirstColumn" || k === "linesValue",
     );
     assert.deepEqual(leaks, []);
+  });
+});
+
+/**
+ * The editor stores a table as a block child of a markdown element:
+ *   body.elements[i] = { tag:'markdown', property:{ elements:[{tag:'table'}] } }
+ * The public DSL has no markdown-embedded table, and table must sit at
+ * body.elements root. rawToDsl hoists it to a sibling table element instead of
+ * degrading it to a pipe table string (which lost columns / widths /
+ * page_size / options / persons cells and rendered as literal "| … |").
+ */
+describe("markdown-embedded table hoisting", () => {
+  const markdownCell = (content: string) => ({
+    data: {
+      tag: "markdown",
+      property: {
+        elements: [{ tag: "plain_text", property: { content } }],
+        originTag: "markdown",
+      },
+    },
+  });
+
+  const tableRaw = {
+    id: "_3_0_0",
+    tag: "table",
+    property: {
+      columns: [
+        { dataType: "markdown", displayName: "阶段", name: "0" },
+        { dataType: "text", displayName: "规模", name: "1" },
+      ],
+      headerStyle: { bold: true },
+      pageSize: 10,
+      rows: [{ "0": markdownCell("小组赛"), "1": { data: "4 队" } }],
+    },
+  };
+
+  const card = (elements: unknown[]) => ({
+    schema: "2.0",
+    body: { id: "_1", tag: "body", property: { elements } },
+  });
+
+  it("hoists a body-level markdown table to a sibling table element", () => {
+    const dsl = rawToDsl(card([
+      {
+        id: "_3",
+        tag: "markdown",
+        property: { elements: [tableRaw], originTag: "markdown", textAlign: "left" },
+      },
+    ])) as AnyDsl;
+
+    assert.deepEqual(dsl.body!.elements.map((el: Record<string, any>) => el.tag), ["table"]);
+    const [table] = dsl.body!.elements as Record<string, any>[];
+    assert.equal(table.columns[0].display_name, "阶段");
+    assert.equal(table.columns[0].data_type, "markdown");
+    assert.equal(table.header_style.bold, true);
+    assert.equal(table.page_size, 10);
+    assert.equal(table.rows[0]["0"], "小组赛");
+    assert.equal(table.rows[0]["1"], "4 队");
+    // 不再残留管道表文本
+    assert.ok(!JSON.stringify(dsl).includes("| --------"));
+  });
+
+  it("splits surrounding markdown around the table and keeps its order", () => {
+    const dsl = rawToDsl(card([
+      {
+        id: "_3",
+        tag: "markdown",
+        property: {
+          elements: [
+            { tag: "plain_text", property: { content: "表格前" } },
+            { tag: "br", property: {} },
+            tableRaw,
+            { tag: "br", property: {} },
+            { tag: "plain_text", property: { content: "表格后" } },
+          ],
+          originTag: "markdown",
+          textStyle: { size: "normal" },
+        },
+      },
+    ])) as AnyDsl;
+
+    const els = dsl.body!.elements as Record<string, any>[];
+    assert.deepEqual(els.map((el) => el.tag), ["markdown", "table", "markdown"]);
+    assert.equal(els[0].content, "表格前");
+    assert.equal(els[2].content, "表格后");
+    // 原 markdown 的显示属性保留在拆分后的每一段上
+    assert.equal(els[0].text_size, "normal");
+    assert.equal(els[2].text_size, "normal");
+  });
+
+  it("does not hoist a table nested in a column (public schema forbids it)", () => {
+    const dsl = rawToDsl(card([
+      {
+        tag: "column_set",
+        property: {
+          columns: [{
+            tag: "column",
+            property: {
+              elements: [{
+                tag: "markdown",
+                property: { elements: [tableRaw], originTag: "markdown" },
+              }],
+            },
+          }],
+        },
+      },
+    ])) as AnyDsl;
+
+    assert.equal(findElements(dsl, (el) => el.tag === "table").length, 0);
+    const [md] = findElements(dsl, (el) => el.tag === "markdown");
+    assert.ok(String(md.content).includes("| 阶段 | 规模 |"));
   });
 });
 

@@ -30,3 +30,4 @@ export type { ThemeColorPair } from './custom-colors.js';
 export type * from './types.js';
 
 export { parseMarkdown, parseInline } from './md-parse.js';
+export { codeBlockLines } from './code-block.js';
