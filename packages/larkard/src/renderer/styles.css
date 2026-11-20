@@ -392,11 +392,31 @@
   height: 1px;
   background-color: var(--line-divider-default, #dee0e3);
   border: none;
-  /* 真机 .universal-card-hr{margin:16px 0}，首尾元素各自收掉外侧间距 */
+  /* 真机 .universal-card-hr 的 margin 是 16px 0，且 body 是普通块容器（没有 flex），
+     相邻 element-shell 的 16px margin 与容器 spacing 会折叠成 max(spacing,16)。
+     渲染器用 flex + row-gap 布局，gap 不会与 margin 折叠；这里把容器已提供的
+     行距从 margin 里扣掉，复现真机的 max(gap,16)——否则 12px gap + 16px
+     margin 会变成 28px，比真机大一倍。 */
   margin: 16px 0;
+  margin: max(0px, 16px - var(--universal-card-row-gap, 0px)) 0;
 }
 .universal-card-hr:first-child { margin-top: 0; }
 .universal-card-hr:last-child { margin-bottom: 0; }
+
+/* 各容器实际生效的 row-gap；组件内有显式 vertical_spacing 时用内联值覆盖。 */
+.universal-card-body { --universal-card-row-gap: 12px; }
+.universal-card-column { --universal-card-row-gap: 8px; }
+.universal-card-interactive-container { --universal-card-row-gap: 4px; }
+.universal-card-collapsible-panel__content { --universal-card-row-gap: 8px; }
+.universal-card-form { --universal-card-row-gap: 12px; }
+.universal-card-form--old-spacing-size { --universal-card-row-gap: 16px; }
+/* 非纵向 gap 容器 / markdown 内部：margin 不做抵扣。 */
+.universal-card-column--row,
+.universal-card-interactive-container--row,
+.universal-card-collapsible-panel__content--row,
+.universal-card-markdown,
+.universal-card-div,
+.universal-card-note { --universal-card-row-gap: 0px; }
 
 .universal-card-collapse-divider {
   width: 100%;
@@ -1145,13 +1165,18 @@
   font-family: Menlo, Consolas, monospace; font-size: 13px;
 }
 .universal-card-markdown-code-block {
-  /* 真机：border 1px line-border-card、bg --bg-body-overlay(#f5f6f7) */
-  text-align: left; padding: 12px; min-width: 210px; margin: 4px 0;
-  font-size: 13px; font-weight: 400; line-height: 1.5;
+  /* 真机 .universal-card-markdown-code-block：padding 12px、font-size 14px、
+     line-height 22px、border 1px line-border-card、radius 8px、无外边距。
+     行号 gutter（真机 padding-left:29px）需要额外的行号 DOM，这里不画行号，
+     左内边距保持 12px。 */
+  text-align: left; padding: 12px; min-width: 210px; margin: 0;
+  font-size: 14px; font-weight: 400; line-height: 22px;
   background-color: var(--bg-body-overlay, #f5f6f7);
   border: 1px solid var(--line-border-card, #dee0e3);
-  border-radius: 6px; overflow-x: auto;
-  font-family: Menlo, Consolas, monospace; white-space: pre;
+  border-radius: 8px; overflow-x: auto; box-sizing: border-box;
+  font-family: "Source Code Pro", Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", "Helvetica Neue", Tahoma, "PingFang SC", "Microsoft Yahei", monospace;
+  white-space: pre;
 }
 /* emoji 对齐真机：
  * - 外层 .larkw-emoji__wrapper 是 inline-block + font-size:0 + vertical-align:top，

@@ -1381,10 +1381,56 @@ test('number_tag: 真机 16×16 圆形、中性底色、左右 3px 留白', () =
   assert.match(ALL_CSS, /\.universal-card-number-tag__content\s*\{[^}]*border-radius:\s*999px/);
 });
 
-test('hr: 上下 16px，首尾元素收掉外侧间距', () => {
-  assert.match(ALL_CSS, /\.universal-card-hr\s*\{[^}]*margin:\s*16px 0/);
+test('hr: 上下间距按容器的 row-gap 抵扣，等价真机 margin collapse', () => {
+  // 真机 body 是普通块容器：hr margin 16px 与容器间距 12px 折叠成 max=16px。
+  // 渲染器用 flex + gap（不折叠），所以 margin 要扣掉 gap，避免变成 28px。
+  assert.match(
+    ALL_CSS,
+    /\.universal-card-hr\s*\{[^}]*margin:\s*max\(0px,\s*16px - var\(--universal-card-row-gap/,
+  );
+  assert.match(ALL_CSS, /\.universal-card-body\s*\{[^}]*--universal-card-row-gap:\s*12px/);
+  assert.match(ALL_CSS, /\.universal-card-markdown[^{]*\{[^}]*--universal-card-row-gap:\s*0px/);
   assert.match(ALL_CSS, /\.universal-card-hr:first-child\s*\{\s*margin-top:\s*0/);
   assert.match(ALL_CSS, /\.universal-card-hr:last-child\s*\{\s*margin-bottom:\s*0/);
+});
+
+test('hr: 显式 vertical_spacing 内联覆盖抵扣变量', () => {
+  const html = renderDslToString({ body: {
+    vertical_spacing: '20px',
+    elements: [{ tag: 'hr' }],
+  } });
+  assert.match(html, /--universal-card-row-gap:20px/);
+});
+
+test('code_block: 编辑器存储的「内容行 + 独立 \\n entry」不产生空行', () => {
+  const line = (content) => ({ contents: [{ content }] });
+  const html = renderCardToString({ body: { elements: [{
+    tag: 'markdown',
+    property: {
+      elements: [{
+        tag: 'code_block',
+        property: {
+          language: 'json',
+          contents: [
+            line('{\n'), line('\n'),
+            line('  "a": 1\n'), line('\n'),
+            line('}\n'), line('\n'),
+          ],
+        },
+      }],
+    },
+  }] } });
+  const m = /<pre class="universal-card-markdown-code-block">([\s\S]*?)<\/pre>/.exec(html);
+  assert.ok(m, 'code_block 渲染为 <pre>');
+  assert.equal(m[1], '{\n  &quot;a&quot;: 1\n}');
+});
+
+test('code_block: 字号/行高/圆角对齐真机（14px / 22px / 8px）', () => {
+  assert.match(
+    ALL_CSS,
+    /\.universal-card-markdown-code-block\s*\{[^}]*font-size:\s*14px[^}]*line-height:\s*22px/,
+  );
+  assert.match(ALL_CSS, /\.universal-card-markdown-code-block\s*\{[^}]*border-radius:\s*8px/);
 });
 
 test('link: B500 链接色，hover 不加下划线', () => {

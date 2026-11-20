@@ -57,6 +57,7 @@ import {
   registerColorEntry,
   type ColorRegistry,
 } from './normalize-stored-colors.js';
+import { codeBlockLines } from './code-block.js';
 
 type AttachmentImageMap = Record<string, { origin_key?: string }>;
 type AttachmentAtUserMap = Record<string, { user_id?: string; mention_key?: string }>;
@@ -412,13 +413,105 @@ function convertHeaderText(rawValue: Record<string, unknown>, ctx: Ctx): Record<
   return undefined;
 }
 
+/**
+ * body 根级 markdown 里内嵌的 table → 同级 `{ tag:'table' }`。
+ *
+ * 飞书编辑器把表格存成 markdown 的块级子元素：
+ *   body.elements[1] = { tag:'markdown', property:{ elements:[ { tag:'table', … } ] } }
+ * 公开 DSL 没有「markdown 内嵌 table」的形态（markdown.content 是字符串），
+ * 而 table 组件本来就要求放在 `body.elements` 根级。之前 `childToMarkdown`
+ * 把它降级成管道表文本：结构、列宽、行高、options/persons 单元格全部丢失，
+ * 渲染器侧也没有管道表解析，预览里只剩 `| … |` 字面量。
+ *
+ * 这里在投影前把 table 拆出来，前后剩余的内联/块级子元素各自成为独立的
+ * markdown 元素，保持原有顺序；只有 body 根级做这个提升（column 等容器
+ * 按公开 schema 不允许 table，仍走 `childToMarkdown` 的文本降级）。
+ */
+function hoistMarkdownTables(node: Record<string, unknown>): Record<string, unknown> {
+  const property = isRecord(node.property) ? node.property : node;
+  const elements = Array.isArray(property.elements) ? property.elements : undefined;
+  if (!elements) return node;
+
+  let changed = false;
+  const out: unknown[] = [];
+  for (const element of elements) {
+    const split = splitMarkdownTables(element);
+    if (!split) {
+      out.push(element);
+      continue;
+    }
+    changed = true;
+    out.push(...split);
+  }
+  if (!changed) return node;
+
+  if (isRecord(node.property)) {
+    return { ...node, property: { ...node.property, elements: out } };
+  }
+  return { ...node, elements: out };
+}
+
+/**
+ * 把一个 markdown 元素按内嵌 table 切开：table 原样留在数组里（后续由
+ * `unwrap(table)` 投影成公开 DSL），其余子元素按块边界拆成若干 markdown。
+ * 不含 table 时返回 null，调用方保留原元素不动。
+ */
+function splitMarkdownTables(element: unknown): unknown[] | null {
+  if (!isRecord(element) || element.tag !== "markdown" || !isRecord(element.property)) {
+    return null;
+  }
+  const markdownProperty = element.property as Record<string, unknown>;
+  const children = Array.isArray(markdownProperty.elements) ? markdownProperty.elements : [];
+  if (!children.some((child) => isRecord(child) && child.tag === "table")) return null;
+
+  const out: unknown[] = [];
+  let buffer: unknown[] = [];
+  let markdownCount = 0;
+
+  const flush = () => {
+    // table 前后的 br 只是编辑器用来分隔块的换行，拆成独立元素后不再需要。
+    let start = 0;
+    let end = buffer.length;
+    while (start < end && isRecord(buffer[start]) && (buffer[start] as Record<string, unknown>).tag === "br") start++;
+    while (end > start && isRecord(buffer[end - 1]) && (buffer[end - 1] as Record<string, unknown>).tag === "br") end--;
+    const segment = buffer.slice(start, end);
+    buffer = [];
+    if (segment.length === 0) return;
+
+    const markdown: Record<string, unknown> = {
+      tag: "markdown",
+      property: { ...markdownProperty, elements: segment },
+    };
+    // 原 markdown 的自定义 id 只跟第一段走，避免拆分后出现重复 element_id。
+    if (markdownCount === 0 && element.id !== undefined) markdown.id = element.id;
+    markdownCount++;
+    out.push(markdown);
+  };
+
+  for (const child of children) {
+    if (isRecord(child) && child.tag === "table") {
+      flush();
+      out.push(child);
+    } else {
+      buffer.push(child);
+    }
+  }
+  flush();
+  return out;
+}
+
 function convertBody(node: Record<string, unknown>, ctx: Ctx): unknown {
   // Raw body comes in two shapes:
   //   1. wrapped:   { id, tag, property: { elements, ... } }  (editor-saved cards)
   //   2. bare:      { elements, ... }                          (some live im.message.get payloads)
   // The bare form has no `property` envelope; fall back to the node itself so
   // we don't silently drop the entire body.
-  const property = isRecord(node.property) ? node.property : node;
+  //
+  // Tables stored as markdown block children are hoisted to body root first;
+  // the public schema has no markdown-embedded table (and table must sit at
+  // body.elements root anyway).
+  const hoisted = hoistMarkdownTables(node);
+  const property = isRecord(hoisted.property) ? hoisted.property : hoisted;
   return convertProperty(property, "body", ctx);
 }
 
@@ -2067,28 +2160,14 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
       return `<text_tag>${innerContent}</text_tag>`;
     }
     case "code_block": {
-      // raw code_block: property.contents is an array of LINES; each line is
-      // { contents: [{ content, contentType }] } whose inner segments
-      // concatenate into that line's text. Lines must be rejoined with "\n" —
-      // the editor stores the newline as the boundary between outer entries,
-      // not as a character inside any segment, so a naive concat collapses a
-      // multi-line block into a single line.
+      // raw code_block: property.contents is a list of entries whose inner
+      // segments concatenate into text. Three encodings exist (one entry per
+      // line; one entry with explicit "\n" segments; editor storage with an
+      // extra "\n" entry after every newline-terminated line). codeBlockLines
+      // normalizes all of them, so a multi-line block neither collapses into
+      // one line nor gains a blank line per source line.
       const lang = typeof prop.language === "string" ? prop.language : "";
-      const blocks = Array.isArray(prop.contents) ? prop.contents : [];
-      const lines = blocks.map((blk) => {
-        if (!isRecord(blk)) return "";
-        const inner = Array.isArray(blk.contents) ? blk.contents : [];
-        let line = "";
-        for (const seg of inner) {
-          if (isRecord(seg) && typeof seg.content === "string") line += seg.content;
-        }
-        return line;
-      });
-      // Two raw encodings exist: one stores each line as a separate outer
-      // entry (no newline chars), another packs everything into one entry with
-      // explicit "\n" segments. Joining with "\n" then trimming trailing
-      // newlines normalizes both before we add a single closing-fence break.
-      const body = lines.join("\n").replace(/\n+$/, "");
+      const body = codeBlockLines(prop.contents).join("\n");
       return `\n\`\`\`${lang}\n${body}\n\`\`\`\n`;
     }
     case "list": {
@@ -2177,6 +2256,11 @@ function childToMarkdown(child: Record<string, unknown>, ctx: Ctx): string {
       // user_card_content already degrades this into a markdown pipe table
       // ("| col | col |\n| --- | --- |\n| a | b |"), so we mirror that shape
       // for parity. Cell content is the inline render of its markdown element.
+      //
+      // Body-root tables never reach this branch: hoistMarkdownTables() lifts
+      // them to real `{ tag:'table' }` siblings before conversion. This is the
+      // fallback for markdown inside containers where the public schema cannot
+      // hold a table (e.g. column).
       const columns = Array.isArray(prop.columns) ? prop.columns : [];
       const rows = Array.isArray(prop.rows) ? prop.rows : [];
       if (columns.length === 0) return "";

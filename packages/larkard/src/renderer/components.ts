@@ -21,7 +21,7 @@ import { CHART_SPEC_ATTR } from './chart-hydrate.js';
 import { TABLE_PAGE_ATTR, TABLE_PAGER_ATTR } from './table-pager.js';
 import { HEADER_BG_LIGHT } from './assets/header.js';
 import { EMOJI_KEY_TO_NAME } from '../content/emoji/index.js';
-import { parseMarkdown } from '../adapter/index.js';
+import { codeBlockLines, parseMarkdown } from '../adapter/index.js';
 import { h } from './vnode.js';
 import {
   alignToStyle, applyOuterMargin, bgStyleToColor, boxToStyle, extractPlainText, extractText,
@@ -470,7 +470,12 @@ export function registerBuiltins(): void {
     // #18/D8：无显式 padding 时，按 header 模板收紧顶部 8px（其余三边走 CSS 12px）。
     if (!pad && ctx.bodyPaddingTop != null) style.paddingTop = ctx.bodyPaddingTop + 'px';
     const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
-    if (vGap != null) style.rowGap = verticalSpacingToPx(vGap as number | string) + 'px';
+    if (vGap != null) {
+      const gap = verticalSpacingToPx(vGap as number | string);
+      style.rowGap = gap + 'px';
+      // hr 用它把自身 margin 抵扣到真机的 max(gap,16)，见 styles.css。
+      style['--universal-card-row-gap'] = gap + 'px';
+    }
     const props: Record<string, unknown> = { className: `${CLS}-body` };
     if (Object.keys(style).length) props.style = style;
     return h('div', props, renderElements(getChildElements(el), ctx));
@@ -977,7 +982,10 @@ registerComponent('column', (el, ctx) => {
   // 纵向间距：列内元素唯一的间隔来源（flex row-gap）。缺省 8px（对齐飞书默认）。
   // 注意不要再叠加 CSS 的相邻兄弟 margin，否则间距翻倍——故 styles.css 里不给 column 子元素设 margin。
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
-  style.rowGap = (vGap != null ? verticalSpacingToPx(vGap as number | string) : 8) + 'px';
+  const rowGap = vGap != null ? verticalSpacingToPx(vGap as number | string) : 8;
+  style.rowGap = rowGap + 'px';
+  // 纵向列的 gap 会与 hr 的 margin 叠加；横排不进纵向排布，留给 CSS 重置为 0。
+  if (!horizontalDir) style['--universal-card-row-gap'] = rowGap + 'px';
   // 背景：有底色挂 --bg（CSS 给 6px 圆角；默认 padding 仍是 0，内边距须 DSL 显式写）。
   const bg = propertyBackgroundColor(p);
   if (bg) style.background = bg;
@@ -1615,7 +1623,11 @@ registerComponent('interactive_container', (el, ctx) => {
     ?? (p as { horizontalSpacing?: string }).horizontalSpacing;
   if (hGap != null) style.columnGap = horizontalSpacingToPx(hGap as number | string) + 'px';
   const vGap = p.verticalSpacingValue?.value ?? p.vertical_spacing;
-  if (vGap != null) style.rowGap = verticalSpacingToPx(vGap as number | string) + 'px';
+  if (vGap != null) {
+    const gap = verticalSpacingToPx(vGap as number | string);
+    style.rowGap = gap + 'px';
+    if (!horizontalDir) style['--universal-card-row-gap'] = gap + 'px';
+  }
   // width：见 resolveInteractiveContainerWidth（fill/缺省 → 100%，auto → auto，pixels → Npx）。
   // height：只有 pixels 生效（真机 heightValue 只认 pixels），定高时不再让 flex 压缩。
   const icHv = p.heightValue as { type?: string; value?: string | number } | undefined;
@@ -1807,7 +1819,11 @@ registerComponent('collapsible_panel', (el, ctx) => {
   contentStyle.display = 'flex';
   contentStyle.flexDirection = isRow ? 'row' : 'column';
   if (hSpacing != null) contentStyle.columnGap = horizontalSpacingToPx(hSpacing as number | string) + 'px';
-  if (vSpacing != null) contentStyle.rowGap = verticalSpacingToPx(vSpacing as number | string) + 'px';
+  if (vSpacing != null) {
+    const gap = verticalSpacingToPx(vSpacing as number | string);
+    contentStyle.rowGap = gap + 'px';
+    if (!isRow) contentStyle['--universal-card-row-gap'] = gap + 'px';
+  }
   // 主轴/交叉轴随方向互换：横排时 horizontal_align 走 justify-content，纵排时走 align-items。
   const hVal = hAlign ? H_ALIGN_MAP[hAlign] : undefined;
   const vVal = vAlign ? V_ALIGN_MAP[vAlign] : undefined;
@@ -2845,11 +2861,15 @@ registerComponent('code_span', (el) => {
 });
 
   // code_block：代码块
+  // RAW contents 有三种编码（一行一 entry / 单 entry 显式 \n / 编辑器存储的
+  // 「内容行 + 独立 \n entry」），统一由 codeBlockLines 归一。直接按 entry 拼接
+  // 会让编辑器存储形态每行之间多出空行（本次对齐真机的回归点）。
   registerComponent('code_block', (el) => {
     const p = el.property || {};
-    const lines = (p.contents || []).map((line) =>
-      (line.contents || []).map((seg) => seg.content).join(''));
-    return h('pre', { className: `${CLS}-markdown-code-block` }, h('code', {}, lines.join('\n')));
+    const lines = codeBlockLines(p.contents);
+    // 不套 <code>：浏览器给 code 的 UA monospace 字体在显式 line-height
+    // 下仍会把行盒撑到 24px（真机 22px）；<pre> 直接放文本可精确对齐 22px。
+    return h('pre', { className: `${CLS}-markdown-code-block` }, lines.join('\n'));
   });
 
   // ---- chart：图表 ----
