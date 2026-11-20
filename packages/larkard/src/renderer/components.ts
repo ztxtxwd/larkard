@@ -3011,14 +3011,17 @@ registerComponent('code_span', (el) => {
           if (c.vertical_align) tdStyle.verticalAlign = c.vertical_align;
           if (metrics.heightPx != null) tdStyle.height = `${metrics.heightPx}px`;
           // 真机 jl()/Rl()：dataType=markdown（originTag:'markdown'）的单元格
-          // 恒走 row-item-wrapper--auto，且 row-item 的 max-height 变量缺省不生效。
-          // 于是 markdown 文本换行时会把 td 撑高（行高 32px 只是最小值）；文本/
-          // number/options 才有 lines 截断，不会撑行。我们之前对 markdown 也写了
-          // max-height:32px + overflow:hidden，第二行会被裁掉、整行不增高。
+          // 恒走 row-item-wrapper--auto（overflow:auto），rowStyle 仍带
+          // maxHeight = row_max_height || row_height。所以：
+          //   - 根级 table（默认 low）：max-height 32px → 换行内容在单元格内滚动；
+          //   - 嵌在 markdown 里的 table：真机把 rowHeightValue 强制改成 auto
+          //     （max-height 124px）→ 内容少时行被撑高，超过 124px 才滚动。
+          // rawToDsl 提升 markdown 内嵌 table 时会补 row_height:'auto'，复现后者。
           const markdownCell = c.data_type === 'markdown';
-          const cellStyle: Record<string, string> = { justifyContent: alignToFlex(align) };
-          // auto 行高仍受 row_max_height 约束；固定行高的 markdown 单元格不设上限。
-          if (metrics.auto || !markdownCell) cellStyle.maxHeight = `${metrics.maxHeightPx}px`;
+          const cellStyle: Record<string, string> = {
+            justifyContent: alignToFlex(align),
+            maxHeight: `${metrics.maxHeightPx}px`,
+          };
           return h('td', {
             className: `${CLS}-table__td`,
             style: tdStyle,
