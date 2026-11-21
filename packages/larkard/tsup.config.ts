@@ -22,6 +22,8 @@ export default defineConfig({
     'palette/browser': 'src/palette/browser.ts',
     'patch/index': 'src/core/patch/index.ts',
     'state/index': 'src/core/state/index.ts',
+    'program/index': 'src/program/index.ts',
+    'program/runtime/index': 'src/program/runtime/index.ts',
     'language-server/index': 'src/language-server/index.ts',
     'language-server/server': 'src/language-server/server.ts',
     cli: 'src/cli.ts',

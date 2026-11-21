@@ -33,6 +33,8 @@ larkard                     ← core：parse / validate / lint / check / compile
 │   └── /browser            ← File/URL → RGBA 像素
 ├── larkard/patch           ← RFC 6902
 ├── larkard/state           ← 卡片内嵌 state
+├── larkard/program         ← 卡片程序协议（解释器 / 模拟器）
+│   └── /runtime            ← 程序宿主（发卡 / 回调 / 实例存储）
 ├── larkard/language-server ← LSP 核心（server 为 bin）
 └── larkard/cli             ← CLI run()
 ```
@@ -51,6 +53,8 @@ larkard                     ← core：parse / validate / lint / check / compile
 | `src/components` | TSX → DSL | props 白名单；输出必须过 schema 契约测试 |
 | `src/optimize` | 发送前视觉优化 | 不依赖 renderer，真机常量从 content 取 |
 | `src/palette` | 图片取色、色板合成、官方色物化 / 枚举回写 | 纯函数；DOM 解码只在 `palette/browser.ts`；官方色从 content 取 |
+| `src/program` | 卡片程序协议：表达式、模板、动作、模拟器 | 纯计算，不依赖 renderer / state；`escapeMarkdown` 等真源从 schema 取 |
+| `src/program/runtime` | 程序宿主：发卡、回调、状态封印、实例存储 | Node；依赖 program + state，不依赖飞书 SDK / 长连接 |
 | `src/cli.ts` / `src/language-server` | 工具入口 | 只消费 core 公共 API |
 
 ## 设计约束
@@ -76,6 +80,8 @@ larkard                     ← core：parse / validate / lint / check / compile
 | 新图标 / emoji / 字号 / 间距 | `src/content` |
 | 新渲染组件 | `src/renderer/components.ts` |
 | 图片取色 / 换色 / 官方色映射 | `src/palette` |
+| 卡片程序协议：表达式 / 模板 / 动作 / 模拟器 | `src/program` |
+| 程序宿主：发卡 / 回调 / 实例存储 | `src/program/runtime` |
 | 浏览器交互 | `src/renderer/browser.ts` / `dom.ts` |
 | 编辑器能力 | `src/language-server` |
 | 终端能力 | `src/cli.ts` |

@@ -106,6 +106,16 @@
       "import": "./dist/state/index.js",
       "require": "./dist/state/index.cjs"
     },
+    "./program": {
+      "types": "./dist/program/index.d.ts",
+      "import": "./dist/program/index.js",
+      "require": "./dist/program/index.cjs"
+    },
+    "./program/runtime": {
+      "types": "./dist/program/runtime/index.d.ts",
+      "import": "./dist/program/runtime/index.js",
+      "require": "./dist/program/runtime/index.cjs"
+    },
     "./language-server": {
       "types": "./dist/language-server/index.d.ts",
       "import": "./dist/language-server/index.js",

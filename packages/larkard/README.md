@@ -29,7 +29,9 @@ npm i larkard
 | `larkard/palette` | 图片取色、任意卡片换色、官方色物化 / 枚举回写 | Universal |
 | `larkard/palette/browser` | File / URL → RGBA 像素（`createImageBitmap` + Canvas） | Browser |
 | `larkard/patch` | RFC 6902 JSON Patch | Universal |
-| `larkard/state` | 把卡片 state 封印进空分栏 URL | Universal |
+| `larkard/state` | 把卡片 state 封印进空分栏 URL | Node |
+| `larkard/program` | 卡片程序协议：编译、渲染、动作、模拟器 | Universal |
+| `larkard/program/runtime` | 卡片程序宿主：发卡、回调、状态封印与实例存储 | Node |
 | `larkard/language-server` | LSP 核心（stdio 服务器为 `larkard-language-server` bin） | Node / WebWorker |
 | `larkard/cli` | CLI 的 `run(argv)` | Node |
 
@@ -163,6 +165,32 @@ const next = applyPatch(dsl, parsePatch(params.json_patch));
 const { card, errors } = checkCard(next);
 ```
 
+## 卡片程序
+
+`larkard/program` 是「卡片即程序」协议的通用解释器：卡片文档在 JSON 2.0 上增加
+`$state` / `$actions`，渲染时展开 `{{ }}`、`$if` / `$for`，点击时执行动作。
+
+```ts
+import { compileProgram, createSimulator, renderProgram } from 'larkard/program';
+import { composeCard } from 'larkard/program/runtime';
+
+const { program, diagnostics } = compileProgram(doc);
+if (!program) throw new Error(diagnostics.map((d) => `${d.path}: ${d.message}`).join('\n'));
+
+const { card } = renderProgram(program, program.initialState, { rev: 0 });
+const sealed = composeCard(card, doc, { rev: 0, state: program.initialState });
+```
+
+宿主要处理点击时用 `larkard/program/runtime` 的 `CardRuntime`：
+
+- `handleCallback()` 返回飞书回调响应（toast + 新卡），原样交给长连接 / Webhook；
+- 不是本协议的卡片返回 `undefined`，宿主应继续其它卡片处理；
+- bot 这类可能不在消息所在会话里的宿主请配置 `store`（按 `message_id` 持久化程序和状态），
+  冷启动就不用依赖平台读回。
+
+协议见 [`docs/program-protocol.md`](../../docs/program-protocol.md)，平台事实与接入边界见
+[`docs/program-runtime.md`](../../docs/program-runtime.md)。
+
 ## CLI
 
 ```bash
@@ -201,6 +229,8 @@ larkard-language-server
 | `@open-feishu-card/compiler` | `larkard`（`sanitize` / `compile`） |
 | `@open-feishu-card/patch` | `larkard/patch` |
 | `@open-feishu-card/store` | `larkard/state` |
+| `@lark-interactive/core` | `larkard/program` |
+| `@lark-interactive/runtime` | `larkard/program/runtime` |
 | `@open-feishu-card/schema` | `larkard/schema` |
 | `@open-feishu-card/schema/icon-catalog` | `larkard/icons`（`ICON_CATALOG` / `ICON_TOKENS`） |
 | `@open-feishu-card/adapter` | `larkard/adapter` |

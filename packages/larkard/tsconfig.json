@@ -22,7 +22,9 @@
       "larkard/palette": ["./src/palette/index.ts"],
       "larkard/palette/browser": ["./src/palette/browser.ts"],
       "larkard/patch": ["./src/core/patch/index.ts"],
-      "larkard/store": ["./src/core/store/index.ts"],
+      "larkard/state": ["./src/core/state/index.ts"],
+      "larkard/program": ["./src/program/index.ts"],
+      "larkard/program/runtime": ["./src/program/runtime/index.ts"],
       "larkard/language-server": ["./src/language-server/index.ts"]
     }
   },

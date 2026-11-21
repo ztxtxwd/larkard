@@ -1,0 +1,48 @@
+{
+  "$v": 1,
+  "schema": "2.0",
+  "config": { "update_multi": true },
+  "header": {
+    "title": { "tag": "plain_text", "content": "{{ title }}" },
+    "subtitle": { "tag": "plain_text", "content": "{{ len(participants) >= limit ? '名额已满' : '报名中' }}" },
+    "template": "{{ len(participants) >= limit ? 'grey' : 'blue' }}"
+  },
+  "body": {
+    "elements": [
+      { "tag": "markdown", "content": "已报名 **{{ len(participants) }}** / {{ limit }} 人" },
+      {
+        "tag": "person_list",
+        "$if": "len(participants) > 0",
+        "persons": [{ "$for": "id in participants", "id": "{{ id }}" }],
+        "size": "small"
+      },
+      {
+        "tag": "button",
+        "type": "primary",
+        "text": { "tag": "plain_text", "content": "报名参与" },
+        "disabled": "{{ len(participants) >= limit }}",
+        "$on": "join"
+      },
+      {
+        "tag": "button",
+        "text": { "tag": "plain_text", "content": "取消报名" },
+        "$if": "len(participants) > 0",
+        "$on": "quit"
+      }
+    ]
+  },
+  "$state": { "title": "周五羽毛球", "limit": 3, "participants": [] },
+  "$actions": {
+    "join": [
+      { "assert": "!includes(participants, $user.open_id)", "toast": "你已经报过名了" },
+      { "assert": "len(participants) < limit", "toast": "名额已满" },
+      { "push": "participants", "value": "$user.open_id" },
+      { "toast": "报名成功，当前第 {{ len(participants) }} 位", "type": "success" }
+    ],
+    "quit": [
+      { "assert": "includes(participants, $user.open_id)", "toast": "你还没有报名" },
+      { "remove": "participants", "value": "$user.open_id" },
+      { "toast": "已取消报名" }
+    ]
+  }
+}
