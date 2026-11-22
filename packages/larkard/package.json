@@ -1,6 +1,6 @@
 {
   "name": "larkard",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "飞书卡片 JSON 2.0 工具链：解析、校验、发送前检查、RAW ↔ DSL、渲染、TSX、CLI 与 LSP",
   "type": "module",
   "main": "./dist/index.cjs",
