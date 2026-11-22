@@ -1903,9 +1903,10 @@ registerComponent('button', (el, ctx) => {
   // 其余（未写 width）→ 宽屏自适应、窄屏撑满
   const auto = !block && !pxWidth;
   // 尺寸类：未写 size / 无法识别的值不写类（基础样式即 medium）。
-  // text 纯文字族暂不参与：它的内边距/行高是真机另一套（ud__button--text 覆盖 padding），
-  // 没有逐档实测前不跟着改，避免把当前几何带偏。
-  const sizeCls = p.size && BUTTON_FONT_SIZE[btnSize] && !textFamily
+  // text 纯文字族也参与：真机按钮的 font_size / line_height 对 text 族同样按 size 分档，
+  // 只有 padding 例外——ud__button--text 固定 2px 4px、min-height/height 为初始值。
+  // 这部分覆盖放在 styles.css 的 text 族规则里（靠后且同特异度，盖掉尺寸类的 padding/min-height）。
+  const sizeCls = p.size && BUTTON_FONT_SIZE[btnSize]
     ? ` ${CLS}-button--${btnSize}`
     : '';
   const base = `${CLS}-button ${CLS}-button--${type}`

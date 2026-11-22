@@ -630,6 +630,29 @@ test('button: size → 盒子高度 24/28/32/40 + 字号 12/12/14/16', () => {
   assert.match(ALL_CSS, /\.universal-card-button--large\s*\{[^}]*min-height: 40px[^}]*font-size: 16px[^}]*line-height: 24px/);
 });
 
+test('button: text 族参与 size 分档，但 padding/高度走 ud__button--text', () => {
+  const html = renderDslToString({
+    body: {
+      elements: [{
+        tag: 'button',
+        type: 'text',
+        size: 'small',
+        text: { content: '取消我的选择' },
+        behaviors: [{ type: 'open_url', default_url: 'https://open.feishu.cn' }],
+      }],
+    },
+  });
+  // 字号/行高来自 size 分档；撑满 + 左对齐
+  assert.match(html, /universal-card-button--text/);
+  assert.match(html, /universal-card-button--small/);
+  assert.match(html, /universal-card-button--block/);
+  // 真机 ud__button--text：固定 2px 4px、无最小宽度/高度、无描边
+  assert.match(ALL_CSS, /\.universal-card-button--text,[^{]*\{[^}]*border: none[^}]*padding: 2px 4px/);
+  assert.match(ALL_CSS, /\.universal-card-button--text,[^{]*\{[^}]*min-height: unset/);
+  // 尺寸类的字号/行高对 text 族仍生效
+  assert.match(ALL_CSS, /\.universal-card-button--small\s*\{[^}]*font-size: 12px[^}]*line-height: 20px/);
+});
+
 test('button: 未写 size 不产生尺寸类（基础样式即 medium）', () => {
   const html = renderDslToString({
     body: {

@@ -648,8 +648,8 @@
    真机卡片外壳 `.universal-card-button .ud__button{height:auto}`，所以盒子高度由
    padding + line-height + 1px 描边决定：tiny/xs 24、small/sm 28、medium/md 32、large/lg 40。
    未写 size / medium 走上面的基础值（视觉与 medium 一致）。
-   仅描边族 / 实心族参与：text 纯文字族在下面单独覆盖 padding（真机 ud__button--text），
-   几何另有实测，暂不随 size 变。 */
+   text 纯文字族也吃这里的 font-size / line-height（真机对 text 族照常下发），
+   但 padding 与高度由下面的 text 族规则覆盖（真机 ud__button--text：固定 2px 4px、无最小高度）。 */
 .universal-card-button--tiny { min-height: 24px; padding: 1px 7px; font-size: 12px; line-height: 20px; }
 .universal-card-button--small { min-height: 28px; padding: 3px 7px; font-size: 12px; line-height: 20px; }
 .universal-card-button--medium { min-height: 32px; padding: 4px 12px; font-size: 14px; line-height: 22px; }
@@ -678,10 +678,12 @@
 .universal-card-button--text,
 .universal-card-button--primary_text,
 .universal-card-button--danger_text {
-  border-color: transparent; background: transparent; padding: 4px 8px;
+  /* 真机 ud__button--text：height/min-width 初始值、border:none、padding:2px 4px。
+     高度因此只由 line-height 决定（small=20+4=24px），不再被描边族的 min-height 撑大。 */
+  border: none; background: transparent; padding: 2px 4px;
   justify-content: flex-start;
-  /* 真机 text 族按钮不设最小宽度 */
   min-width: unset;
+  min-height: unset;
 }
 .universal-card-button--text { color: #1f2329; }
 .universal-card-button--primary_text { color: #1456f0; }
