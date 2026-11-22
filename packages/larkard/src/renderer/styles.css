@@ -853,8 +853,16 @@
 }
 /* 真机：cursor:pointer 与 hover 底只在 __action 层；纯展示容器（无 actions/url）保持默认箭头 */
 .universal-card-interactive-container--action { cursor: pointer; }
+/* 真机 hover 底 = 当前底色做 HSL lighten 5%（dark 主题 darken 5%，见客户端 useColors）。
+   这里用同色系叠加近似：自定义底色必须保留，只叠一层 5% 亮/暗层。
+   不能像以前那样用固定灰覆盖 background-color——深色按钮 hover 会直接变透明，
+   白字跟着消失，看起来整块按钮都没了。 */
 .universal-card-interactive-container--action:not(.universal-card-interactive-container--disabled):hover {
-  background-color: rgba(31, 35, 41, 0.05);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05));
+}
+.universal-card-root.theme-dark
+  .universal-card-interactive-container--action:not(.universal-card-interactive-container--disabled):hover {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05));
 }
 .universal-card-interactive-container--bordered { border: 1px solid var(--line-border-component); }
 /* disabled：去掉手型指针与 hover 灰底，外观退回普通块 */
