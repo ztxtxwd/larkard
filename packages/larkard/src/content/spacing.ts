@@ -5,6 +5,10 @@
  * - 纵向 vertical：{ default: 8, medium: 12, large: 16 }，没有 small / extra_large
  * - 横向 horizontal：{ small: 4, default: 8, large: 12 }，没有 medium / extra_large
  *
+ * 注意：纵向的 `default: 8` 是**容器子项**的缺省间距。正文 `body` 省略
+ * `vertical_spacing` 时客户端用 12px（`.universal-card-body { row-gap: 12px }`），
+ * 见 `BODY_DEFAULT_VERTICAL_SPACING_PX`。
+ *
  * 来源：客户端反推 #16/D6。renderer、optimize、store、core 的 device 规则
  * 都从这里取值，避免同一条真机规则各写一份数字。
  */
@@ -25,6 +29,14 @@ export const HORIZONTAL_SPACING_PX: Record<string, number> = {
 
 /** 未写 / 未知值时的缺省间距。 */
 export const DEFAULT_SPACING_PX = 8;
+
+/**
+ * 正文 `body` 省略 `vertical_spacing` 时的默认纵向间距。
+ *
+ * 来源：客户端样式 `.universal-card-body { row-gap: 12px }`（旧间距模式 16px）。
+ * 8px 只适用于 `column_set` / 嵌套容器，不能拿来兜底 body。
+ */
+export const BODY_DEFAULT_VERTICAL_SPACING_PX = 12;
 
 export type SpacingDirection = 'horizontal' | 'vertical';
 

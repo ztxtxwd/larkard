@@ -9,14 +9,15 @@
  * {
  *   "tag": "column_set",
  *   "element_id": "card_state",
- *   "margin": "-8px 0 0 0",
+ *   "margin": "-12px 0 0 0",
  *   "action": { "multi_url": { "url": "lark://msgcard/unsupported_action#s1...." } },
  *   "columns": [{ "tag": "column", "width": "auto", "elements": [] }]
  * }
  * ```
  *
  * `margin` 的上外边距 = 正文纵向间距的负数（正文纵向排列时才有；横向正文不写）。
- * 间距按客户端纵向枚举算：default 8 / medium 12 / large 16。
+ * 正文省略或回显 `default` 时按客户端 body 默认 12px；显式值按纵向枚举
+ * （medium 12 / large 16）或 px 计算。注意 8px 只是 column_set / 嵌套容器的缺省。
  *
  * 回读请走 `raw_card_content`（`user_card_content` 会丢掉 URL）。
  */

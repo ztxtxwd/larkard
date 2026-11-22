@@ -101,7 +101,8 @@ describe('seal / read / unseal', () => {
     const cols = host!.columns as Array<Record<string, unknown>>;
     assert.equal(cols.length, 1);
     assert.deepEqual(cols[0]!.elements, []);
-    assert.equal(host!.margin, '-8px 0 0 0');
+    // 未写 vertical_spacing 时按客户端 body 默认 12px 抵消（容器缺省 8px 不适用）。
+    assert.equal(host!.margin, '-12px 0 0 0');
 
     assert.deepEqual(readCardState(card), state);
 
@@ -117,7 +118,13 @@ describe('seal / read / unseal', () => {
     sealCardState(card, { n: 1 });
     assert.equal(findStateHost(card)?.margin, '-12px 0 0 0');
 
-    // 客户端纵向枚举 {default:8, medium:12, large:16}；横向那套 {small,default,large} 不能用。
+    // 回显 "default" 时用 body 默认 12px（容器子项的 default 才是 8px）。
+    const defaultToken = baseCard();
+    (defaultToken.body as { vertical_spacing: string }).vertical_spacing = 'default';
+    sealCardState(defaultToken, { n: 1 });
+    assert.equal(findStateHost(defaultToken)?.margin, '-12px 0 0 0');
+
+    // 纵向枚举 {default:8, medium:12, large:16}（容器口径）；横向那套 {small,default,large} 不能用。
     const named = baseCard();
     (named.body as { vertical_spacing: string }).vertical_spacing = 'large';
     sealCardState(named, { n: 1 });
@@ -128,7 +135,7 @@ describe('seal / read / unseal', () => {
     sealCardState(medium, { n: 1 });
     assert.equal(findStateHost(medium)?.margin, '-12px 0 0 0');
 
-    // small / extra_large 不是纵向 token，客户端回落 default(8)。
+    // small / extra_large 不在当前纵向枚举里，未知值沿用 8px 兜底。
     const unknown = baseCard();
     (unknown.body as { vertical_spacing: string }).vertical_spacing = 'extra_large';
     sealCardState(unknown, { n: 1 });

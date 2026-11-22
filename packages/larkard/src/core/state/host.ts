@@ -1,4 +1,8 @@
-import { DEFAULT_SPACING_PX, parseSpacingPx } from '../../content/spacing.js';
+import {
+  BODY_DEFAULT_VERTICAL_SPACING_PX,
+  DEFAULT_SPACING_PX,
+  parseSpacingPx,
+} from '../../content/spacing.js';
 import {
   decodeStateUrl,
   encodeStateUrl,
@@ -136,12 +140,16 @@ function rawVerticalSpacing(property: Record<string, unknown> | undefined): numb
 /**
  * 正文纵向间距。DSL 写在 body.vertical_spacing；RAW 写在 body.property.verticalSpacingValue
  * （{type:'pixels', value:12}）或 body.property.vertical_spacing。
+ *
+ * 省略或回显 `default` 时用客户端 body 的默认 12px（`.universal-card-body { row-gap: 12px }`）。
+ * 不能用 `DEFAULT_SPACING_PX`(8) 兜底：那是 `column_set` / 嵌套容器的默认间距。
  */
 function bodyVerticalSpacingPx(card: Record<string, unknown>): number {
   const body = isRecord(card.body) ? card.body : undefined;
-  if (!body) return DEFAULT_SPACING_PX;
+  if (!body) return BODY_DEFAULT_VERTICAL_SPACING_PX;
   const property = isRecord(body.property) ? body.property : undefined;
   const raw = body.vertical_spacing ?? rawVerticalSpacing(property);
+  if (raw == null || raw === 'default') return BODY_DEFAULT_VERTICAL_SPACING_PX;
   return spacingPx(raw as number | string | undefined);
 }
 
