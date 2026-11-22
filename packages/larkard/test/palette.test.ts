@@ -48,6 +48,35 @@ function twoTonePixels(
   return { data, width, height };
 }
 
+function bandedPixels(
+  width: number,
+  height: number,
+  bands: Array<{ color: Rgba; fraction: number }>,
+): PixelData {
+  const data = new Uint8ClampedArray(width * height * 4);
+  const edges: number[] = [];
+  let acc = 0;
+  for (const band of bands) {
+    acc += band.fraction;
+    edges.push(width * acc);
+  }
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const index = Math.min(
+        bands.length - 1,
+        Math.max(0, edges.findIndex((edge) => x < edge)),
+      );
+      const color = bands[index]!.color;
+      const offset = (y * width + x) * 4;
+      data[offset] = color.r;
+      data[offset + 1] = color.g;
+      data[offset + 2] = color.b;
+      data[offset + 3] = 255;
+    }
+  }
+  return { data, width, height };
+}
+
 const BLUE = parseColor('rgba(51,102,255,1)')!;
 const CREAM = parseColor('rgba(255,248,238,1)')!;
 
@@ -375,6 +404,27 @@ describe('近中性图片', () => {
     // 源卡高亮栏是高饱和蓝；图片只是低彩度香槟金，不能合成成焦橙。
     assert.ok(column.c <= 0.065, `column chroma=${column.c}`);
     assert.ok(result.theme.preview.some((item) => item.label === '图片强调色'));
+  });
+
+  it('同一色相组里面积更大的车漆色决定色相，不被小红高光带偏', () => {
+    const pixels = bandedPixels(100, 20, [
+      { color: oklchToRgba({ l: 0.35, c: 0.005, h: 313 }), fraction: 0.7 },
+      { color: oklchToRgba({ l: 0.54, c: 0.005, h: 66 }), fraction: 0.2 },
+      { color: oklchToRgba({ l: 0.75, c: 0.011, h: 38 }), fraction: 0.1 },
+    ]);
+    const result = recolorCardWithImage(blueLightCard(), pixels);
+    assert.equal(result.image.accents.length, 1);
+    const accentHue = result.image.accents[0]!.h;
+    // 落在车漆的金棕色区间，而不是小红高光的 38°。
+    assert.ok(accentHue > 50 && accentHue < 75, `accent hue=${accentHue}`);
+
+    const canvas = rgbaToOklch(parseColor(colorOf(result.card, 'cv_canvas'))!);
+    // 中性面用图片的整体暖色，但彩度必须压得很低，不能变成粉色背景。
+    assert.ok(canvas.h > 25 && canvas.h < 75, `canvas hue=${canvas.h}`);
+    assert.ok(canvas.c <= 0.007, `canvas chroma=${canvas.c}`);
+
+    const column = rgbaToOklch(parseColor(colorOf(result.card, 'cv_column_1'))!);
+    assert.ok(column.h > 55 && column.h < 75, `column hue=${column.h}`);
   });
 
   it('没有可见色相的灰图不会合成彩色表面', () => {

@@ -91,14 +91,14 @@ const ACCENT_MIN_WEIGHT = 0.008;
  */
 export const ACHROMATIC_CHROMA = 0.01;
 /**
- * 没有高彩度强调色时，从“相对最彩”的簇里找一个色相提示。
- * 香槟金车身这类 c≈0.01 的主体色够不到 `ACCENT_MIN_CHROMA`，但它的色相
- * 仍然比暗部色偏可信；用它总比用全局中性色的噪声色相好。
+ * 没有高彩度强调色时，从低彩度主体色里找色相提示。
+ * 香槟金车身这类 c≈0.005~0.01 的主体色够不到 `ACCENT_MIN_CHROMA`；
+ * 但一整个色相组（车身高光 + 暗部）合起来仍然比背景噪声可信。
  */
-const SUBTLE_ACCENT_MIN_CHROMA = 0.008;
+const SUBTLE_ACCENT_MIN_CHROMA = 0.004;
 const SUBTLE_ACCENT_MIN_WEIGHT = 0.01;
-/** 中性色本身已经可见时，只有和它明显不同色相的低彩度簇才算强调色。 */
-const SUBTLE_ACCENT_HUE_DISTANCE = 25;
+/** 同一个色相组内相邻簇的最大色相间隔。 */
+const SUBTLE_ACCENT_HUE_GROUP = 30;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
@@ -269,15 +269,18 @@ function medianLightness(clusters: readonly PaletteCluster[]): number {
  * 挑强调色色相。
  *
  * 优先高彩度、面积够的簇（最多 2 个、色相至少差 30°）。一个都没有时，退而求
- * 其次：找相对中性色明显更彩、面积不小的簇，只取最彩的一个；如果中性色
- * 本身已经有可见色偏，还要求色相明显不同，避免把白平衡噪声当成强调色。
- * 这条兜底专门处理“画面主体有点颜色、但整体很灰”的照片——不兜底的话，
- * 合成阶段只能拿中性色的噪声色相，整张卡就会染上一层看不见的色偏。
+ * 其次，处理“画面主体有点颜色、但整体很灰”的照片：
+ *
+ * 1. 把低彩度簇按色相归组（相邻 < 30° 视为同一片颜色），而不是只看单个
+ *    最彩的簇——单个高光点可能是一小块偏红的反光，不代表主体；
+ * 2. 只有组内最彩的簇达到 `ACHROMATIC_CHROMA` 才算“看得见的颜色”；
+ * 3. 取最彩的一组，再取组内面积最大的簇的色相：香槟金车身高光（h≈38°）
+ *    和车漆暗部（h≈66°）会是同一组，面积更大的车漆决定最终色相，
+ *    不会因为高光更彩就把整张卡染成红棕色。
+ *
+ * 不兜底的话，合成阶段只能拿中性色的噪声色相，整张卡会染上一层看不见的色偏。
  */
-function pickAccentHues(
-  clusters: readonly PaletteCluster[],
-  neutral: Oklch,
-): Oklch[] {
+function pickAccentHues(clusters: readonly PaletteCluster[]): Oklch[] {
   const strong = clusters
     .filter((cluster) => cluster.oklch.c >= ACCENT_MIN_CHROMA && cluster.weight >= ACCENT_MIN_WEIGHT)
     .sort((a, b) =>
@@ -293,21 +296,55 @@ function pickAccentHues(
     .map((cluster) => cluster.oklch);
   if (strong.length > 0) return strong;
 
-  const minChroma = Math.max(SUBTLE_ACCENT_MIN_CHROMA, neutral.c * 1.5);
-  const subtle = clusters
+  const candidates = clusters
     .filter((cluster) => cluster.weight >= SUBTLE_ACCENT_MIN_WEIGHT)
-    .filter((cluster) => cluster.oklch.c >= minChroma)
-    // 中性色自己有可见色偏时，只有明显换色相的簇才算强调色；否则同色相只是
-    // 噪声/白平衡，不能把它当成另一种颜色。
-    .filter((cluster) => neutral.c < ACHROMATIC_CHROMA
-      || hueDistance(cluster.oklch.h, neutral.h) >= SUBTLE_ACCENT_HUE_DISTANCE)
-    .sort((a, b) =>
-      b.oklch.c - a.oklch.c
-      || b.weight - a.weight
-      || b.oklch.l - a.oklch.l
-      || a.oklch.h - b.oklch.h)[0];
+    .filter((cluster) => cluster.oklch.c >= SUBTLE_ACCENT_MIN_CHROMA)
+    .sort((a, b) => a.oklch.h - b.oklch.h || b.weight - a.weight);
+  if (candidates.length === 0) return [];
 
-  return subtle ? [subtle.oklch] : [];
+  // 在最大色相空隙处断开，避免 0°/360° 跨圈把红和品红错误合并。
+  let start = 0;
+  let largestGap = -1;
+  for (let i = 0; i < candidates.length; i += 1) {
+    const next = candidates[(i + 1) % candidates.length]!;
+    const gap = hueDistance(candidates[i]!.oklch.h, next.oklch.h);
+    if (gap > largestGap) {
+      largestGap = gap;
+      start = (i + 1) % candidates.length;
+    }
+  }
+  const ordered = [...candidates.slice(start), ...candidates.slice(0, start)];
+
+  const groups: PaletteCluster[][] = [];
+  for (const cluster of ordered) {
+    const group = groups[groups.length - 1];
+    const previous = group?.[group.length - 1];
+    if (group && previous
+      && hueDistance(previous.oklch.h, cluster.oklch.h) < SUBTLE_ACCENT_HUE_GROUP) {
+      group.push(cluster);
+    } else {
+      groups.push([cluster]);
+    }
+  }
+
+  const scored = groups.map((group) => {
+    const maxChroma = Math.max(...group.map((cluster) => cluster.oklch.c));
+    const weight = group.reduce((sum, cluster) => sum + cluster.weight, 0);
+    const largest = [...group].sort((a, b) =>
+      b.weight - a.weight
+      || b.oklch.c - a.oklch.c
+      || b.oklch.l - a.oklch.l)[0]!;
+    return { maxChroma, weight, largest };
+  });
+  scored.sort((a, b) =>
+    b.maxChroma - a.maxChroma
+    || b.weight - a.weight
+    || b.largest.oklch.c - a.largest.oklch.c
+    || a.largest.oklch.h - b.largest.oklch.h);
+
+  const best = scored[0]!;
+  if (best.maxChroma < ACHROMATIC_CHROMA) return [];
+  return [best.largest.oklch];
 }
 
 /**
@@ -407,7 +444,7 @@ export function extractImagePalette(
     { l: 0, a: 0, b: 0 },
   );
   const neutral = oklabToOklch(neutralLab);
-  const accents = pickAccentHues(clusters, neutral);
+  const accents = pickAccentHues(clusters);
 
   const medianL = medianLightness(clusters);
   return {

@@ -136,6 +136,9 @@ function neutralChromaFor(
   max: number,
 ): number {
   if (!imageHasColor(image)) return Math.min(sourceChroma, 0.004);
+  // 图片中性色自己没有可见色相时，中性面/文字只带一点点强调色的氛围。
+  // 不能把源卡原有的彩度整个搬过来：一张香槟金照片会把浅蓝底卡染成粉色。
+  if (image.neutral.c < ACHROMATIC_CHROMA) return Math.min(sourceChroma, 0.006);
   return clamp(sourceChroma, min, max);
 }
 
@@ -199,7 +202,7 @@ function mapSurface(
   if (role === 'icon_surface') {
     return oklchToRgba({
       l: polarity === 'light' ? 0.96 : 0.30,
-      c: imageHasColor(image) ? clamp(s.c, 0.004, 0.02) : Math.min(s.c, 0.004),
+      c: neutralChromaFor(s.c, image, 0.004, 0.02),
       h: neutralHueFor(image),
     }, source.a);
   }
