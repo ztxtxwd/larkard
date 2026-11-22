@@ -23,7 +23,7 @@ import {
   type Oklch,
   type Rgba,
 } from './color.js';
-import type { ImagePalette } from './extract.js';
+import { ACHROMATIC_CHROMA, type ImagePalette } from './extract.js';
 import {
   normalizeTokenName,
   type CardColorInventory,
@@ -111,14 +111,22 @@ function accentHues(image: ImagePalette): number[] {
   return image.accents.map((accent) => accent.h);
 }
 
-/** 图片本身没有彩度时不要凭空造色相；否则灰图会得到一层很淡的红色。 */
+/**
+ * 中性表面 / 文字该用哪个色相。
+ *
+ * 中性色自己的彩度低到人眼看不出色相时（照片暗部常见的 0.004~0.008 色偏），
+ * 不能拿它染色；改用图片的强调色色相（例如香槟金车身的暖色），让整张卡
+ * 跟主体的颜色走，而不是跟背景噪声走。两者都没有就返回 0，此时彩度会被
+ * 压到 0.004 以下，实际仍是灰色。
+ */
 function neutralHueFor(image: ImagePalette): number {
-  return image.neutral.c < 0.002 ? 0 : image.neutral.h;
+  if (image.neutral.c >= ACHROMATIC_CHROMA) return image.neutral.h;
+  return image.accents[0]?.h ?? 0;
 }
 
 /** 灰图（没有强调色、中性色也几乎无彩度）不应该被合成出彩色表面。 */
 function imageHasColor(image: ImagePalette): boolean {
-  return image.accents.length > 0 || image.neutral.c >= 0.004;
+  return image.accents.length > 0 || image.neutral.c >= ACHROMATIC_CHROMA;
 }
 
 function neutralChromaFor(
@@ -127,8 +135,21 @@ function neutralChromaFor(
   min: number,
   max: number,
 ): number {
-  if (image.neutral.c < 0.002) return Math.min(sourceChroma, 0.004);
+  if (!imageHasColor(image)) return Math.min(sourceChroma, 0.004);
   return clamp(sourceChroma, min, max);
+}
+
+/**
+ * 图片强调色能支撑的最高彩度。
+ *
+ * 源卡可能本来是高饱和品牌色（蓝底卡 c≈0.2）；如果照搬源卡彩度，一张
+ * 香槟金照片会被合成成焦橙色。这里按图片强调色自身彩度封顶，只保留一个
+ * 可见的下限：图片越淡，卡片上的彩色块也越淡。
+ */
+function accentChromaCap(image: ImagePalette, maxAccentChroma: number): number {
+  const accent = image.accents[0];
+  if (!accent) return maxAccentChroma;
+  return clamp(accent.c * 2, 0.06, maxAccentChroma);
 }
 
 /** 从图片生成目标 canvas：保留卡原有的“彩/灰”倾向，只换色相与明度锚点。 */
@@ -147,7 +168,7 @@ function makeTargetCanvas(
     ? nearestHue(accentHues(image), sc.h, image.neutral.h)
     : neutralHueFor(image);
   const c = chromatic
-    ? clamp(sc.c * 0.75, 0.06, 0.14)
+    ? Math.min(clamp(sc.c * 0.75, 0.06, 0.14), accentChromaCap(image, 0.14))
     : neutralChromaFor(sc.c, image, 0.006, 0.025);
   return oklchToRgba({ l, c, h }, source.a);
 }
@@ -178,8 +199,8 @@ function mapSurface(
   if (role === 'icon_surface') {
     return oklchToRgba({
       l: polarity === 'light' ? 0.96 : 0.30,
-      c: clamp(s.c, 0.004, 0.02),
-      h: image.neutral.h,
+      c: imageHasColor(image) ? clamp(s.c, 0.004, 0.02) : Math.min(s.c, 0.004),
+      h: neutralHueFor(image),
     }, source.a);
   }
 
@@ -194,7 +215,10 @@ function mapSurface(
     ? nearestHue(accentHues(image), s.h, image.neutral.h)
     : neutralHueFor(image);
   const c = chromatic
-    ? Math.max(surfaceChroma(s, image, maxAccentChroma), role === 'highlight' ? 0.06 : 0)
+    ? Math.min(
+        Math.max(surfaceChroma(s, image, maxAccentChroma), role === 'highlight' ? 0.06 : 0),
+        accentChromaCap(image, maxAccentChroma),
+      )
     : imageHasColor(image)
       ? surfaceChroma(s, image, maxAccentChroma)
       : neutralChromaFor(s.c, image, 0.005, 0.03);
@@ -222,20 +246,28 @@ function mapAccent(
     const l = polarity === 'light'
       ? clamp(s.l, 0.10, 0.86)
       : clamp(s.l * 0.5 + 0.45, 0.45, 0.90);
-    return oklchToRgba({ l, c: Math.min(s.c, 0.02), h: neutralHueFor(image) }, source.a);
+    return oklchToRgba({
+      l,
+      c: imageHasColor(image) ? Math.min(s.c, 0.02) : Math.min(s.c, 0.004),
+      h: neutralHueFor(image),
+    }, source.a);
   }
 
   if (accents.length === 0) {
     // 灰度图片：不凭空造彩色，强调色收成中性深/浅色。
     return oklchToRgba({
       l: polarity === 'light' ? 0.34 : 0.70,
-      c: Math.min(s.c, 0.04),
+      // 没有强调色不代表要把源卡的高饱和 accent 留在 0.04 的彩度上；
+      // 灰图应该是中性深/浅色，否则 hue=0 会得到一层暗红。
+      c: imageHasColor(image) ? Math.min(s.c, 0.04) : Math.min(s.c, 0.004),
       h: neutralHueFor(image),
     }, source.a);
   }
 
   const accent = accents[index % accents.length]!;
-  const c = clamp(Math.max(s.c, accent.c), 0.06, maxAccentChroma);
+  const cap = accentChromaCap(image, maxAccentChroma);
+  // 源卡 accent 可能很鲜艳；图片强调色很淡时按图片封顶，避免橙得发焦。
+  const c = Math.min(clamp(Math.max(s.c, accent.c), 0.06, maxAccentChroma), cap);
   const l = polarity === 'light'
     ? clamp(s.l, 0.32, 0.84)
     : clamp(s.l * 0.4 + 0.5, 0.45, 0.82);
@@ -352,7 +384,10 @@ function mapAccentText(
   const direction = contrastDirection(effective);
   const accent = image.accents[0]!;
   const baseL = direction === 'lighter' ? 0.76 : 0.48;
-  const chroma = clamp(Math.max(s.c, accent.c), 0.06, 0.16);
+  const chroma = Math.min(
+    clamp(Math.max(s.c, accent.c), 0.06, 0.16),
+    accentChromaCap(image, 0.16),
+  );
   let foreground = oklchToRgba({ l: baseL, c: chroma, h: accent.h }, source.a);
   foreground = ensureContrast(foreground, effective, minTextContrast, direction);
   return foreground;
@@ -561,11 +596,17 @@ function buildPreview(
     add(role, ROLE_LABELS[role] ?? token.name, pair.light_mode);
   }
 
-  for (const cluster of image.clusters.slice(0, 6)) {
-    add('unknown', '图片主色', formatRgba(cluster.rgba));
-    if (preview.length >= 8) break;
+  // 先给图片的强调色：这才是用户从照片里认出来的“那个颜色”（例：香槟金车身）。
+  // 再看面积主色；只列一个主色时，暗背景压过主体会让人误以为取色取错了。
+  const accentLabels = ['图片强调色', '图片次强调色'];
+  for (const [index, accent] of image.accents.slice(0, 2).entries()) {
+    add('unknown', accentLabels[index] ?? '图片强调色', formatRgba(oklchToRgba(accent)));
   }
-  return preview.slice(0, 8);
+  const clusterLabels = ['图片主色', '图片色 2', '图片色 3'];
+  for (const [index, cluster] of image.clusters.slice(0, 3).entries()) {
+    add('unknown', clusterLabels[index] ?? '图片色', formatRgba(cluster.rgba));
+  }
+  return preview.slice(0, 10);
 }
 
 /**
