@@ -313,10 +313,85 @@ describe('图片强调色', () => {
     };
     const result = recolorCardWithImage(card, twoTonePixels(64, 32, BLUE, CREAM));
     const accent = parseColor(colorOf(result.card, 'cv_accent'))!;
-    const hue = rgbaToOklch(accent).h;
-    assert.ok(hue > 230 && hue < 290, `accent hue=${hue}`);
+    const accentOklch = rgbaToOklch(accent);
+    assert.ok(accentOklch.h > 230 && accentOklch.h < 290, `accent hue=${accentOklch.h}`);
+    // 高彩度图片仍然要得到高彩度强调色，不能被“按图片彩度封顶”误伤成灰。
+    assert.ok(accentOklch.c > 0.1, `accent chroma=${accentOklch.c}`);
   });
 });
+function blueLightCard(): Record<string, unknown> {
+  return {
+    schema: '2.0',
+    config: {
+      style: {
+        color: {
+          cv_canvas: { light_mode: 'rgba(236,242,253,1)', dark_mode: 'rgba(236,242,253,1)' },
+          cv_ink: { light_mode: 'rgba(8,26,56,1)', dark_mode: 'rgba(8,26,56,1)' },
+          cv_accent_2: { light_mode: 'rgba(36,110,228,1)', dark_mode: 'rgba(36,110,228,1)' },
+          cv_column_1: { light_mode: 'rgba(18,72,180,1)', dark_mode: 'rgba(18,72,180,1)' },
+        },
+      },
+    },
+    body: {
+      elements: [{
+        tag: 'interactive_container',
+        background_style: 'cv_canvas',
+        elements: [
+          { tag: 'markdown', content: "<font color='cv_ink'>标题</font>" },
+          {
+            tag: 'column_set',
+            columns: [{
+              tag: 'column',
+              background_style: 'cv_column_1',
+              elements: [{ tag: 'markdown', content: '<font color="cv_ink">高亮栏</font>' }],
+            }],
+          },
+          { tag: 'interactive_container', background_style: 'cv_accent_2', elements: [] },
+        ],
+      }],
+    },
+  };
+}
+
+describe('近中性图片', () => {
+  const ROCK = oklchToRgba({ l: 0.35, c: 0.005, h: 313 });
+  const CHAMPAGNE = oklchToRgba({ l: 0.75, c: 0.011, h: 38 });
+
+  it('暗部色偏不当整卡色相；低彩度主体色仍能提供色相', () => {
+    const result = recolorCardWithImage(
+      blueLightCard(),
+      twoTonePixels(64, 32, ROCK, CHAMPAGNE),
+    );
+    assert.equal(result.image.accents.length, 1);
+    const accentHue = result.image.accents[0]!.h;
+    assert.ok(Math.abs(accentHue - 38) < 8, `accent hue=${accentHue}`);
+
+    const canvas = rgbaToOklch(parseColor(colorOf(result.card, 'cv_canvas'))!);
+    assert.ok(canvas.h > 20 && canvas.h < 60, `canvas hue=${canvas.h}`);
+    assert.ok(canvas.c < 0.03, `canvas chroma=${canvas.c}`);
+
+    const column = rgbaToOklch(parseColor(colorOf(result.card, 'cv_column_1'))!);
+    assert.ok(column.h > 20 && column.h < 60, `column hue=${column.h}`);
+    // 源卡高亮栏是高饱和蓝；图片只是低彩度香槟金，不能合成成焦橙。
+    assert.ok(column.c <= 0.065, `column chroma=${column.c}`);
+    assert.ok(result.theme.preview.some((item) => item.label === '图片强调色'));
+  });
+
+  it('没有可见色相的灰图不会合成彩色表面', () => {
+    const dark = oklchToRgba({ l: 0.3, c: 0.005, h: 313 });
+    const light = oklchToRgba({ l: 0.6, c: 0.006, h: 280 });
+    const result = recolorCardWithImage(
+      blueLightCard(),
+      twoTonePixels(64, 32, dark, light),
+    );
+    assert.equal(result.image.accents.length, 0);
+    for (const name of ['cv_canvas', 'cv_column_1', 'cv_accent_2']) {
+      const color = rgbaToOklch(parseColor(colorOf(result.card, name))!);
+      assert.ok(color.c < 0.006, `${name} chroma=${color.c}`);
+    }
+  });
+});
+
 describe('暗色模式', () => {
   it('源卡 light/dark 不同时分别生成两套颜色并保持可读', () => {
     const card = {

@@ -49,7 +49,13 @@ export interface ImagePalette {
   clusters: PaletteCluster[];
   /** 图片的中性色（底色/灰阶倾向）。 */
   neutral: Oklch;
-  /** 按权重和彩度挑出来的强调色色相，最多 2 个。 */
+  /**
+   * 强调色色相，最多 2 个。
+   *
+   * 优先高彩度、面积够的簇；整张图都很淡（例如暗背景上的香槟金车身）时，
+   * 退化为一个“相对最彩”的色相提示。调用方不能假设 accents 里的彩度都
+   * 达到 `ACCENT_MIN_CHROMA`。
+   */
   accents: Oklch[];
   metrics: {
     medianL: number;
@@ -79,6 +85,20 @@ const DEFAULT_ALPHA_THRESHOLD = 128;
 const MERGE_DELTA_E = 0.025;
 const ACCENT_MIN_CHROMA = 0.045;
 const ACCENT_MIN_WEIGHT = 0.008;
+/**
+ * 低到这个程度的彩度人眼几乎看不出色相。照片暗部 / 白平衡常见的
+ * 0.004~0.008 色偏不能拿来给整张卡染色，否则灰石头会变成紫卡片。
+ */
+export const ACHROMATIC_CHROMA = 0.01;
+/**
+ * 没有高彩度强调色时，从“相对最彩”的簇里找一个色相提示。
+ * 香槟金车身这类 c≈0.01 的主体色够不到 `ACCENT_MIN_CHROMA`，但它的色相
+ * 仍然比暗部色偏可信；用它总比用全局中性色的噪声色相好。
+ */
+const SUBTLE_ACCENT_MIN_CHROMA = 0.008;
+const SUBTLE_ACCENT_MIN_WEIGHT = 0.01;
+/** 中性色本身已经可见时，只有和它明显不同色相的低彩度簇才算强调色。 */
+const SUBTLE_ACCENT_HUE_DISTANCE = 25;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
@@ -246,6 +266,51 @@ function medianLightness(clusters: readonly PaletteCluster[]): number {
 }
 
 /**
+ * 挑强调色色相。
+ *
+ * 优先高彩度、面积够的簇（最多 2 个、色相至少差 30°）。一个都没有时，退而求
+ * 其次：找相对中性色明显更彩、面积不小的簇，只取最彩的一个；如果中性色
+ * 本身已经有可见色偏，还要求色相明显不同，避免把白平衡噪声当成强调色。
+ * 这条兜底专门处理“画面主体有点颜色、但整体很灰”的照片——不兜底的话，
+ * 合成阶段只能拿中性色的噪声色相，整张卡就会染上一层看不见的色偏。
+ */
+function pickAccentHues(
+  clusters: readonly PaletteCluster[],
+  neutral: Oklch,
+): Oklch[] {
+  const strong = clusters
+    .filter((cluster) => cluster.oklch.c >= ACCENT_MIN_CHROMA && cluster.weight >= ACCENT_MIN_WEIGHT)
+    .sort((a, b) =>
+      b.weight * b.oklch.c - a.weight * a.oklch.c
+      || b.oklch.c - a.oklch.c
+      || a.oklch.h - b.oklch.h)
+    .reduce<PaletteCluster[]>((picked, cluster) => {
+      if (picked.length >= 2) return picked;
+      if (picked.some((item) => hueDistance(item.oklch.h, cluster.oklch.h) < 30)) return picked;
+      picked.push(cluster);
+      return picked;
+    }, [])
+    .map((cluster) => cluster.oklch);
+  if (strong.length > 0) return strong;
+
+  const minChroma = Math.max(SUBTLE_ACCENT_MIN_CHROMA, neutral.c * 1.5);
+  const subtle = clusters
+    .filter((cluster) => cluster.weight >= SUBTLE_ACCENT_MIN_WEIGHT)
+    .filter((cluster) => cluster.oklch.c >= minChroma)
+    // 中性色自己有可见色偏时，只有明显换色相的簇才算强调色；否则同色相只是
+    // 噪声/白平衡，不能把它当成另一种颜色。
+    .filter((cluster) => neutral.c < ACHROMATIC_CHROMA
+      || hueDistance(cluster.oklch.h, neutral.h) >= SUBTLE_ACCENT_HUE_DISTANCE)
+    .sort((a, b) =>
+      b.oklch.c - a.oklch.c
+      || b.weight - a.weight
+      || b.oklch.l - a.oklch.l
+      || a.oklch.h - b.oklch.h)[0];
+
+  return subtle ? [subtle.oklch] : [];
+}
+
+/**
  * 提取图片调色板。纯函数，不读 DOM、不用随机数。
  */
 export function extractImagePalette(
@@ -326,20 +391,6 @@ export function extractImagePalette(
   merged.sort(compareClusters);
   clusters = merged.slice(0, maxColors);
 
-  const accents = clusters
-    .filter((cluster) => cluster.oklch.c >= ACCENT_MIN_CHROMA && cluster.weight >= ACCENT_MIN_WEIGHT)
-    .sort((a, b) =>
-      b.weight * b.oklch.c - a.weight * a.oklch.c
-      || b.oklch.c - a.oklch.c
-      || a.oklch.h - b.oklch.h)
-    .reduce<PaletteCluster[]>((picked, cluster) => {
-      if (picked.length >= 2) return picked;
-      if (picked.some((item) => hueDistance(item.oklch.h, cluster.oklch.h) < 30)) return picked;
-      picked.push(cluster);
-      return picked;
-    }, [])
-    .map((cluster) => cluster.oklch);
-
   const neutrals = clusters.filter((cluster) => cluster.oklch.c < 0.04);
   const neutralSource = neutrals.length > 0 ? neutrals : clusters;
   const neutralWeight = neutralSource.reduce((value, cluster) => value + cluster.weight, 0);
@@ -356,6 +407,7 @@ export function extractImagePalette(
     { l: 0, a: 0, b: 0 },
   );
   const neutral = oklabToOklch(neutralLab);
+  const accents = pickAccentHues(clusters, neutral);
 
   const medianL = medianLightness(clusters);
   return {
