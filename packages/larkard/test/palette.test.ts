@@ -212,6 +212,26 @@ describe('extractImagePalette', () => {
     assert.ok(palette.accents.some((accent) => accent.h > 240 && accent.h < 280));
   });
 
+  it('混合簇用 vivid 保留鲜艳度，不被面积均值中和', () => {
+    const gray = oklchToRgba({ l: 0.5, c: 0.002, h: 250 });
+    const red = oklchToRgba({ l: 0.5, c: 0.15, h: 25 });
+    const palette = extractImagePalette(
+      bandedPixels(100, 20, [
+        { color: gray, fraction: 0.9 },
+        { color: red, fraction: 0.1 },
+      ]),
+      { maxColors: 2 },
+    );
+
+    assert.equal(palette.version, 2);
+    const mixed = palette.clusters.find((cluster) => cluster.vivid.oklch.c > cluster.oklch.c * 1.1);
+    assert.ok(mixed, '应保留一个 vivid 明显高于均值的簇');
+    assert.ok(mixed.vivid.oklch.c >= 0.1, `vivid chroma=${mixed.vivid.oklch.c}`);
+    assert.ok(palette.accents.length >= 1);
+    assert.ok(palette.accents[0]!.c > 0.1, `accent chroma=${palette.accents[0]!.c}`);
+    assert.ok(Math.abs(palette.accents[0]!.h - 25) < 8, `accent hue=${palette.accents[0]!.h}`);
+  });
+
   it('同一份像素多次提取结果完全一致', () => {
     const pixels = twoTonePixels(32, 32, BLUE, CREAM);
     assert.deepEqual(extractImagePalette(pixels), extractImagePalette(pixels));
