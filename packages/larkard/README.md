@@ -32,6 +32,8 @@ npm i larkard
 | `larkard/state` | 把卡片 state 封印进空分栏 URL | Node |
 | `larkard/program` | 卡片程序协议：编译、渲染、动作、模拟器 | Universal |
 | `larkard/program/runtime` | 卡片程序宿主：发卡、回调、状态封印与实例存储 | Node |
+| `larkard/program/preview` | 卡片程序多用户预览：共享一张卡、创建 / 切换虚拟用户 | Universal |
+| `larkard/program/preview/browser` | 浏览器预览宿主：DOM 点击回传、toast、虚拟用户工具条 | Browser |
 | `larkard/language-server` | LSP 核心（stdio 服务器为 `larkard-language-server` bin） | Node / WebWorker |
 | `larkard/cli` | CLI 的 `run(argv)` | Node |
 
@@ -190,6 +192,39 @@ const sealed = composeCard(card, doc, { rev: 0, state: program.initialState });
 
 协议见 [`docs/program-protocol.md`](../../docs/program-protocol.md)，平台事实与接入边界见
 [`docs/program-runtime.md`](../../docs/program-runtime.md)。
+
+### 本地多用户预览
+
+`larkard/program/preview` 在内存里跑一张**共享卡**：所有虚拟用户看到同一份状态，
+切换身份只影响后续点击里的 `$user`，不会为每个人分叉出另一张卡。状态不落盘。
+
+```ts
+import { createProgramPreview } from 'larkard/program/preview';
+import { mountProgramPreview, mountPreviewUserBar } from 'larkard/program/preview/browser';
+
+// 无 DOM：适合测试 / 自定义 UI
+const preview = createProgramPreview(doc, {
+  users: [{ name: '阿明' }, { name: '小林' }],
+});
+preview.click('报名参与');                 // 阿明点击
+preview.selectUser(preview.users[1]!.open_id);
+preview.click('报名参与');                 // 小林点击，同一张卡
+preview.addUser({ name: '小陈' }, { select: true });
+preview.reset();                           // 回到初始状态，保留用户
+
+// 浏览器：渲染一张卡 + 绑定点击 / 表单 / 下拉 / 勾选
+const mounted = mountProgramPreview(document.querySelector('#card')!, doc, {
+  users: [{ name: '阿明' }, { name: '小林' }],
+});
+mountPreviewUserBar(document.querySelector('#toolbar')!, mounted.preview);
+```
+
+- `createVirtualUser()` 会补全随机 `open_id` / `user_id` / `union_id` 和首字头像；
+  虚拟用户会自动进入 `persons` 表，`person_list` / `at()` 直接显示姓名和头像。
+- 预览里的动作仍然是声明式的 `$state` / `$actions`，不会发网络请求；
+  toast 用 `larkard/renderer/browser` 的 `createToastHost` 显示。
+- `mountProgramPreview({ decorate })` 可在每次重绘后做图表水合、彩色图标替换等后处理。
+- 程序卡渲染结果（公开 DSL）会先经过 `dslToRaw` 再交给渲染器，和画布 / 导出同一条路径。
 
 ## CLI
 

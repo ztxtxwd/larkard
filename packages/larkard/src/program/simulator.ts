@@ -76,6 +76,28 @@ export interface Simulator {
 }
 
 /**
+ * 按文字 / element_id / 条件在渲染出的卡片里找一个可交互组件。
+ *
+ * 单独导出给其它内存宿主复用（例如多用户预览），保证点击匹配规则只有一份。
+ */
+export function findInteraction(card: Json, target: ClickTarget): Interaction {
+  const all = findInteractions(card);
+  const matches =
+    typeof target === 'function'
+      ? all.filter(target)
+      : typeof target === 'string'
+        ? all.filter((i) => i.text?.trim() === target.trim())
+        : all.filter((i) => i.element_id === target.elementId);
+  const label = typeof target === 'function' ? '条件' : JSON.stringify(typeof target === 'string' ? target : target.elementId);
+  if (matches.length === 0) {
+    const known = all.map((i) => i.text ?? i.element_id ?? i.path).join('、');
+    throw new Error(`卡片上找不到可点击的 ${label}${known ? `（现有：${known}）` : ''}`);
+  }
+  if (matches.length > 1) throw new Error(`卡片上有 ${matches.length} 个 ${label}，请改用 element_id 或条件函数`);
+  return matches[0] as Interaction;
+}
+
+/**
  * 在内存里跑一张卡片：渲染 → 点击 → 执行动作 → 状态变了就加版本号重新渲染。
  * 点击走的是渲染出的卡片上真实的回调 value，和线上回调同一条路径。
  */
@@ -95,22 +117,7 @@ export function createSimulator(doc: unknown): Simulator {
     return result;
   };
 
-  const find = (target: ClickTarget): Interaction => {
-    const all = findInteractions(last.card);
-    const matches =
-      typeof target === 'function'
-        ? all.filter(target)
-        : typeof target === 'string'
-          ? all.filter((i) => i.text?.trim() === target.trim())
-          : all.filter((i) => i.element_id === target.elementId);
-    const label = typeof target === 'function' ? '条件' : JSON.stringify(typeof target === 'string' ? target : target.elementId);
-    if (matches.length === 0) {
-      const known = all.map((i) => i.text ?? i.element_id ?? i.path).join('、');
-      throw new Error(`卡片上找不到可点击的 ${label}${known ? `（现有：${known}）` : ''}`);
-    }
-    if (matches.length > 1) throw new Error(`卡片上有 ${matches.length} 个 ${label}，请改用 element_id 或条件函数`);
-    return matches[0] as Interaction;
-  };
+  const find = (target: ClickTarget): Interaction => findInteraction(last.card, target);
 
   return {
     program,

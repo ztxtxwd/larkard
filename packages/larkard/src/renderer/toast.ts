@@ -97,7 +97,8 @@ export function createToastHost(container?: HTMLElement | null): ToastAPI {
     let el = hostEl.querySelector<HTMLElement>('.universal-card-toast-host.js');
     if (!el) {
       el = document.createElement('div');
-      el.className = 'universal-card-toast-host';
+      // `js` 标记：只管理脚本创建的宿主 / toast，SSR 静态输出不参与 destroy。
+      el.className = 'universal-card-toast-host js';
       hostEl.appendChild(el);
     }
     return el;
@@ -110,6 +111,7 @@ export function createToastHost(container?: HTMLElement | null): ToastAPI {
     wrap.style.cssText = 'display:contents';
     wrap.innerHTML = renderToastHTML(type, opts);
     const toastEl = wrap.firstElementChild as HTMLElement;
+    toastEl.classList.add('js');
     host.appendChild(toastEl);
     const showTime = opts.showTime ?? DEFAULT_SHOW_TIME;
     setTimeout(() => {

@@ -116,6 +116,16 @@
       "import": "./dist/program/runtime/index.js",
       "require": "./dist/program/runtime/index.cjs"
     },
+    "./program/preview": {
+      "types": "./dist/program/preview/index.d.ts",
+      "import": "./dist/program/preview/index.js",
+      "require": "./dist/program/preview/index.cjs"
+    },
+    "./program/preview/browser": {
+      "types": "./dist/program/preview/browser.d.ts",
+      "import": "./dist/program/preview/browser.js",
+      "require": "./dist/program/preview/browser.cjs"
+    },
     "./language-server": {
       "types": "./dist/language-server/index.d.ts",
       "import": "./dist/language-server/index.js",

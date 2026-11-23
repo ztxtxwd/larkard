@@ -575,6 +575,11 @@ test('header: text_tag_list 渲染两个彩色标签', () => {
   // 标签底色走 --udtoken-tag-bg-*（半透明），不是 header 的 -100 实心底
   assert.match(html, /rgba\(20,\s*86,\s*240,\s*0\.2\)/);   // blue tag bg
   assert.match(html, /rgba\(91,\s*101,\s*245,\s*0\.2\)/);  // indigo tag bg
+  // header 传 parentFontSize=16、不传 parentLineHeight：18px 高、10px 字、padding 0 4px，
+  // 不做行内 top 补偿（交给 flex 居中）
+  assert.match(html, /font-size:10px;font-weight:500[^>]*line-height:18px;height:18px/);
+  assert.match(html, /padding:0 4px/);
+  assert.doesNotMatch(html, /universal-card-text-tag--blue[^>]*vertical-align:top/);
 });
 
 test('header: icon 渲染到左侧 header__icon，并继承标题色', () => {
@@ -1368,26 +1373,37 @@ test('text_tag: color=neutral 仍是灰标签', () => {
   assert.match(html, /#646a73/);
 });
 
-test('text_tag: 真机 extra-small 尺寸（16px 高 / 10px 字）+ 行高补偿', () => {
+test('text_tag: 真机 18px 高 / 10px 字 + 行高补偿', () => {
   const html = renderDslToString({ body: { elements: [{
     tag: 'markdown',
     content: "<text_tag color='blue'>标签</text_tag> 正文",
   }] } });
-  // 设计系统 Tag extra-small：height/line-height 16、font-size 10、padding 0 4；
-  // 外层 vertical-align:top + top=(22-16)/2+.5
-  assert.match(html, /font-size:10px;font-weight:500[^>]*line-height:16px;height:16px/);
+  // 真机 TextTag size-follow：height/line-height 18、font-size 10、padding 0 4；
+  // 外层 vertical-align:top + top=(22-18)/2+.5
+  assert.match(html, /font-size:10px;font-weight:500[^>]*line-height:18px;height:18px/);
   assert.match(html, /padding:0 4px/);
-  assert.match(html, /vertical-align:top;top:3\.5px/);
+  assert.match(html, /vertical-align:top;top:2\.5px/);
   // 真机外层有 2px 左右外边距
   assert.match(ALL_CSS, /\.universal-card-text-tag\s*\{[^}]*margin:\s*0 2px/);
 });
 
-test('text_tag: note 内按 notation 12/20 计算，垂直偏移 2.5px', () => {
+test('text_tag: 父字号 > 18 时高度跟随字号、水平 padding 扩到 ceil(fs/4)', () => {
+  const html = renderDslToString({ body: { elements: [{
+    tag: 'markdown',
+    content: "<text_tag color='blue'>标签</text_tag>",
+    text_size: 'heading-0',
+  }] } });
+  // heading-0 = 30px → height 30、padding 0 8px
+  assert.match(html, /line-height:30px;height:30px/);
+  assert.match(html, /padding:0 8px/);
+});
+
+test('text_tag: note 内按 notation 12/20 计算，垂直偏移 1.5px', () => {
   const html = renderDslToString({ body: { elements: [{
     tag: 'note',
     elements: [{ tag: 'markdown', content: "<text_tag color='green'>备注</text_tag> 文字" }],
   }] } });
-  assert.match(html, /universal-card-text-tag--green[^>]*top:2\.5px/);
+  assert.match(html, /universal-card-text-tag--green[^>]*top:1\.5px/);
 });
 
 test('number_tag: 真机 16×16 圆形、中性底色、左右 3px 留白', () => {
