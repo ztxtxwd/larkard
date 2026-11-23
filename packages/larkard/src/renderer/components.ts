@@ -53,19 +53,24 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-// text_tag：正文内联标签。按真机截图与桌面端样式表对齐设计系统 Tag `extra-small`：
-//   height/line-height 16px、font-size 10px、padding 0 4px、border-radius 4px，
-//   外层 `.universal-card-text-tag` 自带 margin: 0 2px（桌面端 2bf6f140.css）。
-// 位置用真机同款行高补偿：vertical-align:top + top=(父行高 - 16)/2 + .5，
+// text_tag：正文内联标签。真机 TextTag 走 size-follow（Electron TextTag 组件）：
+//   parentFontSize <= 18 → height/line-height 18px、padding 0 4px；
+//   parentFontSize >  18 → height = 父字号、padding 水平 ceil(父字号 / 4)。
+// 注意：真机**字号**不跟父级走——卡片样式表里的 --universal-card-tag-font-size 并未生效，
+// 逐像素比对真机与渲染器截图（header「直播预告」、正文「上手三步1」）文字墨迹等宽，
+// 都等于设计系统 Tag extra-small 的 10px，所以这里固定 10px。
+// 位置用真机同款行高补偿：vertical-align:top + top=(父行高 - 标签高)/2 + .5，
 // 有多行上下文时才加（header 的 text_tag_list 不传父行高，交给 flex 居中）。
-function textTagMetrics(parentLineHeight?: number) {
-  const height = 16;
+function textTagMetrics(parentFontSize?: number, parentLineHeight?: number) {
+  const fs = parentFontSize && Number.isFinite(parentFontSize) ? parentFontSize : BASE_FONT_SIZE;
   // parentLineHeight 缺失（如 header 的 text_tag_list）时真机不做行内偏移。
   const lh = parentLineHeight && Number.isFinite(parentLineHeight) && parentLineHeight > 0
     ? parentLineHeight
     : undefined;
+  const height = fs <= 18 ? 18 : fs;
   return {
     height,
+    paddingX: fs <= 18 ? 4 : Math.ceil(fs / 4),
     top: lh != null ? (lh - height) / 2 + 0.5 : 0,
     compensate: lh != null,
   };
@@ -74,13 +79,14 @@ function textTagMetrics(parentLineHeight?: number) {
 function textTagStyle(
   bg: string,
   text: string,
+  parentFontSize?: number,
   parentLineHeight?: number,
 ): Record<string, string> {
-  const m = textTagMetrics(parentLineHeight);
+  const m = textTagMetrics(parentFontSize, parentLineHeight);
   return {
     backgroundColor: bg,
     color: text,
-    padding: '0 4px',
+    padding: `0 ${m.paddingX}px`,
     borderRadius: '4px',
     fontSize: '10px',
     fontWeight: '500',
@@ -1577,7 +1583,9 @@ registerComponent('interactive_container', (el, ctx) => {
   const act = Array.isArray(p.actions) ? (p.actions[0] as { action?: { url?: unknown } } | undefined) : undefined;
   const url = resolveURL(act?.action?.url);
   const hasActions = Array.isArray(p.actions) && p.actions.length > 0;
-  const clickable = !disabled && (Boolean(url) || hasActions);
+  // 程序卡把 `$on` 写在 behaviors 上；预览宿主需要拿到同一份回调 value。
+  const callback = readCallbackValue(p);
+  const clickable = !disabled && (Boolean(url) || hasActions || Boolean(callback));
   // border_color / customBorderColor：命名色 /色阶 / 自定义色 → CSS 值。
   // 描边色走 interactive_container.border_color token 表：grey → --line-border-component（N350），
   // 不是正文灰 N600（resolveColor('grey') 会给出后者，描边明显偏深）。
@@ -1644,6 +1652,11 @@ registerComponent('interactive_container', (el, ctx) => {
   if (Object.keys(style).length) props.style = style;
   // disabled 时不挂跳转；hover_tips / disabled_tips 由 renderElement 统一附加为 title。
   if (url && !disabled) props['data-url'] = url;
+  // interactive 预览：回调容器交给宿主按点击回传（与 button / 表单字段同一套属性）。
+  if (ctx.options.interactive && callback && !disabled) {
+    props['data-feishu-action'] = JSON.stringify(callback);
+    props['data-feishu-tag'] = 'interactive_container';
+  }
   return h('div', props, renderElements(p.elements, ctx));
 });
 
@@ -2208,6 +2221,12 @@ registerComponent('checker', (el, ctx) => {
   };
   if (textColor) contentStyle.color = textColor;
 
+  // 程序卡的 `$on` 落在 behaviors 上；interactive 预览里把回调 value 挂到
+  // checkbox 上，宿主的 change 监听据此回传 `$checked`。
+  const callback = readCallbackValue(p);
+  const actionAttrs = ctx.options.interactive && callback && !disabled
+    ? { 'data-feishu-action': JSON.stringify(callback), 'data-feishu-tag': 'checker' }
+    : {};
   const checkbox = h(
     overall ? 'span' : 'label',
     { className: `${CLS}-checker__checkbox-container` },
@@ -2216,6 +2235,7 @@ registerComponent('checker', (el, ctx) => {
       className: `${CLS}-checker__input`,
       ...(checked ? { checked: '' } : {}),
       ...(disabled ? { disabled: '' } : {}),
+      ...actionAttrs,
     }),
     h('span', { className: `${CLS}-checker__box` }),
   );
@@ -2322,6 +2342,7 @@ registerComponent('text_tag', (el, ctx) => {
   const style = textTagStyle(
     p.backgroundColor || c.bg,
     c.text,
+    ctx.textMetrics?.fontSize,
     ctx.textMetrics?.lineHeight,
   );
   return h('span', { className: `${CLS}-text-tag ${CLS}-text-tag--${colorName}`, style }, extractText(p.text));

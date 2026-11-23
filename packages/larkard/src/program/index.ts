@@ -28,7 +28,7 @@ export {
   type CallbackPayload,
 } from './callback.js';
 
-export { createSimulator, findInteractions, type Simulator, type Interaction, type ClickInput, type ClickTarget } from './simulator.js';
+export { createSimulator, findInteraction, findInteractions, type Simulator, type Interaction, type ClickInput, type ClickTarget } from './simulator.js';
 
 export { ExprError, ProgramError, RenderError, type Diagnostic, type Severity } from './errors.js';
 

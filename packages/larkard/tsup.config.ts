@@ -24,6 +24,8 @@ export default defineConfig({
     'state/index': 'src/core/state/index.ts',
     'program/index': 'src/program/index.ts',
     'program/runtime/index': 'src/program/runtime/index.ts',
+    'program/preview/index': 'src/program/preview/index.ts',
+    'program/preview/browser': 'src/program/preview/browser.ts',
     'language-server/index': 'src/language-server/index.ts',
     'language-server/server': 'src/language-server/server.ts',
     cli: 'src/cli.ts',

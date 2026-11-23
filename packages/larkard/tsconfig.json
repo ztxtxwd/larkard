@@ -25,6 +25,8 @@
       "larkard/state": ["./src/core/state/index.ts"],
       "larkard/program": ["./src/program/index.ts"],
       "larkard/program/runtime": ["./src/program/runtime/index.ts"],
+      "larkard/program/preview": ["./src/program/preview/index.ts"],
+      "larkard/program/preview/browser": ["./src/program/preview/browser.ts"],
       "larkard/language-server": ["./src/language-server/index.ts"]
     }
   },
